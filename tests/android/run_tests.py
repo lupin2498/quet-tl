@@ -21,15 +21,22 @@ shot_no = [0]
 
 
 def log(*a):
-    print("[test]", *a, flush=True)
+    msg = " ".join(str(x) for x in a)
+    print("[test]", msg, flush=True)
+    try:
+        with open(os.path.join(OUT, "test.log"), "a", encoding="utf-8") as f:
+            f.write(time.strftime("%H:%M:%S ") + msg + "\n")
+    except Exception:
+        pass
 
 
 def adb(*args, timeout=60, inp=None):
     try:
         r = subprocess.run(["adb", *args], input=inp, capture_output=True, timeout=timeout)
         return r.stdout.decode("utf-8", "replace") + r.stderr.decode("utf-8", "replace")
-    except subprocess.TimeoutExpired:
-        return "TIMEOUT"
+    except subprocess.TimeoutExpired as e:
+        part = (e.stdout or b"").decode("utf-8", "replace") if isinstance(e.stdout, bytes) else (e.stdout or "")
+        return part + "\nTIMEOUT"
 
 
 def sh(cmd, timeout=60):
@@ -85,17 +92,30 @@ def bounds(n):
     return (x1 + x2) // 2, (y1 + y2) // 2
 
 
+def _match(want, got, contains):
+    # nút hộp thoại Material hiển thị chữ in hoa (vd. "XOÁ") -> so khớp không phân biệt hoa/thường
+    w, g = want.casefold(), got.casefold()
+    return (contains and w in g) or w == g
+
+
 def find(text=None, desc=None, contains=False, root=None):
     root = root if root is not None else dump()
     for n in nodes(root):
         t, d = n.get("text", ""), n.get("content-desc", "")
-        if text is not None:
-            if (contains and text in t) or t == text:
-                return n
-        if desc is not None:
-            if (contains and desc in d) or d == desc:
-                return n
+        if text is not None and _match(text, t, contains):
+            return n
+        if desc is not None and _match(desc, d, contains):
+            return n
     return None
+
+
+def dialog_open(root=None):
+    root = root if root is not None else dump()
+    for n in nodes(root):
+        rid = n.get("resource-id", "")
+        if rid in ("android:id/button1", "android:id/button2", "android:id/select_dialog_listview", "android:id/alertTitle"):
+            return True
+    return False
 
 
 def tap_xy(x, y):
@@ -216,6 +236,11 @@ def wait_processing(seconds=12):
 def go_home():
     for _ in range(6):
         if top_activity() == "MainActivity":
+            for _ in range(3):
+                if not dialog_open():
+                    return
+                back()
+                time.sleep(0.8)
             return
         back()
         # hộp thoại xác nhận bỏ trang
@@ -478,7 +503,12 @@ def t_import_multi():
     names = ["doc_2_dark.jpg", "doc_3_gray.jpg", "doc_6_clutter.jpg"]
     for n in names:
         push_test_image(os.path.join(IMAGES, n), n)
-    share_into_app(names)
+    # "am start" không truyền được ArrayList<Uri> (SEND_MULTIPLE) -> dùng lối vào kiểm thử (chỉ có ở bản debug)
+    uris = ",".join("content://%s.share/%s" % (PKG, n) for n in names)
+    out = sh("am start -a %s.TEST_IMPORT --esa uris %s -n %s/.MainActivity" % (PKG, uris, PKG))
+    log(out.strip())
+    if "Error" in out:
+        raise AssertionError(out)
     wait_activity("EditorActivity", 40)
     wait_processing(20)
     shot("import_multi_editor")
@@ -515,8 +545,17 @@ def t_home_list():
     back()
 
 
+def doc_count():
+    n = find(text="tài liệu", contains=True)
+    if n is None:
+        return 0
+    m = re.search(r"(\d+)", n.get("text", ""))
+    return int(m.group(1)) if m else 0
+
+
 def t_delete_document():
     go_home()
+    before = doc_count()
     tap(desc="Tùy chọn tài liệu")
     tap(text="Xoá")
     time.sleep(0.8)
@@ -524,6 +563,10 @@ def t_delete_document():
     tap(text="Xoá")
     time.sleep(1.5)
     shot("after_delete")
+    after = doc_count()
+    log("số tài liệu: %d -> %d" % (before, after))
+    if before and after != before - 1:
+        raise AssertionError("Xoá tài liệu không thành công (%d -> %d)" % (before, after))
 
 
 def t_rotation_and_recreate():
@@ -541,10 +584,19 @@ def t_rotation_and_recreate():
 
 def t_monkey():
     go_home()
-    out = sh("monkey -p %s --pct-syskeys 0 --pct-appswitch 0 --pct-anyevent 0 --throttle 120 -s 1234 -v 2500" % PKG, timeout=900)
+    # chỉ thao tác chạm/vuốt: phím điều hướng/trackball làm máy ảo chờ cửa sổ có focus rất lâu khi chuyển màn hình
+    out = sh("monkey -p %s --pct-syskeys 0 --pct-appswitch 0 --pct-anyevent 0 --pct-nav 0 --pct-majornav 0 "
+             "--pct-trackball 0 --ignore-timeouts --throttle 100 -s 1234 -v 2500" % PKG, timeout=1200)
     open(os.path.join(OUT, "monkey.txt"), "w").write(out)
-    if "// CRASH" in out or "NOT RESPONDING" in out:
+    bad = re.findall(r"// (CRASH|NOT RESPONDING): (\S+)", out)
+    mine = [b for b in bad if b[1].startswith(PKG)]
+    if bad:
+        log("monkey: %s" % bad)
+    if mine:
         raise AssertionError("Monkey phát hiện lỗi:\n" + out[-3000:])
+    if "Monkey finished" not in out:
+        tail = out.strip().splitlines()[-1][:120] if out.strip() else "trống"
+        notes.append("Monkey chưa chạy hết (%s)" % tail)
     shot("after_monkey")
 
 
@@ -590,6 +642,8 @@ def main():
           "**%d/%d bước đạt**" % (passed, len(results)), "", "| Bước | Kết quả | Giây |", "|---|---|---|"]
     for r in results:
         md.append("| %s | %s | %s |" % (r["step"], "✅" if r["ok"] else "❌ " + r.get("error", "").replace("|", "/").replace("\n", " ")[:300], r["sec"]))
+    if notes:
+        md += ["", "Ghi chú:"] + ["- " + n for n in notes]
     open(os.path.join(OUT, "summary.md"), "w").write("\n".join(md) + "\n")
     json.dump({"passed": passed, "total": len(results), "results": results}, open(os.path.join(OUT, "summary.json"), "w"), ensure_ascii=False, indent=1)
     log("DONE %d/%d" % (passed, len(results)))

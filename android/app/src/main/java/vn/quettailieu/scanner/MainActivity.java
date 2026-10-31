@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -317,6 +318,8 @@ public class MainActivity extends Activity {
         }
     }
 
+    private static final String TEST_IMPORT = "vn.quettailieu.scanner.TEST_IMPORT";
+
     private void handleIncoming(Intent intent) {
         if (intent == null) return;
         String act = intent.getAction();
@@ -327,6 +330,10 @@ public class MainActivity extends Activity {
         } else if (Intent.ACTION_SEND_MULTIPLE.equals(act)) {
             ArrayList<Parcelable> ps = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
             if (ps != null) for (Parcelable p : ps) if (p instanceof Uri) uris.add((Uri) p);
+        } else if (TEST_IMPORT.equals(act) && (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+            // chỉ bản debug: kiểm thử tự động nhập nhiều ảnh ("am start" không gửi được ArrayList<Uri>)
+            String[] arr = intent.getStringArrayExtra("uris");
+            if (arr != null) for (String u : arr) uris.add(Uri.parse(u));
         } else {
             return;
         }
