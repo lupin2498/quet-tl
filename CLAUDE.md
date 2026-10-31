@@ -25,7 +25,7 @@ nắn phẳng theo khổ giấy (A4/Letter) → bộ lọc làm rõ chữ → l�
 - Build iOS (macOS): `cd ios && xcodegen generate && xcodebuild -project QuetTaiLieu.xcodeproj -scheme QuetTaiLieu -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO build`
 
 ## CI (GitHub Actions)
-- `.github/workflows/android.yml`: build APK, kiểm thử thuật toán, chạy máy ảo API 29 & 34 với `tests/android/run_tests.py`.
+- `.github/workflows/android.yml`: build APK, kiểm thử thuật toán, chạy máy ảo API 24, 29 & 34 với `tests/android/run_tests.py`.
 - `.github/workflows/ios.yml`: build IPA chưa ký + chạy tự kiểm thử trên iOS Simulator, chụp màn hình.
 - Kết quả (APK/IPA, ảnh màn hình, logcat, summary.md) được đẩy đè lên các nhánh `ci/android-build`, `ci/android-29`,
   `ci/android-34`, `ci/ios`. Xem bằng `git fetch origin ci/android-34 && git show origin/ci/android-34:summary.md`.
