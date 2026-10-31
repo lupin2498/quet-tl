@@ -1,0 +1,993 @@
+10-31 17:56:57.038  1676  2325 I ActivityManager: START u0 {flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity} from uid 2000 on display 0
+10-31 17:56:57.089  1676  2246 I ActivityManager: Start proc 2969:vn.quettailieu.scanner/u0a78 for activity vn.quettailieu.scanner/.MainActivity
+10-31 17:56:58.462  1676  1697 I WindowManager: Destroying surface Surface(name=Starting vn.quettailieu.scanner) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 17:57:00.061  1676  1785 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+10-31 17:57:01.331  3053  3204 E ActivityThread: Failed to find provider info for com.google.android.email.provider
+10-31 17:57:06.727  1676  2135 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity} from uid 10078 on display 0
+10-31 17:57:07.873  1676  2845 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:57:09.791  1676  1785 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+10-31 17:57:13.821  1676  2137 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 17:57:14.821  1676  2137 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:57:16.630  1676  1763 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ id=8, legacyType=-1, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED] ]
+10-31 17:57:16.830  1676  1785 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+10-31 17:57:24.569  3053  3053 E ActivityThread: Service com.android.email.service.EmailBroadcastProcessorService has leaked ServiceConnection bie@78ca6c3 that was originally bound here
+10-31 17:57:24.569  3053  3053 E ActivityThread: android.app.ServiceConnectionLeaked: Service com.android.email.service.EmailBroadcastProcessorService has leaked ServiceConnection bie@78ca6c3 that was originally bound here
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.app.LoadedApk$ServiceDispatcher.<init>(LoadedApk.java:1336)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.app.LoadedApk.getServiceDispatcher(LoadedApk.java:1231)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.app.ContextImpl.bindServiceCommon(ContextImpl.java:1478)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.app.ContextImpl.bindService(ContextImpl.java:1450)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.content.ContextWrapper.bindService(ContextWrapper.java:636)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at bic.a(SourceFile:243)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at bic.d(SourceFile:286)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at bcf.c(SourceFile:175)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at bac.a(SourceFile:203)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at bac.a(SourceFile:147)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at com.android.email.service.EmailBroadcastProcessorService.c(SourceFile:343)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at com.android.email.service.EmailBroadcastProcessorService.onHandleIntent(SourceFile:1328)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:24.569  3053  3053 E ActivityThread: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:27.191  1676  3957 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 17:57:29.488  1676  1688 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:57:29.539  1676  2325 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 17:57:29.888  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:32.860  4480  4503 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:32.860  4480  4503 E ProviderInstaller: Failed to install provider: null
+10-31 17:57:32.860  4480  4503 E MS_RegisterService: Google play services not available
+10-31 17:57:32.860  4480  4503 E MS_RegisterService: fux
+10-31 17:57:32.860  4480  4503 E MS_RegisterService: 	at hnk.a(Unknown Source)
+10-31 17:57:32.860  4480  4503 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:57:32.860  4480  4503 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:32.860  4480  4503 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:32.860  4480  4503 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:32.860  4480  4503 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:32.891  4480  4503 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:32.891  4480  4503 E ProviderInstaller: Failed to install provider: null
+10-31 17:57:32.891  4480  4503 E MS_RegisterService: Google play services not available
+10-31 17:57:32.891  4480  4503 E MS_RegisterService: fux
+10-31 17:57:32.891  4480  4503 E MS_RegisterService: 	at hnk.a(Unknown Source)
+10-31 17:57:32.891  4480  4503 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:57:32.891  4480  4503 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:32.891  4480  4503 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:32.891  4480  4503 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:32.891  4480  4503 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at com.google.android.apps.hangouts.requestwriter.RequestWriter.onCreate(SourceFile:220)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at android.app.ActivityThread.handleCreateService(ActivityThread.java:3162)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at android.app.ActivityThread.-wrap5(ActivityThread.java)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1550)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at android.app.ActivityThread.main(ActivityThread.java:6077)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:866)
+10-31 17:57:33.350  3709  3709 E GmsNativeLibraryLoader: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:756)
+10-31 17:57:33.350  3709  3709 E ProviderInstaller: Failed to install provider: null
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: GPS not available when trying to installIfNeeded
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: fux
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at hnk.a(Unknown Source)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at com.google.android.apps.hangouts.requestwriter.RequestWriter.onCreate(SourceFile:220)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at android.app.ActivityThread.handleCreateService(ActivityThread.java:3162)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at android.app.ActivityThread.-wrap5(ActivityThread.java)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1550)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at android.app.ActivityThread.main(ActivityThread.java:6077)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:866)
+10-31 17:57:33.350  3709  3709 E Babel_RequestWriter: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:756)
+10-31 17:57:33.419  1433  4162 E MetadataRetrieverClient: failed to extract an album art
+10-31 17:57:33.546  1433  1854 E MetadataRetrieverClient: failed to extract an album art
+10-31 17:57:33.848  1433  4162 E MetadataRetrieverClient: failed to extract an album art
+10-31 17:57:33.851  1433  1854 E MetadataRetrieverClient: failed to extract an album art
+10-31 17:57:34.246  4442  4524 E GmsUtils: Failed to connect to Google API client: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+10-31 17:57:36.008  4442  4539 E GmsUtils: Failed to connect to Google API client: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:37.326  4480  4547 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:37.326  4480  4547 E ProviderInstaller: Failed to install provider: null
+10-31 17:57:37.326  4480  4547 E MS_RegisterService: Google play services not available
+10-31 17:57:37.326  4480  4547 E MS_RegisterService: fux
+10-31 17:57:37.326  4480  4547 E MS_RegisterService: 	at hnk.a(Unknown Source)
+10-31 17:57:37.326  4480  4547 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:57:37.326  4480  4547 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:37.326  4480  4547 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:37.326  4480  4547 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:37.326  4480  4547 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:40.159  1310  2187 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:45.601  4480  4611 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:45.601  4480  4611 E ProviderInstaller: Failed to install provider: null
+10-31 17:57:45.601  4480  4611 E MS_RegisterService: Google play services not available
+10-31 17:57:45.601  4480  4611 E MS_RegisterService: fux
+10-31 17:57:45.601  4480  4611 E MS_RegisterService: 	at hnk.a(Unknown Source)
+10-31 17:57:45.601  4480  4611 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:57:45.601  4480  4611 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:57:45.601  4480  4611 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:57:45.601  4480  4611 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:57:45.601  4480  4611 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:57:46.223  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:57:47.823  2969  2974 I chatty  : uid=10078(vn.quettailieu.scanner) expire 6 lines
+10-31 17:57:49.842  3890  3950 E FirebaseInstanceId: Token retrieval failed: INVALID_SENDER
+10-31 17:57:52.978  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:57:59.728  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:58:06.468  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:58:07.246  4480  4733 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:58:07.246  4480  4733 E ProviderInstaller: Failed to install provider: null
+10-31 17:58:07.246  4480  4733 E MS_RegisterService: Google play services not available
+10-31 17:58:07.246  4480  4733 E MS_RegisterService: fux
+10-31 17:58:07.246  4480  4733 E MS_RegisterService: 	at hnk.a(Unknown Source)
+10-31 17:58:07.246  4480  4733 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:58:07.246  4480  4733 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:58:07.246  4480  4733 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:58:07.246  4480  4733 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:58:07.246  4480  4733 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:58:13.199  1310  2054 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:58:19.947  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:58:29.219  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:58:33.754  1676  4386 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 17:58:33.790  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 14 lines
+10-31 17:58:34.095  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +324ms
+10-31 17:58:34.148  1676  3963 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+10-31 17:58:36.892  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:58:40.322  1676  1688 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:58:48.587  1310  1716 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:58:50.067  3890  3950 E FirebaseInstanceId: Token retrieval failed: INVALID_SENDER
+10-31 17:58:50.339  1676  1819 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 17:58:51.056  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +584ms
+10-31 17:58:51.137  1676  3963 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:58:53.470  1310  2054 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:58:57.308  4480  5039 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:58:57.308  4480  5039 E ProviderInstaller: Failed to install provider: null
+10-31 17:58:57.308  4480  5039 E MS_RegisterService: Google play services not available
+10-31 17:58:57.308  4480  5039 E MS_RegisterService: fux
+10-31 17:58:57.308  4480  5039 E MS_RegisterService: 	at hnk.a(Unknown Source)
+10-31 17:58:57.308  4480  5039 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 17:58:57.308  4480  5039 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 17:58:57.308  4480  5039 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 17:58:57.308  4480  5039 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+10-31 17:58:57.308  4480  5039 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 17:58:58.174  1310  1716 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:00.299  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 17:59:00.318  1676  2845 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 17:59:00.325  1676  2326 I ActivityManager: START u0 {act=android.intent.action.CHOOSER flg=0x1 cmp=android/com.android.internal.app.ChooserActivity clip={text/uri-list U:content://vn.quettailieu.scanner.share/Scan%2031-10-2026%2017.57.pdf} (has extras)} from uid 10078 on display 0
+10-31 17:59:00.576  1310  2054 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:00.693  5070  5085 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 17:59:00.694  5070  5085 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 17:59:04.663  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:10.938  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 17:59:10.949  1676  1819 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 17:59:10.951  1676  2845 I ActivityManager: START u0 {act=android.intent.action.CHOOSER flg=0x1 cmp=android/com.android.internal.app.ChooserActivity clip={text/uri-list U:content://vn.quettailieu.scanner.share/Scan%2031-10-2026%2017.57.jpg} (has extras)} from uid 10078 on display 0
+10-31 17:59:15.369  1310  2054 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:19.307  1676  2246 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 17:59:23.852  1310  2054 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:25.824  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 16 lines
+10-31 17:59:25.958  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:26.054  5261  5306 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 17:59:26.058  5261  5306 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 17:59:26.296  5313  5313 E art     : The String#value field is not present on Android versions >= 6.0
+10-31 17:59:26.871  1676  2324 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:59:30.319  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:34.466  1676  4386 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity (has extras)} from uid 10078 on display 0
+10-31 17:59:34.694  2969  5409 I chatty  : uid=10078(vn.quettailieu.scanner) expire 6 lines
+10-31 17:59:34.694  2969  5420 I chatty  : uid=10078(vn.quettailieu.scanner) expire 9 lines
+10-31 17:59:34.707  2969  5421 I chatty  : uid=10078(vn.quettailieu.scanner) expire 8 lines
+10-31 17:59:34.894  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +418ms
+10-31 17:59:34.912  2969  3651 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 17:59:34.917  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:59:38.656  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:40.947  2969  5410 I chatty  : uid=10078(vn.quettailieu.scanner) expire 3 lines
+10-31 17:59:40.980  1676  2135 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 17:59:41.487  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +456ms
+10-31 17:59:41.537  1676  3957 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:59:44.496  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 17:59:47.373  1676  1763 E ConnectivityService: RemoteException caught trying to send a callback msg for NetworkRequest [ id=9, legacyType=-1, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED] ]
+10-31 17:59:47.386  1676  2326 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 17:59:48.091  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +542ms
+10-31 17:59:48.114  1676  2246 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:59:48.121  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 17:59:57.973  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:00:00.422  1310  2187 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:00:02.540  1676  1819 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:00:05.211  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:00:08.554  1310  2054 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:00:08.771  1786  5627 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:00:08.771  1786  5627 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:00:19.087  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:00:20.566  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:00:22.546  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 12 lines
+10-31 18:00:22.737  1676  2845 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:00:27.350  1676  2325 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity (has extras)} from uid 10078 on display 0
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 18:00:27.568  4480  6019 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 18:00:27.568  4480  6019 E ProviderInstaller: Failed to install provider: null
+10-31 18:00:27.568  4480  6019 E MS_RegisterService: Google play services not available
+10-31 18:00:27.568  4480  6019 E MS_RegisterService: fux
+10-31 18:00:27.568  4480  6019 E MS_RegisterService: 	at hnk.a(Unknown Source)
+10-31 18:00:27.568  4480  6019 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 18:00:27.568  4480  6019 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 18:00:27.568  4480  6019 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 18:00:27.568  4480  6019 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+10-31 18:00:27.568  4480  6019 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 18:00:27.671  2969  6018 I chatty  : uid=10078(vn.quettailieu.scanner) expire 6 lines
+10-31 18:00:27.672  2969  6032 I chatty  : uid=10078(vn.quettailieu.scanner) expire 9 lines
+10-31 18:00:27.675  2969  6033 I chatty  : uid=10078(vn.quettailieu.scanner) expire 8 lines
+10-31 18:00:28.006  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +647ms
+10-31 18:00:28.108  1676  2325 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+10-31 18:00:33.387  2969  6021 I chatty  : uid=10078(vn.quettailieu.scanner) expire 3 lines
+10-31 18:00:33.422  1676  4386 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:00:33.954  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +450ms
+10-31 18:00:34.000  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:00:37.989  2969  6097 I chatty  : uid=10078(vn.quettailieu.scanner) expire 6 lines
+10-31 18:00:37.992  2969  6109 I chatty  : uid=10078(vn.quettailieu.scanner) expire 9 lines
+10-31 18:00:37.993  2969  6110 I chatty  : uid=10078(vn.quettailieu.scanner) expire 8 lines
+10-31 18:00:38.471  1676  2137 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:00:41.556  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:00:43.839  2969  6098 I chatty  : uid=10078(vn.quettailieu.scanner) expire 3 lines
+10-31 18:00:43.894  1676  3963 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:00:43.906  2969  2969 I chatty  : uid=10078(vn.quettailieu.scanner) expire 10 lines
+10-31 18:00:44.300  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +346ms
+10-31 18:00:44.317  2969  2980 I chatty  : uid=10078(vn.quettailieu.scanner) expire 8 lines
+10-31 18:00:44.374  1676  1935 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:00:48.318  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 10 lines
+10-31 18:00:48.372  2969  6175 I chatty  : uid=10078(vn.quettailieu.scanner) expire 3 lines
+10-31 18:00:48.377  2969  6186 I chatty  : uid=10078(vn.quettailieu.scanner) expire 5 lines
+10-31 18:00:48.380  2969  6187 I chatty  : uid=10078(vn.quettailieu.scanner) expire 8 lines
+10-31 18:00:48.970  1676  2135 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:00:51.995  1310  1716 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:00:57.701  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:00:59.955  1676  2324 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:01:00.029  2969  2982 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:01:00.100  2969  2986 I chatty  : uid=10078(vn.quettailieu.scanner) expire 10 lines
+10-31 18:01:00.515  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +466ms
+10-31 18:01:00.561  1676  2845 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+10-31 18:01:09.625  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:01:11.268  1676  2324 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:01:11.601  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +303ms
+10-31 18:01:11.637  1676  2325 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:01:13.881  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:01:14.564  1676  1687 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:01:19.183  1676  2246 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity} from uid 10078 on display 0
+10-31 18:01:19.393  2969  6383 I chatty  : uid=10078(vn.quettailieu.scanner) expire 9 lines
+10-31 18:01:19.394  2969  6394 I chatty  : uid=10078(vn.quettailieu.scanner) expire 5 lines
+10-31 18:01:19.405  2969  6395 I chatty  : uid=10078(vn.quettailieu.scanner) expire 8 lines
+10-31 18:01:19.517  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +314ms
+10-31 18:01:19.567  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+10-31 18:01:34.753  2969  6500 I chatty  : uid=10078(vn.quettailieu.scanner) expire 5 lines
+10-31 18:01:34.756  2969  6501 I chatty  : uid=10078(vn.quettailieu.scanner) expire 8 lines
+10-31 18:01:37.805  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:01:40.134  2969  6543 I chatty  : uid=10078(vn.quettailieu.scanner) expire 5 lines
+10-31 18:01:40.141  2969  6544 I chatty  : uid=10078(vn.quettailieu.scanner) expire 9 lines
+10-31 18:01:40.246  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 13 lines
+10-31 18:01:47.326  1802  3783 E WakeLock: GCM_HB_ALARM release without a matched acquire!
+10-31 18:01:49.000  1676  3957 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:01:52.314  1676  1687 I ActivityManager: START u0 {act=android.intent.action.SEND typ=image/jpeg flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity (has extras)} from uid 2000 on display 0
+10-31 18:01:52.351  1676  2135 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:01:53.107  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +539ms (total +787ms)
+10-31 18:01:53.153  2969  2969 I chatty  : uid=10078(vn.quettailieu.scanner) expire 6 lines
+10-31 18:01:53.271  1676  2325 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:01:53.294  1676  1687 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:01:57.153  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:01:59.175  1676  3957 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:02:00.041  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +719ms
+10-31 18:02:00.137  1676  1688 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:00.144  1676  3963 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:11.801  1310  1716 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:02:13.469  1676  3963 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:02:13.653  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 12 lines
+10-31 18:02:13.807  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +333ms
+10-31 18:02:13.906  1676  4386 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:16.218  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:19.609  1676  2326 I ActivityManager: START u0 {act=android.intent.action.SEND typ=image/jpeg flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity (has extras)} from uid 2000 on display 0
+10-31 18:02:19.642  1676  4386 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:02:20.348  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +574ms (total +730ms)
+10-31 18:02:20.410  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:20.436  1676  1935 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:24.439  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:02:26.548  1676  2137 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:02:27.272  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +582ms
+10-31 18:02:27.394  1676  2324 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:27.416  1676  2845 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:39.173  1310  1716 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:02:40.826  1676  2137 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:02:41.184  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +348ms
+10-31 18:02:41.215  1676  2845 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:43.655  1676  2324 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:47.022  1676  2325 I ActivityManager: START u0 {act=android.intent.action.SEND typ=image/jpeg flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity (has extras)} from uid 2000 on display 0
+10-31 18:02:47.055  1676  2325 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:02:47.147  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 10 lines
+10-31 18:02:47.308  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 7 lines
+10-31 18:02:47.736  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +607ms (total +704ms)
+10-31 18:02:47.763  1676  1819 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:47.766  1676  4386 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:51.864  1310  2054 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:02:53.889  1676  1819 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:02:54.552  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +531ms
+10-31 18:02:54.715  1676  3963 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:02:54.738  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:06.487  1310  2187 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:03:08.154  1676  1935 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:03:08.486  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +317ms
+10-31 18:03:08.582  1676  2845 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:10.947  1676  1935 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:14.412  1676  1688 I ActivityManager: START u0 {act=vn.quettailieu.scanner.TEST_IMPORT flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity (has extras)} from uid 2000 on display 0
+10-31 18:03:14.532  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 5 lines
+10-31 18:03:14.715  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +299ms
+10-31 18:03:14.787  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 14 lines
+10-31 18:03:14.876  1676  4386 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:15.037  1676  2137 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:03:15.707  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +664ms
+10-31 18:03:15.790  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:15.822  2969  2986 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+10-31 18:03:22.149  4480  7100 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 18:03:22.149  4480  7100 E ProviderInstaller: Failed to install provider: null
+10-31 18:03:22.149  4480  7100 E MS_RegisterService: Google play services not available
+10-31 18:03:22.149  4480  7100 E MS_RegisterService: fux
+10-31 18:03:22.149  4480  7100 E MS_RegisterService: 	at hnk.a(Unknown Source)
+10-31 18:03:22.149  4480  7100 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+10-31 18:03:22.149  4480  7100 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+10-31 18:03:22.149  4480  7100 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+10-31 18:03:22.149  4480  7100 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+10-31 18:03:22.149  4480  7100 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 18:03:35.232  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:03:38.188  1676  2325 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:03:38.451  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +248ms
+10-31 18:03:38.587  1676  2325 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:40.810  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:03:41.597  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:46.997  1676  2325 I ActivityManager: START u0 {act=vn.quettailieu.scanner.TEST_IMPORT flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity (has extras)} from uid 2000 on display 0
+10-31 18:03:47.391  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +387ms
+10-31 18:03:47.509  1676  2246 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:47.611  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 29 lines
+10-31 18:03:48.866  1676  2137 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:03:48.930  2969  2986 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:48.930  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:48.937  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:03:49.034  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 3 lines
+10-31 18:03:49.136  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:49.171  2969  2986 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:49.236  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:49.277  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:03:49.356  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:49.383  2969  2980 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:49.395  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:03:49.549  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:03:49.576  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:49.660  2969  2980 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:49.722  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:03:49.744  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 3 lines
+10-31 18:03:49.893  2969  2994 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:49.935  2969  3762 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:03:50.087  2969  2969 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:50.105  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 4 lines
+10-31 18:03:50.227  2969  2969 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:50.327  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +1s444ms
+10-31 18:03:50.381  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:03:50.440  1676  1819 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:03:51.463  2969  2986 I chatty  : uid=10078(vn.quettailieu.scanner) expire 3 lines
+10-31 18:03:51.881  2969  2980 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:03:53.809  2969  2986 I chatty  : uid=10078(vn.quettailieu.scanner) expire 17 lines
+10-31 18:04:00.623  2969  2980 I chatty  : uid=10078(vn.quettailieu.scanner) expire 4 lines
+10-31 18:04:01.233  2969  2986 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:04:11.484  1310  2187 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:04:13.147  1676  2135 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:04:13.392  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:04:13.439  2969  2980 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:04:13.523  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +371ms
+10-31 18:04:13.620  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:04:16.770  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:04:22.963  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 8 lines
+10-31 18:04:23.082  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:04:23.106  1676  2325 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:04:23.113  1676  2324 I ActivityManager: START u0 {act=android.intent.action.CHOOSER flg=0x1 cmp=android/com.android.internal.app.ChooserActivity clip={text/uri-list U:content://vn.quettailieu.scanner.share/Scan%2031-10-2026%2018.03.pdf} (has extras)} from uid 10078 on display 0
+10-31 18:04:29.528  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:04:32.568  1676  2135 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:04:37.813  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:04:41.051  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:04:41.632  2969  2969 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:04:41.665  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:04:46.116  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:04:52.890  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 13 lines
+10-31 18:04:55.283  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:04:56.538  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:04:58.403  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:05:00.489  1310  2187 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:05:04.817  1676  2983 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity} from uid 10078 on display 0
+10-31 18:05:04.996  2969  2969 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:05:05.076  2969  7866 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:05:05.076  2969  7877 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:05:05.076  2969  2995 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:05:05.077  2969  7877 I chatty  : uid=10078(vn.quettailieu.scanner) expire 1 line
+10-31 18:05:05.098  2969  7878 I chatty  : uid=10078(vn.quettailieu.scanner) expire 7 lines
+10-31 18:05:05.187  2969  7866 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:05:05.189  2969  7877 I chatty  : uid=10078(vn.quettailieu.scanner) expire 2 lines
+10-31 18:05:05.309  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +487ms
+10-31 18:05:05.527  1676  1819 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+10-31 18:05:13.841  1676  2324 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:05:14.259  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +356ms
+10-31 18:05:14.326  1676  2326 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:05:18.823  1676  1819 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:05:19.356  1676  2324 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:05:19.360  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +439ms
+10-31 18:05:19.383  1676  2135 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:05:27.441  1310  2054 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:05:29.073  1676  4386 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:05:29.383  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +288ms
+10-31 18:05:29.409  1676  3963 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:05:33.559  8006  8006 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:33.564  8006  8006 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:05:33.574  8006  8006 D AndroidRuntime: Shutting down VM
+10-31 18:05:34.030  1676  1819 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:05:40.321  8019  8019 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:40.322  8019  8019 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:40.356  8019  8019 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:40.356  8019  8019 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:40.361  8019  8019 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:05:41.397  8019  8019 D AndroidRuntime: Shutting down VM
+10-31 18:05:41.556  8032  8032 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:41.557  8032  8032 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:41.590  8032  8032 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:41.591  8032  8032 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:41.596  8032  8032 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:05:41.604  8032  8032 D AndroidRuntime: Shutting down VM
+10-31 18:05:41.656  1676  2325 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:05:42.118  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +432ms
+10-31 18:05:42.187  1676  4386 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:05:44.283  1310  1716 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:05:44.593  8050  8050 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:44.594  8050  8050 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:44.636  8050  8050 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:44.636  8050  8050 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:44.643  8050  8050 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:05:45.681  8050  8050 D AndroidRuntime: Shutting down VM
+10-31 18:05:45.852  8066  8066 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:45.854  8066  8066 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:45.889  8066  8066 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:45.889  8066  8066 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:45.894  8066  8066 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:05:45.904  8066  8066 D AndroidRuntime: Shutting down VM
+10-31 18:05:46.092  1676  3963 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:05:46.863  8076  8076 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:46.864  8076  8076 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:46.901  8076  8076 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:46.902  8076  8076 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:46.907  8076  8076 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:05:47.948  8076  8076 D AndroidRuntime: Shutting down VM
+10-31 18:05:48.151  8093  8093 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:48.153  8093  8093 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:48.188  8093  8093 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:48.188  8093  8093 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:48.193  8093  8093 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:05:49.224  8093  8093 D AndroidRuntime: Shutting down VM
+10-31 18:05:49.383  8106  8106 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:49.384  8106  8106 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:49.418  8106  8106 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:49.418  8106  8106 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:49.423  8106  8106 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:05:50.460  8106  8106 D AndroidRuntime: Shutting down VM
+10-31 18:05:50.636  8119  8119 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:50.637  8119  8119 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:50.672  8119  8119 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:50.672  8119  8119 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:50.678  8119  8119 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:05:50.687  8119  8119 D AndroidRuntime: Shutting down VM
+10-31 18:05:50.700  1676  3963 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity} from uid 10078 on display 0
+10-31 18:05:51.014  2969  8141 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:05:51.020  2969  8141 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:05:51.054  2969  8141 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:05:51.054  2969  8141 E EGL_emulation: tid 8141: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:05:51.115  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +404ms
+10-31 18:05:51.311  1676  1688 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+10-31 18:05:54.618  8147  8147 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:54.619  8147  8147 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:54.700  8147  8147 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:54.700  8147  8147 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:54.713  8147  8147 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:05:55.759  8147  8147 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@8010ddcc; boundsInParent: Rect(0, 0 - 1080, 1440); boundsInScreen: Rect(0, 210 - 1080, 1650); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+10-31 18:05:55.769  8147  8147 D AndroidRuntime: Shutting down VM
+10-31 18:05:56.066  8160  8160 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:56.068  8160  8160 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:56.140  8160  8160 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:56.140  8160  8160 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:56.159  8160  8160 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:05:56.171  8160  8160 D AndroidRuntime: Shutting down VM
+10-31 18:05:58.129  8171  8171 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:58.131  8171  8171 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:58.219  8171  8171 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:58.220  8171  8171 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:58.225  8171  8171 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:05:59.290  8171  8171 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@8010dde1; boundsInParent: Rect(0, 0 - 1080, 1440); boundsInScreen: Rect(0, 210 - 1080, 1650); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+10-31 18:05:59.321  8171  8171 D AndroidRuntime: Shutting down VM
+10-31 18:05:59.650  8184  8184 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:05:59.652  8184  8184 D AndroidRuntime: CheckJNI is OFF
+10-31 18:05:59.721  8184  8184 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:05:59.721  8184  8184 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:05:59.729  8184  8184 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:05:59.749  8184  8184 D AndroidRuntime: Shutting down VM
+10-31 18:05:59.918  1676  2137 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:06:00.483  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +507ms
+10-31 18:06:00.512  1676  1687 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:06:03.539  8200  8200 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:03.540  8200  8200 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:03.582  8200  8200 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:03.582  8200  8200 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:03.587  8200  8200 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:04.619  8200  8200 D AndroidRuntime: Shutting down VM
+10-31 18:06:04.769  8213  8213 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:04.771  8213  8213 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:04.804  8213  8213 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:04.804  8213  8213 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:04.809  8213  8213 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:06:04.818  8213  8213 D AndroidRuntime: Shutting down VM
+10-31 18:06:05.038  2969  8235 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:06:05.040  2969  8235 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:06:05.056  2969  8235 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:06:05.056  2969  8235 E EGL_emulation: tid 8235: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:06:05.506  1676  1819 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:06:09.245  8241  8241 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:09.246  8241  8241 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:09.327  8241  8241 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:09.327  8241  8241 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:09.340  8241  8241 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:10.363  8241  8241 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@8010ddff; boundsInParent: Rect(0, 0 - 1080, 1440); boundsInScreen: Rect(0, 210 - 1080, 1650); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+10-31 18:06:10.370  8241  8241 D AndroidRuntime: Shutting down VM
+10-31 18:06:10.637  8254  8254 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:10.638  8254  8254 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:10.700  8254  8254 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:10.700  8254  8254 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:10.712  8254  8254 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:06:10.730  8254  8254 D AndroidRuntime: Shutting down VM
+10-31 18:06:10.899  1676  2137 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:06:10.952  2969  2981 E BufferQueueProducer: [SurfaceTexture-1-2969-16] queueBuffer: BufferQueue has been abandoned
+10-31 18:06:11.239  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +275ms
+10-31 18:06:11.268  1676  1819 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:06:14.504  8270  8270 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:14.505  8270  8270 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:14.548  8270  8270 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:14.548  8270  8270 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:14.553  8270  8270 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:15.581  8270  8270 D AndroidRuntime: Shutting down VM
+10-31 18:06:15.731  8283  8283 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:15.732  8283  8283 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:15.767  8283  8283 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:15.767  8283  8283 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:15.772  8283  8283 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:06:15.798  8283  8283 D AndroidRuntime: Shutting down VM
+10-31 18:06:15.952  2969  8305 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:06:15.953  2969  8305 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:06:15.998  2969  8305 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:06:15.998  2969  8305 E EGL_emulation: tid 8305: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:06:16.427  1676  2325 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:06:20.031  1310  1716 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:06:20.658  8316  8316 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:20.661  8316  8316 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:20.795  8316  8316 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:20.795  8316  8316 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:20.803  8316  8316 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:21.867  8316  8316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@8010de1f; boundsInParent: Rect(0, 0 - 1080, 1440); boundsInScreen: Rect(0, 210 - 1080, 1650); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+10-31 18:06:21.884  8316  8316 D AndroidRuntime: Shutting down VM
+10-31 18:06:22.103  8329  8329 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:22.105  8329  8329 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:22.210  8329  8329 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:22.210  8329  8329 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:22.215  8329  8329 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:23.260  8329  8329 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@8010de2e; boundsInParent: Rect(0, 0 - 1080, 1440); boundsInScreen: Rect(0, 210 - 1080, 1650); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+10-31 18:06:23.268  8329  8329 D AndroidRuntime: Shutting down VM
+10-31 18:06:23.499  8343  8343 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:23.500  8343  8343 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:23.552  8343  8343 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:23.552  8343  8343 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:23.560  8343  8343 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:06:23.568  1676  1688 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:06:23.569  8343  8343 D AndroidRuntime: Shutting down VM
+10-31 18:06:24.020  1802  6651 E WakeLock: GCM_HB_ALARM release without a matched acquire!
+10-31 18:06:24.024  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +385ms
+10-31 18:06:24.026  1802  6651 E WakeLock: GCM_CONN_ALARM release without a matched acquire!
+10-31 18:06:24.048  1676  1687 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:06:31.998  1802  8363 E WakeLock: GCM_CONN_ALARM release without a matched acquire!
+10-31 18:06:34.336  8364  8364 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:34.337  8364  8364 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:34.378  8364  8364 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:34.379  8364  8364 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:34.384  8364  8364 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:35.421  8364  8364 D AndroidRuntime: Shutting down VM
+10-31 18:06:35.571  8377  8377 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:35.572  8377  8377 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:35.607  8377  8377 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:35.607  8377  8377 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:35.611  8377  8377 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:36.639  8377  8377 D AndroidRuntime: Shutting down VM
+10-31 18:06:36.808  8390  8390 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:36.810  8390  8390 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:36.843  8390  8390 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:36.843  8390  8390 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:36.849  8390  8390 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:06:36.856  8390  8390 D AndroidRuntime: Shutting down VM
+10-31 18:06:36.901  1676  2137 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:06:37.367  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +412ms
+10-31 18:06:37.463  1676  2135 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:06:39.541  1310  1716 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:06:39.847  8408  8408 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:39.848  8408  8408 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:39.892  8408  8408 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:39.892  8408  8408 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:39.898  8408  8408 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:40.938  8408  8408 D AndroidRuntime: Shutting down VM
+10-31 18:06:41.108  8421  8421 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:41.109  8421  8421 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:41.144  8421  8421 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:41.144  8421  8421 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:41.149  8421  8421 D AndroidRuntime: Calling main entry com.android.commands.settings.SettingsCmd
+10-31 18:06:41.156  8421  8421 D AndroidRuntime: Shutting down VM
+10-31 18:06:41.307  8435  8435 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:41.308  8435  8435 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:41.342  8435  8435 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:41.342  8435  8435 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:41.347  8435  8435 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:06:41.356  8435  8435 D AndroidRuntime: Shutting down VM
+10-31 18:06:41.574  1676  3957 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:06:42.280  8446  8446 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:42.282  8446  8446 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:42.330  8446  8446 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:42.330  8446  8446 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:42.336  8446  8446 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:43.373  8446  8446 D AndroidRuntime: Shutting down VM
+10-31 18:06:43.571  8462  8462 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:43.573  8462  8462 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:43.607  8462  8462 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:43.607  8462  8462 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:43.612  8462  8462 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:44.642  8462  8462 D AndroidRuntime: Shutting down VM
+10-31 18:06:44.802  8475  8475 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:44.803  8475  8475 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:44.833  8475  8475 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:44.833  8475  8475 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:44.838  8475  8475 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+10-31 18:06:44.842  1676  2135 I ActivityManager: Force stopping vn.quettailieu.scanner appid=10078 user=0: from pid 8475
+10-31 18:06:44.842  1676  2135 I ActivityManager: Killing 2969:vn.quettailieu.scanner/u0a78 (adj 0): stop vn.quettailieu.scanner
+10-31 18:06:44.847  1676  1721 W InputDispatcher: channel '54f6140 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+10-31 18:06:44.847  1676  1721 E InputDispatcher: channel '54f6140 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+10-31 18:06:44.848  1676  1721 W InputDispatcher: channel '4834bb6 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+10-31 18:06:44.848  1676  1721 E InputDispatcher: channel '4834bb6 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+10-31 18:06:44.848  1676  1721 W InputDispatcher: channel '308e80b vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+10-31 18:06:44.848  1676  1721 E InputDispatcher: channel '308e80b vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+10-31 18:06:44.848  1676  1721 W InputDispatcher: channel 'f908ebe vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+10-31 18:06:44.848  1676  1721 E InputDispatcher: channel 'f908ebe vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+10-31 18:06:44.848  1676  1721 W InputDispatcher: channel '6d6b357 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+10-31 18:06:44.848  1676  1721 E InputDispatcher: channel '6d6b357 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+10-31 18:06:44.848  1676  1721 W InputDispatcher: channel '918ec47 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+10-31 18:06:44.848  1676  1721 E InputDispatcher: channel '918ec47 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+10-31 18:06:44.848  1676  2135 W ActivityManager: Force removing ActivityRecord{87e5bd4 u0 vn.quettailieu.scanner/.MainActivity t4}: app died, no saved state
+10-31 18:06:44.856  1676  2983 I WindowManager: WIN DEATH: Window{f908ebe u0 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity}
+10-31 18:06:44.856  1676  2983 W InputDispatcher: Attempted to unregister already unregistered input channel 'f908ebe vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)'
+10-31 18:06:44.857  1676  3963 I WindowManager: WIN DEATH: Window{6d6b357 u0 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity}
+10-31 18:06:44.857  1676  3963 W InputDispatcher: Attempted to unregister already unregistered input channel '6d6b357 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)'
+10-31 18:06:44.858  1676  2326 I WindowManager: WIN DEATH: Window{918ec47 u0 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity}
+10-31 18:06:44.858  1676  2326 W InputDispatcher: Attempted to unregister already unregistered input channel '918ec47 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)'
+10-31 18:06:44.859  1676  1935 I WindowManager: WIN DEATH: Window{308e80b u0 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity}
+10-31 18:06:44.859  1676  1935 W InputDispatcher: Attempted to unregister already unregistered input channel '308e80b vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)'
+10-31 18:06:44.860  1676  1687 I WindowManager: WIN DEATH: Window{4834bb6 u0 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity}
+10-31 18:06:44.860  1676  1687 W InputDispatcher: Attempted to unregister already unregistered input channel '4834bb6 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)'
+10-31 18:06:44.861  1676  2137 I WindowManager: WIN DEATH: Window{54f6140 u0 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity}
+10-31 18:06:44.861  1676  2137 W InputDispatcher: Attempted to unregister already unregistered input channel '54f6140 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)'
+10-31 18:06:44.861  1676  2137 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowState$DeathRecipient.binderDied:1787 android.os.BinderProxy.sendDeathNotice:688 <bottom of call stack> 
+10-31 18:06:44.878  1676  2135 I ActivityManager: Start proc 8485:vn.quettailieu.scanner/u0a78 for activity vn.quettailieu.scanner/.MainActivity
+10-31 18:06:44.879  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{378b613 u0 vn.quettailieu.scanner/.MainActivity t4}
+10-31 18:06:44.879  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{a5dea7b u0 vn.quettailieu.scanner/.MainActivity t4}
+10-31 18:06:44.880  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{ea30d72 u0 vn.quettailieu.scanner/.MainActivity t4}
+10-31 18:06:44.881  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{9267bef u0 vn.quettailieu.scanner/.MainActivity t4}
+10-31 18:06:44.881  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{4816aea u0 vn.quettailieu.scanner/.MainActivity t4}
+10-31 18:06:44.884  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{378b613 u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 W ActivityManager: Duplicate finish request for ActivityRecord{378b613 u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{a5dea7b u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 W ActivityManager: Duplicate finish request for ActivityRecord{a5dea7b u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{ea30d72 u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 W ActivityManager: Duplicate finish request for ActivityRecord{ea30d72 u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{9267bef u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 W ActivityManager: Duplicate finish request for ActivityRecord{9267bef u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 I ActivityManager:   Force finishing activity ActivityRecord{4816aea u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.884  1676  2135 W ActivityManager: Duplicate finish request for ActivityRecord{4816aea u0 vn.quettailieu.scanner/.MainActivity t4 f}
+10-31 18:06:44.889  8475  8475 D AndroidRuntime: Shutting down VM
+10-31 18:06:44.916  1676  1697 E WindowManager: Unhandled exception in Window Manager
+10-31 18:06:44.916  1676  1697 E WindowManager: java.lang.NullPointerException: Attempt to invoke virtual method 'void com.android.server.wm.DisplayContent.getLogicalDisplayRect(android.graphics.Rect)' on a null object reference
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.wm.WindowState.computeFrameLw(WindowState.java:879)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.policy.PhoneWindowManager.layoutWindowLw(PhoneWindowManager.java:4804)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.wm.WindowSurfacePlacer.performLayoutLockedInner(WindowSurfacePlacer.java:995)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.wm.WindowSurfacePlacer.applySurfaceChangesTransaction(WindowSurfacePlacer.java:652)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.wm.WindowSurfacePlacer.performSurfacePlacementInner(WindowSurfacePlacer.java:317)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.wm.WindowSurfacePlacer.performSurfacePlacementLoop(WindowSurfacePlacer.java:232)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.wm.WindowSurfacePlacer.performSurfacePlacement(WindowSurfacePlacer.java:180)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.wm.WindowManagerService.relayoutWindow(WindowManagerService.java:2943)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.wm.Session.relayout(Session.java:224)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.view.ViewRootImpl.relayoutWindow(ViewRootImpl.java:5683)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.view.ViewRootImpl.performTraversals(ViewRootImpl.java:1746)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.view.ViewRootImpl.doTraversal(ViewRootImpl.java:1246)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.view.ViewRootImpl$TraversalRunnable.run(ViewRootImpl.java:6301)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.view.Choreographer$CallbackRecord.run(Choreographer.java:871)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.view.Choreographer.doCallbacks(Choreographer.java:683)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.view.Choreographer.doFrame(Choreographer.java:619)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.view.Choreographer$FrameDisplayEventReceiver.run(Choreographer.java:857)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.os.Handler.handleCallback(Handler.java:751)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.os.Handler.dispatchMessage(Handler.java:95)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.os.Looper.loop(Looper.java:154)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+10-31 18:06:44.916  1676  1697 E WindowManager: 	at com.android.server.ServiceThread.run(ServiceThread.java:46)
+10-31 18:06:44.921  8485  8485 W System  : ClassLoader referenced unknown path: /data/app/vn.quettailieu.scanner-1/lib/x86_64
+10-31 18:06:44.933  1268  1301 E vold    : Failed to readlink for /proc/5293/ns/mnt
+10-31 18:06:44.933  1676  1723 E MountService: Failed to unmount appfuse.
+10-31 18:06:45.103  1676  1697 W WindowManager: This window was lost: Window{a150cfc u0 Starting vn.quettailieu.scanner}
+10-31 18:06:45.104  1676  1697 W WindowManager: mOwnerUid=1000 mShowToOwnerOnly=false package=vn.quettailieu.scanner appop=NONE
+10-31 18:06:45.104  1676  1697 W WindowManager: mToken=AppWindowToken{355b478 token=Token{4aa01db ActivityRecord{4816aea u0 vn.quettailieu.scanner/.MainActivity t4}}}
+10-31 18:06:45.104  1676  1697 W WindowManager: mRootToken=AppWindowToken{355b478 token=Token{4aa01db ActivityRecord{4816aea u0 vn.quettailieu.scanner/.MainActivity t4}}}
+10-31 18:06:45.104  1676  1697 W WindowManager: mAppToken=AppWindowToken{355b478 token=Token{4aa01db ActivityRecord{4816aea u0 vn.quettailieu.scanner/.MainActivity t4}}}
+10-31 18:06:45.104  1676  1697 W WindowManager: WindowStateAnimator{49e5cdf Starting vn.quettailieu.scanner}:
+10-31 18:06:46.016  8511  8511 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:46.017  8511  8511 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:46.053  8511  8511 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:46.053  8511  8511 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:46.058  8511  8511 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+10-31 18:06:46.066  1676  1819 I ActivityManager: START u0 {flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity} from uid 2000 on display 0
+10-31 18:06:46.159  1310  2187 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:06:46.317  8485  8522 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:06:46.317  8485  8522 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:06:46.959  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +886ms
+10-31 18:06:46.964  8511  8511 D AndroidRuntime: Shutting down VM
+10-31 18:06:46.991  1676  1697 I WindowManager: Destroying surface Surface(name=Starting vn.quettailieu.scanner) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:06:49.172  8539  8539 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:49.173  8539  8539 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:49.214  8539  8539 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:49.214  8539  8539 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:49.220  8539  8539 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:50.279  8539  8539 D AndroidRuntime: Shutting down VM
+10-31 18:06:50.437  8556  8556 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:50.439  8556  8556 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:50.476  8556  8556 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:50.476  8556  8556 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:50.483  8556  8556 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:06:51.548  8556  8556 D AndroidRuntime: Shutting down VM
+10-31 18:06:51.709  8569  8569 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:51.710  8569  8569 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:51.741  8569  8569 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:51.741  8569  8569 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:51.747  8569  8569 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-31 18:06:51.755  8569  8569 D AndroidRuntime: Shutting down VM
+10-31 18:06:51.769  1676  4386 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity} from uid 10078 on display 0
+10-31 18:06:52.289  8485  8592 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:06:52.289  8485  8592 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:06:52.314  8485  8592 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:06:52.314  8485  8592 E EGL_emulation: tid 8592: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:06:52.432  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +651ms
+10-31 18:06:52.569  1676  2246 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+10-31 18:06:55.680  8599  8599 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:55.681  8599  8599 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:55.733  8599  8599 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:55.733  8599  8599 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:55.741  8599  8599 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+10-31 18:06:55.744  1676  1935 I ActivityManager: Force stopping vn.quettailieu.scanner appid=10078 user=0: from pid 8599
+10-31 18:06:55.744  1676  1935 I ActivityManager: Killing 8485:vn.quettailieu.scanner/u0a78 (adj 0): stop vn.quettailieu.scanner
+10-31 18:06:55.746  1676  1935 W ActivityManager: Force removing ActivityRecord{66e2624 u0 vn.quettailieu.scanner/.CameraActivity t5}: app died, no saved state
+10-31 18:06:55.755  1676  1935 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.AppWindowToken.removeAllWindows:530 com.android.server.wm.AppWindowToken.removeAppFromTaskLocked:326 
+10-31 18:06:55.769  1676  1935 I ActivityManager: Start proc 8609:vn.quettailieu.scanner/u0a78 for activity vn.quettailieu.scanner/.MainActivity
+10-31 18:06:55.774  1676  1935 E JavaBinder: !!! FAILED BINDER TRANSACTION !!!  (parcel size = 56)
+10-31 18:06:55.787  1676  1721 W InputDispatcher: channel '9b2465 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Consumer closed input channel or an error occurred.  events=0x9
+10-31 18:06:55.787  1676  1721 E InputDispatcher: channel '9b2465 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)' ~ Channel is unrecoverably broken and will be disposed!
+10-31 18:06:55.790  1676  2326 I WindowManager: WIN DEATH: Window{9b2465 u0 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity}
+10-31 18:06:55.790  1676  2326 W InputDispatcher: Attempted to unregister already unregistered input channel '9b2465 vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity (server)'
+10-31 18:06:55.791  1676  1935 I ActivityManager:   Force finishing activity ActivityRecord{12958a u0 vn.quettailieu.scanner/.MainActivity t5}
+10-31 18:06:55.798  1676  1935 I ActivityManager:   Force finishing activity ActivityRecord{12958a u0 vn.quettailieu.scanner/.MainActivity t5 f}
+10-31 18:06:55.798  1676  1935 W ActivityManager: Duplicate finish request for ActivityRecord{12958a u0 vn.quettailieu.scanner/.MainActivity t5 f}
+10-31 18:06:55.806  8599  8599 D AndroidRuntime: Shutting down VM
+10-31 18:06:55.825  8609  8609 W System  : ClassLoader referenced unknown path: /data/app/vn.quettailieu.scanner-1/lib/x86_64
+10-31 18:06:56.942  8625  8625 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:06:56.943  8625  8625 D AndroidRuntime: CheckJNI is OFF
+10-31 18:06:56.978  8625  8625 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:06:56.978  8625  8625 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:06:56.982  8625  8625 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+10-31 18:06:56.987  1676  2324 I ActivityManager: START u0 {flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity} from uid 2000 on display 0
+10-31 18:06:57.118  1310  1326 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+10-31 18:06:57.308  8609  8636 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:06:57.312  8609  8636 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:06:57.951  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +877ms
+10-31 18:06:57.952  8625  8625 D AndroidRuntime: Shutting down VM
+10-31 18:06:57.982  1676  1697 I WindowManager: Destroying surface Surface(name=Starting vn.quettailieu.scanner) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:07:01.158  8657  8657 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:07:01.159  8657  8657 D AndroidRuntime: CheckJNI is OFF
+10-31 18:07:01.200  8657  8657 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:07:01.200  8657  8657 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:07:01.206  8657  8657 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-31 18:07:02.257  8657  8657 D AndroidRuntime: Shutting down VM
+10-31 18:07:02.423  8670  8670 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-31 18:07:02.424  8670  8670 D AndroidRuntime: CheckJNI is OFF
+10-31 18:07:02.461  8670  8670 E memtrack: Couldn't load memtrack module (No such file or directory)
+10-31 18:07:02.461  8670  8670 E android.os.Debug: failed to load memtrack module: -2
+10-31 18:07:02.467  8670  8670 D AndroidRuntime: Calling main entry com.android.commands.monkey.Monkey
+10-31 18:07:02.546  1676  2246 I ActivityManager: START u0 {act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10200000 cmp=vn.quettailieu.scanner/.MainActivity} from uid 2000 on display 0
+10-31 18:07:02.879  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +328ms
+10-31 18:07:03.283  1676  2324 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:07:03.364  1676  4386 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+10-31 18:07:03.402  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:07:03.746  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +300ms
+10-31 18:07:03.875  1676  2135 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:07:03.987  1676  2246 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:07:04.574  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +565ms
+10-31 18:07:04.654  1676  4386 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:07:07.252  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:07:08.626  1676  2983 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:07:08.702  1676  1935 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+10-31 18:07:09.151  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +435ms
+10-31 18:07:09.193  1676  1688 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:07:11.232  1786  1786 E RichInputConnection: Unable to connect to the editor to retrieve text.
+10-31 18:07:11.237  1786  1786 E RichInputConnection: Unable to connect to the editor to retrieve text.
+10-31 18:07:11.249  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:07:11.331  1786  1786 E RichInputConnection: Unable to connect to the editor to retrieve text.
+10-31 18:07:14.048  1310  1310 E Layer   : [StatusBar] rejecting buffer: bufWidth=1080, bufHeight=63, front.active.{w=1080, h=2400}
+10-31 18:07:15.549  1676  2246 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity (has extras)} from uid 10078 on display 0
+10-31 18:07:15.570  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:07:16.066  8609  8695 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:07:16.066  8609  8695 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:07:16.147  8609  8695 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:07:16.147  8609  8695 E EGL_emulation: tid 8695: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:07:16.171  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +525ms
+10-31 18:07:16.197  1676  2246 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:07:22.048  8609  8704 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:07:22.048  8609  8704 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:07:22.057  8609  8704 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:07:22.057  8609  8704 E EGL_emulation: tid 8704: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:07:25.047  1676  2246 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CropActivity (has extras)} from uid 10078 on display 0
+10-31 18:07:25.561  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CropActivity: +440ms
+10-31 18:07:25.695  1676  1688 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+10-31 18:07:38.918  1426  3579 I CameraService: CameraService::connect call (PID -1 "vn.quettailieu.scanner", camera ID 0) for HAL version default and Camera API version 1
+10-31 18:07:38.989  8609  8726 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:07:38.989  8609  8726 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:07:39.084  8609  8726 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:07:39.084  8609  8726 E EGL_emulation: tid 8726: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:07:39.420  1676  3963 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CropActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:07:42.154  8609  8641 E BufferQueueProducer: [SurfaceTexture-1-8609-3] queueBuffer: BufferQueue has been abandoned
+10-31 18:07:42.154  1426  8727 E Surface : queueBuffer: error queuing buffer to SurfaceTexture, -19
+10-31 18:07:42.179  1426  3579 I CameraService: CameraService::connect call (PID -1 "vn.quettailieu.scanner", camera ID 0) for HAL version default and Camera API version 1
+10-31 18:07:42.276  8609  8741 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:07:42.276  8609  8741 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:07:42.281  8609  8741 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:07:42.282  8609  8741 E EGL_emulation: tid 8741: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:07:54.535  1426  1707 I CameraService: CameraService::connect call (PID -1 "vn.quettailieu.scanner", camera ID 0) for HAL version default and Camera API version 1
+10-31 18:07:54.592  8609  8762 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:07:54.592  8609  8762 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:07:54.597  8609  8762 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:07:54.597  8609  8762 E EGL_emulation: tid 8762: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:07:55.668  1676  2135 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:07:55.883  1676  1688 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity (has extras)} from uid 10078 on display 0
+10-31 18:07:56.076  1426  1707 I CameraService: CameraService::connect call (PID -1 "vn.quettailieu.scanner", camera ID 0) for HAL version default and Camera API version 1
+10-31 18:07:56.181  8609  8777 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:07:56.186  8609  8777 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:07:56.316  8609  8777 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:07:56.316  8609  8777 E EGL_emulation: tid 8777: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:07:56.322  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +428ms
+10-31 18:07:56.338  1676  3963 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:07:57.097  1676  3957 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:07:57.137  1676  1935 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.CameraActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:08:01.118  1676  1697 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+10-31 18:08:04.645  1676  1688 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.removeLocked:1456 com.android.server.wm.WindowManagerService.removeWindowInnerLocked:2484 com.android.server.wm.WindowManagerService.removeWindowLocked:2442 com.android.server.wm.WindowManagerService.removeWindowLocked:2311 com.android.server.wm.WindowManagerService.removeWindow:2306 com.android.server.wm.Session.remove:202 
+10-31 18:08:05.383  1676  2326 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.CameraActivity (has extras)} from uid 10078 on display 0
+10-31 18:08:05.634  1426  3579 I CameraService: CameraService::connect call (PID -1 "vn.quettailieu.scanner", camera ID 0) for HAL version default and Camera API version 1
+10-31 18:08:05.788  8609  8797 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:08:05.797  8609  8797 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:08:05.961  8609  8797 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:08:05.961  8609  8797 E EGL_emulation: tid 8797: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:08:05.990  1676  1697 I ActivityManager: Displayed vn.quettailieu.scanner/.CameraActivity: +593ms
+10-31 18:08:06.014  1676  2246 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+10-31 18:08:07.073  1426  1707 I CameraService: CameraService::connect call (PID -1 "vn.quettailieu.scanner", camera ID 0) for HAL version default and Camera API version 1
+10-31 18:08:07.154  8609  8811 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+10-31 18:08:07.154  8609  8811 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+10-31 18:08:07.160  8609  8811 E EGL_emulation: eglQueryContext 32c0  EGL_BAD_ATTRIBUTE
+10-31 18:08:07.161  8609  8811 E EGL_emulation: tid 8811: eglQueryContext(1804): error 0x3004 (EGL_BAD_ATTRIBUTE)
+10-31 18:08:07.201  8670  8670 I AndroidRuntime: VM exiting with result code 0.
+10-31 18:08:07.985  1310  1324 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
