@@ -49,6 +49,7 @@ final class SelfTest {
     private var passed = 0
     private var failed = 0
     private var docIds = [String]()
+    private var retakeSrc = ""
     private var algoDone = false
 
     private init(nav: UINavigationController) {
@@ -187,17 +188,77 @@ final class SelfTest {
         addUntil("màn hình cắt", 20) { self.crop != nil }
         addWait(1.2)
         addSnap("08_crop_edit")
+        addRun("tắt Tự động cắt") { self.crop?.testToggleAuto() }
+        addWait(0.8)
+        addSnap("08b_crop_auto_off")
+        addRun("kiểm tra tắt") { self.check(self.crop?.testAutoOn == false, "Tự động cắt: tắt -> khung toàn ảnh") }
+        addRun("bật lại Tự động cắt") { self.crop?.testToggleAuto() }
+        addUntil("tìm lại mép", 20) { self.crop?.testAutoOn == true }
+        addWait(0.8)
+        addRun("kéo góc trên-trái") { self.crop?.testDragCorner(0, by: CGPoint(x: 40, y: 30)) }
+        addWait(0.5)
+        addSnap("08c_crop_drag_loupe")
+        addRun("kiểm tra kéo tay") {
+            self.check(self.crop?.testAutoOn == false, "kéo tay cầm -> tự tắt Tự động cắt")
+            self.crop?.testEndDrag()
+        }
         addRun("xác nhận vùng cắt") { self.crop?.doneTapped() }
         addUntil("quay lại trình chỉnh sửa", 40) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
         addWait(0.8)
         addSnap("09_editor_after_crop")
+        addRun("giữ So sánh") { self.editor?.testCompare(true) }
+        addWait(0.5)
+        addSnap("09b_compare")
+        addRun("thả So sánh") { self.editor?.testCompare(false) }
         addRun("sang trang 2") { self.editor?.goTo(1, animated: true) }
         addWait(1.2)
         addSnap("10_editor_page2")
+        addRun("chụp lại trang 2") {
+            self.retakeSrc = self.editor?.current?.src ?? ""
+            self.editor?.retakeTapped()
+        }
+        addUntil("máy ảnh (chụp lại)", 15) { self.topMost() is CameraViewController }
+        addWait(1.2)
+        addSnap("10b_camera_retake")
+        addRun("chụp (chụp lại)") { self.camera?.shoot() }
+        addUntil("cắt (chụp lại)", 30) { self.crop != nil }
+        addWait(1.0)
+        addRun("Tiếp tục (chụp lại)") { self.crop?.doneTapped() }
+        addUntil("về trình chỉnh sửa sau chụp lại", 40) {
+            self.nav.presentedViewController == nil && self.editor != nil && (self.editor?.pending ?? 1) == 0
+        }
+        addWait(1.0)
+        addSnap("10c_after_retake")
+        addRun("kiểm tra chụp lại") {
+            var src: String?
+            var count = 0
+            if let ed = self.editor {
+                count = ed.doc.pages.count
+                if count > 1 { src = ed.doc.pages[1].src }
+            }
+            self.check(src != nil && src != self.retakeSrc && count == 3, "chụp lại thay ảnh trang 2, vẫn 3 trang")
+        }
         addRun("lưu tài liệu") { self.editor?.finishEditing(done: true) }
         addUntil("về màn hình tài liệu", 40) { self.docVC != nil && self.docVC?.rendering == false }
         addWait(1.0)
         addSnap("11_document_after_edit")
+        addRun("Thêm trang") { self.docVC?.addPages() }
+        addUntil("máy ảnh (thêm trang)", 15) { self.topMost() is CameraViewController }
+        addWait(1.0)
+        addRun("chụp (thêm trang)") { self.camera?.shoot() }
+        addUntil("cắt (thêm trang)", 30) { self.crop != nil }
+        addWait(1.0)
+        addRun("Tiếp tục (thêm trang)") { self.crop?.doneTapped() }
+        addUntil("trình chỉnh sửa (thêm trang)", 40) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(0.8)
+        addSnap("11b_editor_add_page")
+        addRun("lưu (thêm trang)") { self.editor?.finishEditing(done: true) }
+        addUntil("về tài liệu (thêm trang)", 40) {
+            self.nav.presentedViewController == nil && self.docVC != nil && self.docVC?.rendering == false
+        }
+        addWait(1.0)
+        addSnap("11c_document_4_pages")
+        addRun("kiểm tra thêm trang") { self.check(self.docVC?.doc.pages.count == 4, "Thêm trang: tài liệu có 4 trang") }
         addRun("kiểm tra PDF sau chỉnh sửa") { self.verifyCurrentDocPdf() }
         addRun("chia sẻ PDF") { self.docVC?.share(pdf: true) }
         addWait(2.5)
@@ -266,8 +327,39 @@ final class SelfTest {
         addWait(0.6)
         addRun("về màn hình chính") { self.nav.popToRootViewController(animated: false) }
         addWait(1.0)
-        addSnap("22_home_final")
-        addRun("kiểm tra danh sách") { self.check(DocStore.shared.list().count == 3, "có 3 tài liệu đã lưu (\(DocStore.shared.list().count))") }
+        // --- nhập ảnh từ Thư viện (gọi thẳng hàm nhập, bỏ qua bộ chọn ảnh hệ thống) ---
+        addRun("nhập 1 ảnh") {
+            if let img = SelfTest.testImage("doc_4_beige") { self.home?.importImages([img]) }
+        }
+        addUntil("màn hình cắt (nhập ảnh)", 20) { self.crop != nil }
+        addWait(1.2)
+        addSnap("22_import_crop")
+        addRun("Xong (nhập ảnh)") { self.crop?.doneTapped() }
+        addUntil("trình chỉnh sửa (nhập ảnh)", 40) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(0.8)
+        addSnap("23_import_editor")
+        addRun("lưu (nhập ảnh)") { self.editor?.finishEditing(done: true) }
+        addUntil("tài liệu (nhập ảnh)", 40) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(0.8)
+        addSnap("24_import_document")
+        addRun("về màn hình chính") { self.nav.popToRootViewController(animated: false) }
+        addWait(0.8)
+        addRun("nhập nhiều ảnh") {
+            let imgs = ["doc_3_gray", "doc_5_blue", "doc_6_clutter"].compactMap { SelfTest.testImage($0) }
+            self.home?.importImages(imgs)
+        }
+        addUntil("trình chỉnh sửa (nhập nhiều ảnh)", 60) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(1.0)
+        addSnap("25_import_multi_editor")
+        addRun("kiểm tra nhập nhiều ảnh") { self.check(self.editor?.doc.pages.count == 3, "nhập nhiều ảnh: 3 trang") }
+        addRun("lưu (nhập nhiều ảnh)") { self.editor?.finishEditing(done: true) }
+        addUntil("tài liệu (nhập nhiều ảnh)", 40) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(0.8)
+        addSnap("26_import_multi_document")
+        addRun("về màn hình chính") { self.nav.popToRootViewController(animated: false) }
+        addWait(1.0)
+        addSnap("27_home_final")
+        addRun("kiểm tra danh sách") { self.check(DocStore.shared.list().count == 5, "có 5 tài liệu đã lưu (\(DocStore.shared.list().count))") }
         next()
     }
 
@@ -409,14 +501,17 @@ final class SelfTest {
             }
         }
         check(renderOK && d.pages.count == names.count, "dựng \(d.pages.count) trang")
-        // tỷ lệ khổ giấy A4 sau khi nắn phẳng
+        // tỷ lệ trang sau khi nắn phẳng, so với bản Java (Geom.java) trên cùng tứ giác:
+        // doc_2_dark có phối cảnh tổng hợp không theo mô hình máy ảnh nên ước lượng ra 0.666 (không bắt về A4)
+        let expected = [Geom.a4Ratio, 0.666, Geom.a4Ratio]
         for (i, p) in d.pages.enumerated() {
             guard let o = p.out, let cg = ImageOps.loadCG(DocStore.shared.url(d, o)) else {
                 check(false, "ảnh kết quả trang \(i + 1)")
                 continue
             }
             let r = Double(min(cg.width, cg.height)) / Double(max(cg.width, cg.height))
-            check(abs(r - Geom.a4Ratio) < 0.03, String(format: "trang %ld: %ldx%ld, tỷ lệ %.3f (A4 = %.3f)", i + 1, cg.width, cg.height, r, Geom.a4Ratio))
+            let e = i < expected.count ? expected[i] : Geom.a4Ratio
+            check(abs(r - e) < 0.01, String(format: "trang %ld: %ldx%ld, tỷ lệ %.3f (bản Java: %.3f)", i + 1, cg.width, cg.height, r, e))
         }
         d.draft = false
         d.modified = Date()

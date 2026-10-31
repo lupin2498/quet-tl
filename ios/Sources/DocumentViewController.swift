@@ -215,7 +215,7 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
 
     @objc private func editPages() { openEditor(at: 0) }
 
-    @objc private func addPages() {
+    @objc func addPages() {
         let cam = CameraViewController(mode: .add(doc))
         cam.onFinished = { [weak self] _ in
             self?.dismiss(animated: true) {

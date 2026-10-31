@@ -519,6 +519,10 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
 
     // MARK: so sánh
 
+    func testCompare(_ on: Bool) {
+        if on { compareDown() } else { compareUp() }
+    }
+
     @objc private func compareDown() {
         guard let p = current, let w = p.warp else { return }
         let url = DocStore.shared.url(doc, w)
@@ -635,7 +639,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         }
     }
 
-    @objc private func retakeTapped() {
+    @objc func retakeTapped() {
         guard let p = current else { return }
         if pending > 0 {
             showWait()

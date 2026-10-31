@@ -81,12 +81,13 @@ final class CropViewController: UIViewController {
 
         var cfg = UIButton.Configuration.plain()
         cfg.title = "Tự động cắt"
-        cfg.imagePadding = 8
+        cfg.imagePadding = 7
         cfg.baseForegroundColor = .white
-        cfg.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 4, bottom: 8, trailing: 8)
+        cfg.titleLineBreakMode = .byClipping
+        cfg.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 2, bottom: 8, trailing: 4)
         cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var out = incoming
-            out.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            out.font = UIFont.systemFont(ofSize: 15, weight: .medium)
             return out
         }
         autoBtn.configuration = cfg
@@ -94,8 +95,10 @@ final class CropViewController: UIViewController {
         autoBtn.addTarget(self, action: #selector(toggleAuto), for: .touchUpInside)
 
         let second = Theme.textButton(mode == .capture ? "Chụp lại" : "Hủy")
+        second.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 6, bottom: 8, trailing: 6)
         second.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
         let ok = Theme.primaryButton(mode == .capture ? "Tiếp tục" : "Xong")
+        ok.configuration?.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16)
         ok.addTarget(self, action: #selector(doneTapped), for: .touchUpInside)
         ok.accessibilityIdentifier = "cropDone"
 
@@ -103,13 +106,16 @@ final class CropViewController: UIViewController {
         let row = UIStackView(arrangedSubviews: [autoBtn, spacer, second, ok])
         row.axis = .horizontal
         row.alignment = .center
-        row.spacing = 8
+        row.spacing = 4
         row.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(row)
         spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        autoBtn.setContentHuggingPriority(.required, for: .horizontal)
-        second.setContentHuggingPriority(.required, for: .horizontal)
-        ok.setContentHuggingPriority(.required, for: .horizontal)
+        spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        for b in [autoBtn, second, ok] {
+            b.setContentHuggingPriority(.required, for: .horizontal)
+            b.setContentCompressionResistancePriority(.required, for: .horizontal)
+            b.titleLabel?.numberOfLines = 1
+        }
 
         let g = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
@@ -222,6 +228,13 @@ final class CropViewController: UIViewController {
             }
         }
     }
+
+    // MARK: móc kiểm thử (SelfTest)
+
+    var testAutoOn: Bool { autoOn }
+    func testToggleAuto() { toggleAuto() }
+    func testDragCorner(_ i: Int, by d: CGPoint) { crop.testDrag(corner: i, by: d) }
+    func testEndDrag() { crop.testEndDrag() }
 
     @objc private func cancelTapped() {
         if let c = onCancel { c() } else { dismiss(animated: true) }
@@ -494,6 +507,19 @@ final class CropOverlayView: UIView {
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         endDrag()
     }
+
+    /// Mô phỏng kéo góc (toạ độ ảnh) cho tự kiểm thử; giữ trạng thái đang kéo để thấy kính lúp.
+    func testDrag(corner i: Int, by d: CGPoint) {
+        guard quad.count == 4, i >= 0, i < 4 else { return }
+        stopAnim()
+        dragCorner = i
+        dragEdge = -1
+        quad[i] = CGPoint(x: min(max(quad[i].x + d.x, 0), imgW), y: min(max(quad[i].y + d.y, 0), imgH))
+        redraw()
+        onChange?(true)
+    }
+
+    func testEndDrag() { endDrag() }
 
     private func endDrag() {
         dragCorner = -1
