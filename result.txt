@@ -1,0 +1,13 @@
+PASS doc_1_wood       err=0.0004 (0.8px)   57ms score=0.731 borders=0 refined=true
+PASS doc_2_dark       err=0.0004 (0.7px)   33ms score=0.848 borders=0 refined=true
+PASS doc_3_gray       err=0.0004 (0.8px)   28ms score=0.803 borders=0 refined=true
+PASS doc_4_beige      err=0.0004 (0.7px)   31ms score=0.797 borders=0 refined=true
+PASS doc_5_blue       err=0.0004 (0.7px)   29ms score=0.813 borders=0 refined=true
+PASS doc_6_clutter    err=0.0004 (0.7px)   69ms score=0.841 borders=0 refined=true
+DocDetector: 6/6 ảnh sai số <1% đường chéo
+PASS Enhancer Gốc: trung vị độ sáng 250, 0ms
+PASS Enhancer Tăng cường: trung vị độ sáng 255, 32ms
+PASS Enhancer Làm sáng: trung vị độ sáng 255, 32ms
+PASS Enhancer Thang xám: trung vị độ sáng 255, 23ms
+PASS Enhancer Đen trắng: trung vị độ sáng 255, 23ms
+PASS PdfWriter: 540671 byte
