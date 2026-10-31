@@ -285,6 +285,7 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
         cell.titleLabel.text = d.title
         cell.subLabel.text = "\(Theme.dateString(d.modified))   ▢ \(d.pages.count)"
         cell.thumb.image = nil
+        cell.docId = d.id
         cell.onMore = { [weak self] in self?.docMenu(d) }
         if let first = d.pages.first, let out = first.out {
             let key = "\(d.id)/\(out)" as NSString
@@ -297,7 +298,7 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
                     DispatchQueue.main.async {
                         guard let img = img else { return }
                         self.thumbCache.setObject(img, forKey: key)
-                        if let c = tableView.cellForRow(at: indexPath) as? DocCell { c.thumb.image = img }
+                        if cell.docId == d.id { cell.thumb.image = img }
                     }
                 }
             }
@@ -375,6 +376,7 @@ final class DocCell: UITableViewCell {
     let subLabel = Theme.label("", size: 13, color: Theme.text2)
     private let more = UIButton(type: .system)
     var onMore: (() -> Void)?
+    var docId: String?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

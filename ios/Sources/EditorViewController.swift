@@ -663,23 +663,26 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     @objc private func deleteCurrent() {
         guard let p = current else { return }
         confirm("Xoá trang này?", message: nil, ok: "Xoá") { [weak self] in
-            guard let self = self else { return }
-            self.processing.remove(p.id)
-            self.gen[p.id] = -1
-            self.setShared(p.id, -1)
-            DocStore.shared.removePage(self.doc, pageId: p.id)
-            if self.doc.pages.isEmpty {
-                if self.context != .camera { DocStore.shared.delete(self.doc) }
-                self.onDone?(false)
-                return
-            }
-            self.index = min(self.index, self.doc.pages.count - 1)
-            self.collection.reloadData()
-            self.collection.layoutIfNeeded()
-            self.collection.setContentOffset(CGPoint(x: CGFloat(self.index) * self.collection.bounds.width, y: 0), animated: false)
-            self.updateIndicator()
-            if self.filterPanelVisible { self.refreshFilterPanel() }
+            self?.deletePage(p.id)
         }
+    }
+
+    func deletePage(_ pid: String) {
+        processing.remove(pid)
+        gen[pid] = -1
+        setShared(pid, -1)
+        DocStore.shared.removePage(doc, pageId: pid)
+        if doc.pages.isEmpty {
+            if context != .camera { DocStore.shared.delete(doc) }
+            onDone?(false)
+            return
+        }
+        index = min(index, doc.pages.count - 1)
+        collection.reloadData()
+        collection.layoutIfNeeded()
+        collection.setContentOffset(CGPoint(x: CGFloat(index) * collection.bounds.width, y: 0), animated: false)
+        updateIndicator()
+        if filterPanelVisible { refreshFilterPanel() }
     }
 
     @objc private func rename() {

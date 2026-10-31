@@ -230,12 +230,15 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
 
     @objc private func rename() {
         prompt("Đổi tên tài liệu", initial: doc.title) { [weak self] v in
-            guard let self = self else { return }
-            self.doc.title = v
-            self.doc.modified = Date()
-            DocStore.shared.save(self.doc)
-            self.reload()
+            self?.applyRename(v)
         }
+    }
+
+    func applyRename(_ v: String) {
+        doc.title = v
+        doc.modified = Date()
+        DocStore.shared.save(doc)
+        reload()
     }
 
     @objc private func moreTapped() {
@@ -269,10 +272,13 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
 
     private func deleteDoc() {
         confirm("Xoá tài liệu?", message: "\"\(doc.title)\" sẽ bị xoá vĩnh viễn.", ok: "Xoá") { [weak self] in
-            guard let self = self else { return }
-            DocStore.shared.delete(self.doc)
-            self.navigationController?.popToRootViewController(animated: true)
+            self?.performDelete()
         }
+    }
+
+    func performDelete() {
+        DocStore.shared.delete(doc)
+        navigationController?.popToRootViewController(animated: true)
     }
 
     @objc private func shareTapped() {

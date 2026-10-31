@@ -50,6 +50,7 @@ final class SelfTest {
     private var failed = 0
     private var docIds = [String]()
     private var retakeSrc = ""
+    private var targetId = ""
     private var algoDone = false
 
     private init(nav: UINavigationController) {
@@ -357,9 +358,43 @@ final class SelfTest {
         addWait(0.8)
         addSnap("26_import_multi_document")
         addRun("về màn hình chính") { self.nav.popToRootViewController(animated: false) }
+        addWait(0.8)
+        // --- đổi tên, xoá trang, xoá tài liệu (gọi thẳng thao tác sau hộp thoại xác nhận) ---
+        addRun("mở tài liệu 2 trang") {
+            if let d = DocStore.shared.list().first(where: { $0.pages.count == 2 }) {
+                self.targetId = d.id
+                self.home?.openDocument(d)
+            }
+        }
+        addUntil("màn hình tài liệu 2 trang", 20) { self.docVC != nil && self.docVC?.rendering == false }
+        addRun("đổi tên") { self.docVC?.applyRename("Biên bản thử nghiệm") }
+        addWait(0.6)
+        addSnap("28_renamed")
+        addRun("kiểm tra đổi tên") {
+            self.check(DocStore.shared.load(self.targetId)?.title == "Biên bản thử nghiệm", "đổi tên được lưu")
+        }
+        addRun("mở trình chỉnh sửa để xoá trang") { self.docVC?.openEditor(at: 0) }
+        addUntil("trình chỉnh sửa (xoá trang)", 30) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addRun("xoá trang 1") {
+            if let ed = self.editor, let p = ed.current { ed.deletePage(p.id) }
+        }
         addWait(1.0)
-        addSnap("27_home_final")
-        addRun("kiểm tra danh sách") { self.check(DocStore.shared.list().count == 5, "có 5 tài liệu đã lưu (\(DocStore.shared.list().count))") }
+        addSnap("29_page_deleted")
+        addRun("kiểm tra xoá trang") {
+            self.check(DocStore.shared.load(self.targetId)?.pages.count == 1, "xoá trang: còn 1 trang")
+            self.editor?.finishEditing(done: true)
+        }
+        addUntil("về tài liệu sau xoá trang", 30) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(0.6)
+        addRun("xoá tài liệu") { self.docVC?.performDelete() }
+        addUntil("về màn hình chính sau xoá", 15) { self.topMost() is HomeViewController }
+        addRun("tải lại") { self.home?.reload() }
+        addWait(1.0)
+        addSnap("30_home_final")
+        addRun("kiểm tra danh sách") {
+            let n = DocStore.shared.list().count
+            self.check(n == 4 && DocStore.shared.load(self.targetId) == nil, "xoá tài liệu: còn 4 tài liệu (\(n))")
+        }
         next()
     }
 
