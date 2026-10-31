@@ -10,7 +10,11 @@ nắn phẳng theo khổ giấy (A4/Letter) → bộ lọc làm rõ chữ → l�
   - Các Activity: `MainActivity` (trang chủ), `CameraActivity` (Camera2, Đơn/Hàng loạt), `CropActivity` + `CropView`
     (chỉnh 4 góc, kính lúp), `EditorActivity` + `PageStripView` (lọc, xoay, cắt lại, so sánh), `DocumentActivity`.
   - `tools/desktop/` — chạy thử thuật toán trên JVM (`TestDetect`, `EvalSynth`).
-- `ios/` — bản iOS (Swift/UIKit, Vision, CoreImage), dự án sinh bằng XcodeGen (`ios/project.yml`).
+- `ios/` — bản iOS (Swift/UIKit, CoreImage), dự án sinh bằng XcodeGen (`ios/project.yml`).
+  - `ios/Sources/DocDetector.swift` port 1-1 từ `DocDetector.java` (sửa thuật toán thì sửa cả hai); Vision chỉ là dự phòng.
+  - `Enhancer.swift`, `PdfWriter.swift`, `DocDetector.swift` chỉ dùng Foundation -> kiểm thử nhanh trên Linux bằng
+    `ios/Tests/linux/main.swift` (job `algo-linux`, kết quả ở nhánh `ci/ios-algo`).
+  - Chạy app với tham số `-selftest` để tự kiểm thử trên Simulator (kết quả: Documents/selftest/).
 - `tests/android/run_tests.py` — kiểm thử giao diện tự động trên máy ảo (adb + uiautomator).
 - `tests/images/` — ảnh thử TỔNG HỢP (sinh bằng `tests/tools/make_test_images.py`), kèm `gt.txt` toạ độ góc thật.
 
