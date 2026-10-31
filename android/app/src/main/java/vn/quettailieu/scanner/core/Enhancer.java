@@ -184,6 +184,7 @@ public final class Enhancer {
                 valid = nv;
             }
         }
+        limitChroma(r, g, b, lum, paper);
         // làm mượt lưới
         for (int it = 0; it < 2; it++) {
             r = box3(r, gw, gh);
@@ -199,6 +200,39 @@ public final class Enhancer {
         bg.gw = gw; bg.gh = gh; bg.cell = cell;
         bg.r = r; bg.g = g; bg.b = b;
         return bg;
+    }
+
+    /**
+     * Giới hạn sắc độ của nền quanh màu giấy chung: mảng màu lớn (ảnh, nền màu) không bị coi là
+     * màu giấy -> tránh đổi màu giả (vùng màu bị tẩy trắng, viền tím/xanh); vẫn sửa được ám màu nhẹ cục bộ.
+     * lum: độ sáng ô trước khi nội suy; paper: độ sáng giấy (phân vị 90%).
+     */
+    static void limitChroma(float[] r, float[] g, float[] b, float[] lum, float paper) {
+        int n = r.length;
+        float pr = 0, pg = 0, pb = 0;
+        int pc = 0;
+        for (int i = 0; i < n; i++) {
+            if (lum[i] >= 0.9f * paper) { pr += r[i]; pg += g[i]; pb += b[i]; pc++; }
+        }
+        if (pc == 0) return;
+        float pl = Math.max(1f, 0.299f * pr / pc + 0.587f * pg / pc + 0.114f * pb / pc);
+        float gr = Math.max(1e-3f, pr / pc / pl), gg = Math.max(1e-3f, pg / pc / pl), gb = Math.max(1e-3f, pb / pc / pl);
+        for (int i = 0; i < n; i++) {
+            float l = Math.max(1f, 0.299f * r[i] + 0.587f * g[i] + 0.114f * b[i]);
+            float lr = r[i] / l, lg = g[i] / l, lb = b[i] / l;
+            // lệch ít (<8%): giữ sắc độ cục bộ (ám màu do đèn); lệch nhiều (>15%): dùng màu giấy chung
+            float dev = Math.max(Math.abs(lr / gr - 1f), Math.max(Math.abs(lg / gg - 1f), Math.abs(lb / gb - 1f)));
+            float wgt = clampF((0.15f - dev) / 0.07f, 0f, 1f);
+            float cr = gr + (lr - gr) * wgt, cg = gg + (lg - gg) * wgt, cb = gb + (lb - gb) * wgt;
+            float k = l / Math.max(1e-3f, 0.299f * cr + 0.587f * cg + 0.114f * cb);
+            r[i] = cr * k;
+            g[i] = cg * k;
+            b[i] = cb * k;
+        }
+    }
+
+    private static float clampF(float v, float lo, float hi) {
+        return v < lo ? lo : (v > hi ? hi : v);
     }
 
     private static float[] box3(float[] a, int w, int h) {

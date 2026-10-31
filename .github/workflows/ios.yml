@@ -16,6 +16,46 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  algo-linux:
+    # kiểm tra nhanh phần thuật toán Swift (biên dịch + so với ảnh thử có toạ độ thật)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift
+        run: |
+          which swift || ls /usr/share/swift/usr/bin
+          swift --version
+      - name: Chuyển ảnh thử sang PPM
+        run: |
+          python3 -c "import PIL" 2>/dev/null || pip3 install --break-system-packages pillow
+          mkdir -p out/algo
+          python3 - <<'PY'
+          from PIL import Image
+          import glob, os
+          for f in glob.glob('tests/images/*.jpg'):
+              Image.open(f).convert('RGB').save('out/algo/' + os.path.basename(f)[:-4] + '.ppm')
+          PY
+          cp tests/images/doc_1_wood.jpg out/algo/sample.jpg
+      - name: Biên dịch + chạy
+        run: |
+          swiftc -O -o out/algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
+          set -o pipefail
+          ./out/algotest tests/images/gt.txt out/algo 2>&1 | tee out/algo/result.txt
+
+      - name: Đẩy kết quả lên nhánh ci/ios-algo
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p out/algo && cd out/algo
+          rm -f *.ppm
+          git init -q
+          git checkout -q -b ci/ios-algo
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "ios-algo run=${GITHUB_RUN_NUMBER} sha=${GITHUB_SHA} status=${{ job.status }}" || true
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/ios-algo
+
   build:
     runs-on: macos-15
     timeout-minutes: 75

@@ -191,6 +191,7 @@ enum Enhancer {
                 valid = nv
             }
         }
+        limitChroma(&r, &g, &b, lum, paper)
         for _ in 0..<2 {
             r = box3(r, gw, gh)
             g = box3(g, gw, gh)
@@ -203,6 +204,33 @@ enum Enhancer {
         out.gw = gw; out.gh = gh; out.cell = Float(cell)
         out.r = r; out.g = g; out.b = b
         return out
+    }
+
+    /// Giới hạn sắc độ của nền quanh màu giấy chung: mảng màu lớn (ảnh, nền màu) không bị coi là màu giấy
+    /// -> tránh đổi màu giả; vẫn sửa được ám màu nhẹ cục bộ. lum: độ sáng ô trước khi nội suy.
+    private static func limitChroma(_ r: inout [Float], _ g: inout [Float], _ b: inout [Float], _ lum: [Float], _ paper: Float) {
+        let n = r.count
+        var pr: Float = 0, pg: Float = 0, pb: Float = 0
+        var pc = 0
+        for i in 0..<n where lum[i] >= 0.9 * paper {
+            pr += r[i]; pg += g[i]; pb += b[i]; pc += 1
+        }
+        if pc == 0 { return }
+        let fc = Float(pc)
+        let pl = max(1, 0.299 * pr / fc + 0.587 * pg / fc + 0.114 * pb / fc)
+        let gr = max(1e-3, pr / fc / pl), gg = max(1e-3, pg / fc / pl), gb = max(1e-3, pb / fc / pl)
+        for i in 0..<n {
+            let l = max(1, 0.299 * r[i] + 0.587 * g[i] + 0.114 * b[i])
+            let lr = r[i] / l, lg = g[i] / l, lb = b[i] / l
+            // lệch ít (<8%): giữ sắc độ cục bộ; lệch nhiều (>15%): dùng màu giấy chung
+            let dev = max(abs(lr / gr - 1), max(abs(lg / gg - 1), abs(lb / gb - 1)))
+            let wgt = min(1, max(0, (0.15 - dev) / 0.07))
+            let cr = gr + (lr - gr) * wgt, cg = gg + (lg - gg) * wgt, cb = gb + (lb - gb) * wgt
+            let k = l / max(1e-3, 0.299 * cr + 0.587 * cg + 0.114 * cb)
+            r[i] = cr * k
+            g[i] = cg * k
+            b[i] = cb * k
+        }
     }
 
     private static func box3(_ a: [Float], _ w: Int, _ h: Int) -> [Float] {

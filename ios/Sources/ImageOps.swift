@@ -64,41 +64,80 @@ enum ImageOps {
         return ctx.makeImage() ?? cg
     }
 
-    /// Tìm 4 góc trang giấy. Trả về toạ độ pixel của `cg` (gốc trên-trái), hoặc nil.
-    static func detect(_ cg: CGImage) -> [CGPoint]? {
+    /// Điểm ảnh RGBX 8 bit (R ở byte 0), cạnh dài không quá maxDim.
+    static func rgbaPixels(_ cg: CGImage, maxDim: CGFloat) -> (data: [UInt8], w: Int, h: Int)? {
+        let W = CGFloat(cg.width), H = CGFloat(cg.height)
+        guard W > 0, H > 0 else { return nil }
+        let k = min(1, maxDim / max(W, H))
+        let w = max(1, Int((W * k).rounded())), h = max(1, Int((H * k).rounded()))
+        var data = [UInt8](repeating: 0, count: w * h * 4)
+        let ok: Bool = data.withUnsafeMutableBytes { buf -> Bool in
+            guard let ctx = CGContext(data: buf.baseAddress, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,
+                                      space: CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return false }
+            ctx.interpolationQuality = .high
+            ctx.draw(cg, in: CGRect(x: 0, y: 0, width: w, height: h))
+            return true
+        }
+        return ok ? (data, w, h) : nil
+    }
+
+    struct Detection {
+        var quad: [CGPoint]?
+        var source: String
+        var score: Double
+    }
+
+    /// Bộ tìm mép giống bản Android (DocDetector). Toạ độ pixel của `cg`.
+    static func docDetector(_ cg: CGImage) -> (quad: [CGPoint], score: Double, borders: Int)? {
+        guard let px = rgbaPixels(cg, maxDim: 1024) else { return nil }
+        let r: DocDetector.Result? = px.data.withUnsafeBufferPointer { buf -> DocDetector.Result? in
+            guard let base = buf.baseAddress else { return nil }
+            return DocDetector.detect(rgba: base, width: px.w, height: px.h, bytesPerRow: px.w * 4)
+        }
+        guard let res = r, let q = res.quad, q.count == 8 else { return nil }
+        let kx = CGFloat(cg.width) / CGFloat(px.w), ky = CGFloat(cg.height) / CGFloat(px.h)
+        let pts = (0..<4).map { CGPoint(x: (CGFloat(q[2 * $0]) + 0.5) * kx - 0.5, y: (CGFloat(q[2 * $0 + 1]) + 0.5) * ky - 0.5) }
+        let o = Geom.order(pts)
+        guard Geom.isConvex(o) else { return nil }
+        return (Geom.clamp(o, CGFloat(cg.width), CGFloat(cg.height)), Double(res.score), res.borders)
+    }
+
+    /// Tách vùng tài liệu bằng Vision (học máy). Toạ độ pixel của `cg`.
+    static func visionSegment(_ cg: CGImage) -> (quad: [CGPoint], confidence: Double)? {
         let small = scaledCG(cg, maxDim: 1024)
         let sw = CGFloat(small.width), sh = CGFloat(small.height)
         let kx = CGFloat(cg.width) / sw, ky = CGFloat(cg.height) / sh
-        func convert(_ o: VNRectangleObservation) -> [CGPoint] {
-            let pts = [o.topLeft, o.topRight, o.bottomRight, o.bottomLeft].map {
-                CGPoint(x: $0.x * sw * kx, y: (1 - $0.y) * sh * ky)
-            }
-            return Geom.order(pts)
-        }
-        let full = Double(cg.width * cg.height)
         let seg = VNDetectDocumentSegmentationRequest()
-        let h1 = VNImageRequestHandler(cgImage: small, orientation: .up, options: [:])
-        if (try? h1.perform([seg])) != nil, let obs = seg.results?.first, obs.confidence > 0.4 {
-            let q = convert(obs)
-            if Geom.isConvex(q) && Geom.area(q) > full * 0.05 {
-                return Geom.clamp(q, CGFloat(cg.width), CGFloat(cg.height))
-            }
+        let handler = VNImageRequestHandler(cgImage: small, orientation: .up, options: [:])
+        guard (try? handler.perform([seg])) != nil, let obs = seg.results?.first else { return nil }
+        let pts = [obs.topLeft, obs.topRight, obs.bottomRight, obs.bottomLeft].map {
+            CGPoint(x: $0.x * sw * kx, y: (1 - $0.y) * sh * ky)
         }
-        let rect = VNDetectRectanglesRequest()
-        rect.minimumAspectRatio = 0.25
-        rect.maximumAspectRatio = 1.0
-        rect.minimumSize = 0.2
-        rect.quadratureTolerance = 35
-        rect.minimumConfidence = 0.4
-        rect.maximumObservations = 1
-        let h2 = VNImageRequestHandler(cgImage: small, orientation: .up, options: [:])
-        if (try? h2.perform([rect])) != nil, let obs = rect.results?.first {
-            let q = convert(obs)
-            if Geom.isConvex(q) && Geom.area(q) > full * 0.05 {
-                return Geom.clamp(q, CGFloat(cg.width), CGFloat(cg.height))
-            }
+        let q = Geom.order(pts)
+        guard Geom.isConvex(q), Geom.area(q) > Double(cg.width * cg.height) * 0.1 else { return nil }
+        return (Geom.clamp(q, CGFloat(cg.width), CGFloat(cg.height)), Double(obs.confidence))
+    }
+
+    /// Tìm 4 góc trang giấy: ưu tiên DocDetector khi chắc chắn (thấy đủ 4 mép), nếu không thì Vision,
+    /// cuối cùng là kết quả yếu của DocDetector.
+    static func detectDetailed(_ cg: CGImage) -> Detection {
+        let dd = docDetector(cg)
+        if let d = dd, d.borders == 0, d.score >= 0.3 {
+            return Detection(quad: d.quad, source: "docdetector", score: d.score)
         }
-        return nil
+        if let v = visionSegment(cg), v.confidence >= 0.6 {
+            return Detection(quad: v.quad, source: "vision", score: v.confidence)
+        }
+        if let d = dd {
+            return Detection(quad: d.quad, source: "docdetector-weak", score: d.score)
+        }
+        return Detection(quad: nil, source: "none", score: 0)
+    }
+
+    /// Tìm 4 góc trang giấy. Trả về toạ độ pixel của `cg` (gốc trên-trái), hoặc nil.
+    static func detect(_ cg: CGImage) -> [CGPoint]? {
+        return detectDetailed(cg).quad
     }
 
     /// Nắn phẳng tứ giác (toạ độ pixel gốc trên-trái) thành ảnh chữ nhật kích thước `size`.

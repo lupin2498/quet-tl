@@ -29,6 +29,9 @@ targets:
       path: Info.plist
       properties:
         CFBundleDisplayName: "Quét Tài Liệu"
+        CFBundleDevelopmentRegion: vi
+        CFBundleLocalizations:
+          - vi
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         LSRequiresIPhoneOS: true

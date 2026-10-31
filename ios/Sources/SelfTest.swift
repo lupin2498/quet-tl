@@ -120,7 +120,11 @@ final class SelfTest {
     }
 
     private func snap(_ name: String) {
-        guard let win = nav.view.window else { return }
+        let appWin = (UIApplication.shared.delegate as? AppDelegate)?.window
+        guard let win = appWin ?? nav.view.window else {
+            log("không chụp được màn hình \(name)")
+            return
+        }
         let r = UIGraphicsImageRenderer(bounds: win.bounds)
         let img = r.image { _ in
             _ = win.drawHierarchy(in: win.bounds, afterScreenUpdates: true)
@@ -284,7 +288,13 @@ final class SelfTest {
         algoDone = false
         DispatchQueue.global(qos: .userInitiated).async {
             var out = [String]()
-            var ok = 0, total = 0
+            var okAll = 0, okDD = 0, total = 0
+            func err(_ q: [CGPoint]?, _ gt: [Double], _ diag: Double) -> Double {
+                guard let q = q, q.count == 4 else { return 1 }
+                var e = 0.0
+                for i in 0..<4 { e = max(e, hypot(Double(q[i].x) - gt[2 * i], Double(q[i].y) - gt[2 * i + 1]) / diag) }
+                return e
+            }
             if let gtURL = Bundle.main.url(forResource: "gt", withExtension: "txt", subdirectory: "TestImages"),
                let text = try? String(contentsOf: gtURL, encoding: .utf8) {
                 for line in text.split(separator: "\n") {
@@ -292,32 +302,32 @@ final class SelfTest {
                     guard parts.count >= 9 else { continue }
                     let name = (parts[0] as NSString).deletingPathExtension
                     let gt = parts[1...8].compactMap { Double($0) }
+                    total += 1
                     guard gt.count == 8, let img = SelfTest.testImage(name), let cg = img.cgImage else {
                         out.append("FAIL \(name): không đọc được ảnh")
-                        total += 1
                         continue
                     }
-                    total += 1
-                    let t0 = Date()
-                    let q = ImageOps.detect(cg)
-                    let ms = Int(Date().timeIntervalSince(t0) * 1000)
                     let diag = hypot(Double(cg.width), Double(cg.height))
-                    if let q = q {
-                        var err = 0.0
-                        for i in 0..<4 {
-                            err = max(err, hypot(Double(q[i].x) - gt[2 * i], Double(q[i].y) - gt[2 * i + 1]) / diag)
-                        }
-                        if err < 0.02 { ok += 1 }
-                        out.append(String(format: "%@ %@ err=%.4f (%.1fpx) %ldms", err < 0.02 ? "PASS" : "FAIL", name, err, err * diag, ms))
-                    } else {
-                        out.append("FAIL \(name): không tìm thấy trang (\(ms)ms)")
-                    }
+                    let t0 = Date()
+                    let det = ImageOps.detectDetailed(cg)
+                    let ms = Int(Date().timeIntervalSince(t0) * 1000)
+                    let t1 = Date()
+                    let dd = ImageOps.docDetector(cg)
+                    let msDD = Int(Date().timeIntervalSince(t1) * 1000)
+                    let vis = ImageOps.visionSegment(cg)
+                    let eAll = err(det.quad, gt, diag), eDD = err(dd?.quad, gt, diag), eVis = err(vis?.quad, gt, diag)
+                    if eAll < 0.01 { okAll += 1 }
+                    if eDD < 0.01 { okDD += 1 }
+                    out.append(String(format: "%@ %@ err=%.4f (%.1fpx) %ldms nguồn=%@ | DocDetector err=%.4f điểm=%.3f biên=%ld %ldms | Vision err=%.4f tin cậy=%.2f",
+                                      eAll < 0.01 ? "PASS" : "FAIL", name, eAll, eAll * diag, ms, det.source,
+                                      eDD, dd?.score ?? 0, dd?.borders ?? -1, msDD, eVis, vis?.confidence ?? 0))
                 }
             }
-            let lines = out, nOK = ok, nTotal = total
+            let lines = out, nAll = okAll, nDD = okDD, nTotal = total
             DispatchQueue.main.async {
                 for l in lines { self.log("   " + l) }
-                self.check(nTotal > 0 && nOK * 3 >= nTotal * 2, "tìm mép đúng (<2% đường chéo) \(nOK)/\(nTotal) ảnh")
+                self.check(nTotal > 0 && nDD == nTotal, "DocDetector (Swift) trùng bản Java: \(nDD)/\(nTotal) ảnh sai số <1% đường chéo")
+                self.check(nTotal > 0 && nAll * 6 >= nTotal * 5, "tìm mép (DocDetector + Vision) \(nAll)/\(nTotal) ảnh sai số <1% đường chéo")
                 self.algoDone = true
             }
         }
@@ -325,7 +335,45 @@ final class SelfTest {
 
     // MARK: dựng tài liệu + PDF
 
+    /// Nắn phẳng bằng toạ độ góc thật (gt.txt): kiểm tra riêng khâu nắn phẳng + tỷ lệ khổ giấy.
+    private func warpWithGroundTruth() {
+        guard let gtURL = Bundle.main.url(forResource: "gt", withExtension: "txt", subdirectory: "TestImages"),
+              let text = try? String(contentsOf: gtURL, encoding: .utf8),
+              let line = text.split(separator: "\n").first(where: { $0.hasPrefix("doc_1_wood") }) else {
+            check(false, "đọc gt.txt")
+            return
+        }
+        let gt = line.split(separator: " ").dropFirst().compactMap { Double($0) }
+        guard gt.count == 8, let img = SelfTest.testImage("doc_1_wood"), let cg = img.cgImage else {
+            check(false, "đọc doc_1_wood")
+            return
+        }
+        let q = (0..<4).map { CGPoint(x: gt[2 * $0], y: gt[2 * $0 + 1]) }
+        let size = Geom.outputSize(q, imgW: Double(cg.width), imgH: Double(cg.height), focal: -1, snap: true, maxLong: ImageOps.maxOut)
+        guard let w = ImageOps.warp(cg, quad: q, size: size) else {
+            check(false, "nắn phẳng với góc thật")
+            return
+        }
+        try? ImageOps.writeJPEG(w, to: SelfTest.outDir.appendingPathComponent("warp_gt_doc_1.jpg"), quality: 0.85)
+        let r = Double(w.width) / Double(w.height)
+        check(abs(r - Geom.a4Ratio) < 0.02, String(format: "nắn phẳng với góc thật: %ldx%ld, tỷ lệ %.3f", w.width, w.height, r))
+        // góc trên-trái của trang phải là giấy trắng (không lẫn nền gỗ), giữa trang có chữ (điểm tối)
+        if let px = ImageOps.rgbaPixels(w, maxDim: 400) {
+            func lum(_ x: Int, _ y: Int) -> Int {
+                let i = (y * px.w + x) * 4
+                return (299 * Int(px.data[i]) + 587 * Int(px.data[i + 1]) + 114 * Int(px.data[i + 2])) / 1000
+            }
+            let corner = lum(px.w / 40 + 2, px.h / 40 + 2)
+            var dark = 0
+            for y in stride(from: px.h / 10, to: px.h * 9 / 10, by: 2) {
+                for x in stride(from: px.w / 10, to: px.w * 9 / 10, by: 2) where lum(x, y) < 100 { dark += 1 }
+            }
+            check(corner > 150 && dark > 50, "nội dung sau nắn phẳng: góc sáng \(corner), \(dark) điểm chữ")
+        }
+    }
+
     private func buildDocumentAndPdf() {
+        warpWithGroundTruth()
         let names = ["doc_1_wood", "doc_2_dark", "doc_6_clutter"]
         let d = DocStore.shared.create(draft: true)
         for n in names {
@@ -335,6 +383,14 @@ final class SelfTest {
             }
             let norm = ImageOps.normalized(img, maxDim: ImageOps.maxSrc)
             let q = norm.cgImage.flatMap { ImageOps.detect($0) }
+            var desc = "không có"
+            if let pts = q {
+                var parts = [String]()
+                for pt in pts { parts.append("(\(Int(pt.x)),\(Int(pt.y)))") }
+                desc = parts.joined(separator: " ")
+            }
+            let dims = norm.cgImage.map { "\($0.width)x\($0.height)" } ?? "?"
+            log("   \(n): \(dims) góc=\(desc)")
             do {
                 try DocStore.shared.addPage(d, image: norm, quad: q, auto: true)
             } catch {

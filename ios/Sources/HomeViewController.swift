@@ -15,6 +15,7 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = Theme.bg
+        navigationItem.backButtonDisplayMode = .minimal
         buildUI()
     }
 
