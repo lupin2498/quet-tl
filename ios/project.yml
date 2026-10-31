@@ -1,0 +1,58 @@
+name: QuetTaiLieu
+options:
+  bundleIdPrefix: vn.quettailieu
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.1"
+    CURRENT_PROJECT_VERSION: "2"
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: ""
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGNING_ALLOWED: "NO"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_BITCODE: "NO"
+targets:
+  QuetTaiLieu:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      - path: Resources/Assets.xcassets
+      - path: Resources/TestImages
+        type: folder
+        buildPhase: resources
+    info:
+      path: Info.plist
+      properties:
+        CFBundleDisplayName: "Quét Tài Liệu"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        LSRequiresIPhoneOS: true
+        UILaunchScreen:
+          UIColorName: LaunchBG
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIUserInterfaceStyle: Dark
+        UIStatusBarStyle: UIStatusBarStyleLightContent
+        UIViewControllerBasedStatusBarAppearance: false
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: "Ảnh"
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.image
+        NSCameraUsageDescription: "Ứng dụng dùng máy ảnh để quét giấy tờ."
+        NSPhotoLibraryAddUsageDescription: "Lưu ảnh trang đã quét vào Thư viện ảnh."
+        NSPhotoLibraryUsageDescription: "Chọn ảnh trong Thư viện để quét."
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: vn.quettailieu.scanner
+        PRODUCT_NAME: QuetTaiLieu
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1"
