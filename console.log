@@ -1,0 +1,156 @@
+2026-10-31 17:58:47.877 QuetTaiLieu[6294:24337] [SELFTEST] Quét Tài Liệu 1.1 (2) — iOS 26.2, iPhone
+2026-10-31 17:58:48.206 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 01_home_empty.png (HomeViewController)
+2026-10-31 17:58:48.308 QuetTaiLieu[6294:24337] [SELFTEST] -- thuật toán tìm mép trên ảnh tổng hợp
+2026-10-31 17:58:50.522 QuetTaiLieu[6294:24337] [SELFTEST]    PASS doc_1_wood err=0.0005 (1.0px) 86ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.661 biên=0 48ms | Vision err=0.1779 tin cậy=0.00
+2026-10-31 17:58:50.524 QuetTaiLieu[6294:24337] [SELFTEST]    PASS doc_2_dark err=0.0005 (1.0px) 77ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.848 biên=0 34ms | Vision err=0.5119 tin cậy=0.97
+2026-10-31 17:58:50.525 QuetTaiLieu[6294:24337] [SELFTEST]    PASS doc_3_gray err=0.0005 (1.0px) 48ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.803 biên=0 36ms | Vision err=0.5164 tin cậy=0.83
+2026-10-31 17:58:50.525 QuetTaiLieu[6294:24337] [SELFTEST]    PASS doc_4_beige err=0.0005 (1.0px) 51ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.797 biên=0 45ms | Vision err=0.4628 tin cậy=0.99
+2026-10-31 17:58:50.526 QuetTaiLieu[6294:24337] [SELFTEST]    PASS doc_5_blue err=0.0005 (0.9px) 63ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.813 biên=0 44ms | Vision err=0.5275 tin cậy=0.95
+2026-10-31 17:58:50.530 QuetTaiLieu[6294:24337] [SELFTEST]    PASS doc_6_clutter err=0.0005 (1.0px) 72ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.834 biên=0 67ms | Vision err=0.5463 tin cậy=0.99
+2026-10-31 17:58:50.531 QuetTaiLieu[6294:24337] [SELFTEST] PASS DocDetector (Swift) trùng bản Java: 6/6 ảnh sai số <1% đường chéo
+2026-10-31 17:58:50.532 QuetTaiLieu[6294:24337] [SELFTEST] PASS tìm mép (DocDetector + Vision) 6/6 ảnh sai số <1% đường chéo
+2026-10-31 17:58:50.672 QuetTaiLieu[6294:24337] [SELFTEST] -- dựng tài liệu + PDF
+2026-10-31 17:58:51.596 QuetTaiLieu[6294:24337] [SELFTEST] PASS nắn phẳng với góc thật: 804x1137, tỷ lệ 0.707
+2026-10-31 17:58:51.599 QuetTaiLieu[6294:24337] [SELFTEST] PASS nội dung sau nắn phẳng: góc sáng 215, 137 điểm chữ
+2026-10-31 17:58:51.696 QuetTaiLieu[6294:24337] [SELFTEST]    doc_1_wood: 1200x1600 góc=(225,287) (971,276) (1016,1412) (213,1424)
+2026-10-31 17:58:51.766 QuetTaiLieu[6294:24337] [SELFTEST]    doc_2_dark: 1200x1600 góc=(218,191) (968,232) (945,1412) (113,1367)
+2026-10-31 17:58:51.846 QuetTaiLieu[6294:24337] [SELFTEST]    doc_6_clutter: 1200x1600 góc=(125,280) (902,141) (1123,1283) (313,1428)
+2026-10-31 17:58:54.174 QuetTaiLieu[6294:24337] [SELFTEST] PASS dựng 3 trang
+2026-10-31 17:58:54.190 QuetTaiLieu[6294:24337] [SELFTEST] PASS trang 1: 804x1137, tỷ lệ 0.707 (bản Java: 0.707)
+2026-10-31 17:58:54.201 QuetTaiLieu[6294:24337] [SELFTEST] PASS trang 2: 834x1252, tỷ lệ 0.666 (bản Java: 0.666)
+2026-10-31 17:58:54.215 QuetTaiLieu[6294:24337] [SELFTEST] PASS trang 3: 822x1163, tỷ lệ 0.707 (bản Java: 0.707)
+2026-10-31 17:58:54.535 QuetTaiLieu[6294:24337] [SELFTEST] PASS PDF 3 trang: 562 KB, 3 trang
+2026-10-31 17:58:54.906 QuetTaiLieu[6294:24337] [SELFTEST] -- tải lại danh sách
+2026-10-31 17:58:56.496 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 02_home_list.png (HomeViewController)
+2026-10-31 17:58:56.599 QuetTaiLieu[6294:24337] [SELFTEST] -- mở tài liệu
+2026-10-31 17:58:58.397 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 03_document.png (DocumentViewController)
+2026-10-31 17:58:58.503 QuetTaiLieu[6294:24337] [SELFTEST] -- mở trình chỉnh sửa
+2026-10-31 17:59:00.242 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 04_editor.png (EditorViewController)
+2026-10-31 17:59:00.345 QuetTaiLieu[6294:24337] [SELFTEST] -- mở bảng lọc
+2026-10-31 17:59:00.349 QuetTaiLieu[6294:24337] The behavior of the UICollectionViewFlowLayout is not defined because:
+2026-10-31 17:59:00.349 QuetTaiLieu[6294:24337] the item height must be less than the height of the UICollectionView minus the section insets top and bottom values, minus the content insets top and bottom values.
+2026-10-31 17:59:00.352 QuetTaiLieu[6294:24337] The relevant UICollectionViewFlowLayout instance is <UICollectionViewFlowLayout: 0x104e17960>, and it is attached to <UICollectionView: 0x1058f5a00; frame = (0 108; 402 468); clipsToBounds = YES; gestureRecognizers = <NSArray: 0x600000cbfa50>; animations = { bounds.size=<CABasicAnimation: 0x600000308400>; position=<CABasicAnimation: 0x6000003085a0>; }; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <CALayer: 0x600000cbeaf0>; contentOffset: {0, 0}; contentSize: {1206, 622}; adjustedContentInset: {0, 0, 0, 0}; layout: <UICollectionViewFlowLayout: 0x104e17960>; dataSource: <QuetTaiLieu.EditorViewController: 0x1050f3600>>.
+2026-10-31 17:59:00.609 QuetTaiLieu[6294:24337] Make a symbolic breakpoint at UICollectionViewFlowLayoutBreakForInvalidSizes to catch this in the debugger.
+2026-10-31 17:59:02.774 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 05_filters.png (EditorViewController)
+2026-10-31 17:59:02.876 QuetTaiLieu[6294:24337] [SELFTEST] -- lọc Đen trắng
+2026-10-31 17:59:04.217 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 06_filter_bw.png (EditorViewController)
+2026-10-31 17:59:04.321 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra bộ lọc
+2026-10-31 17:59:04.322 QuetTaiLieu[6294:24337] [SELFTEST] PASS trang 1 dùng bộ lọc Đen trắng
+2026-10-31 17:59:04.637 QuetTaiLieu[6294:24337] [SELFTEST] -- xoay trái
+2026-10-31 17:59:06.114 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 07_rotated.png (EditorViewController)
+2026-10-31 17:59:06.219 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra xoay
+2026-10-31 17:59:06.220 QuetTaiLieu[6294:24337] [SELFTEST] PASS trang 1 xoay 270°
+2026-10-31 17:59:06.523 QuetTaiLieu[6294:24337] [SELFTEST] -- đóng bảng lọc + mở màn hình cắt
+2026-10-31 17:59:08.342 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 08_crop_edit.png (CropViewController)
+2026-10-31 17:59:08.449 QuetTaiLieu[6294:24337] [SELFTEST] -- tắt Tự động cắt
+2026-10-31 17:59:09.874 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 08b_crop_auto_off.png (CropViewController)
+2026-10-31 17:59:09.981 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra tắt
+2026-10-31 17:59:09.982 QuetTaiLieu[6294:24337] [SELFTEST] PASS Tự động cắt: tắt -> khung toàn ảnh
+2026-10-31 17:59:10.298 QuetTaiLieu[6294:24337] [SELFTEST] -- bật lại Tự động cắt
+2026-10-31 17:59:11.449 QuetTaiLieu[6294:24337] [SELFTEST] -- kéo góc trên-trái
+2026-10-31 17:59:12.572 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 08c_crop_drag_loupe.png (CropViewController)
+2026-10-31 17:59:12.682 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra kéo tay
+2026-10-31 17:59:12.688 QuetTaiLieu[6294:24337] [SELFTEST] PASS kéo tay cầm -> tự tắt Tự động cắt
+2026-10-31 17:59:13.008 QuetTaiLieu[6294:24337] [SELFTEST] -- xác nhận vùng cắt
+2026-10-31 17:59:15.152 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 09_editor_after_crop.png (EditorViewController)
+2026-10-31 17:59:15.257 QuetTaiLieu[6294:24337] [SELFTEST] -- giữ So sánh
+2026-10-31 17:59:16.390 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 09b_compare.png (EditorViewController)
+2026-10-31 17:59:16.492 QuetTaiLieu[6294:24337] [SELFTEST] -- thả So sánh
+2026-10-31 17:59:16.795 QuetTaiLieu[6294:24337] [SELFTEST] -- sang trang 2
+2026-10-31 17:59:18.672 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 10_editor_page2.png (EditorViewController)
+2026-10-31 17:59:18.776 QuetTaiLieu[6294:24337] [SELFTEST] -- chụp lại trang 2
+2026-10-31 17:59:20.775 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 10b_camera_retake.png (CameraViewController)
+2026-10-31 17:59:20.879 QuetTaiLieu[6294:24337] [SELFTEST] -- chụp (chụp lại)
+2026-10-31 17:59:22.240 QuetTaiLieu[6294:24337] [SELFTEST] -- Tiếp tục (chụp lại)
+2026-10-31 17:59:24.981 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 10c_after_retake.png (EditorViewController)
+2026-10-31 17:59:25.089 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra chụp lại
+2026-10-31 17:59:25.091 QuetTaiLieu[6294:24337] [SELFTEST] PASS chụp lại thay ảnh trang 2, vẫn 3 trang
+2026-10-31 17:59:25.397 QuetTaiLieu[6294:24337] [SELFTEST] -- lưu tài liệu
+2026-10-31 17:59:27.027 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 11_document_after_edit.png (DocumentViewController)
+2026-10-31 17:59:27.133 QuetTaiLieu[6294:24337] [SELFTEST] -- Thêm trang
+2026-10-31 17:59:28.507 QuetTaiLieu[6294:24337] [SELFTEST] -- chụp (thêm trang)
+2026-10-31 17:59:29.840 QuetTaiLieu[6294:24337] [SELFTEST] -- Tiếp tục (thêm trang)
+2026-10-31 17:59:31.979 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 11b_editor_add_page.png (EditorViewController)
+2026-10-31 17:59:32.082 QuetTaiLieu[6294:24337] [SELFTEST] -- lưu (thêm trang)
+2026-10-31 17:59:33.932 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 11c_document_4_pages.png (DocumentViewController)
+2026-10-31 17:59:34.035 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra thêm trang
+2026-10-31 17:59:34.037 QuetTaiLieu[6294:24337] [SELFTEST] PASS Thêm trang: tài liệu có 4 trang
+2026-10-31 17:59:34.345 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra PDF sau chỉnh sửa
+2026-10-31 17:59:34.654 QuetTaiLieu[6294:24337] [SELFTEST] PASS PDF 4 trang: 783 KB, 4 trang
+2026-10-31 17:59:34.958 QuetTaiLieu[6294:24337] [SELFTEST] -- chia sẻ PDF
+2026-10-31 17:59:40.576 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 12_share_pdf.png (UIActivityViewController)
+2026-10-31 17:59:40.686 QuetTaiLieu[6294:24337] [SELFTEST] -- đóng bảng chia sẻ
+2026-10-31 17:59:42.050 QuetTaiLieu[6294:24337] [SELFTEST] -- về màn hình chính
+2026-10-31 17:59:43.198 QuetTaiLieu[6294:24337] [SELFTEST] -- mở máy ảnh (Đơn)
+2026-10-31 17:59:45.579 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 13_camera_single.png (CameraViewController)
+2026-10-31 17:59:45.682 QuetTaiLieu[6294:24337] [SELFTEST] -- chụp
+2026-10-31 17:59:47.877 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 14_crop_capture.png (CropViewController)
+2026-10-31 17:59:47.980 QuetTaiLieu[6294:24337] [SELFTEST] -- Tiếp tục
+2026-10-31 17:59:50.597 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 15_editor_from_camera.png (EditorViewController)
+2026-10-31 17:59:50.701 QuetTaiLieu[6294:24337] [SELFTEST] -- lưu
+2026-10-31 17:59:52.524 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 16_document_new.png (DocumentViewController)
+2026-10-31 17:59:52.628 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra tài liệu mới
+2026-10-31 17:59:52.630 QuetTaiLieu[6294:24337] [SELFTEST] PASS tài liệu chụp Đơn có 1 trang
+2026-10-31 17:59:52.631 QuetTaiLieu[6294:24337] [SELFTEST] PASS tài liệu chụp Đơn đã lưu
+2026-10-31 17:59:52.935 QuetTaiLieu[6294:24337] [SELFTEST] -- về màn hình chính
+2026-10-31 17:59:54.057 QuetTaiLieu[6294:24337] [SELFTEST] -- mở máy ảnh (Hàng loạt)
+2026-10-31 17:59:55.859 QuetTaiLieu[6294:24337] [SELFTEST] -- chụp 1
+2026-10-31 17:59:57.190 QuetTaiLieu[6294:24337] [SELFTEST] -- Tiếp tục 1
+2026-10-31 17:59:58.780 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 17_camera_batch_1.png (CameraViewController)
+2026-10-31 17:59:58.888 QuetTaiLieu[6294:24337] [SELFTEST] -- chụp 2
+2026-10-31 18:00:00.241 QuetTaiLieu[6294:24337] [SELFTEST] -- Tiếp tục 2
+2026-10-31 18:00:01.761 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 18_camera_batch_2.png (CameraViewController)
+2026-10-31 18:00:01.865 QuetTaiLieu[6294:24337] [SELFTEST] -- xem các trang đã chụp
+2026-10-31 18:00:05.757 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 19_editor_batch.png (EditorViewController)
+2026-10-31 18:00:05.860 QuetTaiLieu[6294:24337] [SELFTEST] -- lưu
+2026-10-31 18:00:07.671 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 20_document_batch.png (DocumentViewController)
+2026-10-31 18:00:07.774 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra tài liệu hàng loạt
+2026-10-31 18:00:07.775 QuetTaiLieu[6294:24337] [SELFTEST] PASS tài liệu Hàng loạt có 2 trang
+2026-10-31 18:00:08.109 QuetTaiLieu[6294:24337] [SELFTEST] PASS PDF 2 trang: 382 KB, 2 trang
+2026-10-31 18:00:08.415 QuetTaiLieu[6294:24337] [SELFTEST] -- chọn khổ giấy PDF
+2026-10-31 18:00:10.070 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 21_pdf_size.png (UIAlertController)
+2026-10-31 18:00:10.173 QuetTaiLieu[6294:24337] [SELFTEST] -- đóng
+2026-10-31 18:00:11.106 QuetTaiLieu[6294:24337] [SELFTEST] -- về màn hình chính
+2026-10-31 18:00:12.440 QuetTaiLieu[6294:24337] [SELFTEST] -- nhập 1 ảnh
+2026-10-31 18:00:14.369 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 22_import_crop.png (CropViewController)
+2026-10-31 18:00:14.476 QuetTaiLieu[6294:24337] [SELFTEST] -- Xong (nhập ảnh)
+2026-10-31 18:00:17.176 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 23_import_editor.png (EditorViewController)
+2026-10-31 18:00:17.287 QuetTaiLieu[6294:24337] [SELFTEST] -- lưu (nhập ảnh)
+2026-10-31 18:00:18.624 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 24_import_document.png (DocumentViewController)
+2026-10-31 18:00:18.727 QuetTaiLieu[6294:24337] [SELFTEST] -- về màn hình chính
+2026-10-31 18:00:19.857 QuetTaiLieu[6294:24337] [SELFTEST] -- nhập nhiều ảnh
+2026-10-31 18:00:24.630 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 25_import_multi_editor.png (EditorViewController)
+2026-10-31 18:00:24.735 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra nhập nhiều ảnh
+2026-10-31 18:00:24.736 QuetTaiLieu[6294:24337] [SELFTEST] PASS nhập nhiều ảnh: 3 trang
+2026-10-31 18:00:25.040 QuetTaiLieu[6294:24337] [SELFTEST] -- lưu (nhập nhiều ảnh)
+2026-10-31 18:00:26.438 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 26_import_multi_document.png (DocumentViewController)
+2026-10-31 18:00:26.545 QuetTaiLieu[6294:24337] [SELFTEST] -- về màn hình chính
+2026-10-31 18:00:27.669 QuetTaiLieu[6294:24337] [SELFTEST] -- mở tài liệu 2 trang
+2026-10-31 18:00:27.986 QuetTaiLieu[6294:24337] [SELFTEST] -- đổi tên
+2026-10-31 18:00:29.184 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 28_renamed.png (DocumentViewController)
+2026-10-31 18:00:29.302 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra đổi tên
+2026-10-31 18:00:29.304 QuetTaiLieu[6294:24337] [SELFTEST] PASS đổi tên được lưu
+2026-10-31 18:00:29.621 QuetTaiLieu[6294:24337] [SELFTEST] -- mở trình chỉnh sửa để xoá trang
+2026-10-31 18:00:29.945 QuetTaiLieu[6294:24337] [SELFTEST] -- xoá trang 1
+2026-10-31 18:00:31.546 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 29_page_deleted.png (EditorViewController)
+2026-10-31 18:00:31.653 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra xoá trang
+2026-10-31 18:00:31.655 QuetTaiLieu[6294:24337] [SELFTEST] PASS xoá trang: còn 1 trang
+2026-10-31 18:00:32.596 QuetTaiLieu[6294:24337] [SELFTEST] -- xoá tài liệu
+2026-10-31 18:00:32.907 QuetTaiLieu[6294:24337] [SELFTEST] -- tải lại
+2026-10-31 18:00:34.489 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 30_home_final.png (HomeViewController)
+2026-10-31 18:00:34.595 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra danh sách
+2026-10-31 18:00:34.601 QuetTaiLieu[6294:24337] [SELFTEST] PASS xoá tài liệu: còn 4 tài liệu (4)
+2026-10-31 18:00:34.906 QuetTaiLieu[6294:24337] [SELFTEST] -- nhập 12 ảnh lớn
+2026-10-31 18:01:04.710 QuetTaiLieu[6294:24337] [SELFTEST] -- thời gian xử lý
+2026-10-31 18:01:04.720 QuetTaiLieu[6294:24337] [SELFTEST]    nhập + xử lý 12 ảnh 12 MP: 29.8s
+2026-10-31 18:01:06.404 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 31_stress_editor.png (EditorViewController)
+2026-10-31 18:01:06.512 QuetTaiLieu[6294:24337] [SELFTEST] -- lưu (12 ảnh)
+2026-10-31 18:01:08.086 QuetTaiLieu[6294:24337] [SELFTEST] ảnh màn hình: 32_stress_document.png (DocumentViewController)
+2026-10-31 18:01:08.190 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra 12 trang
+2026-10-31 18:01:08.192 QuetTaiLieu[6294:24337] [SELFTEST] PASS nhập 12 ảnh lớn: tài liệu 12 trang
+2026-10-31 18:01:08.583 QuetTaiLieu[6294:24337] [SELFTEST] PASS PDF 12 trang: 6897 KB, 12 trang
+2026-10-31 18:01:08.897 QuetTaiLieu[6294:24337] [SELFTEST] -- về màn hình chính
+2026-10-31 18:01:10.040 QuetTaiLieu[6294:24337] [SELFTEST] -- kiểm tra danh sách cuối
+2026-10-31 18:01:10.042 QuetTaiLieu[6294:24337] [SELFTEST] PASS danh sách cuối: 5 tài liệu (5)
+2026-10-31 18:01:10.352 QuetTaiLieu[6294:24337] [SELFTEST] KẾT QUẢ: 27 đạt, 0 lỗi
+vn.quettailieu.scanner: 6294

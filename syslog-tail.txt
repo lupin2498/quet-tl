@@ -1,0 +1,1039 @@
+Timestamp               Ty Process[PID:TID]
+2026-10-31 17:58:46.586 Df QuetTaiLieu[6294:5f11] (libMobileGestalt.dylib) No persisted cache on this platform.
+2026-10-31 17:58:46.587 Df QuetTaiLieu[6294:5f2c] [com.apple.xpc:connection] [0x104f06d10] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
+2026-10-31 17:58:46.587 Df QuetTaiLieu[6294:5f2d] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
+2026-10-31 17:58:46.588 Df QuetTaiLieu[6294:5f2d] [com.apple.xpc:connection] [0x104f07780] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-10-31 17:58:46.591 A  QuetTaiLieu[6294:5f2c] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-10-31 17:58:46.598 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
+2026-10-31 17:58:46.599 Df QuetTaiLieu[6294:5f11] [com.apple.runningboard:connection] Initializing connection
+2026-10-31 17:58:46.599 Df QuetTaiLieu[6294:5f11] [com.apple.runningboard:process] Removing all cached process handles
+2026-10-31 17:58:46.599 Df QuetTaiLieu[6294:5f11] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
+2026-10-31 17:58:46.600 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-10-31 17:58:46.600 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-10-31 17:58:46.601 Df QuetTaiLieu[6294:5f11] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
+2026-10-31 17:58:46.602 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
+2026-10-31 17:58:46.603 Df QuetTaiLieu[6294:5f32] [com.apple.xpc:connection] [0x104e05280] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-10-31 17:58:46.604 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x6000002036a0; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
+2026-10-31 17:58:46.604 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003000240 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
+2026-10-31 17:58:46.604 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003000240 com.apple.frontboard.systemappservices> sent handshake
+2026-10-31 17:58:46.604 Df QuetTaiLieu[6294:5f11] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x600000210e00>
+2026-10-31 17:58:46.610 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
+2026-10-31 17:58:46.613 A  QuetTaiLieu[6294:5f30] (RunningBoardServices) didChangeInheritances
+2026-10-31 17:58:46.613 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:connection] Handshake succeeded
+2026-10-31 17:58:46.614 Df QuetTaiLieu[6294:5f2b] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-10-31 17:58:46.614 Df QuetTaiLieu[6294:5f2b] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-10-31 17:58:46.615 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
+2026-10-31 17:58:46.616 Df QuetTaiLieu[6294:5f2b] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x60000210af30>
+2026-10-31 17:58:46.616 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:connection] Identity resolved as app<vn.quettailieu.scanner((null))>
+2026-10-31 17:58:46.616 Df QuetTaiLieu[6294:5f2b] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x60000210af30>
+2026-10-31 17:58:46.617 Df QuetTaiLieu[6294:5f2b] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x600001706e40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 408 (elapsed = 0).
+2026-10-31 17:58:46.617 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
+2026-10-31 17:58:46.618 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
+2026-10-31 17:58:46.619 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x104e04080> for initial
+2026-10-31 17:58:46.620 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x104e04080> for CADisplay KVO
+2026-10-31 17:58:46.621 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
+2026-10-31 17:58:46.624 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
+2026-10-31 17:58:46.626 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
+2026-10-31 17:58:46.626 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
+2026-10-31 17:58:46.627 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
+2026-10-31 17:58:46.628 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
+2026-10-31 17:58:46.628 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
+2026-10-31 17:58:46.629 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
+2026-10-31 17:58:46.630 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
+2026-10-31 17:58:46.630 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-10-31 17:58:46.631 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneWindowingControlClientSettings on FBSSceneClientSettings
+2026-10-31 17:58:46.632 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneSettingsCore on FBSSceneSettings
+2026-10-31 17:58:46.636 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneClientSettingsCore on FBSSceneClientSettings
+2026-10-31 17:58:46.636 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingContentSizePreferenceClientSettings> on FBSSceneClientSettings
+2026-10-31 17:58:46.637 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneHostingTraitCollectionPropagationSettings on FBSSceneSettings
+2026-10-31 17:58:46.640 Df QuetTaiLieu[6294:5f11] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 1, category name = (null)
+2026-10-31 17:58:46.640 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationSettings> on FBSSceneSettings
+2026-10-31 17:58:46.641 Df QuetTaiLieu[6294:5f11] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 0, category name = (null)
+2026-10-31 17:58:46.641 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationClientSettings> on FBSSceneClientSettings
+2026-10-31 17:58:46.642 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingEventDeferringSettings> on FBSSceneSettings
+2026-10-31 17:58:46.645 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneSettings
+2026-10-31 17:58:46.645 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneClientSettings
+2026-10-31 17:58:46.645 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingViewControllerPreferencePropagationClientSettings> on FBSSceneClientSettings
+2026-10-31 17:58:46.646 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneSettings setting counterpart class: UIApplicationSceneSettings
+2026-10-31 17:58:46.648 Df QuetTaiLieu[6294:5f2b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneZoomTransitionSettings> on FBSSceneSettings
+2026-10-31 17:58:46.648 Df QuetTaiLieu[6294:5f11] [com.apple.dt.xctest:Default] Registering for test daemon availability notify post.
+2026-10-31 17:58:46.648 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneClientSettings setting counterpart class: UIApplicationSceneClientSettings
+2026-10-31 17:58:46.649 Df QuetTaiLieu[6294:5f11] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-10-31 17:58:46.649 Df QuetTaiLieu[6294:5f11] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-10-31 17:58:46.649 Df QuetTaiLieu[6294:5f2d] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneTransitionContextCore on FBSSceneTransitionContext
+2026-10-31 17:58:46.650 Df QuetTaiLieu[6294:5f11] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-10-31 17:58:46.652 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UpdateScheduler] Selected display: name=LCD (PurpleMain), id=1
+2026-10-31 17:58:46.661 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:BackgroundTask] Will add backgroundTask with taskName: Persistent SceneSession Map Update, expirationHandler: <__NSGlobalBlock__: 0x1e61729e0>
+2026-10-31 17:58:46.661 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:BackgroundTask] Reusing background assertion <BKSProcessAssertion: 0x60000210af30>
+2026-10-31 17:58:46.662 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x60000210af30>
+2026-10-31 17:58:46.662 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x600001711280>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 408 (elapsed = 0).
+2026-10-31 17:58:46.663 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Deactivation reason added: 5; deactivation reasons: 1024 -> 1056; animating application lifecycle event: 1
+2026-10-31 17:58:46.664 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:46.665 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Should send trait collection or coordinate space update, interface style 2 -> 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:46.666 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:46.668 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:HomeAffordanceObservation] Initializing: <_UIHomeAffordanceSceneNotifier: 0x60000290c9a0>; with scene: <UIWindowScene: 0x104e08c20>
+2026-10-31 17:58:46.668 Df QuetTaiLieu[6294:5f11] [com.apple.BacklightServices:scenes] 0x600000c0ef10 setDelegate:<0x600000c0efd0 _UIBacklightEnvironment> hasDelegate:YES for environment:sceneID:vn.quettailieu.scanner-default
+2026-10-31 17:58:46.669 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:46.669 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:EventDeferring] [0x60000290d030] Initialized with scene: <UIWindowScene: 0x104e08c20>; behavior: <_UIEventDeferringBehavior_iOS: 0x600000207140>; availableForProcess: 1, systemShellManagesKeyboardFocus: 1
+2026-10-31 17:58:46.670 Df QuetTaiLieu[6294:5f11] [com.apple.BoardServices:XPCErrors] [C:2] Alloc com.apple.backboard.hid-services.xpc
+2026-10-31 17:58:46.670 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x104f0cc20] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-10-31 17:58:46.671 Df QuetTaiLieu[6294:5f11] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x600002602dc0; process scope; status: target> was:none
+2026-10-31 17:58:46.671 Df QuetTaiLieu[6294:5f2c] [com.apple.BackBoard:EventDelivery] BKSHIDEventObserver - connection activation
+2026-10-31 17:58:46.672 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-10-31 17:58:46.672 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Scene target of keyboard event deferring environment did change: 1; scene: UIWindowScene: 0x104e08c20; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Avn.quettailieu.scanner-default
+2026-10-31 17:58:46.672 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:EventDeferring] [0x60000290d030] Scene target of event deferring environments did update: scene: 0x104e08c20; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-10-31 17:58:46.672 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x104e08c20; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Avn.quettailieu.scanner-default
+2026-10-31 17:58:46.672 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Stack[KeyWindow] 0x600000c0f690: Taking no further action for migration from LastOneWins -> SystemShellManaged as there are no scenes
+2026-10-31 17:58:46.672 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-10-31 17:58:46.672 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Key window needs update: 0; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x104e08c20; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x0; reason: UIWindowScene: 0x104e08c20: Window scene became target of keyboard environment
+2026-10-31 17:58:46.673 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:46.673 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:46.675 F  QuetTaiLieu[6294:5f11] [com.apple.runtime-issues:UIKit App Config] `UIScene` lifecycle will soon be required. Failure to adopt will result in an assert in the future.
+2026-10-31 17:58:46.675 A  QuetTaiLieu[6294:5f11] (libsystem_trace.dylib) Activity for state dumps
+2026-10-31 17:58:46.676 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:46.679 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:vn.quettailieu.scanner-default  persistentID: 97030D2B-1C26-4DCD-9347-39B768EF3EB4
+2026-10-31 17:58:46.680 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 1056
+2026-10-31 17:58:46.680 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Deactivation reason added: 11; deactivation reasons: 1056 -> 3104; animating application lifecycle event: 1
+2026-10-31 17:58:46.682 Df QuetTaiLieu[6294:5f11] [com.apple.KeyboardArbiter:Client] startConnection
+2026-10-31 17:58:46.684 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x1060095e0] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-10-31 17:58:46.712 Df QuetTaiLieu[6294:5f2c] [com.apple.xpc:connection] [0x104f0ab70] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-10-31 17:58:46.773 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Warning: no visual style classes have been registered at all.
+2026-10-31 17:58:46.773 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Warning: no visual style classes have been registered at all.
+2026-10-31 17:58:46.773 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:46.773 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:46.794 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIApplicationSceneDisplaySettings> on FBSSceneSettings
+2026-10-31 17:58:46.828 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Orientation] <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4) Scene updated orientation preferences: none -> ( Pu )
+2026-10-31 17:58:46.828 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Key window API is scene-level: YES
+2026-10-31 17:58:46.828 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] UIWindowScene: 0x104e08c20: Window became key in scene: UIWindow: 0x104e0c760; contextId: 0xEBF466A4: reason: UIWindowScene: 0x104e08c20: Window requested to become key in scene: 0x104e0c760
+2026-10-31 17:58:46.828 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Key window needs update: 1; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x104e08c20; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x104e0c760; reason: UIWindowScene: 0x104e08c20: Window requested to become key in scene: 0x104e0c760
+2026-10-31 17:58:46.828 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Window did become application key: UIWindow: 0x104e0c760; contextId: 0xEBF466A4; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Avn.quettailieu.scanner-default
+2026-10-31 17:58:46.828 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:EventDeferring] [0x60000290d030] Begin local event deferring requested for token: 0x600002609860; environments: 1; reason: UIWindowScene: 0x104e08c20: Begin event deferring in keyboardFocus for window: 0x104e0c760
+2026-10-31 17:58:46.829 Df QuetTaiLieu[6294:5f36] [com.apple.BackBoard:EventDelivery] BKSHIDEventDeliveryManager - connection activation
+2026-10-31 17:58:46.832 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Deactivation reason removed: 10; deactivation reasons: 3104 -> 2080; animating application lifecycle event: 1
+2026-10-31 17:58:46.832 Df QuetTaiLieu[6294:5f36] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x600002602dc0; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Avn.quettailieu.scanner-default; status: ancestor> was:target
+2026-10-31 17:58:46.833 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-10-31 17:58:46.833 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-10-31 17:58:46.833 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-10-31 17:58:46.835 Df QuetTaiLieu[6294:5f36] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-10-31 17:58:46.836 Df QuetTaiLieu[6294:5f36] [com.apple.xpc:session] [0x600002110000] Session created.
+2026-10-31 17:58:46.836 Df QuetTaiLieu[6294:5f36] [com.apple.xpc:session] [0x600002110000] Session created from connection [0x104e08990]
+2026-10-31 17:58:46.836 Df QuetTaiLieu[6294:5f36] [com.apple.xpc:connection] [0x104e08990] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-10-31 17:58:46.836 Df QuetTaiLieu[6294:5f36] [com.apple.xpc:session] [0x600002110000] Session activated
+2026-10-31 17:58:46.836 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:46.871 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Warning: no visual style classes have been registered at all.
+2026-10-31 17:58:46.880 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Warning: no visual style classes have been registered at all.
+2026-10-31 17:58:46.957 Df QuetTaiLieu[6294:5f11] [PrototypeTools:domain] Not observing PTDefaults on customer install.
+2026-10-31 17:58:46.961 Df QuetTaiLieu[6294:5f2c] [com.apple.calls.callkit:Default] Call host has no calls
+2026-10-31 17:58:47.249 Df QuetTaiLieu[6294:5f37] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 2
+2026-10-31 17:58:47.249 Df QuetTaiLieu[6294:5f37] [com.apple.UIKit:BackgroundTask] Ending task with identifier 2 and description: <_UIBackgroundTaskInfo: 0x600001711280>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 408 (elapsed = 0), _expireHandler: <__NSGlobalBlock__: 0x1e61729e0>
+2026-10-31 17:58:47.249 Df QuetTaiLieu[6294:5f37] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x60000210af30> (used by background task with identifier 2: <_UIBackgroundTaskInfo: 0x600001711280>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 408 (elapsed = 0))
+2026-10-31 17:58:47.474 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x104f14700] activating connection: mach=true listener=false peer=false name=com.apple.lsd.mapdb
+2026-10-31 17:58:47.487 A  QuetTaiLieu[6294:5f36] (RunningBoardServices) didChangeInheritances
+2026-10-31 17:58:47.491 Df QuetTaiLieu[6294:5f11] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [49C26BDC-7D24-4233-AF7A-F006377E46A6] (reporting strategy default)>
+2026-10-31 17:58:47.491 Df QuetTaiLieu[6294:5f11] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [7EE8B85B-D96A-4B6E-97BC-45517C92B612] (reporting strategy default)>
+2026-10-31 17:58:47.491 Df QuetTaiLieu[6294:5f11] [com.apple.network:activity] Set activity <nw_activity 50:1 [49C26BDC-7D24-4233-AF7A-F006377E46A6] (reporting strategy default)> as the global parent
+2026-10-31 17:58:47.492 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-10-31 17:58:47.492 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x600001706e40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 408 (elapsed = 1), _expireHandler: (null)
+2026-10-31 17:58:47.492 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x60000210af30> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x600001706e40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 408 (elapsed = 1))
+2026-10-31 17:58:47.492 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x60000210af30> for task identifier: 1
+2026-10-31 17:58:47.492 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:EventDeferring] [0x60000290d030] Scene target of event deferring environments did update: scene: 0x104e08c20; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-10-31 17:58:47.492 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x104e08c20; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Avn.quettailieu.scanner-default
+2026-10-31 17:58:47.492 Df QuetTaiLieu[6294:5f11] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-10-31 17:58:47.495 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:EventBus] Event Timing Profile for Touch: not found, path="/System/Library/EventTimingProfiles/Sim.Touch.plist"
+2026-10-31 17:58:47.495 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:EventBus] Event Timing Profile for Pencil: not found, path="/System/Library/EventTimingProfiles/Sim.Pencil.plist"
+2026-10-31 17:58:47.496 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-10-31 17:58:47.497 Df QuetTaiLieu[6294:5f11] [com.apple.KeyboardArbiter:Client] startConnection
+2026-10-31 17:58:47.502 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:vn.quettailieu.scanner-default  persistentID: 97030D2B-1C26-4DCD-9347-39B768EF3EB4
+2026-10-31 17:58:47.503 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:47.508 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 2, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:47.509 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:vn.quettailieu.scanner-default  persistentID: 97030D2B-1C26-4DCD-9347-39B768EF3EB4
+2026-10-31 17:58:47.510 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-10-31 17:58:47.510 Df QuetTaiLieu[6294:5f11] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-10-31 17:58:47.512 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-10-31 17:58:47.514 Df QuetTaiLieu[6294:5f11] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-10-31 17:58:47.515 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-10-31 17:58:47.518 A  QuetTaiLieu[6294:5f37] (RunningBoardServices) didChangeInheritances
+2026-10-31 17:58:47.572 Df QuetTaiLieu[6294:5f11] [com.apple.network:activity] <nw_activity 50:1 [49C26BDC-7D24-4233-AF7A-F006377E46A6] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 1554ms
+2026-10-31 17:58:47.572 Df QuetTaiLieu[6294:5f11] [com.apple.network:activity] <nw_activity 50:2 [7EE8B85B-D96A-4B6E-97BC-45517C92B612] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 1554ms
+2026-10-31 17:58:47.572 Df QuetTaiLieu[6294:5f11] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [49C26BDC-7D24-4233-AF7A-F006377E46A6] (global parent) (reporting strategy default) complete (reason success)>
+2026-10-31 17:58:47.572 Df QuetTaiLieu[6294:5f11] [com.apple.network:activity] Unset the global parent activity
+2026-10-31 17:58:47.573 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:vn.quettailieu.scanner-default  persistentID: 97030D2B-1C26-4DCD-9347-39B768EF3EB4
+2026-10-31 17:58:47.573 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Scene did update interface style to 1, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:47.573 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Push traits update to screen for new style 1, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 17:58:47.660 A  QuetTaiLieu[6294:5f2b] (RunningBoardServices) didChangeInheritances
+2026-10-31 17:58:47.877 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] Quét Tài Liệu 1.1 (2) — iOS 26.2, iPhone
+2026-10-31 17:58:47.911 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x106010d70] activating connection: mach=true listener=false peer=false name=com.apple.IOSurface.Remote
+2026-10-31 17:58:48.205 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 01_home_empty.png (HomeViewController)
+2026-10-31 17:58:48.308 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- thuật toán tìm mép trên ảnh tổng hợp
+2026-10-31 17:58:48.371 Df QuetTaiLieu[6294:5f2d] (CoreVideo) Pixel format registry initialized. Constant classes enabled.
+2026-10-31 17:58:48.536 Df QuetTaiLieu[6294:5f2d] [com.apple.xpc:connection] [0x106007ac0] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-10-31 17:58:48.537 Df QuetTaiLieu[6294:5f2d] [com.apple.xpc:connection] [0x104f22b70] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-10-31 17:58:48.538 Df QuetTaiLieu[6294:5f2d] [com.apple.xpc:connection] [0x104e5f930] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-10-31 17:58:48.619 Df QuetTaiLieu[6294:5f2d] [com.apple.CoreAnalytics:client] No XPC connection in Simulator
+2026-10-31 17:58:48.663 E  QuetTaiLieu[6294:5f37] (libCoreFSCache.dylib) fopen failed for data file: errno = 2 (No such file or directory)
+2026-10-31 17:58:48.664 E  QuetTaiLieu[6294:5f37] (libCoreFSCache.dylib) Errors found! Invalidating cache...
+2026-10-31 17:58:48.664 Df QuetTaiLieu[6294:5f37] [com.apple.xpc:connection] [0x106027450] activating connection: mach=false listener=false peer=false name=com.apple.MTLCompilerService
+2026-10-31 17:58:48.740 A  QuetTaiLieu[6294:5f37] (Metal) compiling shader
+2026-10-31 17:58:48.740 Df QuetTaiLieu[6294:5f36] [com.apple.xpc:connection] [0x104e07750] activating connection: mach=false listener=false peer=false name=com.apple.MTLCompilerService
+2026-10-31 17:58:48.740 A  QuetTaiLieu[6294:5f36] (Metal) compiling shader
+2026-10-31 17:58:49.218 E  QuetTaiLieu[6294:5f36] (libCoreFSCache.dylib) fopen failed for data file: errno = 2 (No such file or directory)
+2026-10-31 17:58:49.218 E  QuetTaiLieu[6294:5f36] (libCoreFSCache.dylib) Errors found! Invalidating cache...
+2026-10-31 17:58:49.218 A  QuetTaiLieu[6294:5f36] (Metal) compiling shader
+2026-10-31 17:58:49.218 A  QuetTaiLieu[6294:5f37] (Metal) compiling shader
+2026-10-31 17:58:50.522 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    PASS doc_1_wood err=0.0005 (1.0px) 86ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.661 biên=0 48ms | Vision err=0.1779 tin cậy=0.00
+2026-10-31 17:58:50.524 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    PASS doc_2_dark err=0.0005 (1.0px) 77ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.848 biên=0 34ms | Vision err=0.5119 tin cậy=0.97
+2026-10-31 17:58:50.525 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    PASS doc_3_gray err=0.0005 (1.0px) 48ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.803 biên=0 36ms | Vision err=0.5164 tin cậy=0.83
+2026-10-31 17:58:50.525 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    PASS doc_4_beige err=0.0005 (1.0px) 51ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.797 biên=0 45ms | Vision err=0.4628 tin cậy=0.99
+2026-10-31 17:58:50.526 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    PASS doc_5_blue err=0.0005 (0.9px) 63ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.813 biên=0 44ms | Vision err=0.5275 tin cậy=0.95
+2026-10-31 17:58:50.530 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    PASS doc_6_clutter err=0.0005 (1.0px) 72ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.834 biên=0 67ms | Vision err=0.5463 tin cậy=0.99
+2026-10-31 17:58:50.531 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS DocDetector (Swift) trùng bản Java: 6/6 ảnh sai số <1% đường chéo
+2026-10-31 17:58:50.532 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS tìm mép (DocDetector + Vision) 6/6 ảnh sai số <1% đường chéo
+2026-10-31 17:58:50.672 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- dựng tài liệu + PDF
+2026-10-31 17:58:50.744 A  QuetTaiLieu[6294:5f2d] (Metal) compiling shader
+2026-10-31 17:58:50.758 A  QuetTaiLieu[6294:5f2d] (Metal) compiling shader
+2026-10-31 17:58:51.596 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS nắn phẳng với góc thật: 804x1137, tỷ lệ 0.707
+2026-10-31 17:58:51.599 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS nội dung sau nắn phẳng: góc sáng 215, 137 điểm chữ
+2026-10-31 17:58:51.696 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    doc_1_wood: 1200x1600 góc=(225,287) (971,276) (1016,1412) (213,1424)
+2026-10-31 17:58:51.766 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    doc_2_dark: 1200x1600 góc=(218,191) (968,232) (945,1412) (113,1367)
+2026-10-31 17:58:51.846 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    doc_6_clutter: 1200x1600 góc=(125,280) (902,141) (1123,1283) (313,1428)
+2026-10-31 17:58:54.174 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS dựng 3 trang
+2026-10-31 17:58:54.190 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS trang 1: 804x1137, tỷ lệ 0.707 (bản Java: 0.707)
+2026-10-31 17:58:54.201 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS trang 2: 834x1252, tỷ lệ 0.666 (bản Java: 0.666)
+2026-10-31 17:58:54.215 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS trang 3: 822x1163, tỷ lệ 0.707 (bản Java: 0.707)
+2026-10-31 17:58:54.535 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS PDF 3 trang: 562 KB, 3 trang
+2026-10-31 17:58:54.906 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- tải lại danh sách
+2026-10-31 17:58:56.496 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 02_home_list.png (HomeViewController)
+2026-10-31 17:58:56.598 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- mở tài liệu
+2026-10-31 17:58:56.784 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:56.784 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:56.786 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:56.786 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:56.787 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:56.787 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:58.397 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 03_document.png (DocumentViewController)
+2026-10-31 17:58:58.503 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- mở trình chỉnh sửa
+2026-10-31 17:58:58.516 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:58:58.516 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:00.242 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 04_editor.png (EditorViewController)
+2026-10-31 17:59:00.345 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- mở bảng lọc
+2026-10-31 17:59:00.349 Df QuetTaiLieu[6294:5f11] (UIKitCore) The behavior of the UICollectionViewFlowLayout is not defined because:
+2026-10-31 17:59:00.349 Df QuetTaiLieu[6294:5f11] (UIKitCore) the item height must be less than the height of the UICollectionView minus the section insets top and bottom values, minus the content insets top and bottom values.
+2026-10-31 17:59:00.352 Df QuetTaiLieu[6294:5f11] (UIKitCore) The relevant UICollectionViewFlowLayout instance is <UICollectionViewFlowLayout: 0x104e17960>, and it is attached to <UICollectionView: 0x1058f5a00; frame = (0 108; 402 468); clipsToBounds = YES; gestureRecognizers = <NSArray: 0x600000cbfa50>; animations = { bounds.size=<CABasicAnimation: 0x600000308400>; position=<CABasicAnimation: 0x6000003085a0>; }; backgroundColor = UIExtendedGrayColorSpace 0 0; layer = <CALayer: 0x600000cbeaf0>; contentOffset: {0, 0}; contentSize: {1206, 622}; adjustedContentInset: {0, 0, 0, 0}; layout: <UICollectionViewFlowLayout: 0x104e17960>; dataSource: <QuetTaiLieu.EditorViewController: 0x1050f3600>>.
+2026-10-31 17:59:00.609 Df QuetTaiLieu[6294:5f11] (UIKitCore) Make a symbolic breakpoint at UICollectionViewFlowLayoutBreakForInvalidSizes to catch this in the debugger.
+2026-10-31 17:59:00.634 A  QuetTaiLieu[6294:5f36] (Metal) compiling shader
+2026-10-31 17:59:00.671 A  QuetTaiLieu[6294:5f36] (Metal) compiling shader
+2026-10-31 17:59:02.774 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 05_filters.png (EditorViewController)
+2026-10-31 17:59:02.876 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- lọc Đen trắng
+2026-10-31 17:59:04.217 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 06_filter_bw.png (EditorViewController)
+2026-10-31 17:59:04.320 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra bộ lọc
+2026-10-31 17:59:04.322 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS trang 1 dùng bộ lọc Đen trắng
+2026-10-31 17:59:04.637 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- xoay trái
+2026-10-31 17:59:06.114 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 07_rotated.png (EditorViewController)
+2026-10-31 17:59:06.219 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra xoay
+2026-10-31 17:59:06.220 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS trang 1 xoay 270°
+2026-10-31 17:59:06.523 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- đóng bảng lọc + mở màn hình cắt
+2026-10-31 17:59:06.556 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:06.556 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:08.341 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 08_crop_edit.png (CropViewController)
+2026-10-31 17:59:08.449 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- tắt Tự động cắt
+2026-10-31 17:59:09.874 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 08b_crop_auto_off.png (CropViewController)
+2026-10-31 17:59:09.981 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra tắt
+2026-10-31 17:59:09.982 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS Tự động cắt: tắt -> khung toàn ảnh
+2026-10-31 17:59:10.298 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- bật lại Tự động cắt
+2026-10-31 17:59:11.449 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kéo góc trên-trái
+2026-10-31 17:59:12.572 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 08c_crop_drag_loupe.png (CropViewController)
+2026-10-31 17:59:12.682 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra kéo tay
+2026-10-31 17:59:12.688 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS kéo tay cầm -> tự tắt Tự động cắt
+2026-10-31 17:59:13.008 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- xác nhận vùng cắt
+2026-10-31 17:59:15.152 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 09_editor_after_crop.png (EditorViewController)
+2026-10-31 17:59:15.256 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- giữ So sánh
+2026-10-31 17:59:16.390 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 09b_compare.png (EditorViewController)
+2026-10-31 17:59:16.492 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- thả So sánh
+2026-10-31 17:59:16.795 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- sang trang 2
+2026-10-31 17:59:18.672 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 10_editor_page2.png (EditorViewController)
+2026-10-31 17:59:18.776 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- chụp lại trang 2
+2026-10-31 17:59:18.804 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke_2: camera-history/unknown/preferred-camera-history changed... newDownplayUserPreferredCameraOverrideHistory = F (based on camera-history/unknown/preferred-camera-history), new user preferred camera history (null)
+2026-10-31 17:59:18.804 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: dispatching async to preferred camera property refresh queue
+2026-10-31 17:59:18.804 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _cameraHistoryDispatchQueue]_block_invoke: using main queue for refreshing camera properties
+2026-10-31 17:59:18.804 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: async dispatch to preferred camera property refresh queue returned
+2026-10-31 17:59:18.804 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: change handler for camera-history/unknown/preferred-camera-history returning
+2026-10-31 17:59:18.804 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: camera-history/override/preferred-camera-history changed... newDownplayUserPreferredCameraOverrideHistory = F (based on camera-history/unknown/preferred-camera-history), new user preferred camera override history (null)
+2026-10-31 17:59:18.804 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: dispatching async to preferred camera property refresh queue
+2026-10-31 17:59:18.804 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: async dispatch to preferred camera property refresh queue returned
+2026-10-31 17:59:18.805 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: change handler for camera-history/override/preferred-camera-history returning
+2026-10-31 17:59:18.805 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: camera-history/system-wide/streaming-camera-history changed... new streaming camera history (null)
+2026-10-31 17:59:18.805 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: dispatching async to preferred camera property refresh queue
+2026-10-31 17:59:18.805 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: async dispatch to preferred camera property refresh queue returned
+2026-10-31 17:59:18.805 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: change handler for camera-history/system-wide/streaming-camera-history returning
+2026-10-31 17:59:18.805 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke: doing deferred dispatch async to preferred camera property refresh queue
+2026-10-31 17:59:18.805 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _setUpCameraHistoryOnce]_block_invoke_2: deferred async dispatch to preferred camera property refresh queue returned
+2026-10-31 17:59:18.810 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureDevice >>>> +[AVCaptureDevice _listEligibleEffects]_block_invoke: App with preferencesDomain 'unknown' bundle 'vn.quettailieu.scanner' is NOT eligible for NSCameraBackgroundReplacementEnabled effects
+2026-10-31 17:59:18.810 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureDevice >>>> +[AVCaptureDevice _listEligibleEffects]_block_invoke: App with preferencesDomain 'unknown' bundle 'vn.quettailieu.scanner' is NOT eligible for NSCameraPortraitEffectEnabled effects
+2026-10-31 17:59:18.810 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureDevice >>>> +[AVCaptureDevice _listEligibleEffects]_block_invoke: App with preferencesDomain 'unknown' bundle 'vn.quettailieu.scanner' is NOT eligible for NSCameraStudioLightEnabled effects
+2026-10-31 17:59:18.810 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureDevice >>>> +[AVCaptureDevice _listEligibleEffects]_block_invoke: App with preferencesDomain 'unknown' bundle 'vn.quettailieu.scanner' is NOT eligible for NSCameraReactionEffectsEnabled effects
+2026-10-31 17:59:18.811 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureDevice >>>> +[AVCaptureDevice reactionEffectGesturesEnabledDefault]_block_invoke: Using default from system 0
+2026-10-31 17:59:18.811 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureDevice >>>> +[AVCaptureDevice setUpReactionEffectsStateOnce]_block_invoke: Suppressed gestures 1 : enabled 0 have shown 0
+2026-10-31 17:59:18.811 E  QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< FigCaptureSourceSimulator >>>> signalled err=-12784 at <>:259
+2026-10-31 17:59:18.812 E  QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< FigCaptureSourceSimulator >>>> signalled err=-12784 at <>:259
+2026-10-31 17:59:18.813 E  QuetTaiLieu[6294:5f11] [com.apple.coremedia:] <<<< FormatDescription >>>> signalled err=-12710 at <>:988
+2026-10-31 17:59:18.813 E  QuetTaiLieu[6294:5f11] [com.apple.coremedia:] (Fig) signalled err=-12710 at <>:601
+2026-10-31 17:59:18.814 E  QuetTaiLieu[6294:5f11] [com.apple.coremedia:] <<<< FormatDescription >>>> signalled err=-12710 at <>:988
+2026-10-31 17:59:18.814 E  QuetTaiLieu[6294:5f11] [com.apple.coremedia:] (Fig) signalled err=-12710 at <>:601
+2026-10-31 17:59:18.815 E  QuetTaiLieu[6294:5f11] [com.apple.coremedia:] <<<< FormatDescription >>>> signalled err=-12710 at <>:988
+2026-10-31 17:59:18.815 E  QuetTaiLieu[6294:5f11] [com.apple.coremedia:] (Fig) signalled err=-12710 at <>:601
+2026-10-31 17:59:18.815 E  QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< FigCaptureSourceSimulator >>>> signalled err=-12784 at <>:259
+2026-10-31 17:59:18.815 E  QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< FigCaptureSourceSimulator >>>> signalled err=-12784 at <>:259
+2026-10-31 17:59:18.826 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureDevice >>>> _registerVideoDevicesOnce: Did not find front wide camera. registeredVideoDevices: (
+    "<AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>"
+)
+2026-10-31 17:59:18.870 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:18.870 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:18.870 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession init]: (0x60000001dd70) called
+2026-10-31 17:59:18.874 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _initWithMediaEnvironment:]: (0x60000001dd70) finished
+2026-10-31 17:59:18.878 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _addVideoPreviewLayer:exceptionReason:]: (0x60000001dd70) <AVCaptureVideoPreviewLayer: 0x600001777ac0>
+2026-10-31 17:59:18.878 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession beginConfiguration]: (0x60000001dd70)
+2026-10-31 17:59:18.878 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001dd70) updated beginConfigRefCount 1
+2026-10-31 17:59:18.880 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession commitConfiguration]: (0x60000001dd70)
+2026-10-31 17:59:18.880 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _commitConfiguration]: (0x60000001dd70) updated beginConfigRefCount 0
+2026-10-31 17:59:18.880 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001dd70) called. skipConfig: 0
+2026-10-31 17:59:18.881 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001dd70) New fcs config(1)
+2026-10-31 17:59:18.881 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001dd70) Setting fcs config(1) FigCaptureSessionConfiguration 0x600002639c80: ID 1, sdk 5072047138930695, AVCaptureSessionPresetHigh multiCam: 0, appAudio: 1, autoConfig: 1, mixesWithOthers: 0, hqBluetooth: 0, runWhileMultitasking: 0, checkIfFileAlreadyExistForMFO: 1 autoRunDeferredStart: 0
+2026-10-31 17:59:18.882 E  QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< FigCaptureSessionSimulator >>>> signalled err=-12782 at <>:297
+2026-10-31 17:59:18.890 Df QuetTaiLieu[6294:5f11] [com.apple.coremedia:] <<<< AVError >>>> AVLocalizedErrorWithUnderlyingOSStatus: Returning error (AVFoundationErrorDomain / -11800) status (-12782)
+2026-10-31 17:59:18.899 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _postRuntimeError:]: (0x60000001dd70) posting AVCaptureSessionRuntimeErrorNotification with Error Domain=AVFoundationErrorDomain Code=-11800 "Không thể hoàn thành thao tác này" UserInfo={NSLocalizedFailureReason=Đã xảy ra lỗi không xác định (-12782), NSLocalizedDescription=Không thể hoàn thành thao tác này, NSUnderlyingError=0x600000cc3ba0 {Error Domain=NSOSStatusErrorDomain Code=-12782 "(null)"}}
+2026-10-31 17:59:18.935 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001777ac0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:18.989 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: getting current value for userPreferredCamera (allowsSuspendedPreferredCameras = F)
+2026-10-31 17:59:18.989 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: current list of devices:
+2026-10-31 17:59:18.989 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.989 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.989 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: devices with media types (
+    vide,
+    muxx
+):
+2026-10-31 17:59:18.989 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.989 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.989 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: 6. fallback code first device in list (if any)
+2026-10-31 17:59:18.990 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: getting current value for systemPreferredCamera (allowsSuspendedPreferredCameras = F)
+2026-10-31 17:59:18.990 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: current list of devices:
+2026-10-31 17:59:18.990 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.991 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.991 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: devices with media types (
+    vide,
+    muxx
+):
+2026-10-31 17:59:18.991 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.992 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.992 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: 6. fallback code first device in list (if any)
+2026-10-31 17:59:18.992 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: userPreferredCameraChanged T, resolved userPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>, current sUserPreferredCamera = (null)
+2026-10-31 17:59:18.992 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: systemPreferredCameraChanged T, resolved systemPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>, current sSystemPreferredCamera = (null)
+2026-10-31 17:59:18.993 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: changing sUserPreferredCamera from (null) to <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.993 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: changing sSystemPreferredCamera from (null) to <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.993 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: getting current value for userPreferredCamera (allowsSuspendedPreferredCameras = F)
+2026-10-31 17:59:18.993 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: current list of devices:
+2026-10-31 17:59:18.994 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.994 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.994 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: devices with media types (
+    vide,
+    muxx
+):
+2026-10-31 17:59:18.994 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.994 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.994 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: 6. fallback code first device in list (if any)
+2026-10-31 17:59:18.995 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: getting current value for systemPreferredCamera (allowsSuspendedPreferredCameras = F)
+2026-10-31 17:59:18.995 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: current list of devices:
+2026-10-31 17:59:18.995 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.995 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.995 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: devices with media types (
+    vide,
+    muxx
+):
+2026-10-31 17:59:18.995 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.995 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.995 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: 6. fallback code first device in list (if any)
+2026-10-31 17:59:18.996 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: userPreferredCameraChanged F, resolved userPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>, current sUserPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.996 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: systemPreferredCameraChanged F, resolved systemPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>, current sSystemPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.996 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: getting current value for userPreferredCamera (allowsSuspendedPreferredCameras = F)
+2026-10-31 17:59:18.996 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: current list of devices:
+2026-10-31 17:59:18.996 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.996 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.996 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: devices with media types (
+    vide,
+    muxx
+):
+2026-10-31 17:59:18.996 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: 6. fallback code first device in list (if any)
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: getting current value for systemPreferredCamera (allowsSuspendedPreferredCameras = F)
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: current list of devices:
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: devices with media types (
+    vide,
+    muxx
+):
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.997 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: 6. fallback code first device in list (if any)
+2026-10-31 17:59:18.998 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: userPreferredCameraChanged F, resolved userPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>, current sUserPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.998 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: systemPreferredCameraChanged F, resolved systemPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>, current sSystemPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.998 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: getting current value for userPreferredCamera (allowsSuspendedPreferredCameras = F)
+2026-10-31 17:59:18.998 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: current list of devices:
+2026-10-31 17:59:18.998 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.998 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.999 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: devices with media types (
+    vide,
+    muxx
+):
+2026-10-31 17:59:18.999 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.999 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:18.999 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: 6. fallback code first device in list (if any)
+2026-10-31 17:59:18.999 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: getting current value for systemPreferredCamera (allowsSuspendedPreferredCameras = F)
+2026-10-31 17:59:18.999 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: current list of devices:
+2026-10-31 17:59:18.999 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:18.999 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:19.000 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: devices with media types (
+    vide,
+    muxx
+):
+2026-10-31 17:59:19.000 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:19.000 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: -------------
+2026-10-31 17:59:19.000 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _defaultDeviceWithDeviceType:mediaTypes:position:cameraOverrideHistoryAllowed:cameraOverrideHistorySuspendedAllowed:wombatsMustBeMagic:userPreferredCameraHistorySuspendedAllowed:invalidSpecialDeviceTypes:]: 6. fallback code first device in list (if any)
+2026-10-31 17:59:19.000 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: userPreferredCameraChanged F, resolved userPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>, current sUserPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:19.001 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureFigVideoDevice >>>> +[AVCaptureFigVideoDevice _refreshPreferredCameraProperties:]: systemPreferredCameraChanged F, resolved systemPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>, current sSystemPreferredCamera = <AVCaptureFigVideoDevice: 0x105198800 [(null)][(null)]>
+2026-10-31 17:59:20.775 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 10b_camera_retake.png (CameraViewController)
+2026-10-31 17:59:20.879 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- chụp (chụp lại)
+2026-10-31 17:59:20.885 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:20.886 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:20.905 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001777ac0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:22.240 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- Tiếp tục (chụp lại)
+2026-10-31 17:59:22.244 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001777ac0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:22.263 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001777ac0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:22.824 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession beginConfiguration]: (0x60000001dd70)
+2026-10-31 17:59:22.826 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001dd70) updated beginConfigRefCount 1
+2026-10-31 17:59:22.826 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession commitConfiguration]: (0x60000001dd70)
+2026-10-31 17:59:22.827 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _commitConfiguration]: (0x60000001dd70) updated beginConfigRefCount 0
+2026-10-31 17:59:22.827 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001dd70) called. skipConfig: 0
+2026-10-31 17:59:22.834 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001dd70) New fcs config(2)
+2026-10-31 17:59:22.835 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession dealloc]: (0x60000001dd70) (pthread 0x104c0c200)
+2026-10-31 17:59:22.835 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001dd70) updated beginConfigRefCount 1
+2026-10-31 17:59:22.835 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _makeConfigurationLive:]: (0x60000001dd70) did make configuration with ID 0 live
+2026-10-31 17:59:24.981 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 10c_after_retake.png (EditorViewController)
+2026-10-31 17:59:25.089 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra chụp lại
+2026-10-31 17:59:25.091 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS chụp lại thay ảnh trang 2, vẫn 3 trang
+2026-10-31 17:59:25.397 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- lưu tài liệu
+2026-10-31 17:59:27.027 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 11_document_after_edit.png (DocumentViewController)
+2026-10-31 17:59:27.132 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- Thêm trang
+2026-10-31 17:59:27.138 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:27.138 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:27.138 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession init]: (0x60000000aee0) called
+2026-10-31 17:59:27.143 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _initWithMediaEnvironment:]: (0x60000000aee0) finished
+2026-10-31 17:59:27.144 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _addVideoPreviewLayer:exceptionReason:]: (0x60000000aee0) <AVCaptureVideoPreviewLayer: 0x6000017f7280>
+2026-10-31 17:59:27.144 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession beginConfiguration]: (0x60000000aee0)
+2026-10-31 17:59:27.144 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000000aee0) updated beginConfigRefCount 1
+2026-10-31 17:59:27.144 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession commitConfiguration]: (0x60000000aee0)
+2026-10-31 17:59:27.144 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _commitConfiguration]: (0x60000000aee0) updated beginConfigRefCount 0
+2026-10-31 17:59:27.144 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000000aee0) called. skipConfig: 0
+2026-10-31 17:59:27.145 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000000aee0) New fcs config(3)
+2026-10-31 17:59:27.146 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000000aee0) Setting fcs config(3) FigCaptureSessionConfiguration 0x6000026408a0: ID 3, sdk 5072047138930695, AVCaptureSessionPresetHigh multiCam: 0, appAudio: 1, autoConfig: 1, mixesWithOthers: 0, hqBluetooth: 0, runWhileMultitasking: 0, checkIfFileAlreadyExistForMFO: 1 autoRunDeferredStart: 0
+2026-10-31 17:59:27.150 E  QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< FigCaptureSessionSimulator >>>> signalled err=-12782 at <>:297
+2026-10-31 17:59:27.158 Df QuetTaiLieu[6294:5f11] [com.apple.coremedia:] <<<< AVError >>>> AVLocalizedErrorWithUnderlyingOSStatus: Returning error (AVFoundationErrorDomain / -11800) status (-12782)
+2026-10-31 17:59:27.158 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _postRuntimeError:]: (0x60000000aee0) posting AVCaptureSessionRuntimeErrorNotification with Error Domain=AVFoundationErrorDomain Code=-11800 "Không thể hoàn thành thao tác này" UserInfo={NSLocalizedFailureReason=Đã xảy ra lỗi không xác định (-12782), NSLocalizedDescription=Không thể hoàn thành thao tác này, NSUnderlyingError=0x600000ce1350 {Error Domain=NSOSStatusErrorDomain Code=-12782 "(null)"}}
+2026-10-31 17:59:27.166 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f7280>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:28.507 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- chụp (thêm trang)
+2026-10-31 17:59:28.515 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:28.515 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:28.527 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f7280>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:29.840 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- Tiếp tục (thêm trang)
+2026-10-31 17:59:29.843 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f7280>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:29.848 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f7280>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:29.875 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:29.875 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:29.898 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f7280>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:30.414 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f7280>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:31.979 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 11b_editor_add_page.png (EditorViewController)
+2026-10-31 17:59:32.082 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- lưu (thêm trang)
+2026-10-31 17:59:32.093 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:32.093 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:32.608 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession beginConfiguration]: (0x60000000aee0)
+2026-10-31 17:59:32.609 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000000aee0) updated beginConfigRefCount 1
+2026-10-31 17:59:32.609 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession commitConfiguration]: (0x60000000aee0)
+2026-10-31 17:59:32.609 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _commitConfiguration]: (0x60000000aee0) updated beginConfigRefCount 0
+2026-10-31 17:59:32.609 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000000aee0) called. skipConfig: 0
+2026-10-31 17:59:32.611 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000000aee0) New fcs config(4)
+2026-10-31 17:59:32.611 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession dealloc]: (0x60000000aee0) (pthread 0x104c0c200)
+2026-10-31 17:59:32.612 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000000aee0) updated beginConfigRefCount 1
+2026-10-31 17:59:32.612 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _makeConfigurationLive:]: (0x60000000aee0) did make configuration with ID 0 live
+2026-10-31 17:59:33.932 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 11c_document_4_pages.png (DocumentViewController)
+2026-10-31 17:59:34.035 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra thêm trang
+2026-10-31 17:59:34.036 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS Thêm trang: tài liệu có 4 trang
+2026-10-31 17:59:34.345 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra PDF sau chỉnh sửa
+2026-10-31 17:59:34.654 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS PDF 4 trang: 783 KB, 4 trang
+2026-10-31 17:59:34.957 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- chia sẻ PDF
+2026-10-31 17:59:34.969 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIActivityViewController: initialized with activityItems ((
+    "file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf"
+))
+2026-10-31 17:59:34.976 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAVC: viewControllerPresnetationDidInitiate
+2026-10-31 17:59:34.978 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAVC: create context:<<SHSheetContext: 0x60000370be40> activityViewController:<UIActivityViewController: 0x106911000> activityItems:(
+    "file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf"
+) applicationActivities:(null) activityTypesToCreateInShareService:(
+    "com.apple.UIKit.activity.RemoteExtension",
+    "com.apple.UIKit.activity.RemoteOpenInApplication"
+) sharingStyle:0 activityTypeOrder:(null) excludedActivityTypes:(null) includedActivityTypes:(null) excludedActivityCategories:0 allowsEmbedding:NO configureForCloudSharing:NO configureForPhotosEdit:NO hideHeaderView:NO hideSuggestions:NO isContentManaged:NO shouldSuggestFamilyMembers:NO showKeyboardAutomatically:NO whitelistActionActivitiesOnly:NO photosHeaderMetadata:(null) objectManipulationDelegate:(null) instantShareSheet:NO useRemoteUIService:YES peopleSuggestionBundleIds:(null) collaborationModeRestricti
+2026-10-31 17:59:34.979 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Create main presenter for context:<<SHSheetContext: 0x60000370be40> activityViewController:<UIActivityViewController: 0x106911000> activityItems:(
+    "file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf"
+) applicationActivities:(null) activityTypesToCreateInShareService:(
+    "com.apple.UIKit.activity.RemoteExtension",
+    "com.apple.UIKit.activity.RemoteOpenInApplication"
+) sharingStyle:0 activityTypeOrder:(null) excludedActivityTypes:(null) includedActivityTypes:(null) excludedActivityCategories:0 allowsEmbedding:NO configureForCloudSharing:NO configureForPhotosEdit:NO hideHeaderView:NO hideSuggestions:NO isContentManaged:NO shouldSuggestFamilyMembers:NO showKeyboardAutomatically:NO whitelistActionActivitiesOnly:NO photosHeaderMetadata:(null) objectManipulationDelegate:(null) instantShareSheet:NO useRemoteUIService:YES peopleSuggestionBundleIds:(null) collaborationModeRestricti
+2026-10-31 17:59:34.981 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Activating com.apple.sharing.sharesheet
+2026-10-31 17:59:35.052 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x104f4d960] activating connection: mach=true listener=false peer=false name=com.apple.sharing.sharesheet
+2026-10-31 17:59:35.052 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Establishing connection
+2026-10-31 17:59:35.084 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] connection established
+2026-10-31 17:59:35.084 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] connection established
+2026-10-31 17:59:35.086 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SharePlay: SharePlay is not supported because the app does not have the appropriate entitlement
+2026-10-31 17:59:35.086 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SharePlay: App supports SharePlay: no
+2026-10-31 17:59:35.090 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] update collaboration items for activityItems:(
+    "file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf"
+)
+2026-10-31 17:59:35.090 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] request collaboration items for activity items:(
+    "file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf"
+)
+2026-10-31 17:59:35.093 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Inspect activityItemValue:<private>, activityItemValueType:(null) activityItem:<private> activityItemType:NSURL
+2026-10-31 17:59:35.107 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] request default share mode for URL:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf
+2026-10-31 17:59:35.107 A  QuetTaiLieu[6294:5f11] (ShareSheet) Sharing/SFShareSheetSlotManager/requestDefaultShareModeCollaborationForURL
+2026-10-31 17:59:35.112 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] defaultShareModeCollaboration for fileURL:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf = NO
+2026-10-31 17:59:35.117 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] <_SFFPShareCollaborationItem: 0x600003764000> identifier:64ABEF03-8C6A-4BD7-A15D-1496FE924671, type:0, itemProvider:<NSItemProvider: 0x600002973480> {types = (
+    "public.file-url",
+    "public.url"
+)}, activityItem:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf, placeholderActivityItem:https://www.apple.com/icloud/, options:(null), sendCopyRepresentation:(null), canAddPeople:(null): identifier:64ABEF03-8C6A-4BD7-A15D-1496FE924671 itemProvider:<NSItemProvider: 0x600002973480> {types = (
+    "public.file-url",
+    "public.url"
+)} activityItem:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf placeholderActivityItem:https://www.apple.com/icloud/ defaultCollaboration:no
+2026-10-31 17:59:35.149 E  QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Only support loading options for CKShare and SWY types.
+2026-10-31 17:59:35.165 E  QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] error fetching item for URL:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf : (null)
+2026-10-31 17:59:35.165 E  QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] error fetching file provider domain for URL:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf : (null)
+2026-10-31 17:59:35.165 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] <_SFFPShareCollaborationItem: 0x600003764000> identifier:64ABEF03-8C6A-4BD7-A15D-1496FE924671, type:0, itemProvider:<NSItemProvider: 0x600002973480> {types = (
+    "public.file-url",
+    "public.url"
+)}, activityItem:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf, placeholderActivityItem:https://www.apple.com/icloud/, options:(null), sendCopyRepresentation:(null), canAddPeople:(null): fileURL:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf isShared:no isiCloudDrive:no isInSharedFolder:no isThirdPartyFileProviderBacked:no
+2026-10-31 17:59:35.165 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] did load can add people:YES
+2026-10-31 17:59:35.165 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] did found collaboration items:(
+    "<_SFFPShareCollaborationItem: 0x600003764000> identifier:64ABEF03-8C6A-4BD7-A15D-1496FE924671, type:0, itemProvider:<NSItemProvider: 0x600002973480> {types = (\134n    \134"public.file-url\134",\134n    \134"public.url\134"\134n)}, activityItem:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf, placeholderActivityItem:https://www.apple.com/icloud/, options:(null), sendCopyRepresentation:(null), canAddPeople:1"
+)
+2026-10-31 17:59:35.165 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Did set collaborationItems:(
+    "<_SFFPShareCollaborationItem: 0x600003764000> identifier:64ABEF03-8C6A-4BD7-A15D-1496FE924671, type:0, itemProvider:<NSItemProvider: 0x600002973480> {types = (\134n    \134"public.file-url\134",\134n    \134"public.url\134"\134n)}, activityItem:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf, placeholderActivityItem:https://www.apple.com/icloud/, options:(null), sendCopyRepresentation:(null), canAddPeople:1"
+)
+2026-10-31 17:59:35.168 Df QuetTaiLieu[6294:5f32] [com.apple.xpc:connection] [0x104ebfa60] activating connection: mach=true listener=false peer=false name=com.apple.FileCoordination
+2026-10-31 17:59:35.180 Df QuetTaiLieu[6294:6fc8] [com.apple.foundation.filecoordination:presenter] Adding presenter D0D4761D-C3CE-4917-9C0E-CE259CD01B89 for URL: file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf
+2026-10-31 17:59:35.180 E  QuetTaiLieu[6294:5f32] [com.apple.ShareSheet:ShareSheet] error fetching item for URL:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf : (null)
+2026-10-31 17:59:35.181 Df QuetTaiLieu[6294:5f32] [com.apple.foundation.filecoordination:presenter] Removing presenter D0D4761D-C3CE-4917-9C0E-CE259CD01B89
+2026-10-31 17:59:35.200 Df QuetTaiLieu[6294:5f11] [com.apple.sharing:Utilities] sandbox extension issued successfully for URL:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf
+2026-10-31 17:59:35.397 A  QuetTaiLieu[6294:5f32] (libsystem_containermanager.dylib) container_system_group_path_for_identifier
+2026-10-31 17:59:35.398 Df QuetTaiLieu[6294:5f32] [com.apple.containermanager:xpc] Requesting container lookup; class = 13, identifier = (null), group_identifier = systemgroup.com.apple.configurationprofiles, create = 1, temp = 0, euid = 501, uid = 501
+2026-10-31 17:59:35.398 A  QuetTaiLieu[6294:5f32] (libsystem_containermanager.dylib) container_query_t
+2026-10-31 17:59:35.398 Df QuetTaiLieu[6294:5f32] [com.apple.containermanager:xpc] Query; euid = 501, uid = 501, class = 13, identifier = [(null)](0), flags = 900000003
+2026-10-31 17:59:35.512 Df QuetTaiLieu[6294:5f32] [com.apple.containermanager:unspecified] _container_query_get_result_at_index: success
+2026-10-31 17:59:35.512 A  QuetTaiLieu[6294:5f32] (libsystem_containermanager.dylib) container_copy_object
+2026-10-31 17:59:35.512 Df QuetTaiLieu[6294:5f32] [com.apple.containermanager:unspecified] container_system_group_path_for_identifier: success
+2026-10-31 17:59:35.512 Df QuetTaiLieu[6294:5f32] [com.apple.ManagedConfiguration:MC] Got system group container path from MCM for systemgroup.com.apple.configurationprofiles: /Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles
+2026-10-31 17:59:35.701 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] did finish loading metadata:(
+)
+2026-10-31 17:59:35.705 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Resolved placeholder activity item types:(
+	NSURL
+) to:(
+	NSURL
+)
+2026-10-31 17:59:35.706 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Update activities with context:<_UIActivityMatchingContext: 0xE613, activityItemValueClasses: NULL, allowMatchingBuiltInActivities, matchOnlyUserElectedExtensions, activityItemValueExtensionMatchingDictionaries: NULL>
+2026-10-31 17:59:35.767 Df QuetTaiLieu[6294:5f11] [com.apple.IDS:Registration] Dispatch registration success - initial state {name: kMMSEnabledDidChange, initialState: 1802074480}
+2026-10-31 17:59:35.768 Df QuetTaiLieu[6294:5f11] [com.apple.IDS:Registration] Dispatch registration success - initial state {name: kRCSEnabledDidChange, initialState: 1802074520}
+2026-10-31 17:59:35.772 Df QuetTaiLieu[6294:5f11] [com.apple.Registration:ServiceAvailability] <FTCServiceAvailabilityCenter: 0x600000018980> adding listener `MFMessageComposeViewController:vn.quettailieu.scanner#7997C55F-ED59-4205-961B-C27A5E229FC3` for service: iMessage
+2026-10-31 17:59:35.772 Df QuetTaiLieu[6294:5f11] [com.apple.Registration:ServiceAvailability] <FTCServiceAvailabilityCenter: 0x600000018980> creating monitor for service: iMessage
+2026-10-31 17:59:35.773 Df QuetTaiLieu[6294:5f11] [com.apple.IDS:Registration] Dispatch registration success {name: kiMessageChangedNotification}
+2026-10-31 17:59:35.777 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIMessageActivity: Can't send content
+2026-10-31 17:59:35.777 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIMailActivity: Can't display activity
+2026-10-31 17:59:35.777 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SharePlay: SharePlay is not supported because the app does not have the appropriate entitlement
+2026-10-31 17:59:35.783 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAddToHomeScreenActivity: App does not have the default browser entitlement
+2026-10-31 17:59:35.868 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Add activities:(
+    "<UICopyToPasteboardActivity: 0x60000302c510> activityType:com.apple.UIKit.activity.CopyToPasteboard activityTitle:Sao ch\134U00e9p",
+    "<UIAirDropActivity: 0x60000302d170> activityType:com.apple.UIKit.activity.AirDrop activityTitle:AirDrop",
+    "<UICreatePDFActivity: 0x600003761c80> activityType:com.apple.UIKit.activity.MarkupAsPDF activityTitle:\134U0110\134U00e1nh d\134U1ea5u",
+    "<UIPrintActivity: 0x600003501e40> activityType:com.apple.UIKit.activity.Print activityTitle:In"
+)
+2026-10-31 17:59:35.871 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Add activities:(
+    "<UISharePlayActivity: 0x60000302eeb0> activityType:com.apple.UIKit.activity.SharePlay activityTitle:SharePlay"
+)
+2026-10-31 17:59:36.433 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:InterfaceOrientationObserver] Creating orientation service connection with <BSServiceConnectionEndpoint: 0x6000002103a0; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.orientation-observer>
+2026-10-31 17:59:36.438 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:InterfaceOrientationObserver] <0x600000cd0d80> Registering interest for orientation updates.
+2026-10-31 17:59:36.441 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:InterfaceOrientationObserver] <0x6000017beb40> connection activated: <BSXPC(com.apple.frontboard.systemappservices[C:1-3])-as(com.apple.frontboard.orientation-observer):0x6000021470c0>
+2026-10-31 17:59:36.441 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:InterfaceOrientationObserver] <0x600000cd0d80> Received orientation reset.
+2026-10-31 17:59:36.441 Df QuetTaiLieu[6294:6fc8] [com.apple.FrontBoard:InterfaceOrientationObserver] <0x600000cd0d80> Received orientation update: <FBSOrientationUpdate: 0x600000cd9560; orientation: portrait (1); sequenceNumber: 1>.
+2026-10-31 17:59:36.441 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Start session
+2026-10-31 17:59:36.442 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Connection state changed:Connecting
+2026-10-31 17:59:36.442 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Connecting to sharingd
+2026-10-31 17:59:36.446 Df QuetTaiLieu[6294:5f11] [com.apple.sharing:Utilities] sandbox extension issued successfully for URL:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf
+2026-10-31 17:59:36.447 A  QuetTaiLieu[6294:5f11] (ShareSheet) Sharing/SFShareSheetSlotManager/connectToDaemonWithSessionID
+2026-10-31 17:59:36.579 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Connection to sharingd established
+2026-10-31 17:59:36.580 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Connection state changed:Connected
+2026-10-31 17:59:36.580 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> activating
+2026-10-31 17:59:36.580 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> setting up scene hosting
+2026-10-31 17:59:36.586 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessWorkspace] This process will acquire finish-task workspace self-assertions.
+2026-10-31 17:59:36.586 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:Common] no previous workspace connections state - initializing
+2026-10-31 17:59:36.586 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessWorkspace] Registering Source for 6294 : <FBWorkspaceEventDispatcherSource: 0x600000cd3450>
+2026-10-31 17:59:36.587 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessWorkspace] [app<vn.quettailieu.scanner>:6294] Registering event dispatcher at init
+2026-10-31 17:59:36.587 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessWorkspace] Created <FBWorkspace: 0x600003024240; <FBApplicationProcess: 0x104eb4730; app<vn.quettailieu.scanner>:6294(v32B0)>>
+2026-10-31 17:59:36.587 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Process] Bootstrapping app<vn.quettailieu.scanner>
+2026-10-31 17:59:36.588 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Process] [app<vn.quettailieu.scanner>:6294] Bootstrap success!
+2026-10-31 17:59:36.594 Df QuetTaiLieu[6294:5f11] [com.apple.runningboard:connection] Creating side-channel connection to com.apple.runningboard
+2026-10-31 17:59:36.594 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x104f55310] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-10-31 17:59:36.596 Df QuetTaiLieu[6294:5f11] [com.apple.runningboard:process] Hit the server for a process handle c69349500001896 that resolved to: [app<vn.quettailieu.scanner((null))>:6294]
+2026-10-31 17:59:36.596 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessWorkspace] [app<vn.quettailieu.scanner>:6294] Skipping workspace endpoint injector.
+2026-10-31 17:59:36.596 Df QuetTaiLieu[6294:6fc8] [com.apple.FrontBoard:Process] [app<vn.quettailieu.scanner>:6294] Connection to remote process established!
+2026-10-31 17:59:36.597 Df QuetTaiLieu[6294:5f11] [com.apple.runningboard:process] Starting death monitoring for handle [app<vn.quettailieu.scanner((null))>:6294]
+2026-10-31 17:59:36.599 Df QuetTaiLieu[6294:5f11] [com.apple.runningboard:monitor] Updating configuration of monitor M6294-1
+2026-10-31 17:59:36.600 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessWorkspace] Registering Target for UISceneHosting-vn.quettailieu.scanner: <FBSceneWorkspace: 0x600002648780; UISceneHosting-vn.quettailieu.scanner; scenes: 0>
+2026-10-31 17:59:36.601 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x104ee2cb0] readying connection: mach=false listener=true peer=false name=(anonymous)
+2026-10-31 17:59:36.601 Df QuetTaiLieu[6294:5f11] [com.apple.BoardServices:Bootstrap] manually activating session for domain FBWorkspace-vn.quettailieu.scanner
+2026-10-31 17:59:36.601 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x104ee2cb0] activating connection: mach=false listener=true peer=false name=(anonymous)
+2026-10-31 17:59:36.602 Df QuetTaiLieu[6294:5f11] [com.apple.BoardServices:XPCErrors] [C:3] Alloc 6294:FBWorkspace-vn.quettailieu.scanner
+2026-10-31 17:59:36.602 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x106050ac0] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-10-31 17:59:36.602 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Common] FBSWorkspace registering source: 6294:FBWorkspace-vn.quettailieu.scanner
+2026-10-31 17:59:36.602 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x6000002e9a00; target: 6294:FBWorkspace-vn.quettailieu.scanner; service: com.apple.frontboard.workspace-service>
+2026-10-31 17:59:36.603 Df QuetTaiLieu[6294:5f2c] [com.apple.BoardServices:XPCErrors] [S:4] Alloc 6294:FBWorkspace-vn.quettailieu.scanner
+2026-10-31 17:59:36.603 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003024120 6294:FBWorkspace-vn.quettailieu.scanner> attempting immediate handshake from activate
+2026-10-31 17:59:36.603 Df QuetTaiLieu[6294:5f2c] [com.apple.xpc:connection] [0x104e5ddf0] activating connection: mach=false listener=false peer=true name=com.apple.xpc.anonymous.0x104ee2cb0.peer[6294].0x104e5ddf0
+2026-10-31 17:59:36.603 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x600003024120 6294:FBWorkspace-vn.quettailieu.scanner> sent handshake
+2026-10-31 17:59:36.603 Df QuetTaiLieu[6294:5f2c] [com.apple.FrontBoard:ProcessWorkspace] [app<vn.quettailieu.scanner>:6294] Connection established.
+2026-10-31 17:59:36.605 Df QuetTaiLieu[6294:5f2c] [com.apple.FrontBoard:ProcessWorkspace] [app<vn.quettailieu.scanner>:6294] created proxy of <BSXPCServiceConnectionProxy<FBSWorkspaceServiceServerInterface>: 0x6000029b3410>
+2026-10-31 17:59:36.606 Df QuetTaiLieu[6294:70dd] [com.apple.FrontBoard:ProcessWorkspace] received incoming handshake : process=<FBApplicationProcess: 0x104eb4730; app<vn.quettailieu.scanner>:6294(v32B0); taskState: Running; visibility: Unknown> remote=<BSAuditToken: 0x600001776480; AUID: 501; EUID: 501; EGID: 20; RUID: 501; RGID: 20; PID: 6294; ASID: 100011; PIDVersion: 12976> remnants=0
+2026-10-31 17:59:36.623 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KBProxyForwarding] <StateMachine:0x6000017ef400> Created with presentation environment: <0x600000cc83c0:<_UISceneKeyboardProxyLayerForwardingPresentationScene: 0x600000cc83c0> Tracking scene: <FBScene: 0x600003e32f00; UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6>>
+2026-10-31 17:59:36.624 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KBProxyForwarding] <ForwardingPresentationScene:0x600000cc83c0> Prioritized presenter: <_UIScenePresenter: 0x6000029b3480; identifier: UISceneHostingView-UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6; sortContext: 0>.
+2026-10-31 17:59:36.651 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneScrollPocketSettings> on FBSSceneSettings
+2026-10-31 17:59:36.662 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneScrollPocketClientSettings> on FBSSceneClientSettings
+2026-10-31 17:59:36.672 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Ingesting properties from UIMutableApplicationSceneSettings...
+2026-10-31 17:59:36.705 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIApplicationSceneSettings[derived]> on FBSSceneSettings
+2026-10-31 17:59:36.770 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Create main view for session:<SHSheetSession: 0x104f599e0>
+2026-10-31 17:59:36.770 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] remote scene view controller <SHSheetRemoteSceneViewController: 0x105140000> installing hosting view
+2026-10-31 17:59:36.771 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController: viewDidLoad
+2026-10-31 17:59:36.774 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Created remote scene view controller:<SHSheetRemoteSceneViewController: 0x105140000>
+2026-10-31 17:59:36.774 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Install main view:<SHSheetRemoteSceneViewController: 0x105140000> parentViewController:<UIActivityViewController: 0x106911000>
+2026-10-31 17:59:36.778 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Update content view:<SHSheetRemoteSceneViewController: 0x105140000>
+2026-10-31 17:59:36.778 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController updating remote with view model: <SHSheetViewModel peopleSuggestions:(
+) peopleSuggestionProxies:(null) activities:(
+    "<UICopyToPasteboardActivity: 0x60000302c510> activityType:com.apple.UIKit.activity.CopyToPasteboard activityTitle:Sao ch\134U00e9p",
+    "<UIAirDropActivity: 0x60000302d170> activityType:com.apple.UIKit.activity.AirDrop activityTitle:AirDrop",
+    "<UICreatePDFActivity: 0x600003761c80> activityType:com.apple.UIKit.activity.MarkupAsPDF activityTitle:\134U0110\134U00e1nh d\134U1ea5u",
+    "<UIPrintActivity: 0x600003501e40> activityType:com.apple.UIKit.activity.Print activityTitle:In"
+) shareProxies:(null) actionProxies:(null) metadataValues:(
+) showOptions:NO restrictedActivityTypes:(
+)>
+2026-10-31 17:59:36.778 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> will update
+2026-10-31 17:59:36.779 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Beginning presentation delay
+2026-10-31 17:59:36.780 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Request initial configuration for presentation
+2026-10-31 17:59:36.781 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Update activities with context:<_UIActivityMatchingContext: 0xACCA, activityItemValueClasses: NULL, allowMatchingBuiltInActivities, matchOnlyUserElectedExtensions, activityItemValueExtensionMatchingDictionaries: NULL>
+2026-10-31 17:59:36.783 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIMessageActivity: Can't send content
+2026-10-31 17:59:36.783 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIMailActivity: Can't display activity
+2026-10-31 17:59:36.783 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SharePlay: SharePlay is not supported because the app does not have the appropriate entitlement
+2026-10-31 17:59:36.784 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAddToHomeScreenActivity: App does not have the default browser entitlement
+2026-10-31 17:59:36.784 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Add activities:(
+    "<UICopyToPasteboardActivity: 0x60000302c510> activityType:com.apple.UIKit.activity.CopyToPasteboard activityTitle:Sao ch\134U00e9p",
+    "<UIAirDropActivity: 0x60000302d170> activityType:com.apple.UIKit.activity.AirDrop activityTitle:AirDrop",
+    "<UICreatePDFActivity: 0x600003761c80> activityType:com.apple.UIKit.activity.MarkupAsPDF activityTitle:\134U0110\134U00e1nh d\134U1ea5u",
+    "<UIPrintActivity: 0x600003501e40> activityType:com.apple.UIKit.activity.Print activityTitle:In"
+)
+2026-10-31 17:59:36.784 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Add activities:(
+    "<UISharePlayActivity: 0x60000302eeb0> activityType:com.apple.UIKit.activity.SharePlay activityTitle:SharePlay"
+)
+2026-10-31 17:59:36.784 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> will update
+2026-10-31 17:59:36.792 Df QuetTaiLieu[6294:5f11] [com.apple.clouddocs:default personal] [WARNING] Cache not populated - going for a quick discovery
+2026-10-31 17:59:36.799 Df QuetTaiLieu[6294:5f2c] [com.apple.xpc:connection] [0x10605d690] activating connection: mach=true listener=false peer=false name=com.apple.bird
+2026-10-31 17:59:36.800 Df QuetTaiLieu[6294:5f11] [com.apple.xpc:connection] [0x10605c8f0] activating connection: mach=true listener=false peer=false name=com.apple.bird
+2026-10-31 17:59:36.861 Df QuetTaiLieu[6294:5f32] [com.apple.xpc:connection] [0x10605a960] activating connection: mach=true listener=false peer=false name=com.apple.bird.token
+2026-10-31 17:59:36.862 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Share sheet is being presented
+2026-10-31 17:59:36.862 Df QuetTaiLieu[6294:5f2c] [com.apple.ShareSheet:ShareSheet] Sending configuration <UISUIActivityViewControllerConfiguration: 0x48A9>, sessionID: A17F82B72FFD, excludedActivityTypes: [ "com.apple.UIKit.activity.Share" ], extensionMatchingDictionaries: [ { "attachments" : [ { "fileProviderItem" : { "URLMightBeInFileProvider" : 0, }, "registeredTypeIdentifiers" : [ "public.file-url", "com.adobe.pdf" ], } ], } ]
+2026-10-31 17:59:36.863 A  QuetTaiLieu[6294:5f2c] (ShareSheet) Sharing/SFShareSheetSlotManager/sendConfiguration
+2026-10-31 17:59:36.863 Df QuetTaiLieu[6294:5f32] [com.apple.xpc:connection] [0x10605a960] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-10-31 17:59:36.863 Df QuetTaiLieu[6294:5f32] [com.apple.xpc:connection] [0x104e17a90] activating connection: mach=true listener=false peer=false name=com.apple.distributed_notifications@1v3
+2026-10-31 17:59:36.863 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Setting parent scene: (FBSceneManager):sceneID:vn.quettailieu.scanner-default
+2026-10-31 17:59:36.867 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Realizing settings extension SBUISecureRenderingSettingsExtension on FBSSceneSettings
+2026-10-31 17:59:36.871 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6 (inactive)] propagating 13 settings from (FBSceneManager):sceneID:vn.quettailieu.scanner-default
+2026-10-31 17:59:36.872 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIChildRemoteContentRegistry] <_UIChildRemoteContentRegistry: 0x600000ce1800; parentScene: <FBSScene: 0x600003304b40>; childScenes: 1; childViewServices: 0> Registry is now tracking child scene <FBScene: 0x6000003081a0>
+2026-10-31 17:59:36.873 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneExternalSettingsModifierSettingsExtension on FBSSceneSettings
+2026-10-31 17:59:36.876 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Process] Asked to bootstrap a new process with identity: osservice<com.apple.sharinguiservice>
+2026-10-31 17:59:36.876 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Process] Creating process (sync=false) with identity: osservice<com.apple.sharinguiservice>
+2026-10-31 17:59:36.876 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessWorkspace] Created <FBWorkspace: 0x600003026e20; <FBApplicationProcess: 0x104ed5b60; osservice<com.apple.sharinguiservice>:<invalid>>>
+2026-10-31 17:59:36.876 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:Process] Bootstrapping osservice<com.apple.sharinguiservice> with intent foreground-interactive
+2026-10-31 17:59:36.877 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Initialized with connection: 0x600000ce53b0.
+2026-10-31 17:59:36.877 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:-1] Registered new scene: <FBUIApplicationWorkspaceScene: 0x60000370b540; UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6> (fromRemnant = 0)
+2026-10-31 17:59:36.877 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6][1] Scene activated.
+2026-10-31 17:59:36.877 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:Process] [osservice<com.apple.sharinguiservice>:-1] Setting process visibility to: Foreground
+2026-10-31 17:59:36.879 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] scene content state changed: preparing
+2026-10-31 17:59:36.880 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UISceneRelationshipManagement] <_UISceneRelationshipManagementHostComponent:0x6000017ef4c0> Scene <FBScene: 0x6000003081a0> is hosted in <UIWindowScene: 0x104e08c20>
+2026-10-31 17:59:36.880 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Scene lifecycle state did change: Foreground
+2026-10-31 17:59:36.887 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Scene state did change: FV-Focal[100].
+2026-10-31 17:59:36.896 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:-1] Workspace state did change: XX-None[0] --> FV-Focal[100] (awaiting concrete target).
+2026-10-31 17:59:36.900 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] did load options:<(null) summary: (null), options: (null)>
+2026-10-31 17:59:36.901 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] did load metadata:(null)
+2026-10-31 17:59:36.901 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] loaded options:<(null) summary: (null), options: (null)>
+2026-10-31 17:59:36.901 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Did finish loading for collaboration item:<_SFFPShareCollaborationItem: 0x600003764000> identifier:64ABEF03-8C6A-4BD7-A15D-1496FE924671, type:0, itemProvider:<NSItemProvider: 0x600002973480> {types = (
+    "public.file-url",
+    "public.url"
+)}, activityItem:file:///Users/runner/Library/Developer/CoreSimulator/Devices/6C2153FE-DEAE-4712-8816-98E12A7AFEE0/data/Containers/Data/Application/4478156A-5ED1-4447-9A64-C529102374DB/tmp/share/Scan%2031-10-2026%2017.58.pdf, placeholderActivityItem:https://www.apple.com/icloud/, options:(null), sendCopyRepresentation:(null), canAddPeople:1
+2026-10-31 17:59:36.901 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] did finish serializing loaded metadata:(
+)
+2026-10-31 17:59:36.901 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Update content view:<SHSheetRemoteSceneViewController: 0x105140000>
+2026-10-31 17:59:36.901 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController updating remote with view model: <SHSheetViewModel peopleSuggestions:(
+) peopleSuggestionProxies:(null) activities:(
+    "<UICopyToPasteboardActivity: 0x60000302c510> activityType:com.apple.UIKit.activity.CopyToPasteboard activityTitle:Sao ch\134U00e9p",
+    "<UIAirDropActivity: 0x60000302d170> activityType:com.apple.UIKit.activity.AirDrop activityTitle:AirDrop",
+    "<UICreatePDFActivity: 0x600003761c80> activityType:com.apple.UIKit.activity.MarkupAsPDF activityTitle:\134U0110\134U00e1nh d\134U1ea5u",
+    "<UIPrintActivity: 0x600003501e40> activityType:com.apple.UIKit.activity.Print activityTitle:In"
+) shareProxies:(null) actionProxies:(null) metadataValues:(
+) showOptions:NO restrictedActivityTypes:(
+)>
+2026-10-31 17:59:36.902 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> will update
+2026-10-31 17:59:36.904 Df QuetTaiLieu[6294:5f11] [com.apple.IDS:Registration] Registering <FTDeviceSupport: 0x600003764840> for lockdown changes
+2026-10-31 17:59:37.083 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:Process] [osservice<com.apple.sharinguiservice>:8551] Bootstrap success!
+2026-10-31 17:59:37.085 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:process] Hit the server for a process handle cea374300002167 that resolved to: [osservice<com.apple.sharinguiservice>:8551]
+2026-10-31 17:59:37.085 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:Process] [osservice<com.apple.sharinguiservice>:8551] Setting process task state to: Running
+2026-10-31 17:59:37.085 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] Registering event dispatcher after bootstrap
+2026-10-31 17:59:37.085 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] Registering Source for 8551 : <FBWorkspaceEventDispatcherSource: 0x600000cecae0>
+2026-10-31 17:59:37.085 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] Initial launch state: FV-Focal[100].
+2026-10-31 17:59:37.086 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] FBWorkspaceDomain: registering saved endowment 6294:FBWorkspace-vn.quettailieu.scanner
+2026-10-31 17:59:37.100 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] Workspace state did change: XX-None[0] --> FV-Focal[100] (assertion acquired).
+2026-10-31 17:59:37.100 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] Updating self-assertion for unified workspace priority: BG-Opportunistic[40]
+2026-10-31 17:59:37.101 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] Workspace interruption policy did change: disconnect
+2026-10-31 17:59:37.102 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:process] Starting death monitoring for handle [osservice<com.apple.sharinguiservice>:8551]
+2026-10-31 17:59:37.103 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:Process] Adding: <FBApplicationProcess: 0x104ed5b60; osservice<com.apple.sharinguiservice>:8551(v444E)>
+2026-10-31 17:59:37.103 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:monitor] Updating configuration of monitor M6294-1
+2026-10-31 17:59:37.104 A  QuetTaiLieu[6294:5f32] (RunningBoardServices) observedProcessStatesDidChange
+2026-10-31 17:59:37.105 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:monitor] Received state update for 8551 (osservice<com.apple.sharinguiservice>, running-active-NotVisible
+2026-10-31 17:59:37.190 A  QuetTaiLieu[6294:75c0] (RunningBoardServices) observedProcessStatesDidChange
+2026-10-31 17:59:37.191 Df QuetTaiLieu[6294:75c0] [com.apple.runningboard:monitor] Received state update for 8551 (osservice<com.apple.sharinguiservice>, running-active-NotVisible
+2026-10-31 17:59:37.227 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] received configuration update
+2026-10-31 17:59:37.228 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Update content view:<SHSheetRemoteSceneViewController: 0x105140000>
+2026-10-31 17:59:37.228 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController updating remote with view model: <SHSheetViewModel peopleSuggestions:(
+) peopleSuggestionProxies:(null) activities:(
+    "<UICopyToPasteboardActivity: 0x60000302c510> activityType:com.apple.UIKit.activity.CopyToPasteboard activityTitle:Sao ch\134U00e9p",
+    "<UIAirDropActivity: 0x60000302d170> activityType:com.apple.UIKit.activity.AirDrop activityTitle:AirDrop",
+    "<UICreatePDFActivity: 0x600003761c80> activityType:com.apple.UIKit.activity.MarkupAsPDF activityTitle:\134U0110\134U00e1nh d\134U1ea5u",
+    "<UIPrintActivity: 0x600003501e40> activityType:com.apple.UIKit.activity.Print activityTitle:In"
+) shareProxies:(null) actionProxies:(null) metadataValues:(
+) showOptions:NO restrictedActivityTypes:(
+)>
+2026-10-31 17:59:37.228 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> will update
+2026-10-31 17:59:37.230 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Initial configuration update received
+2026-10-31 17:59:37.231 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Preheating activities
+2026-10-31 17:59:37.231 Df QuetTaiLieu[6294:5f2c] [com.apple.ShareSheet:ShareSheet] Starting Message activity preheating
+2026-10-31 17:59:37.232 Df QuetTaiLieu[6294:5f2c] [com.apple.ShareSheet:ShareSheet] Finished Message activity preheating
+2026-10-31 17:59:37.235 Df QuetTaiLieu[6294:5f11] [com.apple.Registration:ServiceAvailability] <FTCServiceAvailabilityCenter: 0x600000018980> adding listener `MFMessageComposeViewController:vn.quettailieu.scanner#ACEA1F88-F0C6-4995-923E-EE5D68F99C8C` for service: iMessage
+2026-10-31 17:59:37.638 A  QuetTaiLieu[6294:5f2c] (RunningBoardServices) observedProcessStatesDidChange
+2026-10-31 17:59:37.639 Df QuetTaiLieu[6294:5f2c] [com.apple.runningboard:monitor] Received state update for 8551 (osservice<com.apple.sharinguiservice>, running-active-NotVisible
+2026-10-31 17:59:37.648 Df QuetTaiLieu[6294:70dd] [com.apple.BoardServices:XPCErrors] [S:5] Alloc 6294:FBWorkspace-vn.quettailieu.scanner
+2026-10-31 17:59:37.648 Df QuetTaiLieu[6294:70dd] [com.apple.xpc:connection] [0x104f75750] activating connection: mach=false listener=false peer=true name=com.apple.xpc.anonymous.0x104ee2cb0.peer[8551].0x104f75750
+2026-10-31 17:59:37.650 Df QuetTaiLieu[6294:5f2c] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] Connection established.
+2026-10-31 17:59:37.650 Df QuetTaiLieu[6294:5f2c] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] created proxy of <BSXPCServiceConnectionProxy<FBSWorkspaceServiceServerInterface>: 0x6000029960d0>
+2026-10-31 17:59:37.650 Df QuetTaiLieu[6294:5f2c] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Sending scene action [Logical Activate][0x11f9] to process 0x104ed5b60 (watchdog: 10.00s)
+2026-10-31 17:59:37.651 Df QuetTaiLieu[6294:5f2c] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Sending scene create.
+2026-10-31 17:59:37.689 Df QuetTaiLieu[6294:5f2c] [com.apple.FrontBoard:Process] [osservice<com.apple.sharinguiservice>:8551] Connection to remote process established!
+2026-10-31 17:59:37.690 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Client process connected: [osservice<com.apple.sharinguiservice>:8551]
+2026-10-31 17:59:37.691 Df QuetTaiLieu[6294:5f2c] [com.apple.FrontBoard:ProcessWorkspace] received incoming handshake : process=<FBApplicationProcess: 0x104ed5b60; osservice<com.apple.sharinguiservice>:8551(v444E); taskState: Running; visibility: Foreground> remote=<BSAuditToken: 0x6000017cd840; AUID: 501; EUID: 501; EGID: 20; RUID: 501; RGID: 20; PID: 8551; ASID: 100011; PIDVersion: 17486> remnants=0
+2026-10-31 17:59:38.083 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Ingesting properties from UIApplicationSceneClientSettings...
+2026-10-31 17:59:38.086 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIApplicationSceneClientSettings[derived]> on FBSSceneClientSettings
+2026-10-31 17:59:38.160 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Scene action [Logical Activate][0x11f9] completed with success: 1
+2026-10-31 17:59:38.161 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] scene content state changed: ready
+2026-10-31 17:59:38.161 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteScene clientIsReady
+2026-10-31 17:59:38.639 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Received action(s): SHSheetAction
+2026-10-31 17:59:38.639 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> received action: <SHSheetAction: 0x6000003181e0; info: <BSSettings: 0x6000003184e0> {
+    (0) = 10;
+}; responder: <_BSActionResponder: 0x6000029a2610; active: YES> clientInvalidated = NO;
+clientEncoded = NO;>
+2026-10-31 17:59:38.639 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Ending presentation delay
+2026-10-31 17:59:38.639 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAVC: viewControllerPresnetationDidInitiate
+2026-10-31 17:59:38.642 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] did receive action with type:10
+2026-10-31 17:59:38.643 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Delegate <_UISceneHostingController: 0x6000017be900; UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6; active: YES; foreground: YES> handled action(s): SHSheetAction
+2026-10-31 17:59:38.653 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAVC: view will appear
+2026-10-31 17:59:38.653 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Sending action(s): _UISceneHostingViewAppearanceActionHostToClient
+2026-10-31 17:59:38.658 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KBProxyForwarding] <StateMachine:0x6000017ef400> Hosting window did change to <UIWindow: 0x104e0c760; frame = (0 0; 402 874); autoresize = W+H; gestureRecognizers = <NSArray: 0x600000cef840>; backgroundColor = UIExtendedSRGBColorSpace 0.12549 0.121569 0.133333 1; layer = <UIWindowLayer: 0x600001713140>>.
+2026-10-31 17:59:38.658 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KBProxyForwarding] <StateMachine:0x6000017ef400> Waiting for a hosting window.
+2026-10-31 17:59:38.658 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KBProxyForwarding] <StateMachine:0x6000017ef400> Hosting environment did change to <0x60000031b220:FBSScene:sceneID:vn.quettailieu.scanner-default>.
+2026-10-31 17:59:38.683 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] Initial configuration was already requested for presentation
+2026-10-31 17:59:38.683 A  QuetTaiLieu[6294:5f32] (RunningBoardServices) observedProcessStatesDidChange
+2026-10-31 17:59:38.683 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:monitor] Received state update for 8551 (osservice<com.apple.sharinguiservice>, running-active-NotVisible
+2026-10-31 17:59:38.683 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController: viewIsAppearing
+2026-10-31 17:59:38.683 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> will update
+2026-10-31 17:59:38.690 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController: viewDidLayoutSubviews
+2026-10-31 17:59:38.691 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> will update
+2026-10-31 17:59:38.707 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] Dropping launch assertion.
+2026-10-31 17:59:38.819 A  QuetTaiLieu[6294:5f2c] (RunningBoardServices) observedProcessStatesDidChange
+2026-10-31 17:59:38.819 Df QuetTaiLieu[6294:5f2c] [com.apple.runningboard:monitor] Received state update for 8551 (osservice<com.apple.sharinguiservice>, running-active-NotVisible
+2026-10-31 17:59:38.838 Df QuetTaiLieu[6294:5f11] [com.apple.KeyboardArbiter:Client] RX sceneBecameFocused:(null)
+2026-10-31 17:59:38.999 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Received action(s): SHSheetSizeUpdateAction
+2026-10-31 17:59:38.999 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> received action: <SHSheetSizeUpdateAction: 0x60000025ef40; info: <BSSettings: 0x6000002503c0> {
+    (7) = 1;
+    (8) = 0;
+    (9) = 1;
+}; responder: <_BSActionResponder: 0x6000029be840; active: YES> clientInvalidated = NO;
+clientEncoded = NO;>
+2026-10-31 17:59:38.999 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController received size update
+2026-10-31 17:59:39.000 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Delegate <_UISceneHostingController: 0x6000017be900; UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6; active: YES; foreground: YES> handled action(s): SHSheetSizeUpdateAction
+2026-10-31 17:59:39.022 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIActivityViewController: preferredContentSizeDidChangeForChildContentContainer:{402, 358.33333333333331}
+2026-10-31 17:59:39.022 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController: preferredContentSizeDidChangeForChildContentContainer:{402, 358.33333333333331}
+2026-10-31 17:59:39.023 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Received action(s): SHSheetSizeUpdateAction
+2026-10-31 17:59:39.023 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> received action: <SHSheetSizeUpdateAction: 0x60000031e580; info: <BSSettings: 0x60000031c9a0> {
+    (7) = 1;
+    (8) = 0;
+    (9) = 1;
+}; responder: <_BSActionResponder: 0x6000029bbd40; active: YES> clientInvalidated = NO;
+clientEncoded = NO;>
+2026-10-31 17:59:39.023 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController received size update
+2026-10-31 17:59:39.024 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Delegate <_UISceneHostingController: 0x6000017be900; UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6; active: YES; foreground: YES> handled action(s): SHSheetSizeUpdateAction
+2026-10-31 17:59:39.026 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIActivityViewController: preferredContentSizeDidChangeForChildContentContainer:{402, 370.33333333333331}
+2026-10-31 17:59:39.026 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController: preferredContentSizeDidChangeForChildContentContainer:{402, 370.33333333333331}
+2026-10-31 17:59:39.111 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAVC: ready to interact
+2026-10-31 17:59:39.608 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAVC: view did appear
+2026-10-31 17:59:39.608 A  QuetTaiLieu[6294:5f11] (ShareSheet) Sharing/SFShareSheetSlotManager/activityViewControllerDidAppear
+2026-10-31 17:59:40.576 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 12_share_pdf.png (UIActivityViewController)
+2026-10-31 17:59:40.686 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- đóng bảng chia sẻ
+2026-10-31 17:59:40.700 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAVC: view will disappear
+2026-10-31 17:59:40.700 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Sending action(s): _UISceneHostingViewAppearanceActionHostToClient
+2026-10-31 17:59:40.708 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController: viewDidLayoutSubviews
+2026-10-31 17:59:40.708 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> will update
+2026-10-31 17:59:40.736 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Received action(s): SHSheetSizeUpdateAction
+2026-10-31 17:59:40.737 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> received action: <SHSheetSizeUpdateAction: 0x60000030ca00; info: <BSSettings: 0x600000308480> {
+    (7) = 1;
+    (8) = 0;
+    (9) = 1;
+}; responder: <_BSActionResponder: 0x6000029bbe20; active: YES> clientInvalidated = NO;
+clientEncoded = NO;>
+2026-10-31 17:59:40.737 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController received size update
+2026-10-31 17:59:40.737 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Delegate <_UISceneHostingController: 0x6000017be900; UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6; active: YES; foreground: YES> handled action(s): SHSheetSizeUpdateAction
+2026-10-31 17:59:40.742 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIActivityViewController: preferredContentSizeDidChangeForChildContentContainer:{402, 419.33333333333331}
+2026-10-31 17:59:40.742 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController: preferredContentSizeDidChangeForChildContentContainer:{402, 419.33333333333331}
+2026-10-31 17:59:40.742 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Received action(s): SHSheetSizeUpdateAction
+2026-10-31 17:59:40.744 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] scene <SHSheetRemoteScene: 0x6000026495c0> received action: <SHSheetSizeUpdateAction: 0x6000003192a0; info: <BSSettings: 0x6000003191c0> {
+    (7) = 1;
+    (8) = 0;
+    (9) = 1;
+}; responder: <_BSActionResponder: 0x60000297e920; active: YES> clientInvalidated = NO;
+clientEncoded = NO;>
+2026-10-31 17:59:40.744 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController received size update
+2026-10-31 17:59:40.744 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Delegate <_UISceneHostingController: 0x6000017be900; UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6; active: YES; foreground: YES> handled action(s): SHSheetSizeUpdateAction
+2026-10-31 17:59:40.746 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIActivityViewController: preferredContentSizeDidChangeForChildContentContainer:{402, 415.33333333333331}
+2026-10-31 17:59:40.746 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] SHSheetRemoteSceneViewController: preferredContentSizeDidChangeForChildContentContainer:{402, 415.33333333333331}
+2026-10-31 17:59:40.940 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KBProxyForwarding] <StateMachine:0x6000017ef400> Hosting window did change to (null).
+2026-10-31 17:59:40.940 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:KBProxyForwarding] <StateMachine:0x6000017ef400> Hosting environment did change to <0x0:(null)>.
+2026-10-31 17:59:40.940 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Removing parent scene.
+2026-10-31 17:59:40.940 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIChildRemoteContentRegistry] <_UIChildRemoteContentRegistry: 0x600000ce1800; parentScene: <FBSScene: 0x600003304b40>; childScenes: 0; childViewServices: 0> Registry is no longer tracking child scene <FBScene: 0x6000003081a0>
+2026-10-31 17:59:40.941 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] scene content state changed: notReady
+2026-10-31 17:59:40.941 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UISceneRelationshipManagement] <_UISceneRelationshipManagementHostComponent:0x6000017ef4c0> Scene <FBScene: 0x6000003081a0> is hosted in (nil)
+2026-10-31 17:59:40.941 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Scene lifecycle state did change: Background
+2026-10-31 17:59:40.941 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Scene state did change: FG-Active[90].
+2026-10-31 17:59:40.942 Df QuetTaiLieu[6294:5f11] [com.apple.ShareSheet:ShareSheet] UIAVC: view did disappear
+2026-10-31 17:59:40.942 A  QuetTaiLieu[6294:5f11] (ShareSheet) Sharing/SFShareSheetSlotManager/activityViewControllerDidDisappear
+2026-10-31 17:59:40.943 Df QuetTaiLieu[6294:5f11] [com.apple.FrontBoard:Scene] [UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Sending action(s): _UISceneHostingViewAppearanceActionHostToClient
+2026-10-31 17:59:40.945 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] Workspace state did change: FV-Focal[100] --> FG-Active[90] (assertion acquired).
+2026-10-31 17:59:40.945 A  QuetTaiLieu[6294:5f32] (RunningBoardServices) observedProcessStatesDidChange
+2026-10-31 17:59:40.945 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:Process] [osservice<com.apple.sharinguiservice>:8551] Setting process visibility to: Background
+2026-10-31 17:59:40.945 Df QuetTaiLieu[6294:75c0] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Sending scene action [Logical Deactivate][0x90c4] to process 0x104ed5b60 (watchdog: 10.00s)
+2026-10-31 17:59:40.947 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:monitor] Received state update for 8551 (osservice<com.apple.sharinguiservice>, running-active-NotVisible
+2026-10-31 17:59:40.965 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Scene action [Logical Deactivate][0x90c4] completed with success: 1
+2026-10-31 17:59:41.066 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessScene] [0x60000370b540:UISceneHosting-vn.quettailieu.scanner:UIHostedScene-AFF141F9-5C15-4F64-B3ED-CA812B58EDF6] Scene state did change: XX-None[0].
+2026-10-31 17:59:41.067 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] [osservice<com.apple.sharinguiservice>:8551] Workspace state did change: FG-Active[90] --> XX-None[0] (assertion dropped).
+2026-10-31 17:59:41.067 Df QuetTaiLieu[6294:5f32] [com.apple.FrontBoard:ProcessWorkspace] Updating self-assertion for unified workspace priority: XX-None[0]
+2026-10-31 17:59:41.236 A  QuetTaiLieu[6294:5f32] (RunningBoardServices) observedProcessStatesDidChange
+2026-10-31 17:59:41.236 Df QuetTaiLieu[6294:5f32] [com.apple.runningboard:monitor] Received state update for 8551 (osservice<com.apple.sharinguiservice>, running-active-NotVisible
+2026-10-31 17:59:42.049 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- về màn hình chính
+2026-10-31 17:59:43.198 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- mở máy ảnh (Đơn)
+2026-10-31 17:59:43.206 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:43.206 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:43.206 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession init]: (0x60000001f790) called
+2026-10-31 17:59:43.208 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _initWithMediaEnvironment:]: (0x60000001f790) finished
+2026-10-31 17:59:43.209 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _addVideoPreviewLayer:exceptionReason:]: (0x60000001f790) <AVCaptureVideoPreviewLayer: 0x6000017f95c0>
+2026-10-31 17:59:43.209 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession beginConfiguration]: (0x60000001f790)
+2026-10-31 17:59:43.209 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001f790) updated beginConfigRefCount 1
+2026-10-31 17:59:43.209 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession commitConfiguration]: (0x60000001f790)
+2026-10-31 17:59:43.209 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _commitConfiguration]: (0x60000001f790) updated beginConfigRefCount 0
+2026-10-31 17:59:43.209 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001f790) called. skipConfig: 0
+2026-10-31 17:59:43.210 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001f790) New fcs config(5)
+2026-10-31 17:59:43.210 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001f790) Setting fcs config(5) FigCaptureSessionConfiguration 0x60000262d200: ID 5, sdk 5072047138930695, AVCaptureSessionPresetHigh multiCam: 0, appAudio: 1, autoConfig: 1, mixesWithOthers: 0, hqBluetooth: 0, runWhileMultitasking: 0, checkIfFileAlreadyExistForMFO: 1 autoRunDeferredStart: 0
+2026-10-31 17:59:43.210 E  QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< FigCaptureSessionSimulator >>>> signalled err=-12782 at <>:297
+2026-10-31 17:59:43.214 Df QuetTaiLieu[6294:5f11] [com.apple.coremedia:] <<<< AVError >>>> AVLocalizedErrorWithUnderlyingOSStatus: Returning error (AVFoundationErrorDomain / -11800) status (-12782)
+2026-10-31 17:59:43.215 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _postRuntimeError:]: (0x60000001f790) posting AVCaptureSessionRuntimeErrorNotification with Error Domain=AVFoundationErrorDomain Code=-11800 "Không thể hoàn thành thao tác này" UserInfo={NSLocalizedFailureReason=Đã xảy ra lỗi không xác định (-12782), NSLocalizedDescription=Không thể hoàn thành thao tác này, NSUnderlyingError=0x600000cefa50 {Error Domain=NSOSStatusErrorDomain Code=-12782 "(null)"}}
+2026-10-31 17:59:43.227 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f95c0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:45.579 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 13_camera_single.png (CameraViewController)
+2026-10-31 17:59:45.681 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- chụp
+2026-10-31 17:59:45.686 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:45.686 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:45.692 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f95c0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:47.877 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 14_crop_capture.png (CropViewController)
+2026-10-31 17:59:47.980 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- Tiếp tục
+2026-10-31 17:59:47.983 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f95c0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:47.993 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f95c0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:48.076 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:48.076 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:48.123 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f95c0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:48.652 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x6000017f95c0>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:50.597 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 15_editor_from_camera.png (EditorViewController)
+2026-10-31 17:59:50.701 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- lưu
+2026-10-31 17:59:51.254 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:51.255 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:51.259 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession beginConfiguration]: (0x60000001f790)
+2026-10-31 17:59:51.259 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001f790) updated beginConfigRefCount 1
+2026-10-31 17:59:51.259 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession commitConfiguration]: (0x60000001f790)
+2026-10-31 17:59:51.259 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _commitConfiguration]: (0x60000001f790) updated beginConfigRefCount 0
+2026-10-31 17:59:51.259 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001f790) called. skipConfig: 0
+2026-10-31 17:59:51.262 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001f790) New fcs config(6)
+2026-10-31 17:59:51.263 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession dealloc]: (0x60000001f790) (pthread 0x104c0c200)
+2026-10-31 17:59:51.263 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001f790) updated beginConfigRefCount 1
+2026-10-31 17:59:51.263 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _makeConfigurationLive:]: (0x60000001f790) did make configuration with ID 0 live
+2026-10-31 17:59:52.524 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 16_document_new.png (DocumentViewController)
+2026-10-31 17:59:52.628 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra tài liệu mới
+2026-10-31 17:59:52.630 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS tài liệu chụp Đơn có 1 trang
+2026-10-31 17:59:52.630 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS tài liệu chụp Đơn đã lưu
+2026-10-31 17:59:52.935 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- về màn hình chính
+2026-10-31 17:59:54.057 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- mở máy ảnh (Hàng loạt)
+2026-10-31 17:59:54.060 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:54.060 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:54.060 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession init]: (0x60000001d070) called
+2026-10-31 17:59:54.062 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _initWithMediaEnvironment:]: (0x60000001d070) finished
+2026-10-31 17:59:54.062 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _addVideoPreviewLayer:exceptionReason:]: (0x60000001d070) <AVCaptureVideoPreviewLayer: 0x600001800600>
+2026-10-31 17:59:54.062 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession beginConfiguration]: (0x60000001d070)
+2026-10-31 17:59:54.062 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001d070) updated beginConfigRefCount 1
+2026-10-31 17:59:54.063 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession commitConfiguration]: (0x60000001d070)
+2026-10-31 17:59:54.063 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _commitConfiguration]: (0x60000001d070) updated beginConfigRefCount 0
+2026-10-31 17:59:54.063 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001d070) called. skipConfig: 0
+2026-10-31 17:59:54.063 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001d070) New fcs config(7)
+2026-10-31 17:59:54.063 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001d070) Setting fcs config(7) FigCaptureSessionConfiguration 0x6000026351a0: ID 7, sdk 5072047138930695, AVCaptureSessionPresetHigh multiCam: 0, appAudio: 1, autoConfig: 1, mixesWithOthers: 0, hqBluetooth: 0, runWhileMultitasking: 0, checkIfFileAlreadyExistForMFO: 1 autoRunDeferredStart: 0
+2026-10-31 17:59:54.064 E  QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< FigCaptureSessionSimulator >>>> signalled err=-12782 at <>:297
+2026-10-31 17:59:54.066 Df QuetTaiLieu[6294:5f11] [com.apple.coremedia:] <<<< AVError >>>> AVLocalizedErrorWithUnderlyingOSStatus: Returning error (AVFoundationErrorDomain / -11800) status (-12782)
+2026-10-31 17:59:54.067 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _postRuntimeError:]: (0x60000001d070) posting AVCaptureSessionRuntimeErrorNotification with Error Domain=AVFoundationErrorDomain Code=-11800 "Không thể hoàn thành thao tác này" UserInfo={NSLocalizedFailureReason=Đã xảy ra lỗi không xác định (-12782), NSLocalizedDescription=Không thể hoàn thành thao tác này, NSUnderlyingError=0x600000cf8ea0 {Error Domain=NSOSStatusErrorDomain Code=-12782 "(null)"}}
+2026-10-31 17:59:54.076 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:55.859 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- chụp 1
+2026-10-31 17:59:55.865 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:55.865 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:55.873 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:57.190 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- Tiếp tục 1
+2026-10-31 17:59:57.192 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:57.194 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 17:59:58.780 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 17_camera_batch_1.png (CameraViewController)
+2026-10-31 17:59:58.888 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- chụp 2
+2026-10-31 17:59:58.901 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:58.902 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 17:59:58.908 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 18:00:00.240 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- Tiếp tục 2
+2026-10-31 18:00:00.246 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 18:00:00.259 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 18:00:01.761 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 18_camera_batch_2.png (CameraViewController)
+2026-10-31 18:00:01.865 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- xem các trang đã chụp
+2026-10-31 18:00:01.867 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:01.867 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:01.887 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 18:00:02.410 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureVideoPreviewLayer >>>> -[AVCaptureVideoPreviewLayer layerDidBecomeVisible:]: <AVCaptureVideoPreviewLayer: 0x600001800600>: Posting AVCaptureVideoPreviewLayerDidBecomeVisibleNotification
+2026-10-31 18:00:05.757 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 19_editor_batch.png (EditorViewController)
+2026-10-31 18:00:05.860 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- lưu
+2026-10-31 18:00:06.418 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:06.418 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:06.419 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:06.419 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:06.423 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession beginConfiguration]: (0x60000001d070)
+2026-10-31 18:00:06.424 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001d070) updated beginConfigRefCount 1
+2026-10-31 18:00:06.424 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession commitConfiguration]: (0x60000001d070)
+2026-10-31 18:00:06.424 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _commitConfiguration]: (0x60000001d070) updated beginConfigRefCount 0
+2026-10-31 18:00:06.424 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001d070) called. skipConfig: 0
+2026-10-31 18:00:06.426 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _buildAndRunGraph:]: (0x60000001d070) New fcs config(8)
+2026-10-31 18:00:06.426 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession dealloc]: (0x60000001d070) (pthread 0x104c0c200)
+2026-10-31 18:00:06.427 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _beginConfiguration]: (0x60000001d070) updated beginConfigRefCount 1
+2026-10-31 18:00:06.427 Df QuetTaiLieu[6294:5f11] [com.apple.cameracapture:] <<<< AVCaptureSession >>>> -[AVCaptureSession _makeConfigurationLive:]: (0x60000001d070) did make configuration with ID 0 live
+2026-10-31 18:00:07.671 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 20_document_batch.png (DocumentViewController)
+2026-10-31 18:00:07.773 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra tài liệu hàng loạt
+2026-10-31 18:00:07.775 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS tài liệu Hàng loạt có 2 trang
+2026-10-31 18:00:08.109 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS PDF 2 trang: 382 KB, 2 trang
+2026-10-31 18:00:08.415 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- chọn khổ giấy PDF
+2026-10-31 18:00:08.458 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UIFocusSystemSceneComponent] Override focusSystemState: (ENABLED) for reason(s): {(
+    "<_UIAlertControllerPhoneTVMacView 0x105814000>"
+)}
+2026-10-31 18:00:08.462 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 18:00:08.483 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UIFocus] Failed to update focus with context <UIFocusUpdateContext: 0x60000301f180; previouslyFocusedItem: (nil); nextFocusedItem: (nil); focusHeading: None>. No additional info available.
+2026-10-31 18:00:08.663 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UIFocus] Deferring focus update to item <_UIInterfaceActionCustomViewRepresentationView: 0x114e1e350>. No additional info available.
+2026-10-31 18:00:09.072 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UIFocus] Deferring focus update to item <_UIInterfaceActionCustomViewRepresentationView: 0x114e21e90>. No additional info available.
+2026-10-31 18:00:10.070 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 21_pdf_size.png (UIAlertController)
+2026-10-31 18:00:10.173 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- đóng
+2026-10-31 18:00:10.391 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:UIFocusSystemSceneComponent] Override focusSystemState: (DISABLED) for reason(s): <_UIAlertControllerPhoneTVMacView: 0x105814000; frame = (8 559; 386 281); layer = <CALayer: 0x600000cf0450>>
+2026-10-31 18:00:10.391 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x104e08c20> (97030D2B-1C26-4DCD-9347-39B768EF3EB4)
+2026-10-31 18:00:11.106 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- về màn hình chính
+2026-10-31 18:00:12.440 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- nhập 1 ảnh
+2026-10-31 18:00:12.445 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:12.446 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:14.369 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 22_import_crop.png (CropViewController)
+2026-10-31 18:00:14.476 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- Xong (nhập ảnh)
+2026-10-31 18:00:15.020 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:15.020 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:17.176 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 23_import_editor.png (EditorViewController)
+2026-10-31 18:00:17.286 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- lưu (nhập ảnh)
+2026-10-31 18:00:17.325 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:17.326 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:18.624 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 24_import_document.png (DocumentViewController)
+2026-10-31 18:00:18.727 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- về màn hình chính
+2026-10-31 18:00:19.856 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- nhập nhiều ảnh
+2026-10-31 18:00:20.088 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:20.088 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:24.630 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 25_import_multi_editor.png (EditorViewController)
+2026-10-31 18:00:24.735 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra nhập nhiều ảnh
+2026-10-31 18:00:24.736 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS nhập nhiều ảnh: 3 trang
+2026-10-31 18:00:25.040 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- lưu (nhập nhiều ảnh)
+2026-10-31 18:00:25.093 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:25.093 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:25.094 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:25.094 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:25.095 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:25.095 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:26.438 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 26_import_multi_document.png (DocumentViewController)
+2026-10-31 18:00:26.545 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- về màn hình chính
+2026-10-31 18:00:27.669 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- mở tài liệu 2 trang
+2026-10-31 18:00:27.698 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:27.698 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:27.700 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:27.700 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:27.986 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- đổi tên
+2026-10-31 18:00:29.184 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 28_renamed.png (DocumentViewController)
+2026-10-31 18:00:29.302 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra đổi tên
+2026-10-31 18:00:29.304 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS đổi tên được lưu
+2026-10-31 18:00:29.621 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- mở trình chỉnh sửa để xoá trang
+2026-10-31 18:00:29.625 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:29.626 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:29.945 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- xoá trang 1
+2026-10-31 18:00:31.546 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 29_page_deleted.png (EditorViewController)
+2026-10-31 18:00:31.653 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra xoá trang
+2026-10-31 18:00:31.655 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS xoá trang: còn 1 trang
+2026-10-31 18:00:32.596 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- xoá tài liệu
+2026-10-31 18:00:32.906 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- tải lại
+2026-10-31 18:00:34.489 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 30_home_final.png (HomeViewController)
+2026-10-31 18:00:34.595 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra danh sách
+2026-10-31 18:00:34.601 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS xoá tài liệu: còn 4 tài liệu (4)
+2026-10-31 18:00:34.906 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- nhập 12 ảnh lớn
+2026-10-31 18:00:37.727 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:00:37.727 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:04.710 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- thời gian xử lý
+2026-10-31 18:01:04.720 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST]    nhập + xử lý 12 ảnh 12 MP: 29.8s
+2026-10-31 18:01:06.404 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 31_stress_editor.png (EditorViewController)
+2026-10-31 18:01:06.512 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- lưu (12 ảnh)
+2026-10-31 18:01:06.609 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.609 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.610 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.610 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.611 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.611 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.612 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.612 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.612 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.612 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.613 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:06.613 Df QuetTaiLieu[6294:5f11] [com.apple.UIKit:_UIVisualStyleRegistry] Note: no default visual style class registered as fallback for stylable class UIActivityIndicatorView
+2026-10-31 18:01:08.086 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] ảnh màn hình: 32_stress_document.png (DocumentViewController)
+2026-10-31 18:01:08.190 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra 12 trang
+2026-10-31 18:01:08.192 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS nhập 12 ảnh lớn: tài liệu 12 trang
+2026-10-31 18:01:08.583 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS PDF 12 trang: 6897 KB, 12 trang
+2026-10-31 18:01:08.897 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- về màn hình chính
+2026-10-31 18:01:10.040 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] -- kiểm tra danh sách cuối
+2026-10-31 18:01:10.042 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] PASS danh sách cuối: 5 tài liệu (5)
+2026-10-31 18:01:10.352 Df QuetTaiLieu[6294:5f11] (Foundation) [SELFTEST] KẾT QUẢ: 27 đạt, 0 lỗi
