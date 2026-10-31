@@ -26,9 +26,12 @@ nắn phẳng theo khổ giấy (A4/Letter) → bộ lọc làm rõ chữ → l�
 
 ## CI (GitHub Actions)
 - `.github/workflows/android.yml`: build APK, kiểm thử thuật toán, chạy máy ảo API 24, 29 & 34 với `tests/android/run_tests.py`.
-- `.github/workflows/ios.yml`: build IPA chưa ký + chạy tự kiểm thử trên iOS Simulator, chụp màn hình.
-- Kết quả (APK/IPA, ảnh màn hình, logcat, summary.md) được đẩy đè lên các nhánh `ci/android-build`, `ci/android-29`,
-  `ci/android-34`, `ci/ios`. Xem bằng `git fetch origin ci/android-34 && git show origin/ci/android-34:summary.md`.
+- `.github/workflows/ios.yml`: kiểm thử thuật toán Swift trên Linux, build IPA (ký ad-hoc, bỏ ảnh thử) + chạy tự kiểm thử
+  trên iOS Simulator, chụp màn hình.
+- Kết quả (APK/IPA, ảnh màn hình, logcat, summary.md) được đẩy đè lên các nhánh `ci/android-build`, `ci/android-24`,
+  `ci/android-29`, `ci/android-34`, `ci/ios`, `ci/ios-algo`.
+  Xem bằng `git fetch origin '+refs/heads/ci/*:refs/remotes/origin/ci/*' && git show origin/ci/android-34:summary.md`
+  (log job trên GitHub có thể không tải được qua proxy — đọc kết quả từ các nhánh này).
 
 ## Quy ước
 - Chuỗi giao diện tiếng Việt, đặt trực tiếp trong mã (UI dựng bằng code, không dùng XML layout).
