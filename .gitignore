@@ -1,0 +1,17 @@
+# Android
+android/build/
+android/app/build/
+android/.gradle/
+android/local.properties
+android/keystore/
+android/.idea/
+*.iml
+# iOS
+ios/build/
+ios/*.xcodeproj/
+ios/DerivedData/
+# chung
+.DS_Store
+__pycache__/
+out/
+test-out/

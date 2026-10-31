@@ -1,0 +1,111 @@
+name: Android
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "android/**"
+      - "tests/**"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build APK (debug + release chưa ký)
+        working-directory: android
+        run: ./gradlew --no-daemon --stacktrace assembleDebug assembleRelease
+
+      - name: Kiểm thử thuật toán tìm mép (JVM)
+        run: |
+          mkdir -p out/core-classes out/core
+          javac -encoding UTF-8 -d out/core-classes android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/*.java
+          java -DminOk=5 -cp out/core-classes EvalSynth tests/images/gt.txt out/core | tee out/core/core-tests.txt
+
+      - name: Gom kết quả
+        if: always()
+        run: |
+          mkdir -p out/apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk out/apk/ || true
+          cp android/app/build/outputs/apk/release/*.apk out/apk/ || true
+          ls -la out/apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: out/apk/
+
+      - name: Đẩy kết quả lên nhánh ci/android-build
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd out
+          git init -q
+          git checkout -q -b ci/android-build
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "build run=${GITHUB_RUN_NUMBER} sha=${GITHUB_SHA} status=${{ job.status }}"
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/android-build
+
+  emulator:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [29, 34]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: apk
+
+      - name: Bật KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Chạy kiểm thử trên máy ảo API ${{ matrix.api }}
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front none
+          script: python3 tests/android/run_tests.py apk/app-debug.apk test-out
+
+      - name: Đẩy kết quả lên nhánh ci/android-${{ matrix.api }}
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p test-out
+          cd test-out
+          git init -q
+          git checkout -q -b ci/android-${{ matrix.api }}
+          git add -A
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "emulator api=${{ matrix.api }} run=${GITHUB_RUN_NUMBER} sha=${GITHUB_SHA} status=${{ job.status }}" || true
+          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/android-${{ matrix.api }}
