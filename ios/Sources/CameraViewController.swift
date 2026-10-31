@@ -658,26 +658,32 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
         picker.dismiss(animated: true)
         guard !results.isEmpty else { return }
         busy = true
-        ImageLoader.load(results) { [weak self] images in
-            let failed = results.count - images.count
-            DispatchQueue.global(qos: .userInitiated).async {
-                let quads = images.map { img in img.cgImage.flatMap { ImageOps.detect($0) } }
-                DispatchQueue.main.async {
-                    guard let self = self else { return }
-                    self.busy = false
-                    if failed > 0 { self.toast("\(failed) ảnh không đọc được") }
-                    var added = false
-                    for (i, img) in images.enumerated() {
-                        if !self.acceptPage(img, quad: quads[i], auto: true, fromCamera: false) { return }
-                        added = true
-                    }
-                    if added {
-                        if self.batch { self.refreshBottom() }
-                        self.openEditor()
-                    }
+        let st = ImportState()
+        // từng ảnh một: tìm mép ở luồng nền, thêm trang ở luồng chính
+        ImageLoader.forEach(results, { [weak self] img in
+            let q = img.cgImage.flatMap { ImageOps.detect($0) }
+            DispatchQueue.main.sync {
+                guard let self = self, !st.stopped else { return }
+                if self.acceptPage(img, quad: q, auto: true, fromCamera: false) {
+                    st.added = true
+                } else {
+                    st.stopped = true
                 }
             }
-        }
+        }, completion: { [weak self] _, failed in
+            guard let self = self else { return }
+            self.busy = false
+            if failed > 0 { self.toast("\(failed) ảnh không đọc được") }
+            if st.added && !st.stopped {
+                if self.batch { self.refreshBottom() }
+                self.openEditor()
+            }
+        })
+    }
+
+    private final class ImportState {
+        var stopped = false
+        var added = false
     }
 
     private func finish(_ d: Doc?) {

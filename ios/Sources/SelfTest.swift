@@ -51,6 +51,7 @@ final class SelfTest {
     private var docIds = [String]()
     private var retakeSrc = ""
     private var targetId = ""
+    private var stressStart = Date()
     private var algoDone = false
 
     private init(nav: UINavigationController) {
@@ -394,6 +395,43 @@ final class SelfTest {
         addRun("kiểm tra danh sách") {
             let n = DocStore.shared.list().count
             self.check(n == 4 && DocStore.shared.load(self.targetId) == nil, "xoá tài liệu: còn 4 tài liệu (\(n))")
+        }
+        // --- 12 ảnh lớn (12 MP) cùng lúc: hàng đợi xử lý, bộ nhớ, PDF nhiều trang ---
+        addRun("nhập 12 ảnh lớn") {
+            self.stressStart = Date()
+            let names = ["doc_1_wood", "doc_2_dark", "doc_3_gray", "doc_4_beige", "doc_5_blue", "doc_6_clutter"]
+            var imgs = [UIImage]()
+            let fmt = UIGraphicsImageRendererFormat()
+            fmt.scale = 1
+            fmt.opaque = true
+            let r = UIGraphicsImageRenderer(size: CGSize(width: 3024, height: 4032), format: fmt)
+            for i in 0..<12 {
+                guard let src = SelfTest.testImage(names[i % names.count]) else { continue }
+                imgs.append(r.image { _ in src.draw(in: CGRect(x: 0, y: 0, width: 3024, height: 4032)) })
+            }
+            self.home?.importImages(imgs)
+        }
+        addUntil("trình chỉnh sửa 12 trang", 240) {
+            self.editor != nil && (self.editor?.pending ?? 1) == 0 && self.editor?.doc.pages.count == 12
+        }
+        addRun("thời gian xử lý") {
+            self.log(String(format: "   nhập + xử lý 12 ảnh 12 MP: %.1fs", Date().timeIntervalSince(self.stressStart)))
+        }
+        addWait(0.8)
+        addSnap("31_stress_editor")
+        addRun("lưu (12 ảnh)") { self.editor?.finishEditing(done: true) }
+        addUntil("tài liệu 12 trang", 120) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(1.0)
+        addSnap("32_stress_document")
+        addRun("kiểm tra 12 trang") {
+            self.check(self.docVC?.doc.pages.count == 12, "nhập 12 ảnh lớn: tài liệu 12 trang")
+            self.verifyCurrentDocPdf()
+        }
+        addRun("về màn hình chính") { self.nav.popToRootViewController(animated: false) }
+        addWait(0.8)
+        addRun("kiểm tra danh sách cuối") {
+            let n = DocStore.shared.list().count
+            self.check(n == 5, "danh sách cuối: 5 tài liệu (\(n))")
         }
         next()
     }

@@ -80,6 +80,9 @@ jobs:
           name: apk
           path: apk
 
+      - name: Cài Pillow (tạo ảnh thử lớn)
+        run: pip3 install --break-system-packages -q pillow || pip3 install -q pillow || true
+
       - name: Bật KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules

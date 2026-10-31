@@ -521,6 +521,52 @@ def t_import_multi():
     shot("import_multi_document")
 
 
+def t_stress_import():
+    """Nhập 12 ảnh lớn (12 MP) cùng lúc: kiểm tra bộ nhớ, hàng đợi xử lý, xuất PDF nhiều trang."""
+    try:
+        from PIL import Image
+    except ImportError:
+        notes.append("Bỏ qua kiểm thử ảnh lớn (thiếu Pillow)")
+        return
+    go_home()
+    srcs = ["doc_1_wood.jpg", "doc_2_dark.jpg", "doc_3_gray.jpg", "doc_4_beige.jpg", "doc_5_blue.jpg", "doc_6_clutter.jpg"]
+    names = []
+    for i in range(12):
+        im = Image.open(os.path.join(IMAGES, srcs[i % len(srcs)])).convert("RGB").resize((3024, 4032), Image.BILINEAR)
+        name = "big_%02d.jpg" % i
+        path = os.path.join(OUT, name)
+        im.save(path, quality=90)
+        push_test_image(path, name)
+        os.remove(path)
+        names.append(name)
+    uris = ",".join("content://%s.share/%s" % (PKG, n) for n in names)
+    t0 = time.time()
+    out = sh("am start -a %s.TEST_IMPORT --esa uris %s -n %s/.MainActivity" % (PKG, uris, PKG))
+    if "Error" in out:
+        raise AssertionError(out)
+    wait_activity("EditorActivity", 180)
+    log("nhập 12 ảnh lớn: %.1fs đến trình chỉnh sửa" % (time.time() - t0))
+    if not exists(text="/12", timeout=10, contains=True):
+        raise AssertionError("Không đủ 12 trang")
+    time.sleep(20)
+    shot("stress_editor")
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 300)
+    log("nhập + xử lý 12 ảnh lớn: %.1fs" % (time.time() - t0))
+    time.sleep(3)
+    shot("stress_document")
+    if not exists(text="1/12", timeout=8):
+        raise AssertionError("Tài liệu không đủ 12 trang")
+    tap(text="Chia sẻ")
+    time.sleep(1)
+    tap(text="Chia sẻ PDF", contains=True)
+    time.sleep(6)
+    shot("stress_share_pdf")
+    back()
+    time.sleep(1)
+    check_no_crash("stress")
+
+
 def t_home_list():
     go_home()
     time.sleep(2)
@@ -695,6 +741,7 @@ def main():
     for n in ["doc_1_wood.jpg", "doc_4_beige.jpg", "doc_5_blue.jpg"]:
         step("Nhập ảnh %s" % n, t_import(n))
     step("Nhập nhiều ảnh", t_import_multi)
+    step("Nhập 12 ảnh lớn (12 MP)", t_stress_import)
     step("Danh sách + tìm kiếm", t_home_list)
     step("Xoá tài liệu", t_delete_document)
     step("Không giữ hoạt động (lưu/khôi phục trạng thái)", t_dont_keep_activities)

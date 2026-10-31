@@ -210,12 +210,38 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
         guard !results.isEmpty else { return }
-        busy.show(in: view, text: "Đang nhập ảnh…")
-        ImageLoader.load(results) { [weak self] images in
+        if results.count == 1 {
+            busy.show(in: view, text: "Đang nhập ảnh…")
+            ImageLoader.forEach(results, { [weak self] img in
+                DispatchQueue.main.async {
+                    self?.busy.hide()
+                    self?.importImages([img])
+                }
+            }, completion: { [weak self] ok, _ in
+                if ok == 0 {
+                    self?.busy.hide()
+                    self?.toast("Không đọc được ảnh")
+                }
+            })
+            return
+        }
+        // nhiều ảnh: đọc, tìm mép và lưu lần lượt từng ảnh rồi mở trình chỉnh sửa
+        busy.show(in: view, text: "Đang nhập \(results.count) ảnh…")
+        let doc = DocStore.shared.create(draft: true)
+        ImageLoader.forEach(results, { img in
+            let q = img.cgImage.flatMap { ImageOps.detect($0) }
+            _ = try? DocStore.shared.addPage(doc, image: img, quad: q, auto: true)
+        }, completion: { [weak self] _, failed in
             guard let self = self else { return }
             self.busy.hide()
-            self.importImages(images)
-        }
+            if doc.pages.isEmpty {
+                DocStore.shared.delete(doc)
+                self.toast("Không đọc được ảnh")
+                return
+            }
+            if failed > 0 { self.toast("\(failed) ảnh không đọc được") }
+            self.openEditor(doc, isNew: true)
+        })
     }
 
     /// Nhập ảnh: 1 ảnh -> màn hình cắt; nhiều ảnh -> tự tìm mép rồi mở trình chỉnh sửa.
@@ -419,30 +445,40 @@ final class DocCell: UITableViewCell {
     @objc private func moreTapped() { onMore?() }
 }
 
-/// Đọc ảnh từ PHPicker.
+/// Đọc ảnh từ PHPicker lần lượt từng ảnh (không giữ nhiều ảnh 12 MP trong bộ nhớ cùng lúc).
 enum ImageLoader {
-    private final class Box {
-        var images: [UIImage?]
-        init(_ n: Int) { images = [UIImage?](repeating: nil, count: n) }
+    private final class Slot {
+        var image: UIImage?
     }
 
-    static func load(_ results: [PHPickerResult], completion: @escaping ([UIImage]) -> Void) {
-        let box = Box(results.count)
-        let group = DispatchGroup()
-        for (i, r) in results.enumerated() {
-            let provider = r.itemProvider
-            guard provider.canLoadObject(ofClass: UIImage.self) else { continue }
-            group.enter()
-            provider.loadObject(ofClass: UIImage.self) { obj, _ in
-                if let img = obj as? UIImage {
-                    let norm = ImageOps.normalized(img, maxDim: ImageOps.maxSrc)
-                    DispatchQueue.main.async { box.images[i] = norm }
+    /// `body` chạy ở luồng nền cho từng ảnh (đã chuẩn hoá hướng, cạnh dài ≤ maxSrc); `completion` chạy ở luồng chính.
+    static func forEach(_ results: [PHPickerResult], _ body: @escaping (UIImage) -> Void,
+                        completion: @escaping (_ ok: Int, _ failed: Int) -> Void) {
+        DispatchQueue(label: "vn.quettailieu.import", qos: .userInitiated).async {
+            var ok = 0, failed = 0
+            for r in results {
+                let provider = r.itemProvider
+                let slot = Slot()
+                if provider.canLoadObject(ofClass: UIImage.self) {
+                    let sem = DispatchSemaphore(value: 0)
+                    provider.loadObject(ofClass: UIImage.self) { obj, _ in
+                        slot.image = obj as? UIImage
+                        sem.signal()
+                    }
+                    _ = sem.wait(timeout: .now() + 60)
                 }
-                group.leave()
+                if let img = slot.image {
+                    autoreleasepool {
+                        body(ImageOps.normalized(img, maxDim: ImageOps.maxSrc))
+                    }
+                    slot.image = nil
+                    ok += 1
+                } else {
+                    failed += 1
+                }
             }
-        }
-        group.notify(queue: .main) {
-            completion(box.images.compactMap { $0 })
+            let nOK = ok, nFailed = failed
+            DispatchQueue.main.async { completion(nOK, nFailed) }
         }
     }
 }
