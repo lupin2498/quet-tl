@@ -90,6 +90,8 @@ jobs:
           if [ $code -ne 0 ]; then echo "BUILD FAILED"; exit $code; fi
           APP=build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app
           rm -rf Payload && mkdir Payload && cp -R "$APP" Payload/
+          # ảnh thử chỉ dùng cho tự kiểm thử trên Simulator -> bỏ khỏi bộ cài
+          rm -rf Payload/QuetTaiLieu.app/TestImages
           # ký ad-hoc (không cần chứng chỉ) để TrollStore/eSign nhận; Sideloadly/AltStore sẽ ký lại bằng Apple ID
           codesign --force --deep --sign - --timestamp=none Payload/QuetTaiLieu.app
           codesign -dv Payload/QuetTaiLieu.app 2>&1 | head -5
