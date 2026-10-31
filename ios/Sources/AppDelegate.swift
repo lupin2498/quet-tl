@@ -21,7 +21,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     /// Mở ảnh/PDF được chia sẻ vào ứng dụng ("Mở bằng Quét Tài Liệu").
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let access = url.startAccessingSecurityScopedResource()
-        defer { if access { url.stopAccessingSecurityScopedResource() } }
+        defer {
+            if access { url.stopAccessingSecurityScopedResource() }
+            // bản sao hệ thống đặt vào Documents/Inbox -> xoá sau khi đã đọc
+            if url.path.contains("/Documents/Inbox/") { try? FileManager.default.removeItem(at: url) }
+        }
         guard let data = try? Data(contentsOf: url), let img = UIImage(data: data),
               let nav = window?.rootViewController as? UINavigationController,
               let home = nav.viewControllers.first as? HomeViewController else { return false }

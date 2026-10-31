@@ -50,15 +50,15 @@ final class Doc: Codable {
     }
 }
 
-/// Lưu tài liệu: Documents/docs/<id>/doc.json + ảnh từng trang.
+/// Lưu tài liệu: Application Support/docs/<id>/doc.json + ảnh từng trang (không lộ ra ứng dụng Tệp).
 final class DocStore {
     static let shared = DocStore()
     let root: URL
     private let fm = FileManager.default
 
     private init() {
-        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        root = docs.appendingPathComponent("docs", isDirectory: true)
+        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        root = base.appendingPathComponent("docs", isDirectory: true)
         try? FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
     }
 

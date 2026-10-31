@@ -43,8 +43,8 @@ targets:
         UIUserInterfaceStyle: Dark
         UIStatusBarStyle: UIStatusBarStyleLightContent
         UIViewControllerBasedStatusBarAppearance: false
-        UIFileSharingEnabled: true
-        LSSupportsOpeningDocumentsInPlace: true
+        UIFileSharingEnabled: false
+        LSSupportsOpeningDocumentsInPlace: false
         CFBundleDocumentTypes:
           - CFBundleTypeName: "Ảnh"
             LSHandlerRank: Alternate

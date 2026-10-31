@@ -407,7 +407,8 @@ def t_add_page():
     wait_activity("DocumentActivity", 25)
     time.sleep(2.5)
     shot("document_2pages")
-    if not exists(text="2/2", timeout=6, contains=True):
+    # trang 1 có thể cao hơn màn hình (ảnh đã xoay) nên kiểm tra nhãn "1/2" của trang đầu
+    if not exists(text="1/2", timeout=6):
         raise AssertionError("Tài liệu không có 2 trang")
 
 
@@ -569,6 +570,74 @@ def t_delete_document():
         raise AssertionError("Xoá tài liệu không thành công (%d -> %d)" % (before, after))
 
 
+def t_dont_keep_activities():
+    """Bật "Không giữ hoạt động": mỗi màn hình bị huỷ khi rời đi -> kiểm tra lưu/khôi phục trạng thái."""
+    go_home()
+    sh("settings put global always_finish_activities 1")
+    try:
+        # chụp đơn -> cắt -> trình chỉnh sửa -> cắt lại -> lưu
+        tap(desc="Quét tài liệu")
+        wait_activity("CameraActivity", 12)
+        time.sleep(3)
+        tap(text="Đơn")
+        time.sleep(1)
+        tap(desc="Chụp", timeout=10)
+        wait_activity("CropActivity", 25)
+        time.sleep(3)
+        tap(text="Tiếp tục")
+        wait_activity("EditorActivity", 25)
+        wait_processing(8)
+        shot("dka_editor")
+        tap(text="Cắt")
+        wait_activity("CropActivity", 15)
+        time.sleep(2.5)
+        tap(text="Xong")
+        wait_activity("EditorActivity", 15)
+        wait_processing(6)
+        tap(desc="Xong")
+        wait_activity("DocumentActivity", 25)
+        time.sleep(2)
+        shot("dka_document_single")
+        if not exists(text="1/1", timeout=5):
+            raise AssertionError("Không giữ hoạt động: tài liệu chụp đơn không có trang")
+        go_home()
+        # hàng loạt: 2 trang, camera bị huỷ/khôi phục sau mỗi lần cắt
+        tap(desc="Quét tài liệu")
+        wait_activity("CameraActivity", 12)
+        time.sleep(3)
+        tap(text="Hàng loạt")
+        time.sleep(1)
+        for k in range(2):
+            tap(desc="Chụp", timeout=10)
+            wait_activity("CropActivity", 25)
+            time.sleep(3)
+            tap(text="Tiếp tục")
+            wait_activity("CameraActivity", 20)
+            time.sleep(3.5)
+        shot("dka_batch_2")
+        if not exists(text="2", timeout=4):
+            raise AssertionError("Không giữ hoạt động: số trang hàng loạt không đúng")
+        tap(desc="Xem các trang đã chụp")
+        wait_activity("EditorActivity", 25)
+        wait_processing(10)
+        if not exists(text="/2", timeout=5, contains=True):
+            raise AssertionError("Không giữ hoạt động: trình chỉnh sửa không đủ 2 trang")
+        tap(desc="Xong")
+        wait_activity("DocumentActivity", 30)
+        time.sleep(2)
+        shot("dka_document_batch")
+        if not exists(text="1/2", timeout=5):
+            raise AssertionError("Không giữ hoạt động: tài liệu hàng loạt không đủ 2 trang")
+    finally:
+        sh("settings put global always_finish_activities 0")
+        go_home()
+        # khởi động lại ứng dụng cho các bước sau
+        sh("am force-stop %s" % PKG)
+        time.sleep(1)
+        sh("am start -W -n %s/.MainActivity" % PKG)
+        time.sleep(2)
+
+
 def t_rotation_and_recreate():
     # Buộc tạo lại Activity (giống khi hệ thống thu hồi bộ nhớ) để kiểm tra lưu/khôi phục trạng thái
     go_home()
@@ -628,6 +697,7 @@ def main():
     step("Nhập nhiều ảnh", t_import_multi)
     step("Danh sách + tìm kiếm", t_home_list)
     step("Xoá tài liệu", t_delete_document)
+    step("Không giữ hoạt động (lưu/khôi phục trạng thái)", t_dont_keep_activities)
     step("Dừng ứng dụng giữa chừng", t_rotation_and_recreate)
     step("Monkey 2500 thao tác ngẫu nhiên", t_monkey)
 
