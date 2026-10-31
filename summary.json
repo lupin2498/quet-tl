@@ -1,0 +1,116 @@
+{
+ "passed": 22,
+ "total": 22,
+ "results": [
+  {
+   "step": "Cài đặt",
+   "ok": true,
+   "sec": 2.0
+  },
+  {
+   "step": "Mở ứng dụng",
+   "ok": true,
+   "sec": 8.8
+  },
+  {
+   "step": "Chụp đơn + màn hình cắt",
+   "ok": true,
+   "sec": 39.9
+  },
+  {
+   "step": "Công cụ chỉnh sửa (lọc, xoay, so sánh, cắt lại)",
+   "ok": true,
+   "sec": 66.5
+  },
+  {
+   "step": "Lưu tài liệu",
+   "ok": true,
+   "sec": 6.0
+  },
+  {
+   "step": "Chia sẻ PDF/JPG",
+   "ok": true,
+   "sec": 22.4
+  },
+  {
+   "step": "Lưu ảnh vào Thư viện",
+   "ok": true,
+   "sec": 6.4
+  },
+  {
+   "step": "Lưu PDF (bộ chọn tệp)",
+   "ok": true,
+   "sec": 8.6
+  },
+  {
+   "step": "Thêm trang",
+   "ok": true,
+   "sec": 34.2
+  },
+  {
+   "step": "Đổi tên",
+   "ok": true,
+   "sec": 15.1
+  },
+  {
+   "step": "Chế độ hàng loạt + hoàn tác",
+   "ok": true,
+   "sec": 53.7
+  },
+  {
+   "step": "Nút trên máy ảnh",
+   "ok": true,
+   "sec": 38.4
+  },
+  {
+   "step": "Nhập ảnh doc_1_wood.jpg",
+   "ok": true,
+   "sec": 24.7
+  },
+  {
+   "step": "Nhập ảnh doc_4_beige.jpg",
+   "ok": true,
+   "sec": 27.1
+  },
+  {
+   "step": "Nhập ảnh doc_5_blue.jpg",
+   "ok": true,
+   "sec": 27.1
+  },
+  {
+   "step": "Nhập nhiều ảnh",
+   "ok": true,
+   "sec": 30.4
+  },
+  {
+   "step": "Nhập 12 ảnh lớn (12 MP)",
+   "ok": true,
+   "sec": 49.9
+  },
+  {
+   "step": "Danh sách + tìm kiếm",
+   "ok": true,
+   "sec": 16.9
+  },
+  {
+   "step": "Xoá tài liệu",
+   "ok": true,
+   "sec": 12.7
+  },
+  {
+   "step": "Không giữ hoạt động (lưu/khôi phục trạng thái)",
+   "ok": true,
+   "sec": 107.7
+  },
+  {
+   "step": "Dừng ứng dụng giữa chừng",
+   "ok": true,
+   "sec": 11.6
+  },
+  {
+   "step": "Monkey 2500 thao tác ngẫu nhiên",
+   "ok": true,
+   "sec": 70.1
+  }
+ ]
+}

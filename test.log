@@ -1,0 +1,62 @@
+17:56:23 device: 10 29 Physical size: 1080x2400 Physical density: 420
+17:56:23 === Cài đặt
+17:56:24 Performing Streamed Install
+Success
+17:56:25 PASS Cài đặt
+17:56:25 === Mở ứng dụng
+17:56:27 Starting: Intent { cmp=vn.quettailieu.scanner/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: vn.quettailieu.scanner/.MainActivity
+TotalTime: 1690
+WaitTime: 1693
+Complete
+17:56:34 PASS Mở ứng dụng
+17:56:34 === Chụp đơn + màn hình cắt
+17:57:14 PASS Chụp đơn + màn hình cắt
+17:57:14 === Công cụ chỉnh sửa (lọc, xoay, so sánh, cắt lại)
+17:58:21 PASS Công cụ chỉnh sửa (lọc, xoay, so sánh, cắt lại)
+17:58:21 === Lưu tài liệu
+17:58:27 PASS Lưu tài liệu
+17:58:27 === Chia sẻ PDF/JPG
+17:58:49 PASS Chia sẻ PDF/JPG
+17:58:49 === Lưu ảnh vào Thư viện
+17:58:55 PASS Lưu ảnh vào Thư viện
+17:58:55 === Lưu PDF (bộ chọn tệp)
+17:59:04 PASS Lưu PDF (bộ chọn tệp)
+17:59:04 === Thêm trang
+17:59:38 PASS Thêm trang
+17:59:38 === Đổi tên
+17:59:53 PASS Đổi tên
+17:59:53 === Chế độ hàng loạt + hoàn tác
+18:00:47 PASS Chế độ hàng loạt + hoàn tác
+18:00:47 === Nút trên máy ảnh
+18:01:25 PASS Nút trên máy ảnh
+18:01:25 === Nhập ảnh doc_1_wood.jpg
+18:01:27 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+18:01:50 PASS Nhập ảnh doc_1_wood.jpg
+18:01:50 === Nhập ảnh doc_4_beige.jpg
+18:01:54 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+18:02:17 PASS Nhập ảnh doc_4_beige.jpg
+18:02:17 === Nhập ảnh doc_5_blue.jpg
+18:02:21 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+18:02:44 PASS Nhập ảnh doc_5_blue.jpg
+18:02:44 === Nhập nhiều ảnh
+18:02:48 Starting: Intent { act=vn.quettailieu.scanner.TEST_IMPORT cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+18:03:15 PASS Nhập nhiều ảnh
+18:03:15 === Nhập 12 ảnh lớn (12 MP)
+18:03:22 nhập 12 ảnh lớn: 1.6s đến trình chỉnh sửa
+18:03:47 nhập + xử lý 12 ảnh lớn: 26.3s
+18:04:05 PASS Nhập 12 ảnh lớn (12 MP)
+18:04:05 === Danh sách + tìm kiếm
+18:04:22 PASS Danh sách + tìm kiếm
+18:04:22 === Xoá tài liệu
+18:04:34 số tài liệu: 7 -> 6
+18:04:34 PASS Xoá tài liệu
+18:04:34 === Không giữ hoạt động (lưu/khôi phục trạng thái)
+18:06:22 PASS Không giữ hoạt động (lưu/khôi phục trạng thái)
+18:06:22 === Dừng ứng dụng giữa chừng
+18:06:33 PASS Dừng ứng dụng giữa chừng
+18:06:33 === Monkey 2500 thao tác ngẫu nhiên
+18:07:44 PASS Monkey 2500 thao tác ngẫu nhiên
+18:07:44 DONE 22/22
