@@ -11,6 +11,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -25,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -190,7 +192,30 @@ final class Ui {
         return new AlertDialog.Builder(c, android.R.style.Theme_Material_Dialog_Alert);
     }
 
+    /** Độ dài tối đa của tên tài liệu. */
+    static final int MAX_TITLE = 120;
+
+    /** Có thể hiện hộp thoại trên màn hình này không (Activity đã đóng thì hiện sẽ làm ứng dụng dừng). */
+    private static boolean canShow(Context c) {
+        return !(c instanceof Activity) || alive((Activity) c);
+    }
+
+    private static long lastDialogAt;
+
+    private static void show(AlertDialog d) {
+        // chạm đúp một nút mở hộp thoại -> chỉ hiện một hộp thoại
+        long now = android.os.SystemClock.uptimeMillis();
+        if (now - lastDialogAt < 350) return;
+        try {
+            d.show();
+            lastDialogAt = now;
+        } catch (RuntimeException ignored) {
+            // cửa sổ vừa bị huỷ (BadTokenException) -> bỏ qua
+        }
+    }
+
     static void confirm(Context c, String title, String msg, String ok, final Runnable onOk) {
+        if (!canShow(c)) return;
         AlertDialog.Builder b = dialog(c).setTitle(title).setNegativeButton("Hủy", null)
                 .setPositiveButton(ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -199,12 +224,14 @@ final class Ui {
                     }
                 });
         if (msg != null) b.setMessage(msg);
-        b.show();
+        show(b.create());
     }
 
     /** Hộp thoại nhập chữ (đổi tên). */
     static void prompt(Context c, String title, String initial, final Cb<String> cb) {
+        if (!canShow(c)) return;
         final EditText et = new EditText(c);
+        et.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_TITLE)});
         et.setText(initial);
         et.setSingleLine(true);
         et.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
@@ -223,12 +250,13 @@ final class Ui {
                     }
                 }).create();
         if (d.getWindow() != null) d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        d.show();
+        show(d);
         et.requestFocus();
     }
 
     /** Danh sách lựa chọn dạng hộp thoại (thay cho PopupMenu). */
     static void menu(Context c, String title, String[] items, final Cb<Integer> cb) {
+        if (!canShow(c)) return;
         AlertDialog.Builder b = dialog(c).setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface d, int which) {
@@ -236,7 +264,40 @@ final class Ui {
             }
         });
         if (title != null) b.setTitle(title);
-        b.show();
+        show(b.create());
+    }
+
+    /** Hiện hộp thoại dựng sẵn một cách an toàn (bỏ qua nếu màn hình đã đóng). */
+    static void showDialog(Context c, AlertDialog.Builder b) {
+        if (!canShow(c)) return;
+        show(b.create());
+    }
+
+    /** Nội dung lỗi để hiện cho người dùng (không bao giờ là "null"). */
+    static String msg(Throwable t) {
+        if (t == null) return "không rõ nguyên nhân";
+        if (t instanceof OutOfMemoryError) return "thiếu bộ nhớ";
+        String m = t.getMessage();
+        if (m == null || m.trim().length() == 0) return t.getClass().getSimpleName();
+        return m;
+    }
+
+    /**
+     * Chuẩn hoá chuỗi để tìm kiếm: bỏ dấu tiếng Việt, đ -> d, chữ thường
+     * ("bien ban" tìm được "Biên bản").
+     */
+    static String fold(String s) {
+        if (s == null) return "";
+        String n = Normalizer.normalize(s, Normalizer.Form.NFD);
+        StringBuilder sb = new StringBuilder(n.length());
+        for (int i = 0; i < n.length(); i++) {
+            char ch = n.charAt(i);
+            int type = Character.getType(ch);
+            if (type == Character.NON_SPACING_MARK || type == Character.ENCLOSING_MARK || type == Character.COMBINING_SPACING_MARK) continue;
+            if (ch == 'đ' || ch == 'Đ') ch = 'd';
+            sb.append(Character.toLowerCase(ch));
+        }
+        return sb.toString();
     }
 
     static String newTitle(long t) {
@@ -251,10 +312,28 @@ final class Ui {
         return a != null && !a.isFinishing() && !a.isDestroyed();
     }
 
+    /**
+     * Tên file an toàn từ tên tài liệu: bỏ ký tự cấm và ký tự điều khiển, tối đa 80 ký tự / 180 byte UTF-8
+     * (giới hạn tên file 255 byte, còn chừa chỗ cho hậu tố "_12.jpg"), không cắt giữa cặp ký tự thay thế.
+     */
     static String safeName(String s) {
-        String r = s.replaceAll("[\\\\/:*?\"<>|\\n\\r\\t]", "_").trim();
+        if (s == null) s = "";
+        StringBuilder sb = new StringBuilder();
+        int bytes = 0, chars = 0;
+        for (int i = 0; i < s.length(); ) {
+            int cp = s.codePointAt(i);
+            i += Character.charCount(cp);
+            if (cp < 0x20 || cp == 0x7F || "\\/:*?\"<>|".indexOf(cp) >= 0) cp = '_';
+            if (cp >= 0xD800 && cp <= 0xDFFF) cp = '_'; // nửa cặp thay thế lẻ
+            int b = cp < 0x80 ? 1 : cp < 0x800 ? 2 : cp < 0x10000 ? 3 : 4;
+            if (chars + 1 > 80 || bytes + b > 180) break;
+            sb.appendCodePoint(cp);
+            bytes += b;
+            chars++;
+        }
+        String r = sb.toString().trim();
+        while (r.startsWith(".")) r = r.substring(1).trim();
         if (r.length() == 0) r = "TaiLieu";
-        if (r.length() > 80) r = r.substring(0, 80);
         return r;
     }
 }

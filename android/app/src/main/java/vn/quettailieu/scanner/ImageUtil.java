@@ -68,6 +68,10 @@ final class ImageUtil {
         int longSide = Math.max(b[0], b[1]);
         int sample = 1;
         while (longSide / (sample * 2) >= maxDim) sample *= 2;
+        // ảnh rất lớn (48–200 MP): bản giải mã đầy đủ có thể chiếm phần lớn bộ nhớ -> giảm mẫu thêm
+        // sao cho ảnh giải mã không quá 1/4 bộ nhớ tối đa của ứng dụng
+        long budget = Math.max(48L * 1024 * 1024, Runtime.getRuntime().maxMemory() / 4);
+        while (4L * b[0] * b[1] / ((long) sample * sample) > budget && sample < 64) sample *= 2;
         Bitmap bm = null;
         for (int attempt = 0; attempt < 3 && bm == null; attempt++) {
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -203,12 +207,33 @@ final class ImageUtil {
         InputStream in = c.getContentResolver().openInputStream(uri);
         if (in == null) throw new IOException("Không mở được ảnh");
         File f = newCaptureFile(c);
-        DocStore.copy(in, f);
+        try {
+            DocStore.copy(in, f);
+        } catch (IOException e) {
+            f.delete();
+            throw e;
+        } catch (RuntimeException e) {
+            // nhà cung cấp nội dung của ứng dụng khác có thể ném lỗi bất kỳ khi đang đọc
+            f.delete();
+            throw new IOException("Không đọc được ảnh");
+        }
         int[] b = bounds(f.getPath());
-        if (b[0] <= 0) {
+        if (b[0] <= 0 || b[1] <= 0) {
             f.delete();
             throw new IOException("Định dạng ảnh không hỗ trợ");
         }
+        // phần đầu file hợp lệ chưa chắc giải mã được (file hỏng) -> thử giải mã bản thu nhỏ;
+        // nếu không được thì từ chối ngay, tránh tạo trang không bao giờ xử lý xong
+        Bitmap probe = null;
+        try {
+            probe = decodeSampled(f.getPath(), 64);
+        } catch (Throwable ignored) {
+        }
+        if (probe == null) {
+            f.delete();
+            throw new IOException("Ảnh bị hỏng hoặc không giải mã được");
+        }
+        probe.recycle();
         return f;
     }
 

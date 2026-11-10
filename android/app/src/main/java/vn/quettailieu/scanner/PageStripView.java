@@ -43,6 +43,7 @@ public class PageStripView extends View {
     private float dragStartOffset;
     private float downX;
     private boolean dragging;
+    private int activePointer = -1;
     private VelocityTracker vt;
     private ValueAnimator settle;
     private boolean compare;
@@ -90,6 +91,7 @@ public class PageStripView extends View {
         if (n == 0) return;
         i = Math.max(0, Math.min(n - 1, i));
         if (i == index) {
+            if (settle != null) settle.cancel();
             offset = 0;
             invalidate();
             return;
@@ -111,12 +113,23 @@ public class PageStripView extends View {
     }
 
     void dataChanged() {
+        if (settle != null) settle.cancel();
         if (adapter != null) {
             int n = adapter.count();
             if (index > n - 1) index = Math.max(0, n - 1);
         }
         offset = 0;
         invalidate();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (settle != null) settle.cancel();
+        if (vt != null) {
+            vt.recycle();
+            vt = null;
+        }
+        super.onDetachedFromWindow();
     }
 
     private float step() {
@@ -138,7 +151,9 @@ public class PageStripView extends View {
         if (n == 0) return;
         float cx = getWidth() / 2f + offset;
         boolean anim = false;
-        for (int k = -1; k <= 1; k++) {
+        // lật nhanh nhiều trang liên tiếp: phần lệch có thể lớn hơn một bước -> vẽ cả các trang xa hơn đang lướt qua
+        int span = 1 + (int) Math.ceil(Math.abs(offset) / Math.max(1f, step()));
+        for (int k = -span; k <= span; k++) {
             int i = index + k;
             if (i < 0 || i >= n) continue;
             float x = cx + k * step();
@@ -212,7 +227,22 @@ public class PageStripView extends View {
     public boolean onTouchEvent(MotionEvent e) {
         if (adapter == null || adapter.count() == 0) return false;
         int n = adapter.count();
-        switch (e.getActionMasked()) {
+        int action = e.getActionMasked();
+        if (action == MotionEvent.ACTION_POINTER_DOWN) return true; // ngón thứ hai: bỏ qua
+        if (action == MotionEvent.ACTION_POINTER_UP) {
+            // ngón đang vuốt nhấc lên, ngón khác còn chạm: theo ngón còn lại từ vị trí hiện tại (không giật trang)
+            int up = e.getActionIndex();
+            if (e.getPointerId(up) == activePointer) {
+                int other = up == 0 ? 1 : 0;
+                if (other < e.getPointerCount()) {
+                    activePointer = e.getPointerId(other);
+                    downX = e.getX(other);
+                    dragStartOffset = offset;
+                }
+            }
+            return true;
+        }
+        switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (settle != null && settle.isRunning()) {
                     settle.cancel();
@@ -220,13 +250,16 @@ public class PageStripView extends View {
                 if (vt != null) vt.recycle();
                 vt = VelocityTracker.obtain();
                 vt.addMovement(e);
+                activePointer = e.getPointerId(0);
                 downX = e.getX();
                 dragStartOffset = offset;
                 dragging = false;
                 return true;
             case MotionEvent.ACTION_MOVE: {
                 if (vt != null) vt.addMovement(e);
-                float dx = e.getX() - downX;
+                int pi = e.findPointerIndex(activePointer);
+                if (pi < 0) return true;
+                float dx = e.getX(pi) - downX;
                 if (!dragging && Math.abs(dx) > touchSlop) {
                     dragging = true;
                     if (getParent() != null) getParent().requestDisallowInterceptTouchEvent(true);
@@ -256,6 +289,7 @@ public class PageStripView extends View {
                 if (!dragging && e.getActionMasked() == MotionEvent.ACTION_UP) performClick();
                 animateTo(target);
                 dragging = false;
+                activePointer = -1;
                 return true;
             }
         }
@@ -267,10 +301,24 @@ public class PageStripView extends View {
         return super.performClick();
     }
 
+    /**
+     * Chuyển sang trang `target`. Chỉ số trang đổi NGAY (phần lệch còn lại được cuộn về 0 bằng hoạt ảnh),
+     * nên thao tác bấm ngay sau khi lật trang (xoay, lọc, xoá...) áp dụng đúng trang đang lật tới,
+     * và bấm "trang sau" liên tiếp không bị mất lượt.
+     */
     private void animateTo(final int target) {
         if (settle != null) settle.cancel();
+        if (target != index) {
+            offset += (target - index) * step();
+            index = target;
+            if (listener != null) listener.onPageChanged(index);
+        }
         final float from = offset;
-        final float to = (index - target) * step();
+        if (Math.abs(from) < 0.5f || getWidth() == 0) {
+            offset = 0;
+            invalidate();
+            return;
+        }
         settle = ValueAnimator.ofFloat(0f, 1f);
         settle.setDuration(230);
         settle.setInterpolator(new DecelerateInterpolator());
@@ -278,7 +326,7 @@ public class PageStripView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator a) {
                 float t = (Float) a.getAnimatedValue();
-                offset = from + (to - from) * t;
+                offset = from * (1f - t);
                 invalidate();
             }
         });
@@ -293,11 +341,8 @@ public class PageStripView extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (cancelled) return;
-                boolean changed = target != index;
-                index = target;
                 offset = 0;
                 invalidate();
-                if (changed && listener != null) listener.onPageChanged(index);
             }
         });
         settle.start();

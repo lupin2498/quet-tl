@@ -202,9 +202,10 @@ final class Processor {
             public void run() {
                 File[] fs = dir.listFiles();
                 if (fs == null) return;
+                // chạy trên cùng hàng đợi với việc xử lý ảnh nên lúc này không có file .tmp nào đang được ghi
                 for (File f : fs) {
                     String n = f.getName();
-                    if (!keep.contains(n) && !n.endsWith(".tmp") && (n.startsWith("w_") || n.startsWith("o_"))) f.delete();
+                    if (!keep.contains(n) && (n.startsWith("w_") || n.startsWith("o_"))) f.delete();
                 }
             }
         });

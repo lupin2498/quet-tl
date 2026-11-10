@@ -11,20 +11,30 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import vn.quettailieu.scanner.core.Enhancer;
 
-/** Lưu tài liệu: mỗi tài liệu là một thư mục chứa doc.json + ảnh gốc/ảnh đã xử lý từng trang. */
+/**
+ * Lưu tài liệu: mỗi tài liệu là một thư mục chứa doc.json + ảnh gốc/ảnh đã xử lý từng trang.
+ *
+ * Các màn hình mở tài liệu bằng {@link #open}: mọi màn hình dùng chung MỘT đối tượng Doc cho cùng một tài liệu,
+ * nên thay đổi ở màn hình này không bị màn hình khác ghi đè bằng bản cũ. {@link #load} luôn đọc bản mới từ đĩa
+ * (chỉ để liệt kê / dọn dẹp, không dùng để sửa).
+ */
 final class DocStore {
     private DocStore() {}
 
     private static final Object LOCK = new Object();
     private static final Random RND = new Random();
+    /** Tài liệu đang được các màn hình sử dụng (tham chiếu yếu: tự mất khi không còn màn hình nào giữ). */
+    private static final HashMap<String, WeakReference<Doc>> OPEN = new HashMap<>();
 
     static final class Page {
         String id;
@@ -55,6 +65,8 @@ final class DocStore {
         String title;
         long created, modified;
         boolean draft;
+        /** Đã bị xoá: mọi lần lưu sau đó bị bỏ qua (không tạo lại thư mục). */
+        volatile boolean deleted;
         final ArrayList<Page> pages = new ArrayList<>();
 
         File file(String name) {
@@ -95,14 +107,48 @@ final class DocStore {
         d.title = Ui.newTitle(d.created);
         d.draft = draft;
         save(d);
+        synchronized (LOCK) {
+            OPEN.put(d.id, new WeakReference<>(d));
+        }
         return d;
+    }
+
+    /**
+     * Mở tài liệu để dùng trong màn hình (gọi trên luồng chính). Nếu tài liệu đang được màn hình khác dùng
+     * thì trả về chính đối tượng đó.
+     */
+    static Doc open(Context c, String id) {
+        if (id == null) return null;
+        synchronized (LOCK) {
+            WeakReference<Doc> ref = OPEN.get(id);
+            Doc d = ref == null ? null : ref.get();
+            if (d != null && !d.deleted && d.dir.exists()) return d;
+            d = load(c, id);
+            if (d != null) OPEN.put(id, new WeakReference<>(d));
+            else OPEN.remove(id);
+            return d;
+        }
+    }
+
+    /** Tài liệu có đang được màn hình nào đó giữ không. */
+    static boolean isOpen(String id) {
+        synchronized (LOCK) {
+            WeakReference<Doc> ref = OPEN.get(id);
+            Doc d = ref == null ? null : ref.get();
+            return d != null && !d.deleted;
+        }
     }
 
     static Doc load(Context c, String id) {
         if (id == null) return null;
         File dir = new File(root(c), id);
         File f = new File(dir, "doc.json");
-        if (!f.exists()) return null;
+        if (!f.exists()) {
+            // lần ghi trước bị ngắt giữa lúc đổi tên file tạm -> dùng file tạm
+            File tmp = new File(dir, "doc.json.tmp");
+            if (!tmp.exists() || tmp.length() == 0) return null;
+            f = tmp;
+        }
         try {
             JSONObject o = new JSONObject(readText(f));
             Doc d = new Doc();
@@ -144,6 +190,8 @@ final class DocStore {
 
     static void save(Doc d) {
         synchronized (LOCK) {
+            // tài liệu đã xoá (hoặc thư mục không còn) thì không ghi lại, tránh "hồi sinh" tài liệu rỗng
+            if (d == null || d.deleted || d.dir == null || !d.dir.exists()) return;
             try {
                 JSONObject o = new JSONObject();
                 o.put("title", d.title);
@@ -172,7 +220,6 @@ final class DocStore {
                     arr.put(po);
                 }
                 o.put("pages", arr);
-                if (!d.dir.exists()) d.dir.mkdirs();
                 File tmp = new File(d.dir, "doc.json.tmp");
                 FileOutputStream fo = new FileOutputStream(tmp);
                 fo.write(o.toString().getBytes("UTF-8"));
@@ -208,22 +255,75 @@ final class DocStore {
     }
 
     static void delete(Doc d) {
-        if (d != null) deleteRec(d.dir);
+        if (d == null) return;
+        synchronized (LOCK) {
+            d.deleted = true;
+            WeakReference<Doc> ref = OPEN.remove(d.id);
+            Doc shared = ref == null ? null : ref.get();
+            if (shared != null) shared.deleted = true;
+        }
+        deleteRec(d.dir);
     }
 
+    /**
+     * Dọn thư mục rác: bản nháp/tài liệu KHÔNG có trang nào và đã cũ, thư mục hỏng không có doc.json.
+     * Bản nháp còn trang không bị xoá ở đây — chúng được {@link #recoverDrafts} đưa trở lại danh sách.
+     */
     static void cleanDrafts(Context c, long olderThanMs) {
         File[] dirs = root(c).listFiles();
         if (dirs == null) return;
         long now = System.currentTimeMillis();
         for (File dir : dirs) {
+            if (!dir.isDirectory()) continue;
+            if (isOpen(dir.getName())) continue;
             Doc d = load(c, dir.getName());
             if (d == null) {
                 File j = new File(dir, "doc.json");
                 if (!j.exists() && now - dir.lastModified() > olderThanMs) deleteRec(dir);
                 continue;
             }
-            if ((d.draft && now - d.modified > olderThanMs) || (!d.draft && d.pages.isEmpty())) deleteRec(dir);
+            if (d.pages.isEmpty() && now - Math.max(d.modified, dir.lastModified()) > (d.draft ? olderThanMs : 3600L * 1000)) deleteRec(dir);
         }
+    }
+
+    /**
+     * Tìm các bản nháp còn trang nhưng không màn hình nào đang dùng (ứng dụng bị đóng giữa lúc quét)
+     * — gọi trên luồng nền; kết quả đưa cho {@link #recoverDrafts}.
+     */
+    static List<String> orphanDrafts(Context c) {
+        List<String> out = new ArrayList<>();
+        File[] dirs = root(c).listFiles();
+        if (dirs == null) return out;
+        for (File dir : dirs) {
+            if (!dir.isDirectory() || isOpen(dir.getName())) continue;
+            Doc d = load(c, dir.getName());
+            if (d != null && d.draft && !d.pages.isEmpty()) out.add(d.id);
+        }
+        return out;
+    }
+
+    /** Đưa các bản nháp bị bỏ dở trở lại danh sách tài liệu (gọi trên luồng chính). Trả về số tài liệu đã khôi phục. */
+    static int recoverDrafts(Context c, List<String> ids) {
+        int n = 0;
+        for (String id : ids) {
+            if (isOpen(id)) continue;
+            Doc d = open(c, id);
+            if (d == null || !d.draft || d.pages.isEmpty()) continue;
+            // bỏ trang mất ảnh gốc (không thể xử lý lại)
+            for (int i = d.pages.size() - 1; i >= 0; i--) {
+                Page p = d.pages.get(i);
+                File src = p.src == null ? null : d.file(p.src);
+                if (src == null || !src.exists() || src.length() == 0) d.pages.remove(i);
+            }
+            if (d.pages.isEmpty()) {
+                delete(d);
+                continue;
+            }
+            d.draft = false;
+            save(d);
+            n++;
+        }
+        return n;
     }
 
     /** Thêm trang mới từ file ảnh tạm (file được chuyển vào thư mục tài liệu). */

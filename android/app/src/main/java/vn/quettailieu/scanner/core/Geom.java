@@ -84,13 +84,15 @@ public final class Geom {
 
     /** Tứ giác lồi, không tự cắt và các góc trong nằm trong khoảng hợp lý. */
     public static boolean isConvex(float[] q) {
+        if (q == null || q.length < 8) return false;
+        for (int i = 0; i < 8; i++) if (Float.isNaN(q[i]) || Float.isInfinite(q[i])) return false;
         int sign = 0;
         for (int i = 0; i < 4; i++) {
             float ax = q[2 * i], ay = q[2 * i + 1];
             float bx = q[2 * ((i + 1) % 4)], by = q[2 * ((i + 1) % 4) + 1];
             float cx = q[2 * ((i + 2) % 4)], cy = q[2 * ((i + 2) % 4) + 1];
             double cross = (double) (bx - ax) * (cy - by) - (double) (by - ay) * (cx - bx);
-            if (Math.abs(cross) < 1e-6) return false;
+            if (!(Math.abs(cross) >= 1e-6)) return false;
             int s = cross > 0 ? 1 : -1;
             if (sign == 0) sign = s;
             else if (s != sign) return false;
@@ -192,6 +194,10 @@ public final class Geom {
         if (snap) ratio = snapPaper(ratio);
         double wq = Math.max(dist(q, 0, 1), dist(q, 3, 2));
         double hq = Math.max(dist(q, 0, 3), dist(q, 1, 2));
+        // tứ giác suy biến / toạ độ không hữu hạn -> kích thước tối thiểu (không để tràn số)
+        if (!(ratio > 0) || Double.isInfinite(ratio) || !(wq > 0) || !(hq > 0) || Double.isInfinite(wq) || Double.isInfinite(hq)) {
+            return new int[]{16, 16};
+        }
         double outW, outH;
         if (wq / hq > ratio) { outW = wq; outH = wq / ratio; }
         else { outH = hq; outW = hq * ratio; }

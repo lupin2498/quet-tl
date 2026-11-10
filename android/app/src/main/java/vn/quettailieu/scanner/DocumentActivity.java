@@ -1,7 +1,6 @@
 package vn.quettailieu.scanner;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -29,7 +28,7 @@ import java.util.HashSet;
 import vn.quettailieu.scanner.core.PdfWriter;
 
 /** Xem tài liệu đã lưu: danh sách trang, Thêm, Sửa, Chia sẻ, Lưu PDF, Lưu ảnh. */
-public class DocumentActivity extends Activity {
+public class DocumentActivity extends BaseActivity {
     static final String EXTRA_DOC = "doc";
 
     private static final int REQ_EDIT = 31;
@@ -44,12 +43,14 @@ public class DocumentActivity extends Activity {
     private LruCache<String, Bitmap> cache;
     private final HashSet<String> loading = new HashSet<>();
     private final HashSet<String> rendering = new HashSet<>();
+    /** Trang xử lý lỗi (ảnh gốc hỏng/mất): khoá = id + tên ảnh gốc, để thử lại sau khi chụp lại. */
+    private final HashSet<String> failed = new HashSet<>();
     private int itemWidth;
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        doc = DocStore.load(this, getIntent().getStringExtra(EXTRA_DOC));
+        doc = DocStore.open(this, getIntent().getStringExtra(EXTRA_DOC));
         if (doc == null) {
             Ui.toast(this, "Không mở được tài liệu");
             finish();
@@ -67,19 +68,42 @@ public class DocumentActivity extends Activity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        // danh sách trang có thể đã đổi ở màn hình khác (dùng chung tài liệu) -> báo cho ListView trước khi nó vẽ lại
+        if (adapter != null) adapter.notifyDataSetChanged();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        DocStore.Doc d2 = DocStore.load(this, doc.id);
-        if (d2 == null || d2.pages.isEmpty()) {
+        if (doc == null) return;
+        // các màn hình dùng chung một đối tượng tài liệu nên thay đổi ở trình chỉnh sửa / màn hình chụp đã có sẵn ở đây
+        DocStore.Doc d2 = DocStore.open(this, doc.id);
+        if (d2 == null) {
             finish();
             return;
         }
         doc = d2;
+        if (doc.pages.isEmpty()) {
+            // đã xoá hết trang -> không để lại tài liệu rỗng
+            DocStore.delete(doc);
+            finish();
+            return;
+        }
         titleView.setText(doc.title);
         adapter.notifyDataSetChanged();
         for (DocStore.Page p : doc.pages) {
-            if (!doc.outReady(p) || !Processor.outName(p).equals(p.out)) renderMissing(p);
+            if (needsRender(p)) renderMissing(p);
         }
+    }
+
+    private boolean needsRender(DocStore.Page p) {
+        return !doc.outReady(p) || !Processor.outName(p).equals(p.out);
+    }
+
+    private static String failKey(DocStore.Page p) {
+        return p.id + "/" + p.src;
     }
 
     private void buildUi() {
@@ -181,9 +205,24 @@ public class DocumentActivity extends Activity {
     }
 
     private boolean ready() {
-        for (DocStore.Page p : doc.pages) {
-            if (!doc.outReady(p) || rendering.contains(p.id)) {
+        if (doc.pages.isEmpty()) {
+            Ui.toast(this, "Tài liệu không có trang");
+            return false;
+        }
+        for (int i = 0; i < doc.pages.size(); i++) {
+            DocStore.Page p = doc.pages.get(i);
+            if (rendering.contains(p.id)) {
                 Ui.toast(this, "Đang xử lý trang, vui lòng đợi giây lát");
+                return false;
+            }
+            if (needsRender(p)) {
+                if (failed.contains(failKey(p))) {
+                    // ảnh gốc hỏng: chờ thêm cũng không xong -> nói rõ cách xử lý
+                    Ui.toast(this, "Trang " + (i + 1) + " không xử lý được — hãy mở Sửa để chụp lại hoặc xoá trang này");
+                } else {
+                    Ui.toast(this, "Đang xử lý trang, vui lòng đợi giây lát");
+                    renderMissing(p);
+                }
                 return false;
             }
         }
@@ -200,13 +239,13 @@ public class DocumentActivity extends Activity {
     private void share() {
         if (!ready()) return;
         String[] items = {"Chia sẻ PDF (" + Exporter.pdfSizeName(Exporter.pdfSize(this)) + ")", "Chia sẻ ảnh JPG"};
-        Ui.dialog(this).setTitle("Chia sẻ").setItems(items, new DialogInterface.OnClickListener() {
+        Ui.showDialog(this, Ui.dialog(this).setTitle("Chia sẻ").setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface d, int which) {
                 if (which == 0) Exporter.sharePdf(DocumentActivity.this, doc);
                 else Exporter.shareImages(DocumentActivity.this, doc);
             }
-        }).show();
+        }));
     }
 
     private void savePdf() {
@@ -243,6 +282,7 @@ public class DocumentActivity extends Activity {
         Ui.prompt(this, "Đổi tên tài liệu", doc.title, new Ui.Cb<String>() {
             @Override
             public void done(String v) {
+                if (v.equals(doc.title)) return;
                 doc.title = v;
                 doc.modified = System.currentTimeMillis();
                 DocStore.save(doc);
@@ -273,13 +313,13 @@ public class DocumentActivity extends Activity {
         int cur = Exporter.pdfSize(this);
         int sel = 0;
         for (int i = 0; i < vals.length; i++) if (vals[i] == cur) sel = i;
-        Ui.dialog(this).setTitle("Khổ giấy PDF").setSingleChoiceItems(names, sel, new DialogInterface.OnClickListener() {
+        Ui.showDialog(this, Ui.dialog(this).setTitle("Khổ giấy PDF").setSingleChoiceItems(names, sel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface d, int which) {
                 Exporter.setPdfSize(DocumentActivity.this, vals[which]);
                 d.dismiss();
             }
-        }).show();
+        }));
     }
 
     private void confirmDelete() {
@@ -295,6 +335,7 @@ public class DocumentActivity extends Activity {
     @Override
     protected void onActivityResult(int req, int res, Intent data) {
         super.onActivityResult(req, res, data);
+        if (doc == null) return;
         if (req == REQ_SAVE_PDF && res == RESULT_OK && data != null && data.getData() != null) {
             Uri u = data.getData();
             Exporter.savePdfTo(this, doc, u);
@@ -304,9 +345,10 @@ public class DocumentActivity extends Activity {
 
     /** Trang thiếu ảnh kết quả (ví dụ ứng dụng bị đóng giữa chừng) -> xử lý lại. */
     private void renderMissing(DocStore.Page p) {
-        if (rendering.contains(p.id)) return;
+        if (rendering.contains(p.id) || failed.contains(failKey(p))) return;
         rendering.add(p.id);
         final String pid = p.id;
+        final String fkey = failKey(p);
         final DocStore.Page snap = p.copy();
         final File dir = doc.dir;
         Processor.EXEC.execute(new Runnable() {
@@ -325,11 +367,20 @@ public class DocumentActivity extends Activity {
                         rendering.remove(pid);
                         if (!Ui.alive(DocumentActivity.this)) return;
                         DocStore.Page cur = doc.page(pid);
-                        if (fok && cur != null) {
+                        if (cur == null) return;
+                        if (!fok) {
+                            failed.add(fkey);
+                            return;
+                        }
+                        // trang có thể đã được sửa ở màn hình khác trong lúc xử lý: chỉ nhận kết quả nếu còn đúng tham số
+                        if (Processor.outName(cur).equals(snap.out)) {
                             cur.warp = snap.warp;
                             cur.out = snap.out;
+                            cur.ver++;
                             DocStore.save(doc);
                             adapter.notifyDataSetChanged();
+                        } else if (isResumedNow()) {
+                            renderMissing(cur);
                         }
                     }
                 });

@@ -1,6 +1,5 @@
 package vn.quettailieu.scanner;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -35,10 +34,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 /** Màn hình chính: tìm kiếm, công cụ (Quét, Hàng loạt, Nhập ảnh), tài liệu gần đây, nút máy ảnh. */
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
     private static final int REQ_PICK = 41;
     private static final int REQ_IMPORT_CROP = 42;
 
@@ -53,6 +51,9 @@ public class MainActivity extends Activity {
     private final HashSet<String> loading = new HashSet<>();
     private View busyView;
     private String importPath;
+    /** Giữ tài liệu vừa tạo cho tới khi trình chỉnh sửa mở nó (để không bị coi là bản nháp bỏ dở). */
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
+    private DocStore.Doc lastCreated;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -66,7 +67,40 @@ public class MainActivity extends Activity {
         if (state != null) importPath = state.getString("importPath");
         buildUi();
         showCrashIfAny();
-        if (state == null) handleIncoming(getIntent());
+        if (state == null) {
+            recoverDrafts();
+            handleIncoming(getIntent());
+        }
+    }
+
+    /**
+     * Mở ứng dụng mới: các bản nháp còn trang mà không màn hình nào đang dùng là do lần trước ứng dụng
+     * bị đóng giữa lúc quét -> đưa trở lại danh sách thay vì để mất.
+     */
+    private void recoverDrafts() {
+        final Context app = getApplicationContext();
+        Processor.IO.execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<String> ids;
+                try {
+                    ids = DocStore.orphanDrafts(app);
+                } catch (Throwable t) {
+                    return;
+                }
+                if (ids.isEmpty()) return;
+                Ui.MAIN.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int n = DocStore.recoverDrafts(app, ids);
+                        if (n > 0 && Ui.alive(MainActivity.this)) {
+                            Ui.toast(MainActivity.this, "Đã khôi phục " + n + " tài liệu đang quét dở");
+                            reload();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -282,10 +316,11 @@ public class MainActivity extends Activity {
     }
 
     private void applyFilter() {
-        String q = search == null ? "" : search.getText().toString().trim().toLowerCase(Locale.getDefault());
+        // tìm không phân biệt hoa/thường và dấu tiếng Việt ("bien ban" ra "Biên bản")
+        String q = search == null ? "" : Ui.fold(search.getText().toString().trim());
         shown.clear();
         for (DocStore.Doc d : all) {
-            if (q.length() == 0 || d.title.toLowerCase(Locale.getDefault()).contains(q)) shown.add(d);
+            if (q.length() == 0 || Ui.fold(d.title).contains(q)) shown.add(d);
         }
         adapter.notifyDataSetChanged();
         empty.setVisibility(all.isEmpty() ? View.VISIBLE : View.GONE);
@@ -322,22 +357,30 @@ public class MainActivity extends Activity {
 
     private void handleIncoming(Intent intent) {
         if (intent == null) return;
-        String act = intent.getAction();
+        // mở lại từ danh sách "Gần đây" của hệ thống: Intent chia sẻ cũ được gửi lại -> không nhập lần nữa
+        if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) return;
         List<Uri> uris = new ArrayList<>();
-        if (Intent.ACTION_SEND.equals(act)) {
-            Parcelable p = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-            if (p instanceof Uri) uris.add((Uri) p);
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(act)) {
-            ArrayList<Parcelable> ps = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            if (ps != null) for (Parcelable p : ps) if (p instanceof Uri) uris.add((Uri) p);
-        } else if (TEST_IMPORT.equals(act) && (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-            // chỉ bản debug: kiểm thử tự động nhập nhiều ảnh ("am start" không gửi được ArrayList<Uri>)
-            String[] arr = intent.getStringArrayExtra("uris");
-            if (arr != null) for (String u : arr) uris.add(Uri.parse(u));
-        } else {
+        try {
+            String act = intent.getAction();
+            if (Intent.ACTION_SEND.equals(act)) {
+                Parcelable p = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (p instanceof Uri) uris.add((Uri) p);
+            } else if (Intent.ACTION_SEND_MULTIPLE.equals(act)) {
+                ArrayList<Parcelable> ps = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                if (ps != null) for (Parcelable p : ps) if (p instanceof Uri) uris.add((Uri) p);
+            } else if (TEST_IMPORT.equals(act) && (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+                // chỉ bản debug: kiểm thử tự động nhập nhiều ảnh ("am start" không gửi được ArrayList<Uri>)
+                String[] arr = intent.getStringArrayExtra("uris");
+                if (arr != null) for (String u : arr) uris.add(Uri.parse(u));
+            } else {
+                return;
+            }
+            intent.setAction(Intent.ACTION_MAIN);
+        } catch (RuntimeException e) {
+            // Intent từ ứng dụng khác có thể chứa dữ liệu không đọc được
+            Ui.toast(this, "Không đọc được ảnh được chia sẻ");
             return;
         }
-        intent.setAction(Intent.ACTION_MAIN);
         if (!uris.isEmpty()) importUris(uris);
     }
 
@@ -368,13 +411,15 @@ public class MainActivity extends Activity {
             float[] quad = data.getFloatArrayExtra(CropActivity.EXTRA_QUAD);
             int[] size = data.getIntArrayExtra(CropActivity.EXTRA_SIZE);
             if (size == null) size = ImageUtil.orientedSize(path);
+            DocStore.Doc d = null;
             try {
-                DocStore.Doc d = DocStore.create(this, true);
+                d = DocStore.create(this, true);
                 DocStore.addPage(d, new File(path), size, quad, data.getBooleanExtra(CropActivity.EXTRA_AUTO, true), -1);
                 DocStore.save(d);
                 openEditorForNew(d);
             } catch (Exception e) {
-                Ui.toast(this, "Lỗi nhập ảnh: " + e.getMessage());
+                if (d != null) DocStore.delete(d);
+                Ui.toast(this, "Lỗi nhập ảnh: " + Ui.msg(e));
             }
         }
     }
@@ -402,37 +447,53 @@ public class MainActivity extends Activity {
                 Ui.MAIN.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (!Ui.alive(MainActivity.this)) return;
+                        if (!Ui.alive(MainActivity.this)) {
+                            for (File f : files) f.delete();
+                            return;
+                        }
                         busyView.setVisibility(View.GONE);
                         if (nFailed > 0) Ui.toast(MainActivity.this, nFailed + " ảnh không đọc được");
                         if (files.isEmpty()) return;
-                        if (files.size() == 1 && dets.isEmpty()) {
-                            // một ảnh: mở màn hình chọn vùng cắt trước
-                            importPath = files.get(0).getPath();
-                            Intent i = new Intent(MainActivity.this, CropActivity.class);
-                            i.putExtra(CropActivity.EXTRA_PATH, importPath);
-                            i.putExtra(CropActivity.EXTRA_MODE, CropActivity.MODE_EDIT);
-                            startActivityForResult(i, REQ_IMPORT_CROP);
-                            return;
-                        }
-                        try {
-                            DocStore.Doc d = DocStore.create(MainActivity.this, true);
-                            for (int i = 0; i < files.size(); i++) {
-                                Processor.Detection det = dets.get(i);
-                                DocStore.addPage(d, files.get(i), det.size, det.quad, true, -1);
+                        // nhập xong lúc người dùng đã rời ứng dụng -> đợi họ quay lại rồi mới mở màn hình tiếp theo
+                        runWhenResumed(new Runnable() {
+                            @Override
+                            public void run() {
+                                onImported(files, dets);
                             }
-                            DocStore.save(d);
-                            openEditorForNew(d);
-                        } catch (Exception e) {
-                            Ui.toast(MainActivity.this, "Lỗi nhập ảnh: " + e.getMessage());
-                        }
+                        });
                     }
                 });
             }
         });
     }
 
+    private void onImported(List<File> files, List<Processor.Detection> dets) {
+        if (files.size() == 1 && dets.isEmpty()) {
+            // một ảnh: mở màn hình chọn vùng cắt trước
+            importPath = files.get(0).getPath();
+            Intent i = new Intent(this, CropActivity.class);
+            i.putExtra(CropActivity.EXTRA_PATH, importPath);
+            i.putExtra(CropActivity.EXTRA_MODE, CropActivity.MODE_EDIT);
+            startActivityForResult(i, REQ_IMPORT_CROP);
+            return;
+        }
+        DocStore.Doc d = null;
+        try {
+            d = DocStore.create(this, true);
+            for (int i = 0; i < files.size(); i++) {
+                Processor.Detection det = dets.get(i);
+                DocStore.addPage(d, files.get(i), det.size, det.quad, true, -1);
+            }
+            DocStore.save(d);
+            openEditorForNew(d);
+        } catch (Exception e) {
+            if (d != null) DocStore.delete(d);
+            Ui.toast(this, "Lỗi nhập ảnh: " + Ui.msg(e));
+        }
+    }
+
     private void openEditorForNew(DocStore.Doc d) {
+        lastCreated = d;
         Intent i = new Intent(this, EditorActivity.class);
         i.putExtra(EditorActivity.EXTRA_DOC, d.id);
         i.putExtra(EditorActivity.EXTRA_NEW, true);
@@ -451,9 +512,13 @@ public class MainActivity extends Activity {
                         Ui.prompt(MainActivity.this, "Đổi tên tài liệu", d.title, new Ui.Cb<String>() {
                             @Override
                             public void done(String v) {
-                                d.title = v;
-                                d.modified = System.currentTimeMillis();
-                                DocStore.save(d);
+                                // sửa trên đối tượng dùng chung (d chỉ là bản đọc để hiển thị danh sách)
+                                DocStore.Doc cur = DocStore.open(MainActivity.this, d.id);
+                                if (cur != null) {
+                                    cur.title = v;
+                                    cur.modified = System.currentTimeMillis();
+                                    DocStore.save(cur);
+                                }
                                 reload();
                             }
                         });
@@ -505,7 +570,7 @@ public class MainActivity extends Activity {
         tv.setPadding(Ui.dp(20), Ui.dp(8), Ui.dp(20), Ui.dp(8));
         ScrollView sv = new ScrollView(this);
         sv.addView(tv);
-        AlertDialog d = Ui.dialog(this).setTitle("Lần trước ứng dụng gặp lỗi").setView(sv)
+        AlertDialog.Builder b = Ui.dialog(this).setTitle("Lần trước ứng dụng gặp lỗi").setView(sv)
                 .setPositiveButton("Sao chép", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -514,8 +579,8 @@ public class MainActivity extends Activity {
                         Ui.toast(MainActivity.this, "Đã sao chép nội dung lỗi");
                     }
                 })
-                .setNegativeButton("Đóng", null).create();
-        d.show();
+                .setNegativeButton("Đóng", null);
+        Ui.showDialog(this, b);
     }
 
     private class DocAdapter extends BaseAdapter {

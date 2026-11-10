@@ -1,6 +1,5 @@
 package vn.quettailieu.scanner;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,7 +28,7 @@ import java.util.HashSet;
 import vn.quettailieu.scanner.core.Enhancer;
 
 /** Xem lại & chỉnh các trang: Chụp lại, Xoay trái, Lọc, Cắt, So sánh, Xoá; ✓ để lưu. */
-public class EditorActivity extends Activity {
+public class EditorActivity extends BaseActivity {
     static final String EXTRA_DOC = "doc";
     static final String EXTRA_FROM_CAMERA = "fromCamera";
     static final String EXTRA_PAGE = "page";
@@ -63,11 +62,13 @@ public class EditorActivity extends Activity {
     private String cropPageId;
     private int dispMax;
     private boolean finishRetried;
+    /** Có thay đổi nội dung (lọc, xoay, cắt, xoá, chụp lại, đổi tên) -> cập nhật thời điểm sửa khi lưu. */
+    private boolean dirty;
 
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        doc = DocStore.load(this, getIntent().getStringExtra(EXTRA_DOC));
+        doc = DocStore.open(this, getIntent().getStringExtra(EXTRA_DOC));
         if (doc == null || doc.pages.isEmpty()) {
             Ui.toast(this, "Tài liệu trống");
             setResult(RESULT_CANCELED);
@@ -76,7 +77,10 @@ public class EditorActivity extends Activity {
         }
         fromCamera = getIntent().getBooleanExtra(EXTRA_FROM_CAMERA, false);
         isNew = getIntent().getBooleanExtra(EXTRA_NEW, false);
-        if (state != null) cropPageId = state.getString("cropPage");
+        if (state != null) {
+            cropPageId = state.getString("cropPage");
+            dirty = state.getBoolean("dirty", false);
+        }
         int maxKb = (int) Math.min(Integer.MAX_VALUE, Runtime.getRuntime().maxMemory() / 1024 / 6);
         cache = new LruCache<String, Bitmap>(Math.max(16 * 1024, maxKb)) {
             @Override
@@ -99,6 +103,7 @@ public class EditorActivity extends Activity {
         super.onSaveInstanceState(out);
         if (strip != null) out.putInt("index", strip.getIndex());
         if (cropPageId != null) out.putString("cropPage", cropPageId);
+        out.putBoolean("dirty", dirty);
     }
 
     private boolean upToDate(DocStore.Page p) {
@@ -542,40 +547,53 @@ public class EditorActivity extends Activity {
 
     private void onRendered(String pid, int g, DocStore.Page snap, Throwable err) {
         pending--;
+        // Màn hình đã đóng hoặc đã bị hệ thống tạo lại (đổi cấu hình, thu hồi bộ nhớ): bản mới sẽ tự xử lý tiếp.
+        // Bản cũ không được ghi tài liệu hay chạy tiếp việc đang chờ (lưu/đóng) nữa.
+        if (!Ui.alive(this)) {
+            afterPending = null;
+            return;
+        }
         DocStore.Page p = doc.page(pid);
         Integer latest = gen.get(pid);
         if (p != null && latest != null && latest == g) {
             processing.remove(pid);
             if (err == null) {
-                p.warp = snap.warp;
-                p.out = snap.out;
-                p.ver++;
-                DocStore.save(doc);
-                if (Ui.alive(this)) loadOut(p);
-            } else if (Ui.alive(this)) {
-                String m = err instanceof OutOfMemoryError ? "thiếu bộ nhớ" : err.getMessage();
-                Ui.toast(this, "Lỗi xử lý trang: " + m);
+                // chỉ nhận kết quả nếu tham số trang vẫn như lúc bắt đầu xử lý
+                if (Processor.outName(p).equals(snap.out)) {
+                    p.warp = snap.warp;
+                    p.out = snap.out;
+                    p.ver++;
+                    DocStore.save(doc);
+                    loadOut(p);
+                }
+            } else {
+                Ui.toast(this, "Lỗi xử lý trang: " + Ui.msg(err));
             }
         }
         if (pending <= 0) {
             pending = 0;
             if (afterPending != null) {
-                Runnable r = afterPending;
+                final Runnable r = afterPending;
                 afterPending = null;
                 dismissWait();
-                r.run();
+                // xử lý xong lúc ứng dụng đang ở nền -> đợi người dùng quay lại rồi mới chuyển màn hình
+                runWhenResumed(r);
             }
         }
-        if (Ui.alive(this)) strip.invalidate();
+        strip.invalidate();
     }
 
     @SuppressWarnings("deprecation")
     private void showWait(String msg) {
-        if (waitDialog != null) return;
+        if (waitDialog != null || !Ui.alive(this)) return;
         waitDialog = new ProgressDialog(this, android.R.style.Theme_Material_Dialog_Alert);
         waitDialog.setMessage(msg);
         waitDialog.setCancelable(false);
-        waitDialog.show();
+        try {
+            waitDialog.show();
+        } catch (RuntimeException e) {
+            waitDialog = null;
+        }
     }
 
     private void dismissWait() {
@@ -594,6 +612,7 @@ public class EditorActivity extends Activity {
         DocStore.Page p = current();
         if (p == null) return;
         p.rot = (p.rot + 270) % 360;
+        dirty = true;
         DocStore.save(doc);
         schedule(p);
     }
@@ -623,21 +642,26 @@ public class EditorActivity extends Activity {
         Processor.IO.execute(new Runnable() {
             @Override
             public void run() {
-                Bitmap base = ImageUtil.quickWarp(path, w, h, q, 220);
-                if (base == null) return;
-                if (rot != 0) {
-                    Bitmap r = ImageUtil.rotate(base, rot);
-                    if (r != base) base.recycle();
-                    base = r;
-                }
-                int bw = base.getWidth(), bh = base.getHeight();
-                int[] src = ImageUtil.pixels(base);
-                base.recycle();
                 final Bitmap[] outs = new Bitmap[FILTER_MODES.length];
-                for (int k = 0; k < FILTER_MODES.length; k++) {
-                    int[] px = src.clone();
-                    Enhancer.apply(px, bw, bh, FILTER_MODES[k]);
-                    outs[k] = Bitmap.createBitmap(px, bw, bh, Bitmap.Config.ARGB_8888);
+                try {
+                    Bitmap base = ImageUtil.quickWarp(path, w, h, q, 220);
+                    if (base == null) return;
+                    if (rot != 0) {
+                        Bitmap r = ImageUtil.rotate(base, rot);
+                        if (r != base) base.recycle();
+                        base = r;
+                    }
+                    int bw = base.getWidth(), bh = base.getHeight();
+                    int[] src = ImageUtil.pixels(base);
+                    base.recycle();
+                    for (int k = 0; k < FILTER_MODES.length; k++) {
+                        int[] px = src.clone();
+                        Enhancer.apply(px, bw, bh, FILTER_MODES[k]);
+                        outs[k] = Bitmap.createBitmap(px, bw, bh, Bitmap.Config.ARGB_8888);
+                    }
+                } catch (Throwable t) {
+                    // thiếu bộ nhớ khi dựng ảnh xem trước bộ lọc: bỏ qua (không được làm ứng dụng dừng)
+                    return;
                 }
                 Ui.MAIN.post(new Runnable() {
                     @Override
@@ -659,11 +683,13 @@ public class EditorActivity extends Activity {
             for (DocStore.Page p : doc.pages) {
                 if (p.filter != mode) {
                     p.filter = mode;
+                    dirty = true;
                     schedule(p);
                 }
             }
         } else if (cur.filter != mode) {
             cur.filter = mode;
+            dirty = true;
             schedule(cur);
         }
         DocStore.save(doc);
@@ -717,9 +743,11 @@ public class EditorActivity extends Activity {
         Ui.confirm(this, "Xoá trang này?", null, "Xoá", new Runnable() {
             @Override
             public void run() {
+                if (doc.page(p.id) != p) return; // đã xoá (bấm xoá hai lần)
                 processing.remove(p.id);
                 gen.put(p.id, -1);
                 DocStore.removePage(doc, p);
+                dirty = true;
                 DocStore.save(doc);
                 if (doc.pages.isEmpty()) {
                     if (!fromCamera) DocStore.delete(doc);
@@ -738,7 +766,9 @@ public class EditorActivity extends Activity {
         Ui.prompt(this, "Đổi tên tài liệu", doc.title, new Ui.Cb<String>() {
             @Override
             public void done(String v) {
+                if (v.equals(doc.title)) return;
                 doc.title = v;
+                dirty = true;
                 DocStore.save(doc);
                 titleView.setText(v);
             }
@@ -748,28 +778,32 @@ public class EditorActivity extends Activity {
     @Override
     protected void onActivityResult(int req, int res, Intent data) {
         super.onActivityResult(req, res, data);
+        if (doc == null || strip == null) return; // onCreate đã đóng màn hình (tài liệu không còn)
         if (req == REQ_CROP) {
             if (res != RESULT_OK || data == null || cropPageId == null) return;
             DocStore.Page p = doc.page(cropPageId);
             float[] q = data.getFloatArrayExtra(CropActivity.EXTRA_QUAD);
-            if (p == null || q == null) return;
+            if (p == null || q == null || q.length != 8) return;
             p.quad = q;
             p.auto = data.getBooleanExtra(CropActivity.EXTRA_AUTO, false);
             int[] sz = data.getIntArrayExtra(CropActivity.EXTRA_SIZE);
-            if (sz != null && sz.length == 2 && sz[0] > 0) {
+            if (sz != null && sz.length == 2 && sz[0] > 0 && sz[1] > 0) {
                 p.srcW = sz[0];
                 p.srcH = sz[1];
             }
+            dirty = true;
             DocStore.save(doc);
             schedule(p);
         } else if (req == REQ_RETAKE) {
             if (res != RESULT_OK) return;
-            DocStore.Doc d2 = DocStore.load(this, doc.id);
-            if (d2 == null) return;
+            // màn hình chụp dùng chung đối tượng tài liệu nên trang đã được thay ảnh; chỉ cần vẽ lại và xử lý
+            if (doc.deleted || doc.pages.isEmpty()) {
+                setResult(RESULT_CANCELED);
+                finish();
+                return;
+            }
+            dirty = true;
             int idx = strip.getIndex();
-            doc = d2;
-            gen.clear();
-            processing.clear();
             strip.dataChanged();
             strip.setIndex(idx, false);
             for (DocStore.Page p : doc.pages) if (!upToDate(p)) schedule(p);
@@ -805,8 +839,9 @@ public class EditorActivity extends Activity {
             }
         }
         if (done) {
+            // chỉ xem mà không sửa gì thì giữ nguyên thời điểm sửa (không đẩy tài liệu lên đầu danh sách)
+            if (doc.draft || dirty) doc.modified = System.currentTimeMillis();
             doc.draft = false;
-            doc.modified = System.currentTimeMillis();
         }
         DocStore.save(doc);
         Processor.gc(doc.dir, Processor.referenced(doc));

@@ -1,7 +1,6 @@
 package vn.quettailieu.scanner;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -61,7 +60,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /** Màn hình chụp: chế độ Đơn / Hàng loạt, đèn, HD, lưới, nhập ảnh. Dùng Camera2. */
-public class CameraActivity extends Activity {
+public class CameraActivity extends BaseActivity {
     static final String EXTRA_DOC = "doc";
     static final String EXTRA_BATCH = "batch";
     static final String EXTRA_RETAKE = "retake";
@@ -144,7 +143,7 @@ public class CameraActivity extends Activity {
             pendingFocal = state.getDouble("pendingFocal", -1);
         }
         if (docId != null) {
-            doc = DocStore.load(this, docId);
+            doc = DocStore.open(this, docId);
             if (doc == null) {
                 Ui.toast(this, "Không mở được tài liệu");
                 finish();
@@ -184,6 +183,8 @@ public class CameraActivity extends Activity {
         AspectFrame preview = new AspectFrame(this);
         previewFrame = preview;
         texture = new TextureView(this);
+        // luôn gắn: bề mặt xem trước có thể bị huỷ rồi tạo lại khi màn hình đang hiển thị
+        texture.setSurfaceTextureListener(surfaceListener);
         preview.addView(texture, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         gridView = new GridOverlay(this);
         gridView.setVisibility(grid ? View.VISIBLE : View.GONE);
@@ -428,7 +429,13 @@ public class CameraActivity extends Activity {
         Processor.IO.execute(new Runnable() {
             @Override
             public void run() {
-                final Bitmap b = ImageUtil.quickWarp(path, w, h, q, 240);
+                Bitmap b0 = null;
+                try {
+                    b0 = ImageUtil.quickWarp(path, w, h, q, 240);
+                } catch (Throwable ignored) {
+                    // thiếu bộ nhớ khi dựng ảnh thu nhỏ: bỏ qua
+                }
+                final Bitmap b = b0;
                 Ui.MAIN.post(new Runnable() {
                     @Override
                     public void run() {
@@ -455,7 +462,6 @@ public class CameraActivity extends Activity {
         if (hasCameraPermission()) {
             permPanel.setVisibility(View.GONE);
             if (texture.isAvailable()) openCamera();
-            else texture.setSurfaceTextureListener(surfaceListener);
         } else if (!permAsked) {
             permAsked = true;
             requestPermissions(new String[]{Manifest.permission.CAMERA}, REQ_PERM);
@@ -478,10 +484,7 @@ public class CameraActivity extends Activity {
         if (requestCode != REQ_PERM) return;
         boolean ok = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED;
         permPanel.setVisibility(ok ? View.GONE : View.VISIBLE);
-        if (ok && bg != null) {
-            if (texture.isAvailable()) openCamera();
-            else texture.setSurfaceTextureListener(surfaceListener);
-        }
+        if (ok && bg != null && texture.isAvailable()) openCamera();
     }
 
     private boolean hasCameraPermission() {
@@ -564,7 +567,7 @@ public class CameraActivity extends Activity {
                     openLock.release();
                 }
             }
-            Ui.toast(this, "Không mở được máy ảnh: " + t.getMessage());
+            Ui.toast(this, "Không mở được máy ảnh: " + Ui.msg(t));
         }
     }
 
@@ -1023,9 +1026,17 @@ public class CameraActivity extends Activity {
                 setResult(RESULT_OK);
                 finish();
             } else if (doc != null) {
-                DocStore.Doc d2 = DocStore.load(this, doc.id);
-                if (d2 != null) doc = d2;
-                for (int i = sessionPages.size() - 1; i >= 0; i--) if (doc.page(sessionPages.get(i)) == null) sessionPages.remove(i);
+                // trình chỉnh sửa dùng chung đối tượng tài liệu: chỉ cần bỏ các trang đã bị xoá khỏi phiên chụp
+                DocStore.Doc d2 = DocStore.open(this, doc.id);
+                if (d2 == null) {
+                    // tài liệu đã bị xoá hẳn -> bắt đầu lại từ đầu
+                    doc = null;
+                    newDoc = false;
+                    sessionPages.clear();
+                } else {
+                    doc = d2;
+                    for (int i = sessionPages.size() - 1; i >= 0; i--) if (doc.page(sessionPages.get(i)) == null) sessionPages.remove(i);
+                }
                 refreshBottom();
             }
         } else if (req == REQ_PICK) {
@@ -1076,8 +1087,10 @@ public class CameraActivity extends Activity {
                 else openEditor();
             }
             return true;
-        } catch (IOException e) {
-            Ui.toast(this, "Lỗi lưu ảnh: " + e.getMessage());
+        } catch (Throwable e) {
+            // IOException khi chép file, hoặc lỗi bất ngờ khác: báo lỗi, không làm ứng dụng dừng
+            file.delete();
+            Ui.toast(this, "Lỗi lưu ảnh: " + Ui.msg(e));
             return false;
         }
     }
@@ -1141,19 +1154,31 @@ public class CameraActivity extends Activity {
                 Ui.MAIN.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (!Ui.alive(CameraActivity.this)) return;
+                        if (!Ui.alive(CameraActivity.this)) {
+                            for (File f : files) f.delete();
+                            return;
+                        }
                         busy = false;
                         spinner.setVisibility(View.GONE);
                         if (nFailed > 0) Ui.toast(CameraActivity.this, nFailed + " ảnh không đọc được");
                         boolean added = false;
                         for (int i = 0; i < files.size(); i++) {
                             Processor.Detection d = dets.get(i);
-                            if (!acceptPage(files.get(i), d.size, d.quad, true, -1, false)) return;
+                            if (!acceptPage(files.get(i), d.size, d.quad, true, -1, false)) {
+                                for (int k = i + 1; k < files.size(); k++) files.get(k).delete();
+                                return;
+                            }
                             added = true;
                         }
                         if (added) {
                             if (batch) refreshBottom();
-                            openEditor();
+                            // nhập xong lúc người dùng đã rời ứng dụng -> đợi họ quay lại rồi mới mở trình chỉnh sửa
+                            runWhenResumed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    openEditor();
+                                }
+                            });
                         }
                     }
                 });
@@ -1171,14 +1196,16 @@ public class CameraActivity extends Activity {
         Ui.confirm(this, "Bỏ các trang vừa chụp?", sessionPages.size() + " trang vừa chụp sẽ bị xoá.", "Bỏ", new Runnable() {
             @Override
             public void run() {
-                if (newDoc) {
-                    DocStore.delete(doc);
-                } else {
-                    for (String id : sessionPages) {
-                        DocStore.Page p = doc.page(id);
-                        if (p != null) DocStore.removePage(doc, p);
+                if (doc != null) {
+                    if (newDoc) {
+                        DocStore.delete(doc);
+                    } else {
+                        for (String id : sessionPages) {
+                            DocStore.Page p = doc.page(id);
+                            if (p != null) DocStore.removePage(doc, p);
+                        }
+                        DocStore.save(doc);
                     }
-                    DocStore.save(doc);
                 }
                 sessionPages.clear();
                 finish();

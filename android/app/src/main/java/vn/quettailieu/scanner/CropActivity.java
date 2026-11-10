@@ -1,6 +1,5 @@
 package vn.quettailieu.scanner;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -25,7 +24,7 @@ import java.io.File;
 import vn.quettailieu.scanner.core.Geom;
 
 /** Màn hình chỉnh vùng cắt sau khi chụp (Tự động cắt / Chụp lại / Tiếp tục). */
-public class CropActivity extends Activity {
+public class CropActivity extends BaseActivity {
     static final String EXTRA_PATH = "path";
     static final String EXTRA_QUAD = "quad";
     static final String EXTRA_AUTO = "auto";
@@ -52,10 +51,11 @@ public class CropActivity extends Activity {
         path = getIntent().getStringExtra(EXTRA_PATH);
         mode = getIntent().getIntExtra(EXTRA_MODE, MODE_CAPTURE);
         float[] init = getIntent().getFloatArrayExtra(EXTRA_QUAD);
+        if (init != null && init.length != 8) init = null;
         autoOn = getIntent().getBooleanExtra(EXTRA_AUTO, true);
         if (state != null) {
             float[] q = state.getFloatArray("q");
-            if (q != null) init = q;
+            if (q != null && q.length == 8) init = q;
             autoOn = state.getBoolean("auto", autoOn);
             detected = state.getFloatArray("det");
         }
@@ -182,10 +182,21 @@ public class CropActivity extends Activity {
         Processor.IO.execute(new Runnable() {
             @Override
             public void run() {
-                final int[] sz = ImageUtil.orientedSize(path);
-                final Bitmap bm = ImageUtil.decodeOriented(path, maxDisp);
+                int[] sz0 = {0, 0};
+                Bitmap bm0 = null;
                 Processor.Detection det = null;
-                if (init == null && bm != null) det = Processor.detect(bm, sz[0] > 0 ? sz[0] : bm.getWidth(), sz[1] > 0 ? sz[1] : bm.getHeight());
+                try {
+                    sz0 = ImageUtil.orientedSize(path);
+                    bm0 = ImageUtil.decodeOriented(path, maxDisp);
+                    if (init == null && bm0 != null) {
+                        det = Processor.detect(bm0, sz0[0] > 0 ? sz0[0] : bm0.getWidth(), sz0[1] > 0 ? sz0[1] : bm0.getHeight());
+                    }
+                } catch (Throwable t) {
+                    // thiếu bộ nhớ / file hỏng: báo "Không đọc được ảnh" ở dưới thay vì treo vòng chờ
+                    bm0 = null;
+                }
+                final int[] sz = sz0;
+                final Bitmap bm = bm0;
                 final Processor.Detection fd = det;
                 Ui.MAIN.post(new Runnable() {
                     @Override
@@ -236,13 +247,22 @@ public class CropActivity extends Activity {
         Processor.IO.execute(new Runnable() {
             @Override
             public void run() {
-                final Processor.Detection d = Processor.detect(path);
+                Processor.Detection d0 = null;
+                try {
+                    d0 = Processor.detect(path);
+                } catch (Throwable ignored) {
+                }
+                final Processor.Detection d = d0;
                 Ui.MAIN.post(new Runnable() {
                     @Override
                     public void run() {
                         detecting = false;
                         if (!Ui.alive(CropActivity.this)) return;
                         spinner.setVisibility(View.GONE);
+                        if (d == null || d.quad == null) {
+                            Ui.toast(CropActivity.this, "Chưa nhận ra mép giấy");
+                            return;
+                        }
                         detected = d.quad;
                         autoOn = true;
                         crop.setQuad(d.quad, true);

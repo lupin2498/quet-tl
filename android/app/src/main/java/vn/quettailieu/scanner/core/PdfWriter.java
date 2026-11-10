@@ -1,7 +1,12 @@
 package vn.quettailieu.scanner.core;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -10,6 +15,7 @@ import java.util.Locale;
 
 /**
  * Ghi PDF tối giản, nhúng trực tiếp dữ liệu JPEG (DCTDecode) nên file nhỏ và nhanh.
+ * Ảnh từng trang được chép theo luồng (không giữ cả tài liệu trong bộ nhớ).
  * Java thuần, không phụ thuộc Android.
  */
 public final class PdfWriter {
@@ -26,25 +32,107 @@ public final class PdfWriter {
         public int width, height, components;
     }
 
+    /** Nguồn dữ liệu JPEG của một trang. */
+    public interface Source {
+        long length() throws IOException;
+
+        InputStream open() throws IOException;
+    }
+
+    /** Trang lấy từ file JPEG trên đĩa. */
+    public static final class FileSource implements Source {
+        private final File file;
+
+        public FileSource(File f) {
+            file = f;
+        }
+
+        @Override
+        public long length() {
+            return file.length();
+        }
+
+        @Override
+        public InputStream open() throws IOException {
+            return new FileInputStream(file);
+        }
+    }
+
+    private static final class BytesSource implements Source {
+        private final byte[] data;
+
+        BytesSource(byte[] d) {
+            data = d;
+        }
+
+        @Override
+        public long length() {
+            return data == null ? 0 : data.length;
+        }
+
+        @Override
+        public InputStream open() {
+            return new ByteArrayInputStream(data == null ? new byte[0] : data);
+        }
+    }
+
     public static JpegInfo readJpegInfo(byte[] d) {
-        if (d == null || d.length < 4 || (d[0] & 255) != 0xFF || (d[1] & 255) != 0xD8) return null;
-        int i = 2;
-        while (i + 9 < d.length) {
-            if ((d[i] & 255) != 0xFF) { i++; continue; }
-            int marker = d[i + 1] & 255;
-            if (marker == 0xFF) { i++; continue; }
-            if (marker == 0xD8 || marker == 0x01 || (marker >= 0xD0 && marker <= 0xD7)) { i += 2; continue; }
-            int len = ((d[i + 2] & 255) << 8) | (d[i + 3] & 255);
+        if (d == null) return null;
+        try {
+            return readJpegInfo(new ByteArrayInputStream(d));
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Đọc kích thước ảnh từ phần đầu JPEG (đi qua từng đoạn cho tới SOF, không đọc cả file).
+     * Trả về null nếu không phải JPEG hợp lệ.
+     */
+    public static JpegInfo readJpegInfo(InputStream in) throws IOException {
+        if (in.read() != 0xFF || in.read() != 0xD8) return null;
+        int b = in.read();
+        while (b >= 0) {
+            if (b != 0xFF) {
+                b = in.read();
+                continue;
+            }
+            int marker = in.read();
+            while (marker == 0xFF) marker = in.read();
+            if (marker < 0) return null;
+            if (marker == 0xD8 || marker == 0x01 || (marker >= 0xD0 && marker <= 0xD7)) {
+                b = in.read();
+                continue;
+            }
+            int l1 = in.read(), l2 = in.read();
+            if (l2 < 0) return null;
+            int len = (l1 << 8) | l2;
             boolean sof = (marker >= 0xC0 && marker <= 0xCF) && marker != 0xC4 && marker != 0xC8 && marker != 0xCC;
             if (sof) {
+                int[] v = new int[6];
+                for (int i = 0; i < 6; i++) {
+                    v[i] = in.read();
+                    if (v[i] < 0) return null;
+                }
                 JpegInfo info = new JpegInfo();
-                info.height = ((d[i + 5] & 255) << 8) | (d[i + 6] & 255);
-                info.width = ((d[i + 7] & 255) << 8) | (d[i + 8] & 255);
-                info.components = d[i + 9] & 255;
+                info.height = (v[1] << 8) | v[2];
+                info.width = (v[3] << 8) | v[4];
+                info.components = v[5];
+                if (info.width <= 0 || info.height <= 0) return null;
+                if (info.components != 1 && info.components != 3 && info.components != 4) return null;
                 return info;
             }
-            if (marker == 0xDA) break;
-            i += 2 + len;
+            if (marker == 0xDA) return null;
+            long skip = len - 2;
+            while (skip > 0) {
+                long s = in.skip(skip);
+                if (s <= 0) {
+                    if (in.read() < 0) return null;
+                    s = 1;
+                }
+                skip -= s;
+            }
+            b = in.read();
         }
         return null;
     }
@@ -63,9 +151,17 @@ public final class PdfWriter {
      * @param sizeMode SIZE_A4 / SIZE_LETTER / SIZE_FIT (khổ trang theo đúng tỷ lệ ảnh)
      */
     public static void write(OutputStream os, List<byte[]> jpegs, int sizeMode, String title) throws IOException {
+        List<Source> src = new ArrayList<>();
+        for (byte[] j : jpegs) src.add(new BytesSource(j));
+        writeSources(os, src, sizeMode, title);
+    }
+
+    /** Ghi PDF, ảnh từng trang được đọc từ nguồn và chép thẳng ra luồng. */
+    public static void writeSources(OutputStream os, List<? extends Source> pages, int sizeMode, String title) throws IOException {
         Counter out = new Counter(os);
         List<Long> offsets = new ArrayList<>();
-        int n = jpegs.size();
+        int n = pages.size();
+        if (n == 0) throw new IOException("Tài liệu không có trang");
         // Số đối tượng: 1 catalog, 2 pages, 3 info, rồi mỗi trang 3 đối tượng (page, content, image)
         int total = 3 + 3 * n;
         for (int i = 0; i <= total; i++) offsets.add(0L);
@@ -83,17 +179,26 @@ public final class PdfWriter {
         offsets.set(3, out.count);
         str(out, "3 0 obj\n<< /Producer " + pdfText("Quét Tài Liệu") + " /Title " + pdfText(title == null ? "" : title) + " >>\nendobj\n");
 
+        byte[] buf = new byte[64 * 1024];
         for (int i = 0; i < n; i++) {
-            byte[] jpg = jpegs.get(i);
-            JpegInfo info = readJpegInfo(jpg);
+            Source src = pages.get(i);
+            JpegInfo info;
+            InputStream hin = new BufferedInputStream(src.open(), 16 * 1024);
+            try {
+                info = readJpegInfo(hin);
+            } finally {
+                hin.close();
+            }
             if (info == null) throw new IOException("Ảnh trang " + (i + 1) + " không hợp lệ");
+            long length = src.length();
             int pageObj = 4 + 3 * i, contentObj = pageObj + 1, imgObj = pageObj + 2;
             double iw = info.width, ih = info.height;
             double pw, ph;
             if (sizeMode == SIZE_FIT) {
                 double k = 842.0 / Math.max(iw, ih);
-                pw = iw * k;
-                ph = ih * k;
+                // ảnh rất dẹt: mỗi cạnh trang tối thiểu 3 pt (giới hạn của nhiều trình đọc PDF)
+                pw = Math.max(3.0, iw * k);
+                ph = Math.max(3.0, ih * k);
             } else {
                 double a = sizeMode == SIZE_LETTER ? 612.0 : 595.276;
                 double b = sizeMode == SIZE_LETTER ? 792.0 : 841.89;
@@ -118,8 +223,19 @@ public final class PdfWriter {
             String cs = info.components == 1 ? "/DeviceGray" : info.components == 4 ? "/DeviceCMYK" : "/DeviceRGB";
             offsets.set(imgObj, out.count);
             str(out, imgObj + " 0 obj\n<< /Type /XObject /Subtype /Image /Width " + info.width + " /Height " + info.height
-                    + " /ColorSpace " + cs + " /BitsPerComponent 8 /Filter /DCTDecode /Length " + jpg.length + " >>\nstream\n");
-            out.write(jpg);
+                    + " /ColorSpace " + cs + " /BitsPerComponent 8 /Filter /DCTDecode /Length " + length + " >>\nstream\n");
+            long copied = 0;
+            InputStream in = src.open();
+            try {
+                int r;
+                while ((r = in.read(buf)) > 0) {
+                    out.write(buf, 0, r);
+                    copied += r;
+                }
+            } finally {
+                in.close();
+            }
+            if (copied != length) throw new IOException("Ảnh trang " + (i + 1) + " thay đổi trong lúc ghi");
             str(out, "\nendstream\nendobj\n");
         }
 

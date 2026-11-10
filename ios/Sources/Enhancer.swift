@@ -44,7 +44,8 @@ enum Enhancer {
         for i in 0..<lutN {
             let v = Float(i) / lutScale
             let t = (v - bp) * inv
-            if t <= 0 { lut[i] = 0 } else if t >= 1 { lut[i] = 255 } else { lut[i] = UInt8(min(255, Int(pow(t, gamma) * 255 + 0.5))) }
+            // luỹ thừa tính bằng Double như bản Java (Math.pow) để bảng tra trùng nhau
+            if t <= 0 { lut[i] = 0 } else if t >= 1 { lut[i] = 255 } else { lut[i] = UInt8(min(255, max(0, Int(pow(Double(t), Double(gamma)) * 255.0 + 0.5)))) }
         }
         let mono = mode == gray || mode == bw
         var rowR = [Float](repeating: 1, count: w)

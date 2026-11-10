@@ -45,6 +45,8 @@ public class CropView extends View {
     private Listener listener;
     private ValueAnimator anim;
     private boolean interactive = true;
+    /** Ngón tay đang kéo tay cầm (đa chạm: bỏ qua các ngón khác). */
+    private int activePointer = -1;
 
     public CropView(Context c) {
         super(c);
@@ -81,20 +83,32 @@ public class CropView extends View {
         invalidate();
     }
 
+    /** Kết thúc ngay hoạt ảnh chuyển khung (nhảy tới vị trí đích) để không ai đọc phải khung trung gian. */
+    private void finishAnimation() {
+        if (anim != null) {
+            ValueAnimator a = anim;
+            anim = null;
+            if (a.isStarted()) a.end();
+        }
+    }
+
     float[] getQuad() {
+        finishAnimation();
         return quad == null ? null : quad.clone();
     }
 
     boolean isValidQuad() {
+        finishAnimation();
         if (quad == null || !Geom.isConvex(quad)) return false;
         return Geom.area(quad) > 0.01 * imgW * imgH;
     }
 
     void setQuad(float[] q, boolean animate) {
-        if (q == null) return;
+        if (q == null || q.length != 8) return;
         final float[] target = q.clone();
+        for (int i = 0; i < 8; i++) if (Float.isNaN(target[i]) || Float.isInfinite(target[i])) target[i] = 0;
         Geom.clamp(target, imgW, imgH);
-        if (anim != null) anim.cancel();
+        finishAnimation();
         if (!animate || quad == null) {
             quad = target;
             invalidate();
@@ -227,10 +241,23 @@ public class CropView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         if (!interactive || quad == null || bmp == null) return false;
-        float x = e.getX(), y = e.getY();
-        switch (e.getActionMasked()) {
+        int action = e.getActionMasked();
+        if (action == MotionEvent.ACTION_POINTER_DOWN) return true; // ngón thứ hai: bỏ qua
+        if (action == MotionEvent.ACTION_POINTER_UP) {
+            // ngón đang kéo nhấc lên trong khi ngón khác còn chạm -> kết thúc kéo (không để góc nhảy theo ngón còn lại)
+            if (e.getPointerId(e.getActionIndex()) == activePointer) endDrag();
+            return true;
+        }
+        int pi = 0;
+        if (action == MotionEvent.ACTION_MOVE) {
+            pi = e.findPointerIndex(activePointer);
+            if (pi < 0) return true;
+        }
+        float x = e.getX(pi), y = e.getY(pi);
+        switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                if (anim != null) anim.cancel();
+                finishAnimation();
+                activePointer = e.getPointerId(0);
                 dragCorner = -1;
                 dragEdge = -1;
                 float best = Ui.dpf(40);
@@ -273,13 +300,24 @@ public class CropView extends View {
             }
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL: {
-                dragCorner = -1;
-                dragEdge = -1;
-                invalidate();
+                endDrag();
                 return true;
             }
         }
         return true;
+    }
+
+    private void endDrag() {
+        dragCorner = -1;
+        dragEdge = -1;
+        activePointer = -1;
+        invalidate();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        finishAnimation();
+        super.onDetachedFromWindow();
     }
 
     /** Dịch cạnh song song theo pháp tuyến; hai đầu trượt dọc theo hai cạnh kề. */

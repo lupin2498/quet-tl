@@ -29,6 +29,9 @@ public final class DocDetector {
 
     static final int WORK_MAX = 420;
     static final int MAX_LINES_PER_DIR = 20;
+    /** Số đường bổ sung mỗi chiều lấy từ các hướng còn ít đại diện (nền sọc/caro không lấn hết chỗ của mép giấy). */
+    static final int EXTRA_LINES_PER_DIR = 6;
+    static final int MAX_PEAKS = 64, MAX_PEAKS_EXTRA = 96;
     static final float MIN_SCORE = 0.10f;
     static final double BORDER_Q = 0.22;
 
@@ -122,7 +125,7 @@ public final class DocDetector {
             if (!buildProfile(L, gx, gy, mag, gray, sw, sh)) continue;
             // ưu tiên đường có tương phản (mép giấy) hơn dòng chữ/đường kẻ trong trang
             double acon = L.acon[L.len] / Math.max(1, L.len);
-            L.priority = L.votes * (0.25 + 0.75 * Math.min(1.0, acon / 15.0));
+            L.priority = L.votes * (0.25 + 0.75 * Math.min(1.0, acon / 15.0)) * textureFactor(L, acon);
             if (L.isHorizontal()) {
                 L.key = (L.rho - cx * L.nx) / L.ny;
                 hs.add(L);
@@ -131,8 +134,8 @@ public final class DocDetector {
                 vs.add(L);
             }
         }
-        keepTop(hs, MAX_LINES_PER_DIR);
-        keepTop(vs, MAX_LINES_PER_DIR);
+        keepTop(hs, MAX_LINES_PER_DIR, EXTRA_LINES_PER_DIR);
+        keepTop(vs, MAX_LINES_PER_DIR, EXTRA_LINES_PER_DIR);
         hs.add(borderLine(0, 1, 0, cx, cy));
         hs.add(borderLine(0, 1, sh - 1, cx, cy));
         vs.add(borderLine(1, 0, 0, cx, cy));
@@ -263,6 +266,12 @@ public final class DocDetector {
                 // đường kẻ/dòng chữ bên trong trang có hai phía giống nhau -> tương phản thấp -> điểm thấp
                 double wcon = 0.08 + 0.92 * Math.pow(Math.min(1.0, acon / 20.0), 1.2);
                 if (con < -10) wcon *= 0.85;
+                // mép giấy có một phía sáng hơn suốt chiều dài cạnh; đường của hoa văn lặp (caro, ô màu xen kẽ)
+                // đảo dấu liên tục nên |con| nhỏ hơn hẳn acon -> giảm điểm. Chỉ áp dụng khi tương phản mạnh
+                // (acon > 14) để không ảnh hưởng mép giấy mờ kiểu giấy trắng trên nền sáng.
+                double cons = Math.min(1.0, 1.5 * Math.abs(con) / Math.max(1e-6, acon));
+                double gate = Math.max(0.0, Math.min(1.0, (acon - 14.0) / 14.0));
+                wcon *= 1.0 - gate * 0.75 * (1.0 - cons);
                 qs = sup * wcon;
             }
             if (dbg != null) { dbg[s * 5] = sup; dbg[s * 5 + 1] = con; dbg[s * 5 + 2] = acon; dbg[s * 5 + 3] = qs; }
@@ -331,7 +340,11 @@ public final class DocDetector {
         return L;
     }
 
-    private static void keepTop(List<Line> l, int max) {
+    /**
+     * Giữ `max` đường ưu tiên cao nhất, cộng thêm tối đa `extra` đường thuộc các hướng chưa có (hoặc mới có 1)
+     * đại diện: khi nền có rất nhiều đường song song (vải sọc, caro) thì mép giấy vẫn còn chỗ.
+     */
+    private static void keepTop(List<Line> l, int max, int extra) {
         if (l.size() <= max) return;
         Line[] arr = l.toArray(new Line[0]);
         Arrays.sort(arr, new java.util.Comparator<Line>() {
@@ -340,6 +353,35 @@ public final class DocDetector {
         });
         l.clear();
         for (int i = 0; i < max; i++) l.add(arr[i]);
+        int added = 0;
+        for (int i = max; i < arr.length && added < extra; i++) {
+            int fam = 0;
+            for (Line o : l) {
+                double d = Math.abs(o.thetaDeg - arr[i].thetaDeg);
+                d = Math.min(d, 180 - d);
+                if (d <= 4.0) fam++;
+            }
+            if (fam >= 2) continue;
+            l.add(arr[i]);
+            added++;
+        }
+    }
+
+    /**
+     * Hệ số giảm ưu tiên cho đường thuộc hoa văn lặp: dọc đường, tương phản hai phía đảo dấu liên tục
+     * (tổng có dấu trên mọi đoạn đều nhỏ so với tổng trị tuyệt đối). Mép giấy thì có một đoạn dài cùng dấu.
+     */
+    private static double textureFactor(Line L, double acon) {
+        double gate = Math.max(0.0, Math.min(1.0, (acon - 4.0) / 8.0));
+        if (gate <= 0) return 1.0;
+        float mn = 0, mx = 0;
+        for (int i = 1; i <= L.len; i++) {
+            float v = L.con[i];
+            if (v < mn) mn = v;
+            if (v > mx) mx = v;
+        }
+        double tex = Math.min(1.0, 2.0 * (mx - mn) / Math.max(1e-6, L.acon[L.len]));
+        return 1.0 - gate * 0.8 * (1.0 - tex);
     }
 
     private static void sortByKey(List<Line> l) {
@@ -500,20 +542,26 @@ public final class DocDetector {
         List<int[]> accepted = new ArrayList<>();
         for (int[] p : arr) {
             boolean dup = false;
+            int fam = 0;
             for (int[] a : accepted) {
                 int dt = Math.abs(p[1] - a[1]);
                 int rp = p[2], ra = a[2];
                 if (dt > T / 2) { dt = T - dt; ra = -ra; }
-                if (dt <= 3 && Math.abs(rp - ra) <= 5) { dup = true; break; }
+                if (dt <= 3) {
+                    fam++;
+                    if (Math.abs(rp - ra) <= 5) { dup = true; break; }
+                }
             }
             if (dup) continue;
+            // sau MAX_PEAKS đỉnh mạnh nhất chỉ nhận thêm đường thuộc hướng còn ít đại diện
+            if (accepted.size() >= MAX_PEAKS && fam >= 4) continue;
             accepted.add(p);
             Line L = new Line();
             double th = Math.PI * p[1] / T;
             L.setNormal(Math.cos(th), Math.sin(th), p[2]);
             L.votes = p[0];
             out.add(L);
-            if (accepted.size() >= 64) break;
+            if (accepted.size() >= MAX_PEAKS_EXTRA) break;
         }
         return out;
     }

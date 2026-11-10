@@ -16,6 +16,9 @@ enum DocDetector {
 
     static let workMax = 420
     static let maxLinesPerDir = 20
+    /// Số đường bổ sung mỗi chiều lấy từ các hướng còn ít đại diện (nền sọc/caro không lấn hết chỗ của mép giấy).
+    static let extraLinesPerDir = 6
+    static let maxPeaks = 64, maxPeaksExtra = 96
     static let minScore = 0.10
     static let borderQ = 0.22
 
@@ -101,9 +104,10 @@ enum DocDetector {
     /// Ảnh vào: RGBA 8 bit (kênh R,G,B ở byte 0,1,2 của mỗi điểm ảnh).
     static func detect(rgba: UnsafePointer<UInt8>, width w: Int, height h: Int, bytesPerRow bpr: Int) -> Result? {
         guard w >= 16, h >= 16 else { return nil }
-        let scale = min(1.0, Double(workMax) / Double(max(w, h)))
-        let sw = max(16, Int((Double(w) * scale).rounded()))
-        let sh = max(16, Int((Double(h) * scale).rounded()))
+        // tính bằng Float như bản Java (Math.round(w * scale)) để kích thước làm việc luôn trùng nhau
+        let scale: Float = min(1, Float(workMax) / Float(max(w, h)))
+        let sw = max(16, jround(Double(Float(w) * scale)))
+        let sh = max(16, jround(Double(Float(h) * scale)))
         let kx = Float(sw) / Float(w), ky = Float(sh) / Float(h)
         let n = sw * sh
 
@@ -131,8 +135,9 @@ enum DocDetector {
             refineLine(L, em, gx, gy, mag, sw, sh, 2.5)
             if !buildProfile(L, gx, gy, mag, gray, sw, sh) { continue }
             // ưu tiên đường có tương phản (mép giấy) hơn dòng chữ/đường kẻ trong trang
-            let acon = Double(L.acon[L.len]) / Double(max(1, L.len))
-            L.priority = Double(L.votes) * (0.25 + 0.75 * min(1.0, acon / 15.0))
+            // chia bằng Float như bản Java (float / int) để thứ tự ưu tiên trùng nhau
+            let acon = Double(L.acon[L.len] / Float(max(1, L.len)))
+            L.priority = Double(L.votes) * (0.25 + 0.75 * min(1.0, acon / 15.0)) * textureFactor(L, acon)
             if L.isHorizontal {
                 L.key = (L.rho - cx * L.nx) / L.ny
                 hs.append(L)
@@ -141,8 +146,8 @@ enum DocDetector {
                 vs.append(L)
             }
         }
-        keepTop(&hs, maxLinesPerDir)
-        keepTop(&vs, maxLinesPerDir)
+        keepTop(&hs, maxLinesPerDir, extraLinesPerDir)
+        keepTop(&vs, maxLinesPerDir, extraLinesPerDir)
         hs.append(borderLine(0, 1, 0, cx, cy))
         hs.append(borderLine(0, 1, Double(sh - 1), cx, cy))
         vs.append(borderLine(1, 0, 0, cx, cy))
@@ -256,6 +261,12 @@ enum DocDetector {
                 // đường kẻ/dòng chữ trong trang có hai phía giống nhau -> tương phản thấp -> điểm thấp
                 var wcon = 0.08 + 0.92 * pow(min(1.0, acon / 20.0), 1.2)
                 if con < -10 { wcon *= 0.85 }
+                // mép giấy có một phía sáng hơn suốt chiều dài cạnh; đường của hoa văn lặp (caro, ô màu xen kẽ)
+                // đảo dấu liên tục nên |con| nhỏ hơn hẳn acon -> giảm điểm. Chỉ áp dụng khi tương phản mạnh
+                // (acon > 14) để không ảnh hưởng mép giấy mờ kiểu giấy trắng trên nền sáng.
+                let cons = min(1.0, 1.5 * abs(con) / max(1e-6, acon))
+                let gate = max(0.0, min(1.0, (acon - 14.0) / 14.0))
+                wcon *= 1.0 - gate * 0.75 * (1.0 - cons)
                 qs = sup * wcon
             }
             sumQ += qs * len
@@ -324,13 +335,48 @@ enum DocDetector {
         return L
     }
 
-    /// Giữ `maxCount` đường ưu tiên cao nhất (sắp xếp ổn định như Java).
-    private static func keepTop(_ l: inout [Line], _ maxCount: Int) {
+    /// Giữ `maxCount` đường ưu tiên cao nhất (sắp xếp ổn định như Java), cộng thêm tối đa `extra` đường thuộc
+    /// các hướng chưa có (hoặc mới có 1) đại diện: khi nền có rất nhiều đường song song (vải sọc, caro)
+    /// thì mép giấy vẫn còn chỗ.
+    private static func keepTop(_ l: inout [Line], _ maxCount: Int, _ extra: Int) {
         if l.count <= maxCount { return }
         let sorted = l.enumerated().sorted { a, b in
             a.element.priority != b.element.priority ? a.element.priority > b.element.priority : a.offset < b.offset
+        }.map { $0.element }
+        var out = Array(sorted.prefix(maxCount))
+        var added = 0
+        var i = maxCount
+        while i < sorted.count && added < extra {
+            let cand = sorted[i]
+            i += 1
+            var fam = 0
+            for o in out {
+                var d = abs(o.thetaDeg - cand.thetaDeg)
+                d = min(d, 180 - d)
+                if d <= 4.0 { fam += 1 }
+            }
+            if fam >= 2 { continue }
+            out.append(cand)
+            added += 1
         }
-        l = sorted.prefix(maxCount).map { $0.element }
+        l = out
+    }
+
+    /// Hệ số giảm ưu tiên cho đường thuộc hoa văn lặp: dọc đường, tương phản hai phía đảo dấu liên tục
+    /// (tổng có dấu trên mọi đoạn đều nhỏ so với tổng trị tuyệt đối). Mép giấy thì có một đoạn dài cùng dấu.
+    private static func textureFactor(_ L: Line, _ acon: Double) -> Double {
+        let gate = max(0.0, min(1.0, (acon - 4.0) / 8.0))
+        if gate <= 0 { return 1.0 }
+        var mn: Float = 0, mx: Float = 0
+        if L.len >= 1 {
+            for i in 1...L.len {
+                let v = L.con[i]
+                if v < mn { mn = v }
+                if v > mx { mx = v }
+            }
+        }
+        let tex = min(1.0, 2.0 * Double(mx - mn) / max(1e-6, Double(L.acon[L.len])))
+        return 1.0 - gate * 0.8 * (1.0 - tex)
     }
 
     private static func sortByKey(_ l: inout [Line]) {
@@ -422,18 +468,23 @@ enum DocDetector {
             let row = y * w
             for x in 0..<w {
                 let xm2 = max(0, x - 2), xm1 = max(0, x - 1), xp1 = min(w - 1, x + 1), xp2 = min(w - 1, x + 2)
-                let s1 = a[row + xm2] + 4 * a[row + xm1] + 6 * a[row + x]
-                let s2 = 4 * a[row + xp1] + a[row + xp2]
-                tmp[row + x] = (s1 + s2) * k
+                // cộng lần lượt từ trái sang phải như bản Java (kết quả Float trùng từng bit)
+                var s = a[row + xm2] + 4 * a[row + xm1]
+                s += 6 * a[row + x]
+                s += 4 * a[row + xp1]
+                s += a[row + xp2]
+                tmp[row + x] = s * k
             }
         }
         for y in 0..<h {
             let ym2 = max(0, y - 2) * w, ym1 = max(0, y - 1) * w, y0 = y * w
             let yp1 = min(h - 1, y + 1) * w, yp2 = min(h - 1, y + 2) * w
             for x in 0..<w {
-                let s1 = tmp[ym2 + x] + 4 * tmp[ym1 + x] + 6 * tmp[y0 + x]
-                let s2 = 4 * tmp[yp1 + x] + tmp[yp2 + x]
-                a[y0 + x] = (s1 + s2) * k
+                var s = tmp[ym2 + x] + 4 * tmp[ym1 + x]
+                s += 6 * tmp[y0 + x]
+                s += 4 * tmp[yp1 + x]
+                s += tmp[yp2 + x]
+                a[y0 + x] = s * k
             }
         }
     }
@@ -559,6 +610,7 @@ enum DocDetector {
         var accepted = [(t: Int, r: Int)]()
         for p in peaks {
             var dup = false
+            var fam = 0
             for a in accepted {
                 var dtt = abs(p.t - a.t)
                 let rp = p.r
@@ -567,19 +619,24 @@ enum DocDetector {
                     dtt = T - dtt
                     ra = -ra
                 }
-                if dtt <= 3 && abs(rp - ra) <= 5 {
-                    dup = true
-                    break
+                if dtt <= 3 {
+                    fam += 1
+                    if abs(rp - ra) <= 5 {
+                        dup = true
+                        break
+                    }
                 }
             }
             if dup { continue }
+            // sau maxPeaks đỉnh mạnh nhất chỉ nhận thêm đường thuộc hướng còn ít đại diện
+            if accepted.count >= maxPeaks && fam >= 4 { continue }
             accepted.append((t: p.t, r: p.r))
             let L = Line()
             let th = Double.pi * Double(p.t) / Double(T)
             L.setNormal(cos(th), sin(th), Double(p.r))
             L.votes = Int(p.v)
             out.append(L)
-            if accepted.count >= 64 { break }
+            if accepted.count >= maxPeaksExtra { break }
         }
         return out
     }

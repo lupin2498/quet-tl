@@ -1,7 +1,10 @@
-import CoreGraphics
 import Foundation
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 /// Hình học tứ giác trang giấy (port từ Geom.java). Thứ tự góc: TL, TR, BR, BL; gốc toạ độ trên-trái.
+/// Chỉ dùng Foundation/CoreGraphics nên biên dịch được trên Linux để đối chiếu với bản Java.
 enum Geom {
     static let a4Ratio = 210.0 / 297.0
     static let letterRatio = 8.5 / 11.0
@@ -34,6 +37,7 @@ enum Geom {
     }
 
     static func signedArea(_ q: [CGPoint]) -> Double {
+        guard q.count == 4 else { return 0 }
         var a = 0.0
         for i in 0..<4 {
             let j = (i + 1) % 4
@@ -46,11 +50,12 @@ enum Geom {
 
     static func isConvex(_ q: [CGPoint]) -> Bool {
         guard q.count == 4 else { return false }
+        for p in q where !p.x.isFinite || !p.y.isFinite { return false }
         var sign = 0
         for i in 0..<4 {
             let a = q[i], b = q[(i + 1) % 4], c = q[(i + 2) % 4]
             let cross = Double((b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x))
-            if abs(cross) < 1e-6 { return false }
+            if !(abs(cross) >= 1e-6) { return false }
             let s = cross > 0 ? 1 : -1
             if sign == 0 { sign = s } else if s != sign { return false }
         }
@@ -71,6 +76,7 @@ enum Geom {
 
     /// Tỷ lệ rộng/cao thật của trang (Zhang & He, "Whiteboard scanning and image enhancement").
     static func estimateAspect(_ q: [CGPoint], imgW: Double, imgH: Double, focal: Double) -> Double {
+        guard q.count == 4 else { return 1 }
         let wTop = dist(q[0], q[1]), wBot = dist(q[3], q[2])
         let hL = dist(q[0], q[3]), hR = dist(q[1], q[2])
         let affine = (wTop + wBot) / max(1e-6, hL + hR)
@@ -121,12 +127,17 @@ enum Geom {
     }
 
     static func outputSize(_ q: [CGPoint], imgW: Double, imgH: Double, focal: Double, snap: Bool, maxLong: Double) -> CGSize {
+        guard q.count == 4 else { return CGSize(width: 16, height: 16) }
         var ratio = estimateAspect(q, imgW: imgW, imgH: imgH, focal: focal)
         if snap { ratio = snapPaper(ratio) }
         let wq = max(dist(q[0], q[1]), dist(q[3], q[2]))
         let hq = max(dist(q[0], q[3]), dist(q[1], q[2]))
+        // tứ giác suy biến / toạ độ không hữu hạn -> kích thước tối thiểu (không để tràn số)
+        if !(ratio > 0) || !ratio.isFinite || !(wq > 0) || !(hq > 0) || !wq.isFinite || !hq.isFinite {
+            return CGSize(width: 16, height: 16)
+        }
         var outW: Double, outH: Double
-        if wq / max(hq, 1e-6) > ratio {
+        if wq / hq > ratio {
             outW = wq
             outH = wq / ratio
         } else {

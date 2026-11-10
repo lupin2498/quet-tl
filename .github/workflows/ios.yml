@@ -6,6 +6,11 @@ on:
     paths:
       - "ios/**"
       - ".github/workflows/ios.yml"
+      # phần thuật toán dùng chung: bản Swift được đối chiếu với bản Java
+      - "android/app/src/main/java/vn/quettailieu/scanner/core/**"
+      - "android/tools/desktop/**"
+      - "tests/tools/**"
+      - "tests/images/**"
   workflow_dispatch:
 
 permissions:
@@ -17,9 +22,9 @@ concurrency:
 
 jobs:
   algo-linux:
-    # kiểm tra nhanh phần thuật toán Swift (biên dịch + so với ảnh thử có toạ độ thật)
+    # kiểm tra nhanh phần thuật toán Swift: so với toạ độ thật, kiểm thử độ bền (fuzz), đối chiếu từng kết quả với bản Java
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Swift
@@ -28,7 +33,7 @@ jobs:
           swift --version
       - name: Chuyển ảnh thử sang PPM
         run: |
-          python3 -c "import PIL" 2>/dev/null || pip3 install --break-system-packages pillow
+          pip3 install --break-system-packages -q pillow numpy pypdf || pip3 install -q pillow numpy pypdf
           mkdir -p out/algo
           python3 - <<'PY'
           from PIL import Image
@@ -39,9 +44,29 @@ jobs:
           cp tests/images/doc_1_wood.jpg out/algo/sample.jpg
       - name: Biên dịch + chạy
         run: |
-          swiftc -O -o out/algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
+          swiftc -O -o out/algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/Geom.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
           set -o pipefail
           ./out/algotest tests/images/gt.txt out/algo 2>&1 | tee out/algo/result.txt
+
+      - name: Kiểm thử độ bền (fuzz) + kiểm tra PDF bằng trình phân tích thật
+        run: |
+          set -o pipefail
+          mkdir -p out/fuzz
+          cp tests/images/doc_1_wood.jpg out/fuzz/sample.jpg
+          ./out/algotest --fuzz 60 out/fuzz 2>&1 | tee out/algo/fuzz.txt
+          python3 tests/tools/check_pdfs.py out/fuzz out/algo/test.pdf 2>&1 | tee out/algo/fuzz-pdf.txt
+          rm -rf out/fuzz
+
+      - name: Đối chiếu bản Swift với bản Java (cùng dữ liệu tổng hợp)
+        run: |
+          set -o pipefail
+          python3 tests/tools/make_core_inputs.py out/core-in
+          mkdir -p out/jcls
+          javac -encoding UTF-8 -d out/jcls android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/DumpCore.java
+          java -Dfile.encoding=UTF-8 -cp out/jcls DumpCore out/core-in out/core-java 2>&1 | tee out/algo/compare.txt
+          ./out/algotest --dump out/core-in out/core-swift 2>&1 | tee -a out/algo/compare.txt
+          python3 tests/tools/compare_core.py out/core-in out/core-java out/core-swift 2>&1 | tee -a out/algo/compare.txt
+          python3 tests/tools/check_pdfs.py out/core-java out/core-swift | tail -1 | tee -a out/algo/compare.txt
 
       - name: Đẩy kết quả lên nhánh ci/ios-algo
         if: always()
