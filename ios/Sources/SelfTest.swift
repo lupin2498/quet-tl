@@ -530,7 +530,9 @@ final class SelfTest {
         addWait(1.0)
         addSnap("41_finger_removed")
         addRun("kiểm tra gỡ ngón tay") {
-            self.check(self.editor?.current?.filter == Enhancer.magicPro && self.editor?.bannerVisible == false, "Gỡ bỏ -> bộ lọc Thần kỳ, lời nhắc ẩn")
+            let isPro = self.editor?.current?.filter == Enhancer.magicPro
+            let hidden = self.editor?.bannerVisible == false
+            self.check(isPro && hidden, "Gỡ bỏ -> bộ lọc Thần kỳ, lời nhắc ẩn")
             let a = self.statBefore["skin"] ?? -1, b = self.cur(.skin, SelfTest.rFinger)
             self.check(a > 0.3 && b >= 0 && b < 0.02, "Thần kỳ gỡ ngón tay (màu da \(self.f3(a)) -> \(self.f3(b)))")
             let d0 = self.statBefore["signer"] ?? -1, d1 = self.cur(.dark, SelfTest.rSigner)
@@ -561,7 +563,9 @@ final class SelfTest {
         addRun("lời nhắc hiện lại rồi tắt hẳn") {
             self.check(self.editor?.bannerVisible == true, "bỏ bộ lọc Thần kỳ -> lời nhắc ngón tay hiện lại")
             self.editor?.dismissBanner()
-            self.check(self.editor?.bannerVisible == false && self.editor?.current?.fingerOff == true, "✕ tắt lời nhắc cho trang này")
+            let hidden = self.editor?.bannerVisible == false
+            let off = self.editor?.current?.fingerOff == true
+            self.check(hidden && off, "✕ tắt lời nhắc cho trang này")
         }
         addRun("mở bảng lọc + Đen trắng") {
             self.editor?.toggleFilterPanel()
@@ -571,7 +575,9 @@ final class SelfTest {
         addRun("✕ trả lại bộ lọc cũ") { self.editor?.closeFilterPanel(keep: false) }
         addUntil("trả lại bộ lọc", 60) { self.editorIdle() }
         addRun("kiểm tra ✕") {
-            self.check(self.editor?.current?.filter == Enhancer.noHand && self.editor?.filterPanelVisible == false, "✕ ở bảng lọc trả lại bộ lọc lúc mở bảng")
+            let restored = self.editor?.current?.filter == Enhancer.noHand
+            let closed = self.editor?.filterPanelVisible == false
+            self.check(restored && closed, "✕ ở bảng lọc trả lại bộ lọc lúc mở bảng")
         }
         addRun("về bộ lọc Tăng cường") {
             self.editor?.toggleFilterPanel()
@@ -679,19 +685,27 @@ final class SelfTest {
         addWait(0.6)
         addSnap("45d_sign_placed")
         addRun("kiểm tra chữ ký + kéo") {
-            self.check(self.markup?.padOpen == false && self.markup?.marks.count == 6, "lưu chữ ký: bảng ký đóng, có 6 đánh dấu (\(self.markup?.marks.count ?? -1))")
+            let padClosed = self.markup?.padOpen == false
+            let n = self.markup?.marks.count ?? -1
+            self.check(padClosed && n == 6, "lưu chữ ký: bảng ký đóng, có 6 đánh dấu (\(n))")
             self.check(DocStore.shared.signLibrary().count == 1, "chữ ký được lưu vào thư viện")
             self.markup?.testStroke([CGPoint(x: 0.5, y: 0.6), CGPoint(x: 0.72, y: 0.9)])
         }
         addWait(0.4)
         addSnap("45e_sign_moved")
         addRun("kiểm tra kéo + hoàn tác / làm lại") {
-            let m = self.markup?.marks.last
-            let ok = m != nil && m!.t == Mark.sign && abs(m!.x - 0.72) < 0.03 && abs(m!.y - 0.9) < 0.03
-            self.check(ok, "kéo chữ ký tới vị trí mới (\(m?.x ?? -1), \(m?.y ?? -1))")
+            var moved = false
+            var mx = -1.0, my = -1.0
+            if let m = self.markup?.marks.last, m.t == Mark.sign {
+                mx = m.x
+                my = m.y
+                moved = abs(mx - 0.72) < 0.03 && abs(my - 0.9) < 0.03
+            }
+            self.check(moved, "kéo chữ ký tới vị trí mới (\(mx), \(my))")
             self.markup?.undoTapped()
-            let back = self.markup?.marks.last
-            self.check(back != nil && abs(back!.x - 0.5) < 0.001, "hoàn tác trả chữ ký về chỗ cũ")
+            var undone = false
+            if let b = self.markup?.marks.last { undone = abs(b.x - 0.5) < 0.001 }
+            self.check(undone, "hoàn tác trả chữ ký về chỗ cũ")
             self.markup?.redoTapped()
             let types = self.markup?.marks.map { $0.t } ?? []
             self.check(types == [Mark.brush, Mark.brush, Mark.mosaic, Mark.text, Mark.watermark, Mark.sign], "6 đánh dấu theo thứ tự (\(types))")
@@ -737,7 +751,8 @@ final class SelfTest {
         addSnap("47_markup_recrop")
         addRun("kiểm tra cắt lại") {
             let now = self.editor?.current?.marks ?? []
-            self.check(now.count == 6 && now != self.marksBefore, "cắt lại: đánh dấu đi theo vùng cắt mới (còn \(now.count))")
+            let movedMarks = now != self.marksBefore
+            self.check(now.count == 6 && movedMarks, "cắt lại: đánh dấu đi theo vùng cắt mới (còn \(now.count))")
             self.check(self.editor?.current?.erase?.count == 5, "cắt lại: vẫn còn 5 thao tác xoá")
             self.editor?.rotateLeft()
         }
@@ -752,21 +767,38 @@ final class SelfTest {
         addWait(0.4)
         addSnap("47b_sign_rotated")
         addRun("✓ (chữ ký thứ hai)") {
-            let last = self.markup?.marks.last
-            self.check(self.markup?.marks.count == 7 && last?.t == Mark.sign && last?.a == 90, "chữ ký trên trang đã xoay nằm thẳng theo chiều hiển thị (góc \(last?.a ?? -1))")
+            let all = self.markup?.marks ?? []
+            var upright = false
+            var angle = -1
+            if let last = all.last {
+                angle = last.a
+                upright = all.count == 7 && last.t == Mark.sign && last.a == 90
+            }
+            self.check(upright, "chữ ký trên trang đã xoay nằm thẳng theo chiều hiển thị (góc \(angle))")
             self.markup?.applyTapped()
         }
         addUntil("dựng lại sau chữ ký thứ hai", 60) { self.editorIdle() }
         // --- Cắt dán ---
         addRun("Cắt dán 4 trang mỗi tờ") { self.editor?.collage(layout: 1) }
-        addUntil("tài liệu ghép", 60) { self.docVC != nil && self.docVC?.rendering == false }
+        addUntil("tài liệu ghép", 60) {
+            // màn hình tài liệu ghép đã hiện và tờ ghép đã dựng xong ảnh kết quả
+            guard let dv = self.docVC, dv.doc.id != self.beautyId, !dv.rendering else { return false }
+            return dv.doc.pages.first?.out != nil
+        }
         addWait(1.0)
         addSnap("49_collage")
         addRun("kiểm tra tài liệu ghép") {
-            let d = self.docVC?.doc
-            let ok = d != nil && d!.pages.count == 1 && d!.title.hasSuffix(" - ghép") && !d!.draft && d!.id != self.beautyId
-            self.check(ok, "Cắt dán tạo tài liệu mới 1 tờ (\(d?.title ?? "nil"))")
-            if let d = d, let p = d.pages.first { self.check(p.srcW == 2480 && p.srcH == 3508 && p.out != nil, "tờ ghép là A4 dọc 2480x3508 (\(p.srcW)x\(p.srcH))") }
+            var made = false
+            var title = "nil"
+            if let d = self.docVC?.doc {
+                title = d.title
+                made = d.pages.count == 1 && d.title.hasSuffix(" - ghép") && !d.draft && d.id != self.beautyId
+                if let p = d.pages.first {
+                    let a4 = p.srcW == 2480 && p.srcH == 3508
+                    self.check(a4 && p.out != nil, "tờ ghép là A4 dọc 2480x3508 (\(p.srcW)x\(p.srcH))")
+                }
+            }
+            self.check(made, "Cắt dán tạo tài liệu mới 1 tờ (\(title))")
             self.nav.popViewController(animated: false)
         }
         addUntil("về trình chỉnh sửa sau Cắt dán", 20) { self.editorIdle() }
@@ -785,8 +817,11 @@ final class SelfTest {
         addRun("kiểm tra PDF + dọn dẹp") {
             self.verifyCurrentDocPdf()
             let saved = DocStore.shared.load(self.beautyId)
-            self.check(saved != nil && saved!.draft == false && saved!.pages.first?.marks?.count == 7 && saved!.pages.first?.erase?.count == 5,
-                       "tài liệu lưu đủ chỉnh sửa (7 đánh dấu, 5 thao tác xoá)")
+            var kept = false
+            if let d = saved, let p = d.pages.first {
+                kept = !d.draft && (p.marks ?? []).count == 7 && (p.erase ?? []).count == 5
+            }
+            self.check(kept, "tài liệu lưu đủ chỉnh sửa (7 đánh dấu, 5 thao tác xoá)")
             self.nav.popToRootViewController(animated: false)
             if let d = saved { DocStore.shared.delete(d) }
             for u in DocStore.shared.signLibrary() { try? FileManager.default.removeItem(at: u) }

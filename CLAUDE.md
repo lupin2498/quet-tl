@@ -1,40 +1,55 @@
 # Quét Tài Liệu — hướng dẫn cho Claude Code
 
 Ứng dụng quét giấy tờ kiểu CamScanner: chụp → tự tìm mép trang → kéo tay cầm chỉnh vùng cắt →
-nắn phẳng theo khổ giấy (A4/Letter) → bộ lọc làm rõ chữ → lưu/chia sẻ PDF, JPG. Giao diện tiếng Việt.
+nắn phẳng theo khổ giấy (A4/Letter) → bộ lọc làm rõ chữ → chỉnh sửa (xoá thông minh, đánh dấu, tiêu đề trang, cắt dán)
+→ lưu/chia sẻ PDF, JPG. Giao diện tiếng Việt.
 
 ## Cấu trúc
 - `android/` — dự án Android Studio (Java, không thư viện ngoài, minSdk 24, targetSdk 34).
   - `app/src/main/java/vn/quettailieu/scanner/core/` — thuật toán Java thuần, KHÔNG phụ thuộc Android
-    (`DocDetector` tìm mép, `Geom` hình học + tỷ lệ khổ giấy, `Enhancer` bộ lọc, `PdfWriter`).
+    (`DocDetector` tìm mép, `Geom` hình học + tỷ lệ khổ giấy, `Enhancer` bộ lọc, `Retouch` gỡ ngón tay / xoá thông minh /
+    khử nhiễu / làm nét / dọn mép, `PdfWriter`).
   - Các Activity (đều kế thừa `BaseActivity`: chặn mở trùng màn hình khi chạm đúp, `runWhenResumed`): `MainActivity`
     (trang chủ), `CameraActivity` (Camera2, Đơn/Hàng loạt), `CropActivity` + `CropView` (chỉnh 4 góc, kính lúp),
-    `EditorActivity` + `PageStripView` (lọc, xoay, cắt lại, so sánh), `DocumentActivity`.
+    `EditorActivity` + `PageStripView` (thanh công cụ ba nhóm Ảnh / Đánh dấu / Trang; lọc, xoay, cắt lại, so sánh,
+    lời nhắc ngón tay, tiêu đề trang, cắt dán), `EraseActivity` + `EraseView` (Xóa thông minh), `MarkupActivity` +
+    `MarkView` (Đánh dấu; `MarkRender` vẽ chung cho màn hình chỉnh sửa và ảnh kết quả), `DocumentActivity`.
+  - Chỉnh sửa trang KHÔNG phá huỷ: `Page.erase` / `Page.marks` (JSON chuẩn tắc trong `Edits`) + `Doc.header`; `Processor.render`
+    dựng lại theo thứ tự nắn phẳng → dò ngón tay → xoá → lọc → đánh dấu → xoay → tiêu đề. Toạ độ chuẩn hoá theo ảnh đã nắn
+    phẳng (chưa xoay); cắt lại thì `Edits.remap` dời theo vùng cắt mới. Tên ảnh kết quả = băm của mọi tham số.
   - `DocStore.open()` trả về MỘT đối tượng `Doc` dùng chung cho mọi màn hình đang mở tài liệu đó (không nạp bản sao
     riêng rồi ghi đè nhau); tài liệu đã xoá thì `save()` bỏ qua. Bản nháp bị bỏ dở được khôi phục khi mở lại ứng dụng.
-  - `tools/desktop/` — chạy thuật toán trên JVM: `TestDetect`, `EvalSynth` (so với toạ độ thật), `FuzzCore` (kiểm thử độ bền),
-    `DumpCore` (xuất kết quả để đối chiếu với bản Swift).
+  - `tools/desktop/` — chạy thuật toán trên JVM: `TestDetect`, `EvalSynth` (so với toạ độ thật), `EvalRetouch` (gỡ ngón tay,
+    xoá thông minh, bộ lọc mới trên trang tổng hợp), `FuzzCore` (kiểm thử độ bền), `DumpCore` (xuất kết quả để đối chiếu với bản Swift).
 - `ios/` — bản iOS (Swift/UIKit, CoreImage), dự án sinh bằng XcodeGen (`ios/project.yml`).
-  - `ios/Sources/DocDetector.swift` port 1-1 từ `DocDetector.java` (sửa thuật toán thì sửa cả hai); Vision chỉ là dự phòng.
-  - `Enhancer.swift`, `PdfWriter.swift`, `DocDetector.swift` chỉ dùng Foundation -> kiểm thử nhanh trên Linux bằng
+  - `ios/Sources/DocDetector.swift`, `Enhancer.swift`, `Retouch.swift` port 1-1 từ bản Java (sửa thuật toán thì sửa cả hai;
+    CI so từng điểm ảnh giữa hai bản); Vision chỉ là dự phòng khi tìm mép.
+  - Giao diện chỉnh sửa: `EditorViewController`, `EraseViewController`, `MarkupViewController` (chung khung `EditScreen.swift`,
+    vùng vẽ `PageCanvasView`), `MarkRender.swift`, `Collage.swift`, mô hình `Edits.swift` (`EraseOp`, `Mark`, `PageHeader`).
+  - `Enhancer.swift`, `Retouch.swift`, `PdfWriter.swift`, `DocDetector.swift` chỉ dùng Foundation -> kiểm thử nhanh trên Linux bằng
     `ios/Tests/linux/main.swift` (job `algo-linux`, kết quả ở nhánh `ci/ios-algo`).
   - Chạy app với tham số `-selftest` để tự kiểm thử trên Simulator (kết quả: Documents/selftest/).
 - `tests/android/run_tests.py` — kiểm thử giao diện tự động trên máy ảo (adb + uiautomator); mã thoát khác 0 nếu có bước lỗi.
-- `tests/images/` — ảnh thử TỔNG HỢP (sinh bằng `tests/tools/make_test_images.py`), kèm `gt.txt` toạ độ góc thật.
-- `tests/tools/` — `make_core_inputs.py` + `compare_core.py` (đối chiếu Java ↔ Swift trên cùng dữ liệu tổng hợp),
-  `check_pdfs.py` (kiểm tra PDF bằng pypdf).
+- `tests/images/` — ảnh thử TỔNG HỢP (sinh bằng `tests/tools/make_test_images.py`), kèm `gt.txt` toạ độ góc thật;
+  `edit_page.jpg` (trang có ngón tay giữ giấy + chữ viết tay + con dấu, sinh bằng `make_retouch_images.py <thư-mục> 1400 <thư-mục-ảnh>`)
+  dùng cho kiểm thử giao diện phần chỉnh sửa (bản sao ở `ios/Resources/TestImages/`).
+- `tests/tools/` — `make_core_inputs.py` + `make_retouch_images.py` + `compare_core.py` (đối chiếu Java ↔ Swift trên cùng dữ liệu
+  tổng hợp), `check_pdfs.py` (kiểm tra PDF bằng pypdf).
 
 ## Lệnh thường dùng
 - Build Android: `cd android && ./gradlew assembleDebug assembleRelease`
 - Build Android không cần Gradle (Linux, dùng android.jar API 23): `android/build_apk.sh`
 - Kiểm thử thuật toán: `javac -encoding UTF-8 -d out android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/*.java && java -cp out EvalSynth tests/images/gt.txt out/det`
+- Kiểm thử phần làm đẹp / xoá thông minh: `python3 tests/tools/make_retouch_images.py out/rt 1400 && java -cp out EvalRetouch out/rt`.
 - Kiểm thử độ bền: `java -cp out FuzzCore out/fuzz 60` (Java), `algotest --fuzz 60 <thư-mục-có-sample.jpg>` (Swift).
-- Đối chiếu Java ↔ Swift: `python3 tests/tools/make_core_inputs.py in && java -cp out DumpCore in j && algotest --dump in s && python3 tests/tools/compare_core.py in j s`
-  (`algotest` = `swiftc -O ios/Sources/{DocDetector,Enhancer,Geom,PdfWriter}.swift ios/Tests/linux/main.swift`).
+- Đối chiếu Java ↔ Swift: `python3 tests/tools/make_core_inputs.py in && python3 tests/tools/make_retouch_images.py in 700 && java -cp out DumpCore in j && algotest --dump in s && python3 tests/tools/compare_core.py in j s`
+  (`algotest` = `swiftc -O ios/Sources/{DocDetector,Enhancer,Retouch,Geom,PdfWriter}.swift ios/Tests/linux/main.swift`).
+- Chạy riêng vài bước kiểm thử máy ảo: `gh workflow run android.yml --ref <nhánh> -f only='Xóa thông minh|Đánh dấu' -f apis='[34]'`
+  (biến `TEST_ONLY` của `run_tests.py`; kết quả vẫn đẩy lên các nhánh `ci/android-*`).
 - Build iOS (macOS): `cd ios && xcodegen generate && xcodebuild -project QuetTaiLieu.xcodeproj -scheme QuetTaiLieu -sdk iphoneos -configuration Release CODE_SIGNING_ALLOWED=NO build`
 
 ## CI (GitHub Actions)
-- `.github/workflows/android.yml`: build APK, kiểm thử thuật toán + fuzz, chạy máy ảo API 24, 29 & 34 với
+- `.github/workflows/android.yml`: build APK, kiểm thử thuật toán (tìm mép, Retouch) + fuzz, chạy máy ảo API 24, 29 & 34 với
   `tests/android/run_tests.py` (job lỗi nếu có bước không đạt).
 - `.github/workflows/ios.yml`: kiểm thử thuật toán Swift trên Linux (so toạ độ thật, fuzz, đối chiếu với bản Java),
   build IPA (ký ad-hoc, bỏ ảnh thử) + chạy tự kiểm thử trên iOS Simulator (`SelfTest.swift`), chụp màn hình.
