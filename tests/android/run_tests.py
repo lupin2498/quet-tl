@@ -985,6 +985,8 @@ def t_import_corrupt():
         check_no_crash("nhập " + name)
         top = top_activity()
         log("nhập %s -> %s" % (name, top))
+        if name == "bad_head.jpg" and top != "MainActivity":
+            raise AssertionError("Ảnh JPEG chỉ còn phần đầu vẫn được nhập (thành trang đen): %s" % top)
         if top == "CropActivity":
             time.sleep(2)
             tap(text="Xong")

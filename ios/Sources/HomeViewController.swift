@@ -397,18 +397,24 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
         cell.thumb.image = nil
         cell.docId = d.id
         cell.onMore = { [weak self] in self?.docMenu(d) }
-        if let first = d.pages.first, let out = first.out {
-            let key = "\(d.id)/\(out)" as NSString
+        if let first = d.pages.first {
+            // trang chưa có ảnh kết quả (tài liệu vừa khôi phục, chưa mở lần nào) -> xem trước từ ảnh gốc
+            let ready = DocStore.shared.outReady(d, first)
+            let key = (ready ? "\(d.id)/\(first.out ?? "")" : "\(d.id)/src/\(first.src)") as NSString
             if let img = thumbCache.object(forKey: key) {
                 cell.thumb.image = img
             } else {
-                let url = DocStore.shared.url(d, out)
+                let dir = DocStore.shared.dir(d)
+                let outURL = first.out.map { dir.appendingPathComponent($0) }
                 DispatchQueue.global(qos: .userInitiated).async {
-                    let img = ImageOps.thumbnail(url, maxPixel: 220)
+                    var img: UIImage?
+                    if ready, let u = outURL { img = ImageOps.thumbnail(u, maxPixel: 220) }
+                    if img == nil { img = ImageOps.quickPreview(dir: dir, page: first, maxLong: 220) }
+                    let result = img
                     DispatchQueue.main.async {
-                        guard let img = img else { return }
-                        self.thumbCache.setObject(img, forKey: key)
-                        if cell.docId == d.id { cell.thumb.image = img }
+                        guard let result = result else { return }
+                        self.thumbCache.setObject(result, forKey: key)
+                        if cell.docId == d.id { cell.thumb.image = result }
                     }
                 }
             }

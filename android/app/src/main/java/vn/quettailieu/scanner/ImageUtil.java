@@ -233,8 +233,50 @@ final class ImageUtil {
             f.delete();
             throw new IOException("Ảnh bị hỏng hoặc không giải mã được");
         }
+        // JPEG bị cắt cụt gần như ngay sau phần đầu: bộ giải mã vẫn trả về ảnh nhưng hầu hết chỉ là màu tô bù
+        // (trang đen/xám vô dụng) -> từ chối. Ảnh cụt nhưng còn phần nhìn thấy được thì vẫn nhận.
+        boolean blank = false;
+        try {
+            blank = mostlyFill(probe) && isJpegWithoutEnd(f);
+        } catch (Throwable ignored) {
+        }
         probe.recycle();
+        if (blank) {
+            f.delete();
+            throw new IOException("Ảnh bị hỏng (thiếu dữ liệu)");
+        }
         return f;
+    }
+
+    /** Ít nhất 95% điểm ảnh trùng màu với điểm cuối cùng (phần bộ giải mã tô bù khi file thiếu dữ liệu). */
+    static boolean mostlyFill(Bitmap b) {
+        int w = b.getWidth(), h = b.getHeight();
+        if (w <= 0 || h <= 0) return true;
+        int[] px = new int[w * h];
+        b.getPixels(px, 0, w, 0, 0, w, h);
+        int fill = px[px.length - 1];
+        int same = 0;
+        for (int v : px) if (v == fill) same++;
+        return same >= px.length * 0.95;
+    }
+
+    /** File JPEG (bắt đầu bằng FF D8) mà trong 64 KB cuối không có dấu kết thúc ảnh FF D9. */
+    static boolean isJpegWithoutEnd(File f) throws IOException {
+        java.io.RandomAccessFile r = new java.io.RandomAccessFile(f, "r");
+        try {
+            long len = r.length();
+            if (len < 4 || r.read() != 0xFF || r.read() != 0xD8) return false;
+            int n = (int) Math.min(len, 65536);
+            byte[] tail = new byte[n];
+            r.seek(len - n);
+            r.readFully(tail);
+            for (int i = n - 2; i >= 0; i--) {
+                if ((tail[i] & 0xFF) == 0xFF && (tail[i + 1] & 0xFF) == 0xD9) return false;
+            }
+            return true;
+        } finally {
+            r.close();
+        }
     }
 
     static void cleanCache(Context c) {

@@ -653,11 +653,14 @@ public class MainActivity extends BaseActivity {
             });
             h.thumb.setImageBitmap(null);
             DocStore.Page first = d.pages.isEmpty() ? null : d.pages.get(0);
-            if (first != null && first.out != null) {
-                final String key = d.id + "/" + first.out;
+            if (first != null && (first.out != null || first.src != null)) {
+                // trang chưa có ảnh kết quả (tài liệu vừa khôi phục, chưa mở lần nào) -> xem trước từ ảnh gốc
+                final String key = first.out != null ? d.id + "/" + first.out : d.id + "/src/" + first.src + "/" + first.ver;
                 Bitmap b = thumbs.get(key);
                 if (b != null) h.thumb.setImageBitmap(b);
-                else loadThumb(key, d.file(first.out).getPath());
+                else loadThumb(key, first.out == null ? null : d.file(first.out).getPath(),
+                        first.src == null ? null : d.file(first.src).getPath(), first.srcW, first.srcH,
+                        first.quad == null ? null : first.quad.clone());
             }
             return convertView;
         }
@@ -668,13 +671,20 @@ public class MainActivity extends BaseActivity {
         TextView title, sub;
     }
 
-    private void loadThumb(final String key, final String path) {
+    private void loadThumb(final String key, final String outPath, final String srcPath, final int srcW, final int srcH, final float[] quad) {
         if (loading.contains(key)) return;
         loading.add(key);
         Processor.IO.execute(new Runnable() {
             @Override
             public void run() {
-                final Bitmap b = new File(path).exists() ? ImageUtil.decodeSampled(path, 220) : null;
+                Bitmap b0 = null;
+                try {
+                    if (outPath != null && new File(outPath).exists()) b0 = ImageUtil.decodeSampled(outPath, 220);
+                    if (b0 == null && srcPath != null && new File(srcPath).exists()) b0 = ImageUtil.quickWarp(srcPath, srcW, srcH, quad, 220);
+                } catch (Throwable ignored) {
+                    // thiếu bộ nhớ / ảnh hỏng: để trống ảnh thu nhỏ
+                }
+                final Bitmap b = b0;
                 Ui.MAIN.post(new Runnable() {
                     @Override
                     public void run() {
