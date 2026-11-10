@@ -478,8 +478,20 @@ def fresh_home():
 # ----------------------------------------------------------------------------- các bước
 
 def t_install():
-    out = adb("install", "-r", "-g", APK, timeout=240)
-    log(out.strip())
+    out = ""
+    for attempt in range(3):
+        # Máy ảo vừa khởi động có lúc chưa sẵn sàng nhận gói (adb install treo tới hết thời gian chờ):
+        # đợi dịch vụ quản lý gói trả lời rồi mới cài, lỗi thì thử lại.
+        for _ in range(30):
+            if "package:" in sh("pm path android", timeout=20):
+                break
+            time.sleep(2)
+        out = adb("install", "-r", "-g", APK, timeout=240)
+        log(out.strip())
+        if "Success" in out:
+            break
+        log("Cài đặt chưa được (lần %d), thử lại" % (attempt + 1))
+        time.sleep(5)
     if "Success" not in out:
         raise AssertionError(out)
     sh("pm grant %s android.permission.CAMERA" % PKG)
