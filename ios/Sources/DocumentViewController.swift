@@ -218,11 +218,18 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "thumb", for: indexPath) as! ThumbCell
+        cell.imageView.image = nil
+        cell.failedMark.isHidden = true
+        // tài liệu dùng chung với trình chỉnh sửa / máy ảnh: số trang có thể vừa đổi trước khi lưới kịp tải lại
+        guard indexPath.item < doc.pages.count else {
+            cell.pageId = nil
+            cell.number.text = ""
+            cell.spinner.stopAnimating()
+            return cell
+        }
         let p = doc.pages[indexPath.item]
         cell.number.text = "\(indexPath.item + 1)"
         cell.pageId = p.id
-        cell.imageView.image = nil
-        cell.failedMark.isHidden = true
         cell.spinner.startAnimating()
         guard let o = p.out, !needsRender(p) else {
             if failed.contains(ImageOps.outName(p)) {
@@ -254,6 +261,7 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item < doc.pages.count else { return }
         openEditor(at: indexPath.item)
     }
 

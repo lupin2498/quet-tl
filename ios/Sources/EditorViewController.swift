@@ -461,6 +461,14 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "page", for: indexPath) as! PageCell
+        // danh sách trang có thể vừa đổi (xoá trang) trước khi bảng kịp tải lại -> không đọc quá số trang
+        guard indexPath.item < doc.pages.count else {
+            cell.pageId = nil
+            cell.shownSrc = nil
+            cell.imageView.image = nil
+            cell.setScanning(false)
+            return cell
+        }
         configure(cell, doc.pages[indexPath.item])
         return cell
     }
@@ -705,6 +713,10 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         dirty = true
         if doc.pages.isEmpty {
             if context != .camera { DocStore.shared.delete(doc) }
+            // đồng bộ bảng với danh sách trang (rỗng) trước khi màn hình đóng: trong lúc chuyển cảnh
+            // hệ thống còn có thể hỏi ô của trang vừa xoá
+            collection.reloadData()
+            updateIndicator()
             complete(false)
             return
         }
