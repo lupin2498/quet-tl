@@ -82,7 +82,12 @@ jobs:
           git checkout -q -b ci/ios-algo
           git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "ios-algo run=${GITHUB_RUN_NUMBER} sha=${GITHUB_SHA} status=${{ job.status }}" || true
-          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/ios-algo
+          # mạng chập chờn: thử lại vài lần trước khi coi là lỗi
+          for n in 1 2 3 4; do
+            if git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/ios-algo; then exit 0; fi
+            echo "Đẩy kết quả lỗi (lần $n), thử lại"; sleep $((n * 15))
+          done
+          exit 1
 
   build:
     runs-on: macos-15
@@ -229,8 +234,24 @@ jobs:
           rm -f build-device.log.big
           if [ -f build-device.log ] && [ $(wc -c < build-device.log) -gt 5000000 ]; then tail -c 3000000 build-device.log > b && mv b build-device.log; fi
           if [ -f build-sim.log ] && [ $(wc -c < build-sim.log) -gt 5000000 ]; then tail -c 3000000 build-sim.log > b && mv b build-sim.log; fi
+          # Ảnh chụp màn hình PNG của bộ tự kiểm thử nặng hơn 100 MB -> lần đẩy dễ quá thời gian (HTTP 408).
+          # Nhánh kết quả chỉ để xem nên đổi sang JPEG thu nhỏ; bản PNG gốc vẫn nằm trong artifact của lần chạy.
+          for d in selftest simctl; do
+            [ -d "$d" ] || continue
+            for f in "$d"/*.png; do
+              [ -f "$f" ] || continue
+              if sips -s format jpeg -s formatOptions 80 -Z 1600 "$f" --out "${f%.png}.jpg" > /dev/null 2>&1; then rm -f "$f"; fi
+            done
+          done
+          du -sh . || true
           git init -q
           git checkout -q -b ci/ios
+          git config http.postBuffer 524288000
           git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "ios run=${GITHUB_RUN_NUMBER} sha=${GITHUB_SHA} status=${{ job.status }}"
-          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/ios
+          # mạng chập chờn: thử lại vài lần trước khi coi là lỗi
+          for n in 1 2 3 4; do
+            if git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/ios; then exit 0; fi
+            echo "Đẩy kết quả lỗi (lần $n), thử lại"; sleep $((n * 15))
+          done
+          exit 1

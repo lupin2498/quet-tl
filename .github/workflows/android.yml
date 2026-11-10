@@ -90,7 +90,12 @@ jobs:
           git checkout -q -b ci/android-build
           git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "build run=${GITHUB_RUN_NUMBER} sha=${GITHUB_SHA} status=${{ job.status }}"
-          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/android-build
+          # mạng chập chờn: thử lại vài lần trước khi coi là lỗi
+          for n in 1 2 3 4; do
+            if git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/android-build; then exit 0; fi
+            echo "Đẩy kết quả lỗi (lần $n), thử lại"; sleep $((n * 15))
+          done
+          exit 1
 
   emulator:
     needs: build
@@ -141,4 +146,9 @@ jobs:
           git checkout -q -b ci/android-${{ matrix.api }}
           git add -A
           git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "emulator api=${{ matrix.api }} run=${GITHUB_RUN_NUMBER} sha=${GITHUB_SHA} status=${{ job.status }}" || true
-          git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/android-${{ matrix.api }}
+          # mạng chập chờn: thử lại vài lần trước khi coi là lỗi
+          for n in 1 2 3 4; do
+            if git push -q -f "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:ci/android-${{ matrix.api }}; then exit 0; fi
+            echo "Đẩy kết quả lỗi (lần $n), thử lại"; sleep $((n * 15))
+          done
+          exit 1
