@@ -186,11 +186,49 @@ def newest_doc(saved_only=True):
     return ds[-1] if ds else None
 
 
+def app_file_size(rel):
+    """Kích thước một file trong thư mục dữ liệu của ứng dụng (-1 nếu không có). Tên file không chứa khoảng trắng."""
+    out = sh("run-as %s wc -c %s" % (PKG, rel), timeout=30)
+    m = re.match(r"\s*(\d+)\s", out)
+    return int(m.group(1)) if m else -1
+
+
+def write_app_file(rel, data):
+    """Ghi một file vào thư mục dữ liệu của ứng dụng (bản debug) rồi kiểm tra lại kích thước.
+
+    adbd đời cũ (API 24) huỷ lệnh nếu kết nối đóng trước khi lệnh trên thiết bị kịp chạy -> file nhỏ không được ghi.
+    Vì vậy giữ kết nối thêm một lúc sau khi gửi hết dữ liệu và thử lại nếu kích thước chưa khớp.
+    """
+    last = -1
+    for attempt in range(5):
+        p = subprocess.Popen(["adb", "exec-in", "run-as", PKG, "sh", "-c", "cat > %s" % rel],
+                             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        try:
+            if data:
+                p.stdin.write(data)
+            p.stdin.flush()
+            time.sleep(0.5 + 0.5 * attempt)
+            p.communicate(timeout=120)
+        except Exception as e:
+            log("write_app_file", rel, e)
+            try:
+                p.kill()
+            except Exception:
+                pass
+        last = app_file_size(rel)
+        if last == len(data):
+            return
+    raise AssertionError("Không ghi được %s vào thiết bị (%d/%d byte)" % (rel, last, len(data)))
+
+
 def write_doc(d):
     data = dict(d)
     doc_id = data.pop("id")
     raw = json.dumps(data, ensure_ascii=False).encode("utf-8")
-    adb("exec-in", "run-as", PKG, "sh", "-c", "cat > files/docs/%s/doc.json" % doc_id, inp=raw, timeout=30)
+    write_app_file("files/docs/%s/doc.json" % doc_id, raw)
+    back = read_doc(doc_id)
+    if back is None or back.get("title") != d.get("title"):
+        raise AssertionError("Ghi doc.json không thành công (đọc lại: %s)" % (back and back.get("title")))
 
 
 def activity_instances(name):
@@ -348,10 +386,8 @@ def step(name, fn):
 def push_test_image(local, name):
     """Đặt ảnh vào cache/share của ứng dụng (qua run-as) để nhập bằng Intent chia sẻ."""
     data = open(local, "rb").read()
-    out = adb("exec-in", "run-as", PKG, "sh", "-c", "mkdir -p cache/share && cat > cache/share/%s" % name, inp=data, timeout=60)
-    ls = sh("run-as %s ls -l cache/share/%s" % (PKG, name))
-    if name not in ls:
-        raise AssertionError("Không đẩy được ảnh thử: %s %s" % (out, ls))
+    sh("run-as %s mkdir -p cache/share" % PKG)
+    write_app_file("cache/share/%s" % name, data)
 
 
 def share_into_app(names):
@@ -388,6 +424,15 @@ def go_home():
             time.sleep(0.8)
     sh("am start -W -n %s/.MainActivity" % PKG)
     time.sleep(2)
+
+
+def fresh_home():
+    """Khởi động lại ứng dụng: màn hình chính với ô tìm kiếm trống (bước trước có thể còn để lại từ khoá)."""
+    sh("am force-stop %s" % PKG)
+    time.sleep(1)
+    start_app()
+    time.sleep(2.5)
+    wait_activity("MainActivity", 10)
 
 
 # ----------------------------------------------------------------------------- các bước
@@ -783,7 +828,7 @@ def first_doc_row():
 
 def t_double_tap():
     """Chạm đúp rất nhanh (40 ms) lên các nút mở màn hình: chỉ được mở MỘT màn hình."""
-    go_home()
+    fresh_home()
     n = find(desc="Quét tài liệu")
     x, y = bounds(n)
     fast_taps([(x, y), (x, y)])
@@ -1141,6 +1186,16 @@ def t_search_and_long_title():
     shot("search_no_accent")
     if not exists(text="Biên bản nghiệm thu", timeout=4, contains=True):
         raise AssertionError("Tìm 'bien ban nghiem' không ra tài liệu 'Biên bản nghiệm thu…'")
+    # gõ thêm cho không còn tài liệu nào khớp: phải báo "Không tìm thấy kết quả", không để danh sách trống trơn
+    sh("input text 'zzqq'")
+    time.sleep(1.5)
+    shot("search_no_match")
+    if not exists(text="Không tìm thấy kết quả", timeout=4, contains=True):
+        raise AssertionError("Tìm kiếm không ra kết quả nhưng không có thông báo")
+    sh("input keyevent KEYCODE_DEL KEYCODE_DEL KEYCODE_DEL KEYCODE_DEL")
+    time.sleep(1.2)
+    if not exists(text="Biên bản nghiệm thu", timeout=4, contains=True):
+        raise AssertionError("Xoá bớt từ khoá: danh sách không hiện lại tài liệu")
     back()
     tap(text="Biên bản nghiệm thu", contains=True)
     wait_activity("DocumentActivity", 12)
@@ -1390,15 +1445,27 @@ def t_permission_denied():
             tap_xy(*bounds(deny))
             time.sleep(1.5)
         check_no_crash("chụp khi bị từ chối quyền")
-        if top_activity() != "CameraActivity":
+        # hộp thoại xin quyền là một màn hình riêng của hệ thống: đợi màn hình chụp trở lại;
+        # chỉ bấm Back khi hộp thoại vẫn còn (Back trên màn hình chụp sẽ đóng luôn màn hình chụp)
+        for _ in range(8):
+            if top_activity() == "CameraActivity":
+                break
+            time.sleep(0.8)
+        else:
             back()
-            time.sleep(1)
+            time.sleep(1.5)
+        wait_activity("CameraActivity", 8)
+        if not exists(text="cần quyền Máy ảnh", timeout=5, contains=True):
+            raise AssertionError("Từ chối lần hai: không còn hướng dẫn cấp quyền")
         # vẫn nhập ảnh / đóng màn hình được
         tap(desc="Đóng")
         wait_activity("MainActivity", 10)
     finally:
         sh("am force-stop %s" % PKG)
         sh("pm grant %s android.permission.CAMERA" % PKG)
+        # thu hồi rồi cấp lại bằng lệnh có thể để quyền truy cập máy ảnh (app-op) ở trạng thái bị chặn trên vài bản Android
+        sh("appops set %s CAMERA allow" % PKG)
+        sh("appops set --uid %s CAMERA allow" % PKG)
         time.sleep(1)
         start_app()
         time.sleep(2.5)
@@ -1413,6 +1480,59 @@ def t_permission_denied():
     time.sleep(2)
     tap(desc="Đóng")
     wait_activity("MainActivity", 10)
+
+
+def t_camera_blocked_retry():
+    """Máy ảnh bị chặn / bị ngắt khi đang ở màn hình chụp: phải báo rõ kèm nút "Thử lại" (không để màn hình đen);
+    hết bị chặn thì bấm Thử lại là chụp được."""
+    go_home()
+    tap(desc="Quét tài liệu")
+    wait_activity("CameraActivity", 12)
+    time.sleep(3.5)
+    try:
+        sh("appops set %s CAMERA ignore" % PKG)
+        time.sleep(3)
+        blocked = exists(text="Thử lại", timeout=4)
+        if not blocked:
+            # hệ thống không ngắt máy ảnh đang mở: mở lại màn hình chụp để gặp lỗi ngay lúc mở máy ảnh
+            tap(desc="Đóng")
+            wait_activity("MainActivity", 10)
+            tap(desc="Quét tài liệu")
+            wait_activity("CameraActivity", 12)
+            time.sleep(4)
+            blocked = exists(text="Thử lại", timeout=5)
+        shot("camera_blocked")
+        if not blocked:
+            notes.append("Không chặn được máy ảnh bằng appops trên máy ảo này: bỏ qua kiểm thử nút Thử lại")
+            tap(desc="Đóng")
+            wait_activity("MainActivity", 10)
+            return
+        # bấm chụp / thử lại khi vẫn đang bị chặn: không treo, không dừng, vẫn ở màn hình chụp và còn nút Thử lại
+        tap(desc="Chụp")
+        time.sleep(2)
+        tap(text="Thử lại")
+        time.sleep(3)
+        check_no_crash("máy ảnh bị chặn")
+        if top_activity() != "CameraActivity" or not exists(text="Thử lại", timeout=5):
+            raise AssertionError("Máy ảnh vẫn bị chặn nhưng không còn thông báo / nút Thử lại")
+        sh("appops set %s CAMERA allow" % PKG)
+        time.sleep(1.5)
+        tap(text="Thử lại")
+        time.sleep(4)
+        shot("camera_retry_ok")
+        if exists(text="Thử lại", timeout=2):
+            raise AssertionError("Hết bị chặn nhưng Thử lại không mở lại được máy ảnh")
+        tap(desc="Chụp", timeout=10)
+        wait_activity("CropActivity", 25)
+        time.sleep(2.5)
+        tap(text="Chụp lại")
+        wait_activity("CameraActivity", 10)
+        time.sleep(2)
+        tap(desc="Đóng")
+        wait_activity("MainActivity", 10)
+    finally:
+        sh("appops set %s CAMERA allow" % PKG)
+        sh("appops set --uid %s CAMERA allow" % PKG)
 
 
 def t_dont_keep_activities():
@@ -1553,6 +1673,7 @@ def main():
     step("Tiến trình bị thu hồi khi ở nền", t_process_death)
     step("Khôi phục bản nháp sau khi bị buộc dừng", t_draft_recovery)
     step("Từ chối quyền máy ảnh", t_permission_denied)
+    step("Máy ảnh bị chặn giữa chừng + Thử lại", t_camera_blocked_retry)
     step("Dừng ứng dụng giữa chừng", t_rotation_and_recreate)
     step("Monkey 2500 thao tác ngẫu nhiên", t_monkey)
 
@@ -1572,7 +1693,8 @@ def main():
     open(os.path.join(OUT, "summary.md"), "w").write("\n".join(md) + "\n")
     json.dump({"passed": passed, "total": len(results), "results": results}, open(os.path.join(OUT, "summary.json"), "w"), ensure_ascii=False, indent=1)
     log("DONE %d/%d" % (passed, len(results)))
+    return passed == len(results)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(0 if main() else 1)

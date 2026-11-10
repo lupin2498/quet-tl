@@ -345,9 +345,11 @@ final class DocStore {
 
     /** Thay ảnh gốc của trang (chụp lại). */
     static void replaceSource(Doc d, Page p, File srcFile, int[] orientedSize, float[] quad, boolean auto, double focal) throws IOException {
+        // chép ảnh mới xong mới xoá ảnh cũ: nếu chép lỗi (hết dung lượng) thì trang cũ vẫn còn nguyên
+        String newSrc = newId("s") + "_src.jpg";
+        moveFile(srcFile, new File(d.dir, newSrc));
         deletePageFiles(d, p);
-        p.src = newId("s") + "_src.jpg";
-        moveFile(srcFile, new File(d.dir, p.src));
+        p.src = newSrc;
         p.srcW = orientedSize[0];
         p.srcH = orientedSize[1];
         p.quad = quad;

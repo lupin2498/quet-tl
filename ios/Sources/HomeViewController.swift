@@ -9,6 +9,8 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     private let search = UISearchBar()
     private let countLabel = Theme.label("", size: 13, color: Theme.text2)
     private let empty = UIStackView()
+    /// Báo khi tìm kiếm không ra kết quả (thay vì để danh sách trống trơn).
+    private let noMatch = Theme.label("", size: 15, color: Theme.text2)
     private let busy = BusyOverlay()
     private let thumbCache = NSCache<NSString, UIImage>()
     /// Số tài liệu đang quét dở vừa được khôi phục lúc mở ứng dụng (báo một lần khi màn hình hiện ra).
@@ -107,6 +109,12 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
         empty.isHidden = true
         view.addSubview(empty)
 
+        noMatch.numberOfLines = 0
+        noMatch.textAlignment = .center
+        noMatch.isHidden = true
+        noMatch.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(noMatch)
+
         let fab = UIButton(type: .custom)
         fab.setImage(Theme.symbol("camera.fill", size: 22), for: .normal)
         fab.tintColor = .white
@@ -151,6 +159,10 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
             empty.centerYAnchor.constraint(equalTo: table.centerYAnchor, constant: -40),
             empty.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             empty.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40),
+
+            noMatch.topAnchor.constraint(equalTo: table.topAnchor, constant: 48),
+            noMatch.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            noMatch.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
 
             fab.widthAnchor.constraint(equalToConstant: 62),
             fab.heightAnchor.constraint(equalToConstant: 62),
@@ -199,6 +211,9 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
         shown = all.filter { HomeViewController.matches(title: $0.title, query: q) }
         table.reloadData()
         empty.isHidden = !all.isEmpty
+        let none = !all.isEmpty && shown.isEmpty
+        if none { noMatch.text = "Không tìm thấy kết quả cho “\(q.trimmingCharacters(in: .whitespaces))”" }
+        noMatch.isHidden = !none
         countLabel.text = all.isEmpty ? "" : "\(all.count) tài liệu"
     }
 

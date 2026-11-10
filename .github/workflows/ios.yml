@@ -179,7 +179,9 @@ jobs:
           ls -la out/selftest
           cat out/selftest/results.txt
           mkdir -p out/crash
-          find ~/Library/Logs/DiagnosticReports -name "QuetTaiLieu*" -mmin -60 -exec cp {} out/crash/ \; 2>/dev/null
+          # báo cáo crash được hệ thống ghi chậm vài giây sau khi ứng dụng dừng
+          if [ ! -f out/selftest/done.txt ]; then sleep 12; fi
+          find ~/Library/Logs/DiagnosticReports -name "*QuetTaiLieu*" -mmin -60 -exec cp {} out/crash/ \; 2>/dev/null
           ls out/crash
           xcrun simctl spawn "$UDID" log show --last 15m --style compact --predicate 'process == "QuetTaiLieu"' > out/syslog.txt 2>/dev/null
           tail -c 200000 out/syslog.txt > out/syslog-tail.txt; rm -f out/syslog.txt
@@ -195,6 +197,14 @@ jobs:
             echo '```'
             cat out/selftest/results.txt 2>/dev/null || echo "không có results.txt"
             echo '```'
+            for f in out/crash/*; do
+              [ -f "$f" ] || continue
+              echo
+              echo "## Crash: $(basename "$f")"
+              echo '```'
+              grep -m1 -A40 -E '"exception"|Exception Type|Termination Reason|Thread 0 Crashed|"faultingThread"' "$f" | head -80
+              echo '```'
+            done
           } > out/summary.md
           cat out/summary.md
           if [ ! -f out/selftest/done.txt ]; then echo "SELF-TEST KHÔNG HOÀN TẤT"; exit 1; fi

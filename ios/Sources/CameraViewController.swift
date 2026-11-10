@@ -33,6 +33,8 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
     private var configured = false
     /// Đã báo kết quả cho màn hình gọi (chống gọi hai lần khi chạm đúp).
     private var finished = false
+    /// Đã tự chạy lại phiên máy ảnh sau một lỗi lúc đang chạy (chỉ thử một lần mỗi lần màn hình hiện ra).
+    private var restartedAfterError = false
 
     private let session: AVCaptureSession
     private let sessionQueue = DispatchQueue(label: "vn.quettailieu.camera")
@@ -88,6 +90,24 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
         // hệ thống tự tắt đèn khi phiên máy ảnh bị ngắt (ứng dụng vào nền, cuộc gọi...) -> cập nhật lại nút đèn
         NotificationCenter.default.addObserver(self, selector: #selector(sessionInterrupted), name: .AVCaptureSessionWasInterrupted, object: session)
         NotificationCenter.default.addObserver(self, selector: #selector(sessionInterrupted), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(sessionRuntimeError(_:)), name: .AVCaptureSessionRuntimeError, object: session)
+    }
+
+    /// Phiên máy ảnh dừng vì lỗi lúc đang chạy (dịch vụ máy ảnh của hệ thống khởi động lại...):
+    /// tự chạy lại một lần; nếu vẫn lỗi thì báo rõ thay vì để khung xem trước đứng hình.
+    @objc private func sessionRuntimeError(_ note: Notification) {
+        DispatchQueue.main.async {
+            guard self.view.window != nil, self.cameraReady, !self.finished else { return }
+            if self.restartedAfterError {
+                self.showMessage("Máy ảnh gặp lỗi — hãy đóng màn hình này rồi mở lại, hoặc nhập ảnh từ Thư viện", settings: false)
+                return
+            }
+            self.restartedAfterError = true
+            let s = self.session
+            self.sessionQueue.async {
+                if !s.isRunning { s.startRunning() }
+            }
+        }
     }
 
     @objc private func sessionInterrupted() {
@@ -108,6 +128,7 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        restartedAfterError = false
         checkPermissionAndStart()
     }
 

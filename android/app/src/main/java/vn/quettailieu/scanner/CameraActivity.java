@@ -112,6 +112,8 @@ public class CameraActivity extends BaseActivity {
     private View flashView;
     private ProgressBar spinner;
     private LinearLayout permPanel;
+    private LinearLayout errorPanel;
+    private TextView errorText;
     private LinearLayout tabs;
     private TextView tabSingle, tabBatch, retakeLabel;
     private ShutterButton shutter;
@@ -200,6 +202,9 @@ public class CameraActivity extends BaseActivity {
         permPanel = buildPermPanel();
         permPanel.setVisibility(View.GONE);
         preview.addView(permPanel, Ui.frame(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(320), Gravity.CENTER));
+        errorPanel = buildErrorPanel();
+        errorPanel.setVisibility(View.GONE);
+        preview.addView(errorPanel, Ui.frame(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(320), Gravity.CENTER));
         FrameLayout.LayoutParams plp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         plp.topMargin = Ui.dp(56);
         root.addView(preview, plp);
@@ -339,6 +344,73 @@ public class CameraActivity extends BaseActivity {
         return p;
     }
 
+    /** Bảng báo lỗi máy ảnh (không mở được, bị ứng dụng khác chiếm, bị chính sách thiết bị tắt...) kèm nút thử lại. */
+    private LinearLayout buildErrorPanel() {
+        LinearLayout p = new LinearLayout(this);
+        p.setOrientation(LinearLayout.VERTICAL);
+        p.setGravity(Gravity.CENTER);
+        p.setPadding(Ui.dp(32), 0, Ui.dp(32), 0);
+        errorText = Ui.text(this, "", 16, Ui.TEXT, false);
+        errorText.setGravity(Gravity.CENTER);
+        p.addView(errorText);
+        TextView b = Ui.primaryButton(this, "Thử lại", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                retryCamera();
+            }
+        });
+        LinearLayout.LayoutParams lp = Ui.lin(ViewGroup.LayoutParams.WRAP_CONTENT, Ui.dp(44), 0);
+        lp.topMargin = Ui.dp(18);
+        p.addView(b, lp);
+        return p;
+    }
+
+    /** Gọi được từ mọi luồng: hiện bảng báo lỗi máy ảnh thay vì để màn hình xem trước đen thui. */
+    private void showCameraError(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!Ui.alive(CameraActivity.this) || errorPanel == null) return;
+                if (permPanel.getVisibility() == View.VISIBLE) return;
+                errorText.setText(message + "\nBạn vẫn có thể nhập ảnh từ thư viện.");
+                errorPanel.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void hideCameraError() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (errorPanel != null) errorPanel.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void retryCamera() {
+        if (busy || !resumed) return;
+        errorPanel.setVisibility(View.GONE);
+        closeCamera();
+        startBg();
+        if (!hasCameraPermission()) {
+            permPanel.setVisibility(View.VISIBLE);
+            return;
+        }
+        if (texture.isAvailable()) openCamera();
+    }
+
+    private static String cameraErrorText(int error) {
+        switch (error) {
+            case CameraDevice.StateCallback.ERROR_CAMERA_IN_USE:
+            case CameraDevice.StateCallback.ERROR_MAX_CAMERAS_IN_USE:
+                return "Máy ảnh đang được ứng dụng khác sử dụng";
+            case CameraDevice.StateCallback.ERROR_CAMERA_DISABLED:
+                return "Máy ảnh đang bị tắt trên thiết bị này (chính sách thiết bị hoặc cài đặt quyền riêng tư)";
+            default:
+                return "Máy ảnh gặp lỗi (mã " + error + ")";
+        }
+    }
+
     private void updateTopIcons() {
         flashBtn.setImageResource(torch ? R.drawable.ic_flash_on : R.drawable.ic_flash_off);
         flashBtn.setImageTintList(ColorStateList.valueOf(torch ? Ui.ACCENT : Color.WHITE));
@@ -459,6 +531,7 @@ public class CameraActivity extends BaseActivity {
         }
         if (orientationListener != null && orientationListener.canDetectOrientation()) orientationListener.enable();
         startBg();
+        errorPanel.setVisibility(View.GONE);
         if (hasCameraPermission()) {
             permPanel.setVisibility(View.GONE);
             if (texture.isAvailable()) openCamera();
@@ -484,6 +557,7 @@ public class CameraActivity extends BaseActivity {
         if (requestCode != REQ_PERM) return;
         boolean ok = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED;
         permPanel.setVisibility(ok ? View.GONE : View.VISIBLE);
+        if (!ok) errorPanel.setVisibility(View.GONE);
         if (ok && bg != null && texture.isAvailable()) openCamera();
     }
 
@@ -537,11 +611,11 @@ public class CameraActivity extends BaseActivity {
         if (mgr == null) return;
         try {
             if (!setupCamera(mgr)) {
-                Ui.toast(this, "Không tìm thấy máy ảnh sau");
+                showCameraError("Không tìm thấy máy ảnh trên thiết bị");
                 return;
             }
         } catch (Throwable t) {
-            Ui.toast(this, "Không đọc được thông tin máy ảnh");
+            showCameraError("Không đọc được thông tin máy ảnh");
             return;
         }
         boolean swapped = sensorOrientation == 90 || sensorOrientation == 270;
@@ -550,7 +624,7 @@ public class CameraActivity extends BaseActivity {
         boolean acquired = false;
         try {
             if (!openLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
-                Ui.toast(this, "Máy ảnh đang bận");
+                showCameraError("Máy ảnh đang bận");
                 return;
             }
             acquired = true;
@@ -567,7 +641,10 @@ public class CameraActivity extends BaseActivity {
                     openLock.release();
                 }
             }
-            Ui.toast(this, "Không mở được máy ảnh: " + Ui.msg(t));
+            int reason = t instanceof CameraAccessException ? ((CameraAccessException) t).getReason() : 0;
+            if (reason == CameraAccessException.CAMERA_DISABLED) showCameraError(cameraErrorText(CameraDevice.StateCallback.ERROR_CAMERA_DISABLED));
+            else if (reason == CameraAccessException.CAMERA_IN_USE || reason == CameraAccessException.MAX_CAMERAS_IN_USE) showCameraError(cameraErrorText(CameraDevice.StateCallback.ERROR_CAMERA_IN_USE));
+            else showCameraError("Không mở được máy ảnh");
         }
     }
 
@@ -684,6 +761,7 @@ public class CameraActivity extends BaseActivity {
         public void onOpened(CameraDevice cd) {
             device = cd;
             releaseOpening();
+            hideCameraError();
             createSession();
         }
 
@@ -691,22 +769,44 @@ public class CameraActivity extends BaseActivity {
         public void onDisconnected(CameraDevice cd) {
             releaseOpening();
             cd.close();
-            if (device == cd) device = null;
+            dropDevice(cd);
+            lostCamera("Máy ảnh bị ngắt (ứng dụng khác đang dùng hoặc hệ thống thu hồi)");
         }
 
         @Override
         public void onError(CameraDevice cd, final int error) {
             releaseOpening();
             cd.close();
-            if (device == cd) device = null;
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (Ui.alive(CameraActivity.this)) Ui.toast(CameraActivity.this, "Lỗi máy ảnh (" + error + ")");
-                }
-            });
+            dropDevice(cd);
+            lostCamera(cameraErrorText(error));
         }
     };
+
+    /** Thiết bị máy ảnh hiện tại vừa đóng ngoài ý muốn: bỏ phiên chụp gắn với nó. */
+    private void dropDevice(CameraDevice cd) {
+        if (device != cd) return;
+        device = null;
+        captureSession = null;
+        state = STATE_IDLE;
+    }
+
+    /** Máy ảnh không mở được / đóng ngoài ý muốn khi màn hình đang hiển thị: báo lỗi kèm nút thử lại. */
+    private void lostCamera(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!Ui.alive(CameraActivity.this) || !resumed) return;
+                // đã có lần mở khác đang chạy hoặc đã mở được: thông báo này là của lần mở cũ
+                if (device != null || opening) return;
+                if (busy && pendingPath == null) {
+                    Ui.MAIN.removeCallbacks(watchdog);
+                    busy = false;
+                    spinner.setVisibility(View.GONE);
+                }
+                showCameraError(message);
+            }
+        });
+    }
 
     private synchronized void releaseOpening() {
         if (opening) {
@@ -736,12 +836,7 @@ public class CameraActivity extends BaseActivity {
 
                 @Override
                 public void onConfigureFailed(CameraCaptureSession s) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (Ui.alive(CameraActivity.this)) Ui.toast(CameraActivity.this, "Không cấu hình được máy ảnh");
-                        }
-                    });
+                    showCameraError("Không cấu hình được máy ảnh");
                 }
             }, bg);
         } catch (Throwable t) {
@@ -947,6 +1042,8 @@ public class CameraActivity extends BaseActivity {
         }
         if (!takePicture()) {
             Ui.toast(this, "Máy ảnh chưa sẵn sàng");
+            // máy ảnh chưa mở được (bận, vừa bị ngắt...): bấm chụp cũng là một lần thử mở lại
+            if (device == null && !opening && resumed && bg != null && texture.isAvailable()) openCamera();
             return;
         }
         busy = true;

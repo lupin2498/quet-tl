@@ -45,6 +45,7 @@ public class MainActivity extends BaseActivity {
     private DocAdapter adapter;
     private ListView list;
     private View empty;
+    private TextView noMatch;
     private TextView countView;
     private EditText search;
     private LruCache<String, Bitmap> thumbs;
@@ -220,6 +221,12 @@ public class MainActivity extends BaseActivity {
         listBox.addView(list, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         empty = buildEmpty();
         listBox.addView(empty, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        // tìm kiếm không ra kết quả: báo rõ thay vì để danh sách trống trơn
+        noMatch = Ui.text(this, "", 15, Ui.TEXT2, false);
+        noMatch.setGravity(Gravity.CENTER_HORIZONTAL);
+        noMatch.setPadding(Ui.dp(32), Ui.dp(48), Ui.dp(32), 0);
+        noMatch.setVisibility(View.GONE);
+        listBox.addView(noMatch, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         col.addView(listBox, Ui.lin(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
         root.addView(col, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -324,6 +331,9 @@ public class MainActivity extends BaseActivity {
         }
         adapter.notifyDataSetChanged();
         empty.setVisibility(all.isEmpty() ? View.VISIBLE : View.GONE);
+        boolean none = !all.isEmpty() && shown.isEmpty();
+        if (none) noMatch.setText("Không tìm thấy kết quả cho “" + search.getText().toString().trim() + "”");
+        noMatch.setVisibility(none ? View.VISIBLE : View.GONE);
         countView.setText(all.isEmpty() ? "" : all.size() + " tài liệu");
     }
 
