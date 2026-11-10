@@ -32,15 +32,44 @@ ICONS = {
  "ic_crop_free": "M3,5v4h2V5h4V3H5c-1.1,0 -2,0.9 -2,2zM5,15H3v4c0,1.1 0.9,2 2,2h4v-2H5v-4zM19,19h-4v2h4c1.1,0 2,-0.9 2,-2v-4h-2v4zM19,3h-4v2h4v4h2V5c0,-1.1 -0.9,-2 -2,-2z",
  "ic_pages": "M16,1H4c-1.1,0 -2,0.9 -2,2v14h2V3h12V1zM19,5H8c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h11c1.1,0 2,-0.9 2,-2V7c0,-1.1 -0.9,-2 -2,-2zM19,21H8V7h11v14z",
  "ic_add": "M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z",
+ "ic_redo": "M18.4,10.6C16.55,8.99 14.15,8 11.5,8c-4.65,0 -8.58,3.03 -9.96,7.22L3.9,16c1.05,-3.19 4.05,-5.5 7.6,-5.5 1.95,0 3.73,0.72 5.12,1.88L13,16h9V7l-3.6,3.6z",
+ "ic_brush": "M7,14c-1.66,0 -3,1.34 -3,3 0,1.31 -1.16,2 -2,2 0.92,1.22 2.49,2 4,2 2.21,0 4,-1.79 4,-4 0,-1.66 -1.34,-3 -3,-3zM20.71,4.63l-1.34,-1.34c-0.39,-0.39 -1.02,-0.39 -1.41,0L9,12.25 11.75,15l8.96,-8.96c0.39,-0.39 0.39,-1.02 0,-1.41z",
+ "ic_mosaic": "M4,4h5.33v5.33H4zM14.67,4H20v5.33h-5.33zM9.33,9.33h5.34v5.34H9.33zM4,14.67h5.33V20H4zM14.67,14.67H20V20h-5.33z",
+ # biểu tượng nét mảnh: danh sách ("s", đường dẫn) = nét vẽ, ("f", đường dẫn) = tô đặc
+ "ic_erase": [("s", "M9,19.5L4,14.5c-0.6,-0.6 -0.6,-1.5 0,-2.1l8.6,-8.6c0.6,-0.6 1.5,-0.6 2.1,0l5.3,5.3c0.6,0.6 0.6,1.5 0,2.1L12.1,19.5zM9,19.5H21M8.2,8.2l7.4,7.4")],
+ "ic_pen": [("s", "M6,20V11.5L12,5l6,6.5V20M6,12.5h12")],
+ "ic_rect": [("s", "M4,6.5h16v11H4z")],
+ "ic_magic": [("s", "M8,20.5l-4,-4c-0.5,-0.5 -0.5,-1.3 0,-1.8l6.3,-6.3c0.5,-0.5 1.3,-0.5 1.8,0l4,4c0.5,0.5 0.5,1.3 0,1.8L9.8,20.5zM8,20.5h10M7.2,11.8l5.3,5.3"),
+              ("f", "M18.5,2l0.95,2.55L22,5.5l-2.55,0.95L18.5,9l-0.95,-2.55L15,5.5l2.55,-0.95z")],
+ "ic_hand": [("s", "M3,16.5c1.2,-6 3.6,-9.5 5.2,-8.3c2,1.5 -2.4,8.6 0.2,9.1c2.4,0.5 4.2,-7 6.2,-6.4c1.7,0.5 -0.6,5.2 1.2,5.6c1.2,0.3 2.1,-1.2 2.9,-2.6"),
+             ("f", "M19.5,3l0.8,2.2l2.2,0.8l-2.2,0.8l-0.8,2.2l-0.8,-2.2L16.5,6l2.2,-0.8z")],
+ "ic_text_erase": [("s", "M4,7V5h2.5M9.5,5h3M15.5,5H18a0,0 0,0 1,0 0h0v2.5M4,10.5v3M4,17v2h2.5M9.5,19h2.5M9,15.5L12,8l3,7.5M10.1,13h3.8"),
+                   ("f", "M19,13.5l0.9,2.4l2.4,0.9l-2.4,0.9L19,20.1l-0.9,-2.4l-2.4,-0.9l2.4,-0.9z")],
+ "ic_sign": [("s", "M3,16c2.2,-7.2 5.3,-10.2 6.6,-8.8c1.6,1.8 -3,8.2 -0.4,8.6c2,0.3 3.4,-4.3 5.2,-3.9c1.5,0.3 0.2,3.2 1.6,3.5c1,0.2 2.6,-1.3 4,-2.9M3,20h18")],
+ "ic_text": [("s", "M4.5,5h15v14h-15zM8.8,15.8L12,7.8l3.2,8M10,13.2h4")],
+ "ic_watermark": [("s", "M6,3h8.5L19,7.5V21H6zM14.5,3v4.5H19M8.6,12.2c0.8,-1.1 1.6,-1.1 2.3,0s1.5,1.1 2.3,0s1.5,-1.1 2.3,0M8.6,16.4c0.8,-1.1 1.6,-1.1 2.3,0s1.5,1.1 2.3,0s1.5,-1.1 2.3,0")],
+ "ic_collage": [("s", "M4,4.5h16v15H4zM10.5,4.5v15M10.5,11.5H20")],
+ "ic_header": [("s", "M6,3h12v18H6zM9,7.2h6M9.2,17h0.01M12,17h0.01M14.8,17h0.01")],
 }
+STROKE = "1.7"
+
+
 def main(resdir, preview):
     os.makedirs(os.path.join(resdir, "drawable"), exist_ok=True)
     for name, d in ICONS.items():
+        parts = [("f", d)] if isinstance(d, str) else d
+        body = ""
+        for kind, pd in parts:
+            if kind == "f":
+                body += f'    <path android:fillColor="#FFFFFFFF" android:pathData="{pd}"/>\n'
+            else:
+                body += (f'    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="{STROKE}" android:strokeLineCap="round"'
+                         f' android:strokeLineJoin="round" android:fillColor="#00000000" android:pathData="{pd}"/>\n')
         xml = ('<?xml version="1.0" encoding="utf-8"?>\n'
                '<vector xmlns:android="http://schemas.android.com/apk/res/android"\n'
                '    android:width="24dp" android:height="24dp"\n'
                '    android:viewportWidth="24" android:viewportHeight="24">\n'
-               f'    <path android:fillColor="#FFFFFFFF" android:pathData="{d}"/>\n'
+               + body +
                '</vector>\n')
         open(os.path.join(resdir, "drawable", name + ".xml"), "w").write(xml)
     if preview:
@@ -52,7 +81,12 @@ def main(resdir, preview):
         rows = (len(names) + cols - 1) // cols
         sheet = Image.new("RGB", (cols * 80, rows * 80), (40, 40, 40))
         for i, n in enumerate(names):
-            svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24"><path fill="#fff" d="{ICONS[n]}"/></svg>'
+            parts = [("f", ICONS[n])] if isinstance(ICONS[n], str) else ICONS[n]
+            inner = "".join(
+                f'<path fill="#fff" d="{pd}"/>' if kind == "f" else
+                f'<path fill="none" stroke="#fff" stroke-width="{STROKE}" stroke-linecap="round" stroke-linejoin="round" d="{pd}"/>'
+                for kind, pd in parts)
+            svg = f'<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24">{inner}</svg>'
             png = cairosvg.svg2png(bytestring=svg.encode())
             im = Image.open(io.BytesIO(png)).convert("RGBA")
             sheet.paste(im, ((i % cols) * 80 + 8, (i // cols) * 80 + 8), im)

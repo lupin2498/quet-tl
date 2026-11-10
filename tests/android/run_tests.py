@@ -18,6 +18,8 @@ os.makedirs(os.path.join(OUT, "ui"), exist_ok=True)
 results = []
 notes = []
 shot_no = [0]
+# Chỉ chạy các bước có tên khớp biểu thức này (để lặp nhanh khi sửa một tính năng); "Cài đặt" và "Mở ứng dụng" luôn chạy.
+ONLY = os.environ.get("TEST_ONLY", "").strip()
 
 
 def log(*a):
@@ -90,6 +92,17 @@ def bounds(n):
         return None
     x1, y1, x2, y2 = map(int, m)
     return (x1 + x2) // 2, (y1 + y2) // 2
+
+
+def rect(n):
+    m = re.findall(r"\d+", n.get("bounds", "")) if n is not None else []
+    if len(m) != 4:
+        return None
+    return tuple(map(int, m))
+
+
+def parent_map(root):
+    return {c: p for p in root.iter() for c in p}
 
 
 def _match(want, got, contains):
@@ -367,6 +380,8 @@ def check_no_crash(where):
 
 
 def step(name, fn):
+    if ONLY and name not in ("Cài đặt", "Mở ứng dụng") and not re.search(ONLY, name):
+        return
     log("=== %s" % name)
     t0 = time.time()
     try:
@@ -492,15 +507,15 @@ def t_single_scan():
 
 def t_editor_tools():
     wait_activity("EditorActivity", 5)
-    tap(text="Lọc")
+    editor_tool("Bộ lọc")
     time.sleep(2.5)
     shot("filter_panel")
-    for name in ["Đen trắng", "Thang xám", "Gốc", "Làm sáng", "Tăng cường"]:
-        tap(text=name)
+    for name in ["Đen trắng", "Thang xám", "Nguyên gốc", "Làm sáng", "Tăng cường"]:
+        filter_pick(name)
         time.sleep(4.5)
         shot("filter_" + re.sub(r"\W+", "_", name))
     tap(desc="Đóng bộ lọc")
-    tap(text="Bên trái")
+    editor_tool("Bên trái")
     time.sleep(5)
     shot("rotated_left")
     # So sánh: nhấn giữ
@@ -509,7 +524,7 @@ def t_editor_tools():
         x, y = bounds(n)
         sh("input swipe %d %d %d %d 1500" % (x, y, x, y))
     # Cắt lại
-    tap(text="Cắt")
+    editor_tool("Cắt")
     wait_activity("CropActivity", 10)
     time.sleep(2.5)
     shot("recrop")
@@ -1327,10 +1342,13 @@ def t_process_death():
     tap(desc="Xem các trang đã chụp")
     wait_activity("EditorActivity", 20)
     wait_processing(9)
-    tap(text="Lọc")
+    editor_tool("Bộ lọc")
     time.sleep(1.5)
-    tap(text="Đen trắng")
+    filter_pick("Đen trắng")
     time.sleep(5)
+    # đóng bảng lọc: nếu máy ảo không thu hồi được tiến trình thì thanh công cụ (nút ✓) vẫn phải đang hiện
+    tap(desc="Đóng bộ lọc")
+    time.sleep(0.8)
     sh("input keyevent KEYCODE_HOME")
     time.sleep(2.5)
     pid = app_pid()
@@ -1561,7 +1579,7 @@ def t_dont_keep_activities():
         wait_activity("EditorActivity", 25)
         wait_processing(8)
         shot("dka_editor")
-        tap(text="Cắt")
+        editor_tool("Cắt")
         wait_activity("CropActivity", 15)
         time.sleep(2.5)
         tap(text="Xong")
@@ -1642,6 +1660,604 @@ def t_monkey():
     shot("after_monkey")
 
 
+# ----------------------------------------------------------------------------- làm đẹp / chỉnh sửa trang
+
+FILTER_ORDER = ["Nguyên gốc", "Làm sáng", "Tăng cường", "Thần kỳ", "Khử nhiễu", "Không bóng", "Ko viết tay", "Đen trắng", "Thang xám"]
+F_MAGIC, F_GRAY, F_BW, F_PRO, F_DENOISE, F_NOSHADOW, F_NOHAND = 1, 3, 4, 5, 6, 7, 8
+# Ảnh thử tests/images/edit_page.jpg (sinh bằng tests/tools/make_retouch_images.py): vị trí các chi tiết trên trang
+# ĐÃ NẮN PHẲNG, chuẩn hoá theo bề ngang / bề cao trang: (u1, v1, u2, v2)
+R_FINGER = (0.005, 0.42, 0.05, 0.485)        # đầu ngón tay giữ giấy ở mép trái
+R_SIGNER = (0.15, 0.775, 0.30, 0.797)        # dòng chữ in "NGƯỜI LẬP"
+R_STAMP = (0.65, 0.85, 0.81, 0.965)          # con dấu đỏ
+R_SCRIBBLE = (0.14, 0.87, 0.42, 0.945)       # nét bút xanh góc dưới-trái
+R_SCRIBBLE_TOP = (0.565, 0.237, 0.868, 0.273)  # nét bút xanh vắt qua đầu bảng
+R_ROW9 = (0.18, 0.546, 0.31, 0.562)          # chữ "Bộ lưu điện" trong bảng
+R_ROW9_LINE = (0.19, 0.533, 0.30, 0.544)     # đường kẻ ngang phía trên dòng đó
+PAGE_RATIO = 970.0 / 1373.0
+
+
+def density():
+    m = re.findall(r"(\d+)", sh("wm density"))
+    return int(m[-1]) / 160.0 if m else 2.625
+
+
+def swipe(p1, p2, ms=450):
+    sh("input swipe %d %d %d %d %d" % (p1[0], p1[1], p2[0], p2[1], ms))
+    time.sleep(0.5)
+
+
+def hold(text=None, desc=None, ms=1200):
+    n = find(text=text, desc=desc)
+    if n is None:
+        raise AssertionError("Không thấy phần tử %s" % (text if text is not None else desc))
+    x, y = bounds(n)
+    sh("input swipe %d %d %d %d %d" % (x, y, x, y, ms))
+
+
+def editor_tool(name):
+    """Chạm một công cụ trên dải công cụ cuộn ngang của trình chỉnh sửa; đổi thẻ (Ảnh / Đánh dấu / Trang) nếu nó đang khuất."""
+    w, _ = screen_size()
+    for tab in (None, "Ảnh", "Đánh dấu", "Trang", None):
+        if tab is not None:
+            n = find(text=tab)
+            if n is None:
+                continue
+            tap_xy(*bounds(n))
+            time.sleep(1.0)
+        root = dump()
+        n = find(text=name, root=root)
+        if n is None:
+            continue
+        box = rect(parent_map(root).get(n)) or rect(n)
+        ok = rect(find(desc="Xong", root=root))
+        limit = ok[0] if ok else w
+        cx = (box[0] + box[2]) // 2
+        # nút bị che một phần (nằm ở mép dải cuộn) thì đổi thẻ để nó hiện trọn
+        if box[2] - box[0] >= w * 0.12 and cx < limit - w * 0.02:
+            tap_xy(cx, (box[1] + box[3]) // 2)
+            time.sleep(0.6)
+            return
+    raise AssertionError("Không thấy công cụ '%s' trên thanh công cụ" % name)
+
+
+def filter_pick(name):
+    """Chọn một bộ lọc trong bảng lọc (hàng ảnh nhỏ cuộn ngang): vuốt hàng cho tới khi tên bộ lọc hiện trọn."""
+    w, _ = screen_size()
+    want = FILTER_ORDER.index(name)
+    for _ in range(8):
+        root = dump()
+        seen = {}
+        for i, nm in enumerate(FILTER_ORDER):
+            n = find(text=nm, root=root)
+            if n is not None:
+                seen[i] = rect(n)
+        if not seen:
+            raise AssertionError("Bảng bộ lọc chưa mở (không thấy tên bộ lọc nào)")
+        if want in seen:
+            x1, y1, x2, y2 = seen[want]
+            if x1 > w * 0.03 and x2 < w * 0.97:
+                tap_xy((x1 + x2) // 2, (y1 + y2) // 2)
+                time.sleep(0.6)
+                return
+        any_box = list(seen.values())[0]
+        y = any_box[1] - int(30 * density())  # vuốt trên hàng ảnh nhỏ, phía trên dòng tên
+        if want > max(seen) or (want in seen and seen[want][2] >= w * 0.97):
+            sh("input swipe %d %d %d %d 500" % (int(w * 0.75), y, int(w * 0.35), y))
+        else:
+            sh("input swipe %d %d %d %d 500" % (int(w * 0.35), y, int(w * 0.75), y))
+        time.sleep(1.0)
+    raise AssertionError("Không cuộn tới được bộ lọc '%s'" % name)
+
+
+def import_to_editor(names, wait=60):
+    """Nhập ảnh thử thẳng vào trình chỉnh sửa (lối vào kiểm thử của bản debug). Trả về mã tài liệu nháp vừa tạo."""
+    go_home()
+    before = set(doc_ids())
+    for n in names:
+        push_test_image(os.path.join(IMAGES, n), n)
+    uris = ",".join("content://%s.share/%s" % (PKG, n) for n in names)
+    out = sh("am start -a %s.TEST_IMPORT --esa uris %s -n %s/.MainActivity" % (PKG, uris, PKG))
+    if "Error" in out:
+        raise AssertionError(out)
+    wait_activity("EditorActivity", wait)
+    new = [i for i in doc_ids() if i not in before]
+    if len(new) != 1:
+        raise AssertionError("Không xác định được tài liệu vừa nhập: %s" % new)
+    return new[0]
+
+
+def wait_doc(doc_id, pred, timeout=60, what=""):
+    """Chờ tới khi doc.json thoả điều kiện (ứng dụng lưu sau mỗi thay đổi và sau mỗi lần xử lý xong một trang)."""
+    deadline = time.time() + timeout
+    d = None
+    while time.time() < deadline:
+        d = read_doc(doc_id)
+        try:
+            if d is not None and pred(d):
+                return d
+        except (KeyError, IndexError, TypeError):
+            pass
+        time.sleep(1.0)
+    pages = d and [{k: v for k, v in pg.items() if k not in ("quad", "erase", "marks")} for pg in d.get("pages", [])]
+    raise AssertionError("Hết thời gian chờ %s: %s" % (what or "tài liệu", pages))
+
+
+def wait_page(doc_id, pred, timeout=60, what="", index=0):
+    d = wait_doc(doc_id, lambda d: pred(d["pages"][index]), timeout, what)
+    return d["pages"][index]
+
+
+def page_image(doc_id, index=0):
+    """Ảnh kết quả hiện tại của một trang (PIL) hoặc None nếu máy chạy kiểm thử thiếu Pillow."""
+    try:
+        import io
+        from PIL import Image
+    except ImportError:
+        if "Thiếu Pillow: bỏ qua các kiểm tra nội dung ảnh" not in notes:
+            notes.append("Thiếu Pillow: bỏ qua các kiểm tra nội dung ảnh")
+        return None
+    d = read_doc(doc_id)
+    pg = d["pages"][index]
+    data = pull_file("files/docs/%s/%s" % (doc_id, pg["out"]))
+    im = Image.open(io.BytesIO(data)).convert("RGB")
+    im.load()
+    return im
+
+
+def frac(im, box, kind):
+    """Tỷ lệ điểm ảnh thuộc một loại (dark / red / blue / skin) trong vùng chuẩn hoá box của ảnh trang."""
+    W, H = im.size
+    crop = im.crop((int(box[0] * W), int(box[1] * H), max(int(box[0] * W) + 1, int(box[2] * W)), max(int(box[1] * H) + 1, int(box[3] * H))))
+    px = list(crop.getdata())
+    if kind == "dark":
+        c = sum(1 for r, g, b in px if r * 299 + g * 587 + b * 114 < 128000)
+    elif kind == "red":
+        c = sum(1 for r, g, b in px if r > 140 and g < 115 and b < 115)
+    elif kind == "blue":
+        c = sum(1 for r, g, b in px if b > r + 40 and b > 90)
+    elif kind == "skin":
+        c = sum(1 for r, g, b in px if r > 120 and r - b > 45)
+    else:
+        raise ValueError(kind)
+    return c / float(max(1, len(px)))
+
+
+def page_mapper(view_desc):
+    """Hàm đổi toạ độ chuẩn hoá trên trang (u, v) -> điểm màn hình, cho màn hình Xóa thông minh / Đánh dấu (trang chưa xoay)."""
+    n = None
+    for _ in range(8):
+        n = find(desc=view_desc)
+        if n is not None:
+            break
+        time.sleep(0.8)
+    if n is None:
+        raise AssertionError("Không thấy vùng '%s'" % view_desc)
+    x1, y1, x2, y2 = rect(n)
+    pad = 12 * density()
+    aw, ah = (x2 - x1) - 2 * pad, (y2 - y1) - 2 * pad
+    if aw / PAGE_RATIO <= ah:
+        dw, dh = aw, aw / PAGE_RATIO
+    else:
+        dw, dh = ah * PAGE_RATIO, ah
+    left, top = (x1 + x2) / 2.0 - dw / 2.0, (y1 + y2) / 2.0 - dh / 2.0
+    return lambda u, v: (int(round(left + u * dw)), int(round(top + v * dh)))
+
+
+def recreate_by_font_scale():
+    """Đổi cỡ chữ hệ thống rồi trả lại: màn hình đang mở bị tạo lại hai lần, trạng thái phải còn nguyên."""
+    sh("settings put system font_scale 1.15")
+    time.sleep(2.5)
+    sh("settings put system font_scale 1.0")
+    time.sleep(3.0)
+
+
+def apply_edit_screen(activity):
+    """Bấm ✓ ở màn hình Xóa thông minh / Đánh dấu; nếu còn đang xử lý (nút chưa nhận) thì thử lại."""
+    for _ in range(6):
+        tap(desc="Áp dụng")
+        time.sleep(1.5)
+        if top_activity() != activity:
+            break
+        time.sleep(2.0)
+    wait_activity("EditorActivity", 15)
+
+
+def t_filters_new():
+    """Lời nhắc "Phát hiện ngón tay" -> Gỡ bỏ (bộ lọc Thần kỳ); các bộ lọc mới; ✕ trả lại bộ lọc cũ, ✓ giữ."""
+    doc_id = import_to_editor(["edit_page.jpg"])
+    pg = wait_page(doc_id, lambda p: p.get("out") and p.get("finger"), 90, "xử lý trang + dò ngón tay")
+    if pg.get("finger") != 1:
+        raise AssertionError("Không phát hiện ngón tay trên ảnh thử (finger=%s)" % pg.get("finger"))
+    if not exists(text="Phát hiện ngón tay", contains=True, timeout=8):
+        raise AssertionError("Không hiện lời nhắc 'Phát hiện ngón tay'")
+    time.sleep(1.5)
+    shot("finger_banner")
+    im0 = page_image(doc_id)
+    tap(text="Gỡ bỏ")
+    pg = wait_page(doc_id, lambda p: p.get("filter") == F_PRO and p.get("out") != pg["out"], 90, "bộ lọc Thần kỳ sau khi bấm Gỡ bỏ")
+    time.sleep(2.0)
+    shot("finger_removed")
+    if exists(text="Phát hiện ngón tay", contains=True, timeout=1.5):
+        raise AssertionError("Lời nhắc ngón tay vẫn còn sau khi đã gỡ")
+    im1 = page_image(doc_id)
+    if im0 is not None and im1 is not None:
+        a, b = frac(im0, R_FINGER, "skin"), frac(im1, R_FINGER, "skin")
+        log("ngón tay (tỷ lệ màu da ở mép trái) trước/sau Thần kỳ: %.3f -> %.3f" % (a, b))
+        if a < 0.3:
+            raise AssertionError("Ảnh thử không có ngón tay ở vị trí mong đợi (%.3f)" % a)
+        if b > 0.02:
+            raise AssertionError("Bộ lọc Thần kỳ chưa gỡ hết ngón tay (%.3f)" % b)
+        d0, d1 = frac(im0, R_SIGNER, "dark"), frac(im1, R_SIGNER, "dark")
+        if d1 < d0 * 0.5:
+            raise AssertionError("Bộ lọc Thần kỳ làm mất chữ in (%.3f -> %.3f)" % (d0, d1))
+    editor_tool("Bộ lọc")
+    time.sleep(2.5)
+    shot("filter_panel_new")
+    blue0 = frac(im0, R_SCRIBBLE, "blue") if im0 is not None else None
+    for name, code in (("Khử nhiễu", F_DENOISE), ("Không bóng", F_NOSHADOW), ("Ko viết tay", F_NOHAND)):
+        prev = pg["out"]
+        filter_pick(name)
+        pg = wait_page(doc_id, lambda p: p.get("filter") == code and p.get("out") not in (None, prev), 90, "bộ lọc " + name)
+        time.sleep(2.0)
+        shot("filter_" + re.sub(r"\W+", "_", name))
+    im2 = page_image(doc_id)
+    if im2 is not None:
+        blue2 = frac(im2, R_SCRIBBLE, "blue")
+        red2 = frac(im2, R_STAMP, "red")
+        log("Ko viết tay: nét bút xanh %.4f -> %.4f, con dấu đỏ còn %.3f" % (blue0, blue2, red2))
+        if blue0 < 0.01:
+            raise AssertionError("Ảnh thử không có nét bút xanh ở vị trí mong đợi (%.4f)" % blue0)
+        if blue2 > blue0 * 0.15:
+            raise AssertionError("Bộ lọc 'Ko viết tay' chưa xoá nét bút xanh (%.4f -> %.4f)" % (blue0, blue2))
+        if red2 < 0.03:
+            raise AssertionError("Bộ lọc 'Ko viết tay' xoá mất con dấu (%.3f)" % red2)
+    tap(desc="Đóng bộ lọc")
+    time.sleep(1.0)
+    # bộ lọc không còn là Thần kỳ -> lời nhắc hiện lại; bấm ✕ thì tắt hẳn cho trang này
+    if not exists(text="Phát hiện ngón tay", contains=True, timeout=5):
+        raise AssertionError("Lời nhắc ngón tay không hiện lại khi bỏ bộ lọc Thần kỳ")
+    tap(desc="Đóng lời nhắc")
+    wait_page(doc_id, lambda p: p.get("fingerOff") is True, 10, "tắt lời nhắc ngón tay")
+    if exists(text="Phát hiện ngón tay", contains=True, timeout=1.5):
+        raise AssertionError("Lời nhắc ngón tay không tắt")
+    # ✕ ở bảng lọc: trả lại bộ lọc lúc mở bảng
+    editor_tool("Bộ lọc")
+    time.sleep(1.5)
+    prev = pg["out"]
+    filter_pick("Đen trắng")
+    wait_page(doc_id, lambda p: p.get("filter") == F_BW and p.get("out") not in (None, prev), 90, "bộ lọc Đen trắng")
+    tap(desc="Hủy bộ lọc")
+    wait_page(doc_id, lambda p: p.get("filter") == F_NOHAND and p.get("out") == prev, 60, "trả lại bộ lọc sau khi bấm ✕")
+    time.sleep(1.0)
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(2.0)
+    shot("filters_document")
+    d = read_doc(doc_id)
+    if d is None or d.get("draft") or d["pages"][0].get("filter") != F_NOHAND:
+        raise AssertionError("Tài liệu lưu sai bộ lọc: %s" % (d and d["pages"][0].get("filter")))
+
+
+def t_smart_erase():
+    """Xóa thông minh: Bút, Hình chữ nhật, Thần kỳ, Viết tay, Xóa văn bản; hoàn tác / làm lại; giữ trạng thái khi màn hình bị tạo lại."""
+    doc_id = import_to_editor(["edit_page.jpg"])
+    pg = wait_page(doc_id, lambda p: p.get("out") and p.get("finger"), 90, "xử lý trang")
+    im0 = page_image(doc_id)
+    editor_tool("Xóa thông minh")
+    wait_activity("EraseActivity", 15)
+    time.sleep(5.0)
+    P = page_mapper("Trang đang xóa")
+    shot("erase_open")
+    # Bút: tô lên dòng "NGƯỜI LẬP"
+    swipe(P(0.11, 0.786), P(0.34, 0.786))
+    time.sleep(3.0)
+    # Hình chữ nhật quanh con dấu
+    tap(text="Hình chữ nhật")
+    swipe(P(0.60, 0.838), P(0.86, 0.985))
+    time.sleep(3.0)
+    shot("erase_pen_rect")
+    # Thần kỳ: tô sơ qua một đoạn nét bút xanh -> xoá cả nét
+    tap(text="Thần kỳ")
+    swipe(P(0.16, 0.885), P(0.24, 0.93))
+    time.sleep(4.0)
+    shot("erase_magic")
+    # Xóa văn bản: tô lên chữ trong bảng, đường kẻ phải còn
+    tap(text="Xóa văn bản")
+    swipe(P(0.17, 0.554), P(0.33, 0.554))
+    time.sleep(4.0)
+    # Viết tay: một chạm xoá nét bút màu còn lại trên cả trang
+    tap(text="Viết tay")
+    time.sleep(5.0)
+    shot("erase_hand_text")
+    # hoàn tác rồi làm lại bước cuối
+    tap(desc="Hoàn tác")
+    time.sleep(3.0)
+    shot("erase_undo")
+    tap(desc="Làm lại")
+    time.sleep(3.0)
+    hold(text="So sánh")
+    time.sleep(0.5)
+    recreate_by_font_scale()
+    wait_activity("EraseActivity", 10)
+    time.sleep(5.0)
+    shot("erase_recreated")
+    apply_edit_screen("EraseActivity")
+    pg = wait_page(doc_id, lambda p: p.get("erase") and p.get("out") not in (None, pg["out"]), 120, "dựng lại trang sau Xóa thông minh")
+    time.sleep(2.0)
+    shot("erase_applied")
+    kinds = [o.get("k") for o in pg["erase"]]
+    log("thao tác xoá đã lưu:", kinds)
+    if kinds != [0, 1, 2, 3, 4]:
+        raise AssertionError("Danh sách thao tác xoá sai (cần [0, 1, 2, 3, 4]): %s" % kinds)
+    im1 = page_image(doc_id)
+    if im0 is not None and im1 is not None:
+        checks = [("chữ 'NGƯỜI LẬP' (Bút)", R_SIGNER, "dark", 0.03, 0.01),
+                  ("con dấu (Hình chữ nhật)", R_STAMP, "red", 0.03, 0.003),
+                  ("nét bút xanh dưới (Thần kỳ)", R_SCRIBBLE, "blue", 0.01, 0.002),
+                  ("chữ trong bảng (Xóa văn bản)", R_ROW9, "dark", 0.05, 0.02),
+                  ("nét bút xanh trên (Viết tay)", R_SCRIBBLE_TOP, "blue", 0.01, 0.003)]
+        for label, box, kind, need_before, max_after in checks:
+            a, b = frac(im0, box, kind), frac(im1, box, kind)
+            log("xoá %s: %.4f -> %.4f" % (label, a, b))
+            if a < need_before:
+                raise AssertionError("Ảnh thử thiếu %s ở vị trí mong đợi (%.4f)" % (label, a))
+            if b > max_after:
+                raise AssertionError("Chưa xoá được %s (%.4f -> %.4f)" % (label, a, b))
+        line = frac(im1, R_ROW9_LINE, "dark")
+        log("đường kẻ bảng sau Xóa văn bản: %.3f" % line)
+        if line < 0.06:
+            raise AssertionError("Xóa văn bản làm mất đường kẻ bảng (%.3f)" % line)
+    # mở lại: các thao tác cũ được nạp; ✕ thì không đổi gì
+    editor_tool("Xóa thông minh")
+    wait_activity("EraseActivity", 15)
+    time.sleep(4.0)
+    tap(desc="Hoàn tác")
+    time.sleep(2.0)
+    tap(desc="Hủy")
+    wait_activity("EditorActivity", 10)
+    time.sleep(1.5)
+    again = read_doc(doc_id)["pages"][0]
+    if [o.get("k") for o in again.get("erase", [])] != kinds or again.get("out") != pg["out"]:
+        raise AssertionError("Bấm ✕ ở Xóa thông minh vẫn làm đổi trang")
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(2.0)
+    shot("erase_document")
+
+
+def t_markup():
+    """Đánh dấu: Brush, Khảm, Thêm văn bản, Thêm hình mờ, Ký tên (bảng ký, kéo chữ ký); hoàn tác; tạo lại màn hình; cắt lại + xoay sau khi đánh dấu."""
+    doc_id = import_to_editor(["edit_page.jpg"])
+    pg = wait_page(doc_id, lambda p: p.get("out") and p.get("finger"), 90, "xử lý trang")
+    editor_tool("Brush")
+    wait_activity("MarkupActivity", 15)
+    time.sleep(5.0)
+    P = page_mapper("Trang đang đánh dấu")
+    swipe(P(0.2, 0.03), P(0.6, 0.03))
+    tap(desc="Màu đỏ")
+    tap(desc="Nét lớn")
+    swipe(P(0.2, 0.108), P(0.6, 0.108))
+    time.sleep(0.5)
+    shot("markup_brush")
+    tap(text="Khảm")
+    time.sleep(0.5)
+    swipe(P(0.2, 0.45), P(0.7, 0.45))
+    time.sleep(1.0)
+    shot("markup_mosaic")
+    tap(text="Thêm văn bản")
+    time.sleep(1.5)
+    if not dialog_open():
+        tap(text="Thêm chữ", contains=True)
+        time.sleep(1.2)
+    sh("input text 'Da_kiem_tra'")
+    time.sleep(0.5)
+    tap(text="OK")
+    time.sleep(1.5)
+    shot("markup_text")
+    tap(text="Thêm hình mờ")
+    time.sleep(1.5)
+    if not dialog_open():
+        tap(text="Thêm hình mờ", contains=True)
+        time.sleep(1.2)
+    sh("input text 'MAT'")
+    time.sleep(0.5)
+    tap(text="OK")
+    time.sleep(1.5)
+    shot("markup_watermark")
+    tap(text="Ký tên")
+    time.sleep(1.5)
+    if not exists(text="Ký vào khung bên dưới", timeout=3):
+        tap(text="Chữ ký mới", contains=True)
+        time.sleep(1.0)
+    x1, y1, x2, y2 = rect(find(desc="Khung ký tên"))
+
+    def Q(u, v):
+        return int(x1 + u * (x2 - x1)), int(y1 + v * (y2 - y1))
+
+    tap(desc="Mực xanh")
+    swipe(Q(0.15, 0.6), Q(0.4, 0.3), 300)
+    swipe(Q(0.4, 0.3), Q(0.6, 0.65), 300)
+    swipe(Q(0.6, 0.65), Q(0.85, 0.35), 300)
+    time.sleep(0.5)
+    shot("markup_sign_pad")
+    tap(text="Lưu chữ ký")
+    time.sleep(2.0)
+    if exists(text="Ký vào khung bên dưới", timeout=1.5):
+        raise AssertionError("Bảng ký không đóng sau khi lưu chữ ký")
+    shot("markup_sign_placed")
+    # kéo chữ ký vừa đặt (đang ở giữa trang, hơi thấp) xuống góc dưới-phải
+    swipe(P(0.5, 0.6), P(0.72, 0.9), 700)
+    time.sleep(0.8)
+    shot("markup_sign_moved")
+    tap(desc="Hoàn tác")
+    time.sleep(0.8)
+    tap(desc="Làm lại")
+    time.sleep(0.8)
+    recreate_by_font_scale()
+    wait_activity("MarkupActivity", 10)
+    time.sleep(5.0)
+    shot("markup_recreated")
+    apply_edit_screen("MarkupActivity")
+    pg = wait_page(doc_id, lambda p: p.get("marks") and p.get("out") not in (None, pg["out"]), 120, "dựng lại trang sau Đánh dấu")
+    time.sleep(2.0)
+    shot("markup_applied")
+    marks = pg["marks"]
+    types = [m.get("t") for m in marks]
+    log("đánh dấu đã lưu:", types)
+    if types != [0, 0, 1, 2, 4, 3]:
+        raise AssertionError("Danh sách đánh dấu sai (cần [0, 0, 1, 2, 4, 3]): %s" % types)
+    if marks[3].get("s") != "Da_kiem_tra" or marks[4].get("s") != "MAT":
+        raise AssertionError("Nội dung chữ / hình mờ sai: %r, %r" % (marks[3].get("s"), marks[4].get("s")))
+    sg = marks[5]
+    if not str(sg.get("f", "")).startswith("sg_") or app_file_size("files/docs/%s/%s" % (doc_id, sg.get("f"))) <= 0:
+        raise AssertionError("Thiếu file chữ ký của trang: %s" % sg.get("f"))
+    sx, sy = sg.get("x", 0) / 100000.0, sg.get("y", 0) / 100000.0
+    log("vị trí chữ ký sau khi kéo: %.3f, %.3f" % (sx, sy))
+    if abs(sx - 0.72) > 0.06 or abs(sy - 0.9) > 0.06:
+        raise AssertionError("Kéo chữ ký không tới vị trí mong đợi: (%.3f, %.3f)" % (sx, sy))
+    if "s" not in run_as("ls files/signs"):
+        raise AssertionError("Chữ ký không được lưu vào thư viện")
+    im = page_image(doc_id)
+    if im is not None:
+        red = frac(im, (0.22, 0.10, 0.58, 0.116), "red")
+        log("nét brush đỏ trên ảnh kết quả: %.3f" % red)
+        if red < 0.5:
+            raise AssertionError("Ảnh kết quả không có nét brush đỏ (%.3f)" % red)
+    # cắt lại sau khi đánh dấu: các đánh dấu đi theo vùng cắt mới (không mất, không lỗi)
+    editor_tool("Cắt")
+    wait_activity("CropActivity", 15)
+    time.sleep(2.5)
+    w, h = screen_size()
+    sh("input swipe %d %d %d %d 600" % (int(w * 0.12), int(h * 0.12), int(w * 0.22), int(h * 0.2)))
+    time.sleep(0.5)
+    tap(text="Xong")
+    wait_activity("EditorActivity", 15)
+    pg2 = wait_page(doc_id, lambda p: p.get("out") not in (None, pg["out"]), 120, "dựng lại trang sau khi cắt lại")
+    if [m.get("t") for m in pg2.get("marks", [])] != types:
+        raise AssertionError("Cắt lại làm mất đánh dấu: %s" % [m.get("t") for m in pg2.get("marks", [])])
+    time.sleep(2.0)
+    shot("markup_recrop")
+    tap(text="Bên trái")
+    pg3 = wait_page(doc_id, lambda p: p.get("rot") == 270 and p.get("out") not in (None, pg2["out"]), 120, "xoay trang đã đánh dấu")
+    time.sleep(2.0)
+    shot("markup_rotated")
+    # trang đã xoay: chữ ký chọn từ thư viện phải nằm thẳng theo chiều đang hiển thị (góc 90 trong hệ ảnh chưa xoay)
+    editor_tool("Ký tên")
+    wait_activity("MarkupActivity", 15)
+    time.sleep(5.0)
+    if exists(text="Ký vào khung bên dưới", timeout=1.5):
+        raise AssertionError("Đã có chữ ký trong thư viện mà vẫn tự mở bảng ký")
+    tap(desc="Chữ ký 1")
+    time.sleep(1.0)
+    shot("markup_sign_rotated")
+    apply_edit_screen("MarkupActivity")
+    pg4 = wait_page(doc_id, lambda p: len(p.get("marks", [])) == len(types) + 1 and p.get("out") not in (None, pg3["out"]), 120, "thêm chữ ký thứ hai")
+    last = pg4["marks"][-1]
+    if last.get("t") != 3 or last.get("a") != 90:
+        raise AssertionError("Chữ ký trên trang đã xoay sai góc: %s" % {k: last.get(k) for k in ("t", "a")})
+    time.sleep(2.0)
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(2.0)
+    shot("markup_document")
+
+
+def t_header_collage():
+    """Tiêu đề trang (dòng chữ lề trên + số trang, tự đánh lại khi xoá trang) và Cắt dán (ghép các trang lên tờ A4)."""
+    names = ["doc_2_dark.jpg", "doc_3_gray.jpg", "doc_6_clutter.jpg"]
+    doc_id = import_to_editor(names, wait=90)
+    d = wait_doc(doc_id, lambda d: len(d["pages"]) == 3 and all(p.get("out") for p in d["pages"]), 180, "xử lý 3 trang")
+    before = [p["out"] for p in d["pages"]]
+    im0 = page_image(doc_id, 0)
+    editor_tool("Tiêu đề trang")
+    time.sleep(1.5)
+    if not dialog_open():
+        raise AssertionError("Không mở hộp thoại Tiêu đề trang")
+    box = None
+    for n in nodes(dump()):
+        if n.get("class", "") == "android.widget.EditText":
+            box = n
+            break
+    if box is None:
+        raise AssertionError("Hộp thoại Tiêu đề trang thiếu ô nhập")
+    tap_xy(*bounds(box))
+    time.sleep(0.8)
+    sh("input text 'BB_2026'")
+    time.sleep(0.5)
+    tap(text="Đánh số trang", contains=True)
+    shot("header_dialog")
+    tap(text="Áp dụng")
+    want = ["BB_2026\n%d/3" % (i + 1) for i in range(3)]
+    d = wait_doc(doc_id, lambda d: [p.get("hdr") for p in d["pages"]] == want and all(p.get("out") not in (None, before[i]) for i, p in enumerate(d["pages"])),
+                 180, "dựng lại 3 trang có tiêu đề")
+    hd = d.get("header") or {}
+    if hd.get("text") != "BB_2026" or hd.get("num") is not True:
+        raise AssertionError("Tiêu đề trang lưu sai: %s" % hd)
+    time.sleep(2.0)
+    shot("header_applied")
+    im1 = page_image(doc_id, 0)
+    if im0 is not None and im1 is not None:
+        top_band, bottom_band = (0.42, 0.008, 0.58, 0.034), (0.45, 0.966, 0.55, 0.992)
+        t0, t1 = frac(im0, top_band, "dark"), frac(im1, top_band, "dark")
+        b0, b1 = frac(im0, bottom_band, "dark"), frac(im1, bottom_band, "dark")
+        log("tiêu đề lề trên %.3f -> %.3f, số trang lề dưới %.3f -> %.3f" % (t0, t1, b0, b1))
+        if t1 - t0 < 0.02 or b1 - b0 < 0.01:
+            raise AssertionError("Ảnh kết quả không có tiêu đề / số trang (trên %.3f -> %.3f, dưới %.3f -> %.3f)" % (t0, t1, b0, b1))
+    # xoá trang đang xem: 2 trang còn lại được đánh số lại 1/2, 2/2
+    olds = set(p["out"] for p in d["pages"])
+    tap(desc="Xoá trang")
+    time.sleep(1.0)
+    tap(text="Xoá")
+    want = ["BB_2026\n%d/2" % (i + 1) for i in range(2)]
+    d = wait_doc(doc_id, lambda d: [p.get("hdr") for p in d["pages"]] == want and all(p.get("out") and p["out"] not in olds for p in d["pages"]),
+                 180, "đánh lại số trang sau khi xoá trang")
+    time.sleep(2.0)
+    shot("header_renumbered")
+    # Cắt dán: ghép 2 trang lên một tờ A4 -> tài liệu mới
+    ids_before = set(doc_ids())
+    editor_tool("Cắt dán")
+    time.sleep(1.5)
+    shot("collage_menu")
+    tap(text="2 trang mỗi tờ")
+    wait_activity("DocumentActivity", 120)
+    time.sleep(3.0)
+    shot("collage_document")
+    new = [i for i in doc_ids() if i not in ids_before]
+    if len(new) != 1:
+        raise AssertionError("Cắt dán không tạo đúng một tài liệu mới: %s" % new)
+    cd = wait_doc(new[0], lambda d: len(d["pages"]) == 1 and d["pages"][0].get("out"), 120, "xử lý tờ ghép")
+    if cd.get("draft") or not str(cd.get("title", "")).endswith(" - ghép") or cd["pages"][0].get("w") != 2480:
+        raise AssertionError("Tài liệu ghép sai: %s / %s" % (cd.get("title"), cd["pages"][0].get("w")))
+    sheet = page_image(new[0], 0)
+    if sheet is not None:
+        log("tờ ghép: %sx%s" % sheet.size)
+        if min(sheet.size) < 1500 or max(sheet.size) > 3508:
+            raise AssertionError("Tờ ghép có kích thước lạ: %sx%s" % sheet.size)
+        # hai ô của tờ ghép (trên / dưới) đều phải có nội dung
+        for label, box in (("ô trên", (0.2, 0.08, 0.8, 0.45)), ("ô dưới", (0.2, 0.55, 0.8, 0.92))):
+            v = frac(sheet, box, "dark")
+            log("tờ ghép %s: %.3f" % (label, v))
+            if v < 0.005:
+                raise AssertionError("Tờ ghép trống ở %s" % label)
+    back()
+    wait_activity("EditorActivity", 15)
+    time.sleep(1.0)
+    # gỡ tiêu đề
+    editor_tool("Tiêu đề trang")
+    time.sleep(1.5)
+    tap(text="Gỡ bỏ")
+    d = wait_doc(doc_id, lambda d: all(p.get("hdr") is None and p.get("out") for p in d["pages"]) and not d.get("header"), 120, "gỡ tiêu đề trang")
+    time.sleep(6.0)
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 60)
+    time.sleep(2.0)
+    shot("header_document")
+    d = read_doc(doc_id)
+    if d is None or d.get("draft") or len(d["pages"]) != 2:
+        raise AssertionError("Tài liệu lưu sai sau Tiêu đề trang / Cắt dán")
+
+
+
 def screen_size():
     out = sh("wm size")
     m = re.findall(r"(\d+)x(\d+)", out)
@@ -1668,6 +2284,10 @@ def main():
     for n in ["doc_1_wood.jpg", "doc_4_beige.jpg", "doc_5_blue.jpg"]:
         step("Nhập ảnh %s" % n, t_import(n))
     step("Nhập nhiều ảnh", t_import_multi)
+    step("Bộ lọc mới + lời nhắc ngón tay", t_filters_new)
+    step("Xóa thông minh", t_smart_erase)
+    step("Đánh dấu (ký tên, chữ, brush, khảm, hình mờ)", t_markup)
+    step("Tiêu đề trang + Cắt dán", t_header_collage)
     step("Nhập 12 ảnh lớn (12 MP)", t_stress_import)
     step("Danh sách + tìm kiếm", t_home_list)
     step("Xoá tài liệu", t_delete_document)

@@ -374,9 +374,7 @@ public class DocumentActivity extends BaseActivity {
                         }
                         // trang có thể đã được sửa ở màn hình khác trong lúc xử lý: chỉ nhận kết quả nếu còn đúng tham số
                         if (Processor.outName(cur).equals(snap.out)) {
-                            cur.warp = snap.warp;
-                            cur.out = snap.out;
-                            cur.ver++;
+                            cur.takeResult(snap);
                             DocStore.save(doc);
                             adapter.notifyDataSetChanged();
                         } else if (isResumedNow()) {

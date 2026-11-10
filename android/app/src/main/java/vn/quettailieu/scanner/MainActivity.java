@@ -555,7 +555,7 @@ public class MainActivity extends BaseActivity {
 
     private boolean allReady(DocStore.Doc d) {
         for (DocStore.Page p : d.pages) {
-            if (!d.outReady(p)) {
+            if (!d.outReady(p) || !Processor.outName(p).equals(p.out)) {
                 Ui.toast(this, "Hãy mở tài liệu để hoàn tất xử lý trang");
                 return false;
             }

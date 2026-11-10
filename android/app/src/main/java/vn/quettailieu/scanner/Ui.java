@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -152,6 +153,27 @@ final class Ui {
         b.addView(t, tl);
         b.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
         return b;
+    }
+
+    /**
+     * Hàng công cụ chia đều bề ngang màn hình; nút nào có nhãn dài hơn phần được chia thì nở theo nhãn
+     * và cả hàng cuộn ngang (không cắt chữ trên màn hình hẹp hay khi phóng to cỡ chữ).
+     */
+    static HorizontalScrollView toolRow(Context c, LinearLayout[] buttons, int bg) {
+        HorizontalScrollView hs = new HorizontalScrollView(c);
+        hs.setHorizontalScrollBarEnabled(false);
+        hs.setFillViewport(true);
+        hs.setBackgroundColor(bg);
+        LinearLayout row = new LinearLayout(c);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        int minW = c.getResources().getDisplayMetrics().widthPixels / Math.max(1, buttons.length);
+        for (LinearLayout b : buttons) {
+            b.setPadding(dp(6), dp(6), dp(6), dp(6));
+            b.setMinimumWidth(minW);
+            row.addView(b, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
+        }
+        hs.addView(row, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        return hs;
     }
 
     /** Nút chữ nền xanh bo tròn. */

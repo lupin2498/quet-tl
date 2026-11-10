@@ -48,6 +48,12 @@ final class DocStore {
         String warp;         // ảnh đã nắn phẳng (chưa lọc, chưa xoay)
         String out;          // ảnh kết quả
         long ver;            // tăng mỗi lần ảnh kết quả thay đổi
+        String erase;        // "Xóa thông minh": JSON chuẩn tắc (Edits), null nếu không có
+        String marks;        // "Đánh dấu": JSON chuẩn tắc (Edits), null nếu không có
+        String hdr;          // tiêu đề trang đã điền số trang (do DocStore.save đồng bộ từ Doc.header)
+        int finger;          // phát hiện ngón tay giữ giấy: 0 chưa kiểm tra, 1 có, 2 không
+        String fingerKey;    // tên ảnh nắn phẳng đã kiểm tra
+        boolean fingerOff;   // người dùng đã tắt lời nhắc
 
         Page copy() {
             Page p = new Page();
@@ -55,7 +61,30 @@ final class DocStore {
             p.quad = quad == null ? null : quad.clone();
             p.auto = auto; p.focal = focal; p.rot = rot; p.filter = filter;
             p.warp = warp; p.out = out; p.ver = ver;
+            p.erase = erase; p.marks = marks; p.hdr = hdr;
+            p.finger = finger; p.fingerKey = fingerKey; p.fingerOff = fingerOff;
             return p;
+        }
+
+        /** Nhận kết quả từ bản sao đã chạy qua Processor.render (ảnh nắn phẳng, ảnh kết quả, kết quả dò ngón tay). */
+        void takeResult(Page snap) {
+            warp = snap.warp;
+            out = snap.out;
+            ver++;
+            if (snap.fingerKey != null && !snap.fingerKey.equals(fingerKey)) {
+                finger = snap.finger;
+                fingerKey = snap.fingerKey;
+                fingerOff = false;
+            }
+        }
+
+        /** Xoá mọi chỉnh sửa gắn với ảnh gốc cũ (khi chụp lại). */
+        void clearEdits() {
+            erase = null;
+            marks = null;
+            finger = 0;
+            fingerKey = null;
+            fingerOff = false;
         }
     }
 
@@ -68,6 +97,8 @@ final class DocStore {
         /** Đã bị xoá: mọi lần lưu sau đó bị bỏ qua (không tạo lại thư mục). */
         volatile boolean deleted;
         final ArrayList<Page> pages = new ArrayList<>();
+        /** Tiêu đề trang (dòng chữ lề trên + số trang); null nếu không dùng. */
+        Edits.Header header;
 
         File file(String name) {
             return name == null ? null : new File(dir, name);
@@ -158,6 +189,13 @@ final class DocStore {
             d.created = o.optLong("created", f.lastModified());
             d.modified = o.optLong("modified", d.created);
             d.draft = o.optBoolean("draft", false);
+            JSONObject ho = o.optJSONObject("header");
+            if (ho != null) {
+                Edits.Header hd = new Edits.Header();
+                hd.text = ho.optString("text", "");
+                hd.pageNum = ho.optBoolean("num", false);
+                if (!hd.isEmpty()) d.header = hd;
+            }
             JSONArray arr = o.optJSONArray("pages");
             if (arr != null) {
                 for (int i = 0; i < arr.length(); i++) {
@@ -179,6 +217,12 @@ final class DocStore {
                     p.warp = po.has("warp") ? po.optString("warp", null) : null;
                     p.out = po.has("out") ? po.optString("out", null) : null;
                     p.ver = po.optLong("ver", 0);
+                    p.erase = Edits.canonErase(po.optJSONArray("erase"));
+                    p.marks = Edits.canonMarks(po.optJSONArray("marks"));
+                    p.hdr = po.has("hdr") ? po.optString("hdr", null) : null;
+                    p.finger = po.optInt("finger", 0);
+                    p.fingerKey = po.has("fingerKey") ? po.optString("fingerKey", null) : null;
+                    p.fingerOff = po.optBoolean("fingerOff", false);
                     d.pages.add(p);
                 }
             }
@@ -192,12 +236,19 @@ final class DocStore {
         synchronized (LOCK) {
             // tài liệu đã xoá (hoặc thư mục không còn) thì không ghi lại, tránh "hồi sinh" tài liệu rỗng
             if (d == null || d.deleted || d.dir == null || !d.dir.exists()) return;
+            syncHeader(d);
             try {
                 JSONObject o = new JSONObject();
                 o.put("title", d.title);
                 o.put("created", d.created);
                 o.put("modified", d.modified);
                 o.put("draft", d.draft);
+                if (d.header != null && !d.header.isEmpty()) {
+                    JSONObject ho = new JSONObject();
+                    ho.put("text", d.header.text == null ? "" : d.header.text);
+                    ho.put("num", d.header.pageNum);
+                    o.put("header", ho);
+                }
                 JSONArray arr = new JSONArray();
                 for (Page p : d.pages) {
                     JSONObject po = new JSONObject();
@@ -217,6 +268,12 @@ final class DocStore {
                     if (p.warp != null) po.put("warp", p.warp);
                     if (p.out != null) po.put("out", p.out);
                     po.put("ver", p.ver);
+                    if (p.erase != null) po.put("erase", new JSONArray(p.erase));
+                    if (p.marks != null) po.put("marks", new JSONArray(p.marks));
+                    if (p.hdr != null) po.put("hdr", p.hdr);
+                    if (p.finger != 0) po.put("finger", p.finger);
+                    if (p.fingerKey != null) po.put("fingerKey", p.fingerKey);
+                    if (p.fingerOff) po.put("fingerOff", true);
                     arr.put(po);
                 }
                 o.put("pages", arr);
@@ -232,6 +289,18 @@ final class DocStore {
                 }
             } catch (Exception ignored) {
             }
+        }
+    }
+
+    /**
+     * Điền tiêu đề trang (kèm số trang) cho từng trang theo Doc.header. Gọi mỗi lần lưu nên khi thêm/xoá trang
+     * số trang tự đổi; trang nào đổi tiêu đề thì tên ảnh kết quả đổi theo và được xử lý lại.
+     */
+    static void syncHeader(Doc d) {
+        int n = d.pages.size();
+        for (int i = 0; i < n; i++) {
+            Page p = d.pages.get(i);
+            p.hdr = d.header == null ? null : d.header.resolve(i, n);
         }
     }
 
@@ -359,6 +428,8 @@ final class DocStore {
         p.warp = null;
         p.out = null;
         p.ver++;
+        // nét xoá / đánh dấu thuộc về ảnh cũ
+        p.clearEdits();
         d.modified = System.currentTimeMillis();
     }
 

@@ -65,6 +65,19 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Dark" />
 
+        <activity
+            android:name=".EraseActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark" />
+
+        <activity
+            android:name=".MarkupActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:theme="@style/AppTheme.Dark" />
+
         <provider
             android:name=".ShareProvider"
             android:authorities="vn.quettailieu.scanner.share"

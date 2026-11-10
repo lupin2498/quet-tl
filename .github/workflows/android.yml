@@ -8,6 +8,15 @@ on:
       - "tests/**"
       - ".github/workflows/android.yml"
   workflow_dispatch:
+    inputs:
+      only:
+        description: "Chỉ chạy các bước kiểm thử máy ảo có tên khớp biểu thức này (để trống = chạy hết)"
+        required: false
+        default: ""
+      apis:
+        description: "Danh sách API máy ảo (JSON)"
+        required: false
+        default: "[24, 29, 34]"
 
 permissions:
   contents: write
@@ -39,6 +48,15 @@ jobs:
           mkdir -p out/core-classes out/core
           javac -encoding UTF-8 -d out/core-classes android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/*.java
           java -Dfile.encoding=UTF-8 -DminOk=6 -cp out/core-classes EvalSynth tests/images/gt.txt out/core | tee out/core/core-tests.txt
+
+      - name: Kiểm thử làm đẹp trang / xóa thông minh (JVM, ảnh tổng hợp sinh tại chỗ)
+        run: |
+          set -o pipefail
+          sudo apt-get install -y -q fonts-dejavu-core > /dev/null 2>&1 || true
+          pip3 install --break-system-packages -q numpy pillow || pip3 install -q numpy pillow
+          python3 tests/tools/make_retouch_images.py out/retouch-in 1400
+          java -Dfile.encoding=UTF-8 -cp out/core-classes EvalRetouch out/retouch-in | tee out/core/retouch-tests.txt
+          rm -rf out/retouch-in
 
       - name: Kiểm thử độ bền thuật toán (fuzz) + kiểm tra PDF bằng trình phân tích thật
         run: |
@@ -81,7 +99,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api: [24, 29, 34]
+        api: ${{ fromJSON(github.event.inputs.apis || '[24, 29, 34]') }}
     steps:
       - uses: actions/checkout@v4
 
@@ -109,6 +127,8 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front none
           script: python3 tests/android/run_tests.py apk/app-debug.apk test-out
+        env:
+          TEST_ONLY: ${{ github.event.inputs.only }}
 
       - name: Đẩy kết quả lên nhánh ci/android-${{ matrix.api }}
         if: always()

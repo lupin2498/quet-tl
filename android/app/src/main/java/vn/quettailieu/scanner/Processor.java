@@ -1,16 +1,20 @@
 package vn.quettailieu.scanner;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import vn.quettailieu.scanner.core.DocDetector;
 import vn.quettailieu.scanner.core.Enhancer;
 import vn.quettailieu.scanner.core.Geom;
+import vn.quettailieu.scanner.core.Retouch;
 
 /** Xử lý ảnh nền: tìm vùng trang, nắn phẳng, lọc. */
 final class Processor {
@@ -88,6 +92,10 @@ final class Processor {
         int h = warpName(p).hashCode();
         h = h * 31 + p.filter;
         h = h * 31 + p.rot;
+        // chỉ trộn khi có chỉnh sửa: trang không chỉnh sửa giữ nguyên tên file như các bản trước
+        if (p.erase != null) h = h * 31 + p.erase.hashCode();
+        if (p.marks != null) h = h * 31 + 7 * p.marks.hashCode();
+        if (p.hdr != null) h = h * 31 + 13 * p.hdr.hashCode();
         return "o_" + p.id + "_" + Integer.toHexString(h) + ".jpg";
     }
 
@@ -111,8 +119,9 @@ final class Processor {
             return;
         }
         // Nhanh: đã có ảnh kết quả cùng bộ lọc nhưng khác góc xoay -> chỉ cần xoay
+        // (tiêu đề trang được in sau khi xoay nên không dùng được cách này)
         int wantRot = snap.rot;
-        for (int r = 0; r < 360; r += 90) {
+        for (int r = 0; r < 360 && snap.hdr == null; r += 90) {
             if (r == wantRot) continue;
             snap.rot = r;
             File alt = new File(dir, outName(snap));
@@ -145,24 +154,88 @@ final class Processor {
             warped = makeWarp(dir, snap);
             ImageUtil.saveJpeg(warped, wf, 92);
         }
-        if (snap.filter != Enhancer.ORIGINAL) {
+        ArrayList<Retouch.Op> erase = Edits.eraseFromJson(snap.erase);
+        ArrayList<Edits.Mark> marks = Edits.marksFromJson(snap.marks);
+        boolean needFinger = !wn.equals(snap.fingerKey);
+        if (snap.filter != Enhancer.ORIGINAL || !erase.isEmpty() || needFinger) {
             int w = warped.getWidth(), h = warped.getHeight();
             int[] px = new int[w * h];
             warped.getPixels(px, 0, w, 0, 0, w, h);
-            Enhancer.apply(px, w, h, snap.filter);
+            if (needFinger) {
+                // kiểm tra một lần cho mỗi ảnh nắn phẳng: có ngón tay giữ giấy lọt vào trang không
+                boolean found = false;
+                try {
+                    found = Retouch.hasFinger(px, w, h);
+                } catch (Throwable ignored) {
+                }
+                snap.finger = found ? 1 : 2;
+                snap.fingerKey = wn;
+            }
+            if (snap.filter != Enhancer.ORIGINAL || !erase.isEmpty()) {
+                if (!erase.isEmpty()) Retouch.applyErase(px, w, h, erase);
+                Enhancer.apply(px, w, h, snap.filter);
+                if (!warped.isMutable()) {
+                    Bitmap m = warped.copy(Bitmap.Config.ARGB_8888, true);
+                    warped.recycle();
+                    warped = m;
+                }
+                warped.setPixels(px, 0, w, 0, 0, w, h);
+            }
+        }
+        if (!marks.isEmpty()) {
             if (!warped.isMutable()) {
                 Bitmap m = warped.copy(Bitmap.Config.ARGB_8888, true);
                 warped.recycle();
                 warped = m;
             }
-            warped.setPixels(px, 0, w, 0, 0, w, h);
+            MarkRender mr = new MarkRender(dir);
+            try {
+                mr.draw(new Canvas(warped), warped.getWidth(), warped.getHeight(), marks, warped);
+            } finally {
+                mr.release();
+            }
         }
         Bitmap fin = ImageUtil.rotate(warped, snap.rot);
         if (fin != warped) warped.recycle();
+        if (snap.hdr != null) {
+            if (!fin.isMutable()) {
+                Bitmap m = fin.copy(Bitmap.Config.ARGB_8888, true);
+                fin.recycle();
+                fin = m;
+            }
+            MarkRender.drawHeader(new Canvas(fin), fin.getWidth(), fin.getHeight(), snap.hdr);
+        }
         ImageUtil.saveJpeg(fin, outF, 90);
         fin.recycle();
         snap.warp = wn;
         snap.out = on;
+    }
+
+    /** Ảnh xem trước cho màn hình chỉnh sửa: ảnh đã nắn phẳng (chưa lọc, chưa xoay), cạnh dài ~ maxDim. */
+    static final int PREVIEW_MAX = 1500;
+
+    static Bitmap loadWarp(File dir, DocStore.Page p, int maxDim) {
+        if (p == null || p.warp == null) return null;
+        File wf = new File(dir, p.warp);
+        if (!wf.exists()) return null;
+        Bitmap b = ImageUtil.decodeSampled(wf.getPath(), maxDim);
+        if (b == null) return null;
+        int L = Math.max(b.getWidth(), b.getHeight());
+        if (L > maxDim) {
+            float k = maxDim / (float) L;
+            Bitmap sb = Bitmap.createScaledBitmap(b, Math.max(8, Math.round(b.getWidth() * k)), Math.max(8, Math.round(b.getHeight() * k)), true);
+            if (sb != b) b.recycle();
+            b = sb;
+        }
+        return b;
+    }
+
+    /** Áp chuỗi xử lý điểm ảnh (xoá thông minh + bộ lọc) lên mảng điểm ảnh xem trước; trả về ảnh mới. */
+    static Bitmap process(int[] base, int w, int h, List<Retouch.Op> erase, int filter) {
+        int[] px = base.clone();
+        if (erase != null && !erase.isEmpty()) Retouch.applyErase(px, w, h, erase);
+        Enhancer.apply(px, w, h, filter);
+        return Bitmap.createBitmap(px, w, h, Bitmap.Config.ARGB_8888);
     }
 
     private static Bitmap makeWarp(File dir, DocStore.Page p) throws IOException {
