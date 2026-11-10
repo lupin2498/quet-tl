@@ -11,7 +11,13 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     private let titleBtn = UIButton(type: .system)
     private let cache = NSCache<NSString, UIImage>()
     private(set) var rendering = false
-    private var renderToken = 0
+    /// Có yêu cầu xử lý lại trong lúc đang xử lý (chạy tiếp một lượt sau khi lượt hiện tại xong).
+    private var renderAgain = false
+    /// Trang xử lý lỗi (khoá = tên ảnh kết quả mong muốn): báo rõ thay vì "đang xử lý" mãi.
+    private var failed = Set<String>()
+    private let busy = BusyOverlay()
+    private var exporting = false
+    private var closed = false
 
     init(doc: Doc) {
         self.doc = doc
@@ -31,6 +37,26 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
         navigationController?.setNavigationBarHidden(false, animated: animated)
         reload()
         ensureRendered()
+    }
+
+    /// Màn hình này đang ở trên cùng và không có gì che (chống mở trùng khi chạm đúp).
+    private var isFrontmost: Bool {
+        if closed || exporting { return false }
+        // hộp thoại đang đóng dở (vừa chọn một mục trong đó) không tính là đang che
+        if let p = presentedViewController, !p.isBeingDismissed { return false }
+        return navigationController?.topViewController === self
+    }
+
+    /// Tài liệu không còn trang nào (đã xoá hết trong trình chỉnh sửa / lúc thêm trang) -> xoá và về màn hình chính.
+    /// Trả về true nếu đã đóng.
+    @discardableResult
+    private func closeIfEmpty() -> Bool {
+        if closed { return true }
+        guard doc.deleted || doc.pages.isEmpty else { return false }
+        closed = true
+        if !doc.deleted { DocStore.shared.delete(doc) }
+        navigationController?.popToRootViewController(animated: true)
+        return true
     }
 
     private func buildUI() {
@@ -111,47 +137,73 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     }
 
     /// Sinh ảnh kết quả cho các trang còn thiếu (vd. lần trước bị ngắt giữa chừng).
-    private func ensureRendered() {
-        let todo = doc.pages.filter { needsRender($0) }
-        guard !todo.isEmpty else {
-            rendering = false
+    /// retryFailed = true: thử lại cả những trang lần trước xử lý lỗi.
+    private func ensureRendered(retryFailed: Bool = false) {
+        if rendering {
+            // đang chạy một lượt: không chạy song song lượt thứ hai trên cùng các trang, chỉ ghi nhận để chạy tiếp
+            renderAgain = true
             return
         }
+        if retryFailed { failed.removeAll() }
+        let todo = doc.pages.filter { needsRender($0) && !failed.contains(ImageOps.outName($0)) }
+        guard !todo.isEmpty, !doc.deleted else { return }
         rendering = true
-        renderToken += 1
-        let token = renderToken
         let dir = DocStore.shared.dir(doc)
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             var rendered = [Page]()
+            var bad = [String]()
             for p in todo {
-                if let np = try? ImageOps.render(dir: dir, page: p) { rendered.append(np) }
+                if let np = try? ImageOps.render(dir: dir, page: p) {
+                    rendered.append(np)
+                } else {
+                    bad.append(ImageOps.outName(p))
+                }
             }
-            let done = rendered
+            let done = rendered, failedNow = bad
             DispatchQueue.main.async {
-                guard let self = self, token == self.renderToken else { return }
+                guard let self = self else { return }
+                var changed = false
                 for np in done {
                     guard let i = self.doc.index(of: np.id) else { continue }
                     let cur = self.doc.pages[i]
                     if cur.src == np.src && cur.quad == np.quad && cur.filter == np.filter && cur.rot == np.rot {
                         self.doc.pages[i].warp = np.warp
                         self.doc.pages[i].out = np.out
+                        changed = true
                     }
                 }
-                DocStore.shared.save(self.doc)
+                self.failed.formUnion(failedNow)
+                if changed { DocStore.shared.save(self.doc) }
                 self.rendering = false
                 self.reload()
+                if self.renderAgain {
+                    self.renderAgain = false
+                    self.ensureRendered()
+                }
             }
         }
     }
 
+    /// Mọi trang đã có ảnh kết quả chưa; nếu chưa thì báo lý do (đang xử lý / trang nào bị lỗi).
     private func ready() -> Bool {
-        if rendering || doc.pages.contains(where: { needsRender($0) }) {
+        if doc.pages.isEmpty { return false }
+        if rendering {
             toast("Đang xử lý trang, vui lòng đợi giây lát")
-            if !rendering { ensureRendered() }
             return false
         }
-        return true
+        guard let i = doc.pages.firstIndex(where: { needsRender($0) }) else { return true }
+        if let bad = doc.pages.firstIndex(where: { needsRender($0) && failed.contains(ImageOps.outName($0)) }) {
+            toast("Trang \(bad + 1) không xử lý được — hãy mở Sửa để chụp lại hoặc xoá trang này")
+        } else {
+            toast("Đang xử lý trang \(i + 1), vui lòng đợi giây lát")
+        }
+        ensureRendered(retryFailed: true)
+        return false
     }
+
+    /// Móc kiểm thử (SelfTest): trạng thái sẵn sàng xuất và số trang xử lý lỗi.
+    var testReady: Bool { ready() }
+    var testFailedPages: Int { doc.pages.filter { needsRender($0) && failed.contains(ImageOps.outName($0)) }.count }
 
     // MARK: lưới trang
 
@@ -170,8 +222,16 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
         cell.number.text = "\(indexPath.item + 1)"
         cell.pageId = p.id
         cell.imageView.image = nil
+        cell.failedMark.isHidden = true
         cell.spinner.startAnimating()
-        guard let o = p.out, !needsRender(p) else { return cell }
+        guard let o = p.out, !needsRender(p) else {
+            if failed.contains(ImageOps.outName(p)) {
+                // trang lỗi: không quay vòng chờ mãi
+                cell.spinner.stopAnimating()
+                cell.failedMark.isHidden = false
+            }
+            return cell
+        }
         let key = "\(p.id)_\(o)" as NSString
         if let img = cache.object(forKey: key) {
             cell.imageView.image = img
@@ -200,14 +260,15 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     // MARK: thao tác
 
     func openEditor(at page: Int) {
+        // chạm đúp một trang / nút Sửa: chỉ mở một trình chỉnh sửa
+        guard isFrontmost, !doc.pages.isEmpty else { return }
         let ed = EditorViewController(doc: doc, context: .existing, startPage: page)
         ed.onDone = { [weak self] _ in
             guard let self = self else { return }
-            if self.doc.pages.isEmpty {
-                self.navigationController?.popToRootViewController(animated: true)
-                return
-            }
+            // trang cuối cùng bị xoá trong trình chỉnh sửa -> tài liệu đã bị xoá
+            if self.closeIfEmpty() { return }
             self.navigationController?.popToViewController(self, animated: true)
+            self.failed.removeAll()
             self.reload()
         }
         navigationController?.pushViewController(ed, animated: true)
@@ -216,11 +277,16 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     @objc private func editPages() { openEditor(at: 0) }
 
     @objc func addPages() {
+        guard isFrontmost else { return }
         let cam = CameraViewController(mode: .add(doc))
         cam.onFinished = { [weak self] _ in
             self?.dismiss(animated: true) {
-                self?.reload()
-                self?.ensureRendered()
+                guard let self = self else { return }
+                // xoá hết trang trong lúc xem lại các trang vừa chụp -> không để lại tài liệu rỗng
+                if self.closeIfEmpty() { return }
+                self.failed.removeAll()
+                self.reload()
+                self.ensureRendered()
             }
         }
         let nav = UINavigationController(rootViewController: cam)
@@ -229,19 +295,23 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     }
 
     @objc private func rename() {
+        guard isFrontmost else { return }
         prompt("Đổi tên tài liệu", initial: doc.title) { [weak self] v in
             self?.applyRename(v)
         }
     }
 
     func applyRename(_ v: String) {
-        doc.title = v
+        let t = Theme.cleanTitle(v, fallback: doc.title)
+        guard t != doc.title, !doc.deleted else { return }
+        doc.title = t
         doc.modified = Date()
         DocStore.shared.save(doc)
         reload()
     }
 
     @objc private func moreTapped() {
+        guard isFrontmost else { return }
         let a = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         a.addAction(UIAlertAction(title: "Đổi tên", style: .default) { [weak self] _ in self?.rename() })
         a.addAction(UIAlertAction(title: "Khổ giấy PDF: \(DocStore.pdfSizeName(DocStore.shared.pdfSize))", style: .default) { [weak self] _ in
@@ -254,6 +324,7 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     }
 
     func choosePdfSize() {
+        guard isFrontmost else { return }
         let names = ["A4 (210 × 297 mm)", "Letter (216 × 279 mm)", "Theo kích thước ảnh"]
         let values = [PdfWriter.sizeA4, PdfWriter.sizeLetter, PdfWriter.sizeFit]
         let cur = DocStore.shared.pdfSize
@@ -271,18 +342,53 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     }
 
     private func deleteDoc() {
+        guard isFrontmost else { return }
         confirm("Xoá tài liệu?", message: "\"\(doc.title)\" sẽ bị xoá vĩnh viễn.", ok: "Xoá") { [weak self] in
             self?.performDelete()
         }
     }
 
     func performDelete() {
+        if closed { return }
+        closed = true
         DocStore.shared.delete(doc)
         navigationController?.popToRootViewController(animated: true)
     }
 
+    /// Tạo file xuất ở luồng nền (tài liệu nhiều trang mất vài giây) rồi gọi `then` ở luồng chính.
+    private func export(pdf: Bool, then: @escaping ([URL]) -> Void) {
+        guard !exporting, !closed else { return }
+        let job: ImageOps.ExportJob
+        do {
+            job = try ImageOps.exportJob(doc: doc)
+        } catch {
+            toast("Lỗi: \(error.localizedDescription)")
+            return
+        }
+        exporting = true
+        busy.show(in: navigationController?.view ?? view, text: pdf ? "Đang tạo PDF…" : "Đang chuẩn bị ảnh…")
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let result: Result<[URL], Error> = Result {
+                try (pdf ? [ImageOps.exportPDF(job: job)] : ImageOps.exportImages(job: job))
+            }
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.busy.hide()
+                self.exporting = false
+                switch result {
+                case .success(let urls):
+                    // người dùng đã rời màn hình trong lúc tạo file -> không bật bảng chia sẻ lên màn hình khác
+                    guard self.isFrontmost else { return }
+                    then(urls)
+                case .failure(let error):
+                    self.toast("Lỗi: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
     @objc private func shareTapped() {
-        guard ready() else { return }
+        guard isFrontmost, ready() else { return }
         let a = UIAlertController(title: "Chia sẻ", message: nil, preferredStyle: .actionSheet)
         a.addAction(UIAlertAction(title: "Chia sẻ PDF (\(DocStore.pdfSizeName(DocStore.shared.pdfSize)))", style: .default) { [weak self] _ in
             self?.share(pdf: true)
@@ -296,25 +402,22 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     }
 
     func share(pdf: Bool) {
-        do {
-            let items: [URL] = pdf ? [try ImageOps.exportPDF(doc: doc)] : try ImageOps.exportImages(doc: doc)
+        guard isFrontmost, ready() else { return }
+        export(pdf: pdf) { [weak self] items in
+            guard let self = self else { return }
             let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
-            vc.popoverPresentationController?.sourceView = view
-            present(vc, animated: true)
-        } catch {
-            toast("Lỗi: \(error.localizedDescription)")
+            vc.popoverPresentationController?.sourceView = self.view
+            self.present(vc, animated: true)
         }
     }
 
     @objc private func savePDF() {
-        guard ready() else { return }
-        do {
-            let url = try ImageOps.exportPDF(doc: doc)
-            let picker = UIDocumentPickerViewController(forExporting: [url], asCopy: true)
+        guard isFrontmost, ready() else { return }
+        export(pdf: true) { [weak self] urls in
+            guard let self = self else { return }
+            let picker = UIDocumentPickerViewController(forExporting: urls, asCopy: true)
             picker.delegate = self
-            present(picker, animated: true)
-        } catch {
-            toast("Lỗi: \(error.localizedDescription)")
+            self.present(picker, animated: true)
         }
     }
 
@@ -323,17 +426,18 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     }
 
     @objc private func saveImages() {
-        guard ready() else { return }
-        let urls: [URL]
-        do {
-            urls = try ImageOps.exportImages(doc: doc)
-        } catch {
-            toast("Lỗi: \(error.localizedDescription)")
-            return
+        guard isFrontmost, ready() else { return }
+        export(pdf: false) { [weak self] urls in
+            self?.addToPhotos(urls)
         }
-        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+    }
+
+    private func addToPhotos(_ urls: [URL]) {
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { [weak self] status in
             guard status == .authorized || status == .limited else {
-                DispatchQueue.main.async { self.toast("Cần quyền Ảnh để lưu ảnh") }
+                DispatchQueue.main.async {
+                    self?.toast("Cần quyền Ảnh để lưu ảnh — hãy cấp quyền trong Cài đặt")
+                }
                 return
             }
             PHPhotoLibrary.shared().performChanges({
@@ -343,9 +447,9 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
             }, completionHandler: { ok, err in
                 DispatchQueue.main.async {
                     if ok {
-                        self.toast("Đã lưu \(urls.count) ảnh vào Thư viện")
+                        self?.toast("Đã lưu \(urls.count) ảnh vào Thư viện")
                     } else {
-                        self.toast("Lỗi lưu ảnh: \(err?.localizedDescription ?? "")")
+                        self?.toast("Lỗi lưu ảnh: \(err?.localizedDescription ?? "không rõ nguyên nhân")")
                     }
                 }
             })
@@ -357,6 +461,8 @@ final class ThumbCell: UICollectionViewCell {
     let imageView = UIImageView()
     let number = Theme.label("", size: 12, color: Theme.text2)
     let spinner = UIActivityIndicatorView(style: .medium)
+    /// Dấu báo trang không xử lý được.
+    let failedMark = UIImageView(image: Theme.symbol("exclamationmark.triangle.fill", size: 26))
     var pageId: String?
 
     override init(frame: CGRect) {
@@ -366,7 +472,10 @@ final class ThumbCell: UICollectionViewCell {
         spinner.color = Theme.accent
         spinner.hidesWhenStopped = true
         number.textAlignment = .center
-        [imageView, number, spinner].forEach {
+        failedMark.tintColor = Theme.red
+        failedMark.isHidden = true
+        failedMark.accessibilityLabel = "Trang không xử lý được"
+        [imageView, number, spinner, failedMark].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
@@ -380,7 +489,9 @@ final class ThumbCell: UICollectionViewCell {
             number.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             number.heightAnchor.constraint(equalToConstant: 18),
             spinner.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            spinner.centerYAnchor.constraint(equalTo: imageView.centerYAnchor)
+            spinner.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            failedMark.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            failedMark.centerYAnchor.constraint(equalTo: imageView.centerYAnchor)
         ])
     }
 
@@ -389,6 +500,7 @@ final class ThumbCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+        failedMark.isHidden = true
         pageId = nil
     }
 }

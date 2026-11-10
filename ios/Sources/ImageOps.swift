@@ -261,43 +261,82 @@ enum ImageOps {
         return UIImage(cgImage: r)
     }
 
-    static func pdfData(doc: Doc) throws -> Data {
-        var jpgs = [Data]()
-        for p in doc.pages {
-            guard let o = p.out else { throw OpError(message: "Trang chưa xử lý xong") }
-            jpgs.append(try Data(contentsOf: DocStore.shared.url(doc, o)))
-        }
-        return try PdfWriter.make(jpegs: jpgs, sizeMode: DocStore.shared.pdfSize, title: doc.title)
-    }
-
+    /// Tên file an toàn từ tên tài liệu: bỏ ký tự cấm và ký tự điều khiển, tối đa 80 ký tự / 180 byte UTF-8
+    /// (giới hạn tên file 255 byte, còn chừa chỗ cho hậu tố "_12.jpg"), không bắt đầu bằng dấu chấm.
     static func safeName(_ s: String) -> String {
-        let bad = CharacterSet(charactersIn: "\\/:*?\"<>|\n\r\t")
-        let r = s.components(separatedBy: bad).joined(separator: "_").trimmingCharacters(in: .whitespaces)
-        return r.isEmpty ? "TaiLieu" : String(r.prefix(80))
+        var out = ""
+        var bytes = 0, chars = 0
+        for ch in s {
+            var c = ch
+            let bad = ch.unicodeScalars.contains { $0.value < 0x20 || $0.value == 0x7F } || "\\/:*?\"<>|".contains(ch)
+            if bad { c = "_" }
+            let b = String(c).utf8.count
+            if chars + 1 > 80 || bytes + b > 180 { break }
+            out.append(c)
+            bytes += b
+            chars += 1
+        }
+        var r = out.trimmingCharacters(in: .whitespaces)
+        while r.hasPrefix(".") { r = String(r.dropFirst()).trimmingCharacters(in: .whitespaces) }
+        return r.isEmpty ? "TaiLieu" : r
     }
 
-    /// Tạo file PDF tạm để chia sẻ/xuất.
-    static func exportPDF(doc: Doc) throws -> URL {
-        let data = try pdfData(doc: doc)
+    /// Chuẩn hoá chuỗi để tìm kiếm: bỏ dấu tiếng Việt, đ -> d, chữ thường ("bien ban" tìm được "Biên bản").
+    static func fold(_ s: String) -> String {
+        let d = s.replacingOccurrences(of: "đ", with: "d").replacingOccurrences(of: "Đ", with: "D")
+        return d.folding(options: [.diacriticInsensitive, .caseInsensitive, .widthInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+    }
+
+    /// Thông tin cần để xuất tài liệu, chụp lại trên luồng chính (Doc không an toàn khi đọc từ luồng nền).
+    struct ExportJob {
+        let title: String
+        let files: [URL]
+        let pdfSize: Int
+    }
+
+    static func exportJob(doc: Doc) throws -> ExportJob {
+        guard !doc.pages.isEmpty else { throw OpError(message: "Tài liệu không có trang") }
+        var files = [URL]()
+        for p in doc.pages {
+            guard let o = p.out, FileManager.default.fileExists(atPath: DocStore.shared.url(doc, o).path) else {
+                throw OpError(message: "Trang chưa xử lý xong")
+            }
+            files.append(DocStore.shared.url(doc, o))
+        }
+        return ExportJob(title: doc.title, files: files, pdfSize: DocStore.shared.pdfSize)
+    }
+
+    private static func shareDir() -> URL {
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent("share", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        let url = dir.appendingPathComponent(safeName(doc.title) + ".pdf")
-        try data.write(to: url, options: .atomic)
+        return dir
+    }
+
+    /// Tạo file PDF tạm để chia sẻ/xuất. Ảnh từng trang được ghi nối tiếp từ đĩa (không nạp cả tài liệu vào bộ nhớ).
+    static func exportPDF(job: ExportJob) throws -> URL {
+        let url = shareDir().appendingPathComponent(safeName(job.title) + ".pdf")
+        try PdfWriter.write(files: job.files, to: url, sizeMode: job.pdfSize, title: job.title)
         return url
     }
 
-    static func exportImages(doc: Doc) throws -> [URL] {
-        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("share", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+    static func exportPDF(doc: Doc) throws -> URL {
+        return try exportPDF(job: exportJob(doc: doc))
+    }
+
+    static func exportImages(job: ExportJob) throws -> [URL] {
+        let dir = shareDir()
         var urls = [URL]()
-        let base = safeName(doc.title)
-        for (i, p) in doc.pages.enumerated() {
-            guard let o = p.out else { throw OpError(message: "Trang chưa xử lý xong") }
-            let dst = dir.appendingPathComponent(doc.pages.count == 1 ? "\(base).jpg" : "\(base)_\(i + 1).jpg")
+        let base = safeName(job.title)
+        for (i, src) in job.files.enumerated() {
+            let dst = dir.appendingPathComponent(job.files.count == 1 ? "\(base).jpg" : "\(base)_\(i + 1).jpg")
             try? FileManager.default.removeItem(at: dst)
-            try FileManager.default.copyItem(at: DocStore.shared.url(doc, o), to: dst)
+            try FileManager.default.copyItem(at: src, to: dst)
             urls.append(dst)
         }
         return urls
+    }
+
+    static func exportImages(doc: Doc) throws -> [URL] {
+        return try exportImages(job: exportJob(doc: doc))
     }
 }

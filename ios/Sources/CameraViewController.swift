@@ -31,6 +31,8 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
     private var grid = false
     private var cameraReady = false
     private var configured = false
+    /// Đã báo kết quả cho màn hình gọi (chống gọi hai lần khi chạm đúp).
+    private var finished = false
 
     private let session: AVCaptureSession
     private let sessionQueue = DispatchQueue(label: "vn.quettailieu.camera")
@@ -83,9 +85,21 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         buildUI()
         refreshBottom()
+        // hệ thống tự tắt đèn khi phiên máy ảnh bị ngắt (ứng dụng vào nền, cuộc gọi...) -> cập nhật lại nút đèn
+        NotificationCenter.default.addObserver(self, selector: #selector(sessionInterrupted), name: .AVCaptureSessionWasInterrupted, object: session)
+        NotificationCenter.default.addObserver(self, selector: #selector(sessionInterrupted), name: UIApplication.didEnterBackgroundNotification, object: nil)
+    }
+
+    @objc private func sessionInterrupted() {
+        DispatchQueue.main.async {
+            guard self.torch else { return }
+            self.torch = false
+            self.updateTopIcons()
+        }
     }
 
     deinit {
+        NotificationCenter.default.removeObserver(self)
         UIDevice.current.endGeneratingDeviceOrientationNotifications()
         let s = session
         sessionQueue.async { if s.isRunning { s.stopRunning() } }
@@ -547,7 +561,8 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
 
     private func onCaptured(_ img: UIImage) {
-        guard view.window != nil, presentedViewController == nil else {
+        guard view.window != nil, presentedViewController == nil, !finished,
+              navigationController?.topViewController === self else {
             busy = false
             return
         }
@@ -610,7 +625,8 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
     @objc private func openEditorTapped() { openEditor() }
 
     func openEditor() {
-        guard let d = doc, !d.pages.isEmpty else { return }
+        // chạm đúp ảnh thu nhỏ: chỉ mở một trình chỉnh sửa
+        guard let d = doc, !d.pages.isEmpty, !finished, navigationController?.topViewController === self else { return }
         let first = sessionPages.first.flatMap { d.index(of: $0) } ?? 0
         let ed = EditorViewController(doc: d, context: .camera, startPage: first)
         ed.onDone = { [weak self] saved in
@@ -645,7 +661,7 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
 
     @objc private func pickImages() {
-        if busy { return }
+        if busy || presentedViewController != nil { return }
         var cfg = PHPickerConfiguration()
         cfg.filter = .images
         cfg.selectionLimit = retakeId == nil ? 0 : 1
@@ -655,8 +671,14 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
 
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        guard !results.isEmpty else { return }
+        // đợi bộ chọn ảnh đóng xong rồi mới xử lý (mở trình chỉnh sửa trong lúc nó đang đóng có thể bị bỏ qua)
+        picker.dismiss(animated: true) { [weak self] in
+            self?.handlePicked(results)
+        }
+    }
+
+    private func handlePicked(_ results: [PHPickerResult]) {
+        guard !results.isEmpty, !busy else { return }
         busy = true
         let st = ImportState()
         // từng ảnh một: tìm mép ở luồng nền, thêm trang ở luồng chính
@@ -687,11 +709,16 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
     }
 
     private func finish(_ d: Doc?) {
+        if finished { return }
+        finished = true
         if let cb = onFinished { cb(d) } else { dismiss(animated: true) }
     }
 
+    /// Móc kiểm thử (SelfTest): bấm nút Đóng.
+    func testClose() { attemptClose() }
+
     @objc private func attemptClose() {
-        if busy { return }
+        if busy || finished || presentedViewController != nil { return }
         if sessionPages.isEmpty {
             if newDoc, let d = doc, d.pages.isEmpty { DocStore.shared.delete(d) }
             finish(nil)

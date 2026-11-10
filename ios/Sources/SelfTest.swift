@@ -53,6 +53,12 @@ final class SelfTest {
     private var targetId = ""
     private var stressStart = Date()
     private var algoDone = false
+    private var recoveredId = ""
+    private var dirsBefore = 0
+    private var probeDoc: Doc?
+    private var modifiedBefore = Date()
+    private var discardDoc: Doc?
+    private var badDoc: Doc?
 
     private init(nav: UINavigationController) {
         self.nav = nav
@@ -263,9 +269,13 @@ final class SelfTest {
         addRun("kiểm tra thêm trang") { self.check(self.docVC?.doc.pages.count == 4, "Thêm trang: tài liệu có 4 trang") }
         addRun("kiểm tra PDF sau chỉnh sửa") { self.verifyCurrentDocPdf() }
         addRun("chia sẻ PDF") { self.docVC?.share(pdf: true) }
-        addWait(2.5)
+        addUntil("bảng chia sẻ", 20) { self.nav.presentedViewController != nil }
+        addWait(2.0)
         addSnap("12_share_pdf")
-        addRun("đóng bảng chia sẻ") { self.nav.presentedViewController?.dismiss(animated: false) }
+        addRun("đóng bảng chia sẻ") {
+            self.check(self.nav.presentedViewController is UIActivityViewController, "chia sẻ PDF: bảng chia sẻ hiện ra sau khi tạo file ở luồng nền")
+            self.nav.presentedViewController?.dismiss(animated: false)
+        }
         addWait(1.0)
         addRun("về màn hình chính") { self.nav.popToRootViewController(animated: false) }
         addWait(0.8)
@@ -433,7 +443,331 @@ final class SelfTest {
             let n = DocStore.shared.list().count
             self.check(n == 5, "danh sách cuối: 5 tài liệu (\(n))")
         }
+        addRegressionSteps()
         next()
+    }
+
+    /// Kiểm tra lại các lỗi đã sửa ở bản 1.2 (chạm đúp, đóng giữa chừng, trang lỗi, mở ảnh từ ứng dụng khác...).
+    private func addRegressionSteps() {
+        addRun("tiện ích: tìm kiếm không dấu, tên file, tên tài liệu") { self.runUtilityChecks() }
+        // --- khôi phục tài liệu đang quét dở sau khi ứng dụng bị đóng giữa chừng ---
+        addRun("khôi phục bản nháp") { self.runDraftRecovery() }
+        addRun("tải lại") { self.home?.reload() }
+        addWait(0.8)
+        addSnap("33_recovered_draft")
+        addRun("xoá tài liệu vừa khôi phục") {
+            if let d = DocStore.shared.load(self.recoveredId) { DocStore.shared.delete(d) }
+            self.home?.reload()
+        }
+        addWait(0.5)
+        // --- chạm đúp nút Xong ở màn hình cắt và nút ✓ ở trình chỉnh sửa ---
+        addRun("nhập 1 ảnh (chạm đúp)") {
+            self.dirsBefore = self.docDirCount()
+            if let img = SelfTest.testImage("doc_5_blue") { self.home?.importImages([img]) }
+        }
+        addUntil("màn hình cắt (chạm đúp)", 20) { self.crop != nil }
+        addWait(1.5)
+        addRun("bấm Xong hai lần liên tiếp") {
+            let c = self.crop
+            c?.doneTapped()
+            c?.doneTapped()
+        }
+        addUntil("trình chỉnh sửa (chạm đúp)", 40) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(0.8)
+        addRun("kiểm tra không tạo trùng") {
+            let n = self.docDirCount() - self.dirsBefore
+            let pages = self.editor?.doc.pages.count ?? -1
+            self.check(n == 1 && pages == 1, "chạm đúp Xong ở màn hình cắt: chỉ tạo 1 tài liệu 1 trang (\(n) tài liệu, \(pages) trang)")
+            self.check(self.nav.viewControllers.count == 2, "chỉ một trình chỉnh sửa được mở (ngăn xếp \(self.nav.viewControllers.count))")
+        }
+        addRun("bấm ✓ hai lần liên tiếp") {
+            let ed = self.editor
+            self.probeDoc = ed?.doc
+            ed?.doneTapped()
+            ed?.doneTapped()
+        }
+        addUntil("màn hình tài liệu (chạm đúp)", 40) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(0.8)
+        addRun("kiểm tra một màn hình tài liệu") {
+            let docs = self.nav.viewControllers.filter { $0 is DocumentViewController }.count
+            self.check(docs == 1 && self.nav.viewControllers.count == 2, "chạm đúp ✓: chỉ mở một màn hình tài liệu (\(docs), ngăn xếp \(self.nav.viewControllers.count))")
+            self.check(self.probeDoc?.draft == false, "tài liệu vừa nhập đã được lưu")
+        }
+        // --- mở trình chỉnh sửa rồi đóng mà không sửa: không đổi thời điểm sửa ---
+        addRun("mở trình chỉnh sửa, không sửa gì") {
+            self.modifiedBefore = self.docVC?.doc.modified ?? Date()
+            self.docVC?.openEditor(at: 0)
+        }
+        addUntil("trình chỉnh sửa (không sửa)", 30) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(0.6)
+        addRun("đóng trình chỉnh sửa") { self.editor?.finishEditing(done: true) }
+        addUntil("về tài liệu (không sửa)", 30) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(0.6)
+        addRun("kiểm tra thời điểm sửa") {
+            self.check(self.docVC?.doc.modified == self.modifiedBefore, "chỉ xem không sửa: giữ nguyên thời điểm sửa")
+        }
+        // --- bấm Xong khi khung cắt đang chuyển động: phải lấy khung đích ---
+        addRun("mở lại trình chỉnh sửa") { self.docVC?.openEditor(at: 0) }
+        addUntil("trình chỉnh sửa (cắt)", 30) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(0.6)
+        addRun("mở màn hình cắt") { self.editor?.openCrop() }
+        addUntil("màn hình cắt (khung chuyển động)", 20) { self.crop != nil }
+        addWait(1.0)
+        addRun("tắt Tự động cắt rồi bấm Xong ngay") {
+            guard let c = self.crop else {
+                self.check(false, "không có màn hình cắt")
+                return
+            }
+            self.check(c.testAutoOn, "mở lại màn hình cắt: Tự động cắt vẫn bật")
+            c.testToggleAuto()
+            c.doneTapped()
+        }
+        addUntil("về trình chỉnh sửa sau cắt", 40) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(0.8)
+        addSnap("34_crop_done_during_animation")
+        addRun("kiểm tra khung cắt là khung đích") {
+            guard let p = self.editor?.current, let q = p.quad, q.count == 8 else {
+                self.check(false, "không đọc được khung cắt")
+                return
+            }
+            let w = Double(p.srcW), h = Double(p.srcH)
+            let want: [Double] = [0, 0, w, 0, w, h, 0, h]
+            var e = 0.0
+            for i in 0..<8 { e = max(e, abs(q[i] - want[i])) }
+            self.check(e < 1.0 && p.auto == false, String(format: "Xong giữa lúc khung đang chuyển: lấy khung đích (lệch %.2f px)", e))
+        }
+        // --- mở ảnh từ ứng dụng khác ("Mở bằng") ---
+        addRun("mở ảnh ngoài khi đang chỉnh sửa") {
+            let ok = self.openURL(self.writeTempImage("open_test.jpg"))
+            self.check(ok == false && self.editor != nil && self.nav.presentedViewController == nil,
+                       "đang chỉnh sửa: không đóng ngang phiên để mở ảnh ngoài")
+        }
+        addWait(0.5)
+        addSnap("35_open_url_busy")
+        addRun("lưu") { self.editor?.finishEditing(done: true) }
+        addUntil("về tài liệu (mở ảnh ngoài)", 30) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(0.6)
+        addRun("mở file không phải ảnh") {
+            let u = FileManager.default.temporaryDirectory.appendingPathComponent("not_image.jpg")
+            try? Data("đây không phải ảnh".utf8).write(to: u)
+            let ok = self.openURL(u)
+            self.check(ok == false && self.docVC != nil, "file không phải ảnh: từ chối, giữ nguyên màn hình")
+        }
+        addWait(0.5)
+        addRun("mở ảnh ngoài khi đang xem tài liệu") {
+            self.check(self.openURL(self.writeTempImage("open_test.jpg")), "nhận ảnh từ ứng dụng khác")
+        }
+        addUntil("màn hình cắt (ảnh ngoài)", 20) { self.crop != nil }
+        addWait(1.2)
+        addSnap("36_open_url_crop")
+        addRun("Hủy") { self.crop?.testCancel() }
+        addUntil("về màn hình chính (ảnh ngoài)", 15) { self.topMost() is HomeViewController }
+        addWait(0.6)
+        // --- thêm trang rồi xoá hết trang trong trình chỉnh sửa: không để lại tài liệu rỗng ---
+        addRun("mở tài liệu thử") {
+            if let id = self.probeDoc?.id, let d = DocStore.shared.load(id) {
+                self.probeDoc = d
+                self.home?.openDocument(d)
+            } else {
+                self.check(false, "không mở lại được tài liệu thử")
+            }
+        }
+        addUntil("màn hình tài liệu thử", 20) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(0.6)
+        addRun("Thêm trang") { self.docVC?.addPages() }
+        addUntil("máy ảnh (xoá hết trang)", 15) { self.topMost() is CameraViewController }
+        addWait(1.0)
+        addRun("chụp") { self.camera?.shoot() }
+        addUntil("cắt (xoá hết trang)", 30) { self.crop != nil }
+        addWait(1.0)
+        addRun("Tiếp tục") { self.crop?.doneTapped() }
+        addUntil("trình chỉnh sửa (xoá hết trang)", 40) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(0.6)
+        addRun("xoá hết các trang") {
+            guard let ed = self.editor else {
+                self.check(false, "không có trình chỉnh sửa")
+                return
+            }
+            self.check(ed.doc.pages.count == 2, "tài liệu thử có 2 trang trước khi xoá (\(ed.doc.pages.count))")
+            for p in ed.doc.pages { ed.deletePage(p.id) }
+        }
+        addUntil("về máy ảnh", 20) { self.topMost() is CameraViewController }
+        addWait(0.8)
+        addRun("đóng máy ảnh") { self.camera?.testClose() }
+        addUntil("về màn hình chính sau khi xoá hết trang", 20) {
+            self.nav.presentedViewController == nil && self.topMost() is HomeViewController
+        }
+        addWait(0.8)
+        addRun("kiểm tra tài liệu rỗng đã bị xoá") {
+            let gone = self.probeDoc.map { !FileManager.default.fileExists(atPath: DocStore.shared.dir($0).path) } ?? false
+            self.check(gone && self.nav.viewControllers.count == 1, "xoá hết trang lúc thêm trang: tài liệu rỗng bị xoá, về màn hình chính")
+        }
+        // --- bỏ tài liệu vừa nhập trong lúc các trang đang được xử lý ---
+        addRun("nhập 3 ảnh") {
+            let imgs = ["doc_1_wood", "doc_2_dark", "doc_3_gray"].compactMap { SelfTest.testImage($0) }
+            self.home?.importImages(imgs)
+        }
+        addUntil("trình chỉnh sửa (bỏ nháp)", 60) { self.editor != nil }
+        addRun("xoay rồi bỏ tài liệu khi đang xử lý") {
+            guard let ed = self.editor else {
+                self.check(false, "không có trình chỉnh sửa")
+                return
+            }
+            self.discardDoc = ed.doc
+            ed.rotateLeft()
+            self.check(ed.pending > 0, "đang có \(ed.pending) trang chờ xử lý")
+            ed.discardDraft()
+            ed.discardDraft()
+        }
+        addUntil("về màn hình chính (bỏ nháp)", 15) { self.topMost() is HomeViewController }
+        addWait(4.0)
+        addRun("kiểm tra không còn sót tài liệu") {
+            let gone = self.discardDoc.map { !FileManager.default.fileExists(atPath: DocStore.shared.dir($0).path) } ?? false
+            self.check(gone && self.nav.viewControllers.count == 1, "bỏ tài liệu lúc đang xử lý: không tạo lại thư mục tài liệu")
+        }
+        // --- trang mất ảnh gốc: báo lỗi rõ ràng, không chờ mãi; xoá trang cuối thì xoá tài liệu ---
+        addRun("tài liệu có trang mất ảnh gốc") {
+            guard let img = SelfTest.testImage("doc_3_gray") else { return }
+            let d = DocStore.shared.create(draft: false)
+            _ = try? DocStore.shared.addPage(d, image: img, quad: nil, auto: true)
+            if let p = d.pages.first { try? FileManager.default.removeItem(at: DocStore.shared.url(d, p.src)) }
+            self.badDoc = d
+            self.home?.openDocument(d)
+        }
+        addWait(1.0)
+        addUntil("màn hình tài liệu (trang lỗi)", 20) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(0.6)
+        addSnap("37_failed_page")
+        addRun("kiểm tra báo lỗi trang") {
+            self.check(self.docVC?.testFailedPages == 1, "trang mất ảnh gốc được đánh dấu lỗi (không quay chờ mãi)")
+            self.check(self.docVC?.testReady == false, "không cho xuất khi còn trang lỗi")
+        }
+        addWait(0.6)
+        addUntil("thử lại xong", 20) { self.docVC?.rendering == false }
+        addRun("mở trình chỉnh sửa trang lỗi") { self.docVC?.openEditor(at: 0) }
+        addUntil("trình chỉnh sửa (trang lỗi)", 30) { self.editor != nil && (self.editor?.pending ?? 1) == 0 }
+        addWait(1.0)
+        addSnap("38_failed_page_editor")
+        addRun("xoá trang lỗi") {
+            if let ed = self.editor, let p = ed.current { ed.deletePage(p.id) }
+        }
+        addUntil("về màn hình chính sau khi xoá trang lỗi", 20) { self.topMost() is HomeViewController }
+        addWait(0.8)
+        addRun("kiểm tra tài liệu lỗi đã xoá") {
+            let gone = self.badDoc.map { !FileManager.default.fileExists(atPath: DocStore.shared.dir($0).path) } ?? false
+            self.check(gone && self.nav.viewControllers.count == 1, "xoá trang cuối cùng: tài liệu bị xoá, về màn hình chính")
+        }
+        addRun("tải lại") { self.home?.reload() }
+        addWait(1.0)
+        addSnap("39_home_end")
+        addRun("kiểm tra không còn tài liệu thừa") {
+            let n = DocStore.shared.list().count
+            let dirs = self.docDirCount()
+            self.check(n == 5 && dirs == 5, "sau đợt kiểm thử lỗi: \(n) tài liệu, \(dirs) thư mục (mong đợi 5/5)")
+        }
+    }
+
+    private func docDirCount() -> Int {
+        let items = try? FileManager.default.contentsOfDirectory(atPath: DocStore.shared.root.path)
+        return items?.count ?? -1
+    }
+
+    private func writeTempImage(_ name: String) -> URL {
+        let fm = FileManager.default
+        let u = fm.temporaryDirectory.appendingPathComponent(name)
+        try? fm.removeItem(at: u)
+        if let src = Bundle.main.url(forResource: "doc_4_beige", withExtension: "jpg", subdirectory: "TestImages") {
+            try? fm.copyItem(at: src, to: u)
+        }
+        return u
+    }
+
+    private func openURL(_ url: URL) -> Bool {
+        guard let d = UIApplication.shared.delegate as? AppDelegate else { return false }
+        return d.application(UIApplication.shared, open: url, options: [:])
+    }
+
+    private func runUtilityChecks() {
+        let m1 = HomeViewController.matches(title: "Biên bản thử nghiệm", query: "bien ban")
+        let m2 = HomeViewController.matches(title: "Đơn đặt hàng số 5", query: " don DAT ")
+        let m3 = HomeViewController.matches(title: "Scan 01", query: "  ")
+        let m4 = HomeViewController.matches(title: "Scan 01", query: "bien")
+        check(m1 && m2 && m3 && !m4, "tìm kiếm không phân biệt dấu / hoa thường")
+
+        let long = ImageOps.safeName(String(repeating: "ă", count: 300))
+        let odd = ImageOps.safeName("../..\\a:b*c?\"<>|\n\tx")
+        let banned = CharacterSet(charactersIn: "/\\:*?\"<>|\n\t")
+        let lenOK: Bool = long.count <= 80 && long.utf8.count <= 180
+        let oddOK: Bool = !odd.hasPrefix(".") && odd.rangeOfCharacter(from: banned) == nil
+        let dotOK: Bool = ImageOps.safeName(" . ") == "TaiLieu"
+        check(lenOK && oddOK && dotOK, "tên file an toàn (\(long.count) ký tự / \(long.utf8.count) byte, '\(odd)')")
+
+        let t1: String = Theme.cleanTitle(" \n ", fallback: "Cũ")
+        let t2: String = Theme.cleanTitle(String(repeating: "a", count: 500), fallback: "Cũ")
+        let t3: String = Theme.cleanTitle("  Hợp đồng\nsố 1 ", fallback: "Cũ")
+        let titleOK: Bool = t1 == "Cũ" && t2.count == Theme.maxTitle && t3 == "Hợp đồng số 1"
+        check(titleOK, "chuẩn hoá tên tài liệu (bỏ xuống dòng, giới hạn \(Theme.maxTitle) ký tự)")
+
+        let packed: [Double] = Page.pack([CGPoint(x: CGFloat.nan, y: CGFloat.infinity), CGPoint(x: 1, y: 2)])
+        var finite = packed.count == 4
+        for v in packed where !v.isFinite { finite = false }
+        check(finite, "toạ độ không hữu hạn được thay bằng 0 trước khi lưu")
+
+        var emptyThrows = false
+        do {
+            _ = try ImageOps.exportJob(doc: Doc(id: "khong_ton_tai", title: "Rỗng", draft: false))
+        } catch {
+            emptyThrows = true
+        }
+        var pdfThrows = false
+        do {
+            _ = try PdfWriter.make(jpegs: [], sizeMode: PdfWriter.sizeA4, title: "x")
+        } catch {
+            pdfThrows = true
+        }
+        check(emptyThrows && pdfThrows, "tài liệu không có trang: báo lỗi thay vì tạo file PDF hỏng")
+
+        let ghost = DocStore.shared.create(draft: true)
+        DocStore.shared.delete(ghost)
+        DocStore.shared.save(ghost)
+        check(!FileManager.default.fileExists(atPath: DocStore.shared.dir(ghost).path), "lưu sau khi xoá không tạo lại tài liệu")
+    }
+
+    private func runDraftRecovery() {
+        let fm = FileManager.default
+        let store = DocStore.shared
+        guard let img = SelfTest.testImage("doc_3_gray") else {
+            check(false, "đọc ảnh thử doc_3_gray")
+            return
+        }
+        let before = store.list().count
+        // bản nháp 2 trang (ứng dụng bị đóng giữa lúc quét), một trang mất ảnh gốc
+        let a = store.create(draft: true)
+        _ = try? store.addPage(a, image: img, quad: nil, auto: true)
+        _ = try? store.addPage(a, image: img, quad: nil, auto: true)
+        if a.pages.count == 2 { try? fm.removeItem(at: store.url(a, a.pages[1].src)) }
+        // bản nháp rỗng
+        let b = store.create(draft: true)
+        // thư mục chưa kịp ghi doc.json
+        let junk = store.root.appendingPathComponent("junk_dir", isDirectory: true)
+        try? fm.createDirectory(at: junk, withIntermediateDirectories: true)
+        // doc.json hỏng (không được xoá: có thể vẫn còn ảnh của người dùng)
+        let broken = store.root.appendingPathComponent("broken_doc", isDirectory: true)
+        try? fm.createDirectory(at: broken, withIntermediateDirectories: true)
+        try? Data("{ hỏng".utf8).write(to: broken.appendingPathComponent("doc.json"))
+        let n = store.startupMaintenance()
+        let ra = store.load(a.id)
+        let raPages: Int = ra?.pages.count ?? -1
+        let raDraft: Bool = ra?.draft ?? true
+        check(n == 1 && !raDraft && raPages == 1, "khôi phục tài liệu đang quét dở: \(n) tài liệu, \(raPages) trang còn ảnh gốc")
+        let emptyGone: Bool = !fm.fileExists(atPath: store.dir(b).path)
+        let junkGone: Bool = !fm.fileExists(atPath: junk.path)
+        check(emptyGone && junkGone, "dọn bản nháp rỗng và thư mục chưa có doc.json")
+        let brokenKept: Bool = fm.fileExists(atPath: broken.path)
+        let listed: Int = store.list().count
+        check(brokenKept && listed == before + 1, "thư mục có doc.json hỏng được giữ nguyên; tài liệu khôi phục hiện trong danh sách")
+        try? fm.removeItem(at: broken)
+        recoveredId = a.id
     }
 
     private func addRun(_ name: String, _ f: @escaping () -> Void) { steps.append(.run(name, f)) }
@@ -604,8 +938,12 @@ final class SelfTest {
 
     private func checkPdf(_ d: Doc, label: String) {
         do {
-            let data = try ImageOps.pdfData(doc: d)
+            let job = try ImageOps.exportJob(doc: d)
+            let data = try Data(contentsOf: try ImageOps.exportPDF(job: job))
             try data.write(to: SelfTest.outDir.appendingPathComponent("test_\(d.pages.count)p.pdf"))
+            // bản ghi theo luồng (đọc từng trang từ đĩa) phải trùng từng byte với bản tạo trong bộ nhớ
+            let jpegs = try job.files.map { try Data(contentsOf: $0) }
+            let same = try PdfWriter.make(jpegs: jpegs, sizeMode: job.pdfSize, title: job.title) == data
             let head = String(data: data.prefix(8), encoding: .ascii) ?? ""
             let tail = String(data: data.suffix(8), encoding: .ascii) ?? ""
             var pages = 0
@@ -626,8 +964,8 @@ final class SelfTest {
                     try? img.pngData()?.write(to: SelfTest.outDir.appendingPathComponent("pdf_\(d.pages.count)p_page1.png"))
                 }
             }
-            check(head.hasPrefix("%PDF-1.4") && tail.contains("%%EOF") && pages == d.pages.count,
-                  "\(label): \(data.count / 1024) KB, \(pages) trang")
+            check(head.hasPrefix("%PDF-1.4") && tail.contains("%%EOF") && pages == d.pages.count && same,
+                  "\(label): \(data.count / 1024) KB, \(pages) trang, ghi theo luồng \(same ? "trùng" : "KHÁC") bản trong bộ nhớ")
         } catch {
             check(false, "\(label): \(error.localizedDescription)")
         }

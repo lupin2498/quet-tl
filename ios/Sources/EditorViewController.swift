@@ -20,6 +20,12 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     private var finishRetried = false
     private var didInitialScroll = false
     private var applyAll = false
+    /// Có thay đổi nội dung (lọc, xoay, cắt, xoá, chụp lại, đổi tên) -> cập nhật thời điểm sửa khi lưu.
+    private var dirty = false
+    /// Đã báo kết quả cho màn hình gọi (chống lưu/đóng hai lần khi chạm đúp).
+    private var finished = false
+    /// Trang xử lý lỗi (khoá = tên ảnh kết quả mong muốn): không hiện hiệu ứng "đang quét" mãi.
+    private var failed = Set<String>()
     private let renderQueue = DispatchQueue(label: "vn.quettailieu.render", qos: .userInitiated)
     private let cache = NSCache<NSString, UIImage>()
 
@@ -43,7 +49,23 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         self.context = context
         self.index = max(0, min(startPage, doc.pages.count - 1))
         super.init(nibName: nil, bundle: nil)
+        // giới hạn theo dung lượng điểm ảnh (ảnh xem 1800 px ~ 9 MB mỗi trang)
         cache.countLimit = 24
+        cache.totalCostLimit = 96 * 1024 * 1024
+    }
+
+    private func cacheSet(_ img: UIImage, _ key: NSString) {
+        let cost = Int(img.size.width * img.scale * img.size.height * img.scale * 4)
+        cache.setObject(img, forKey: key, cost: cost)
+    }
+
+    /// Báo kết quả cho màn hình gọi — đúng một lần.
+    private func complete(_ saved: Bool) {
+        if finished { return }
+        finished = true
+        afterPending = nil
+        busy.hide()
+        onDone?(saved)
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -404,7 +426,8 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
                         }
                     }
                 case .failure(let e):
-                    toast("Lỗi xử lý trang: \(e.localizedDescription)")
+                    if let i = doc.index(of: pid) { failed.insert(ImageOps.outName(doc.pages[i])) }
+                    if !finished { toast("Lỗi xử lý trang: \(e.localizedDescription)") }
                 }
             }
             reloadCell(pid)
@@ -414,7 +437,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             busy.hide()
             let a = afterPending
             afterPending = nil
-            a?()
+            if !finished { a?() }
         }
     }
 
@@ -447,7 +470,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     }
 
     private func configure(_ cell: PageCell, _ p: Page) {
-        let working = processing.contains(p.id) || !upToDate(p)
+        let working = processing.contains(p.id) || (!upToDate(p) && !failed.contains(ImageOps.outName(p)))
         let samePage = cell.pageId == p.id && cell.shownSrc == p.src && cell.imageView.image != nil
         cell.pageId = p.id
         cell.setScanning(working)
@@ -463,7 +486,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
                 let img = ImageOps.thumbnail(url, maxPixel: 1800)
                 DispatchQueue.main.async {
                     guard let self = self, let img = img else { return }
-                    self.cache.setObject(img, forKey: key)
+                    self.cacheSet(img, key)
                     if cell.pageId == p.id { cell.show(img, src: p.src) }
                 }
             }
@@ -480,7 +503,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             let img = ImageOps.quickPreview(dir: dir, page: p, maxLong: 1000)
             DispatchQueue.main.async {
                 guard let self = self, let img = img else { return }
-                self.cache.setObject(img, forKey: key)
+                self.cacheSet(img, key)
                 if cell.pageId == p.id && cell.imageView.image == nil { cell.show(img, src: p.src) }
             }
         }
@@ -588,10 +611,12 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         if applyAll {
             for i in 0..<doc.pages.count where doc.pages[i].filter != mode {
                 doc.pages[i].filter = mode
+                dirty = true
                 schedule(doc.pages[i])
             }
         } else if cur.filter != mode {
             doc.pages[index].filter = mode
+            dirty = true
             schedule(doc.pages[index])
         }
         DocStore.shared.save(doc)
@@ -601,15 +626,16 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     // MARK: thao tác
 
     @objc func rotateLeft() {
-        guard current != nil else { return }
+        guard current != nil, !finished else { return }
         doc.pages[index].rot = (doc.pages[index].rot + 270) % 360
+        dirty = true
         DocStore.shared.save(doc)
         schedule(doc.pages[index])
         if filterPanelVisible { refreshFilterPanel() }
     }
 
     @objc func openCrop() {
-        guard let p = current else { return }
+        guard let p = current, !finished, presentedViewController == nil else { return }
         let url = DocStore.shared.url(doc, p.src)
         let pid = p.id
         showWait()
@@ -618,6 +644,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 self.busy.hide()
+                guard !self.finished, self.presentedViewController == nil else { return }
                 guard let img = img else {
                     self.toast("Không đọc được ảnh")
                     return
@@ -629,6 +656,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
                     guard let self = self, let i = self.doc.index(of: pid) else { return }
                     self.doc.pages[i].quad = Page.pack(q)
                     self.doc.pages[i].auto = auto
+                    self.dirty = true
                     DocStore.shared.save(self.doc)
                     self.schedule(self.doc.pages[i])
                     if self.filterPanelVisible { self.refreshFilterPanel() }
@@ -640,7 +668,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     }
 
     @objc func retakeTapped() {
-        guard let p = current else { return }
+        guard let p = current, !finished, presentedViewController == nil else { return }
         if pending > 0 {
             showWait()
             afterPending = { [weak self] in self?.retakeTapped() }
@@ -651,6 +679,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             guard let self = self else { return }
             self.dismiss(animated: true)
             guard d != nil else { return }
+            self.dirty = true
             self.collection.reloadData()
             for q in self.doc.pages where !self.upToDate(q) { self.schedule(q) }
             self.updateIndicator()
@@ -661,20 +690,22 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     }
 
     @objc private func deleteCurrent() {
-        guard let p = current else { return }
+        guard let p = current, !finished, presentedViewController == nil else { return }
         confirm("Xoá trang này?", message: nil, ok: "Xoá") { [weak self] in
             self?.deletePage(p.id)
         }
     }
 
     func deletePage(_ pid: String) {
+        guard !finished, doc.index(of: pid) != nil else { return }
         processing.remove(pid)
         gen[pid] = -1
         setShared(pid, -1)
         DocStore.shared.removePage(doc, pageId: pid)
+        dirty = true
         if doc.pages.isEmpty {
             if context != .camera { DocStore.shared.delete(doc) }
-            onDone?(false)
+            complete(false)
             return
         }
         index = min(index, doc.pages.count - 1)
@@ -686,9 +717,11 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     }
 
     @objc private func rename() {
+        guard !finished, presentedViewController == nil else { return }
         prompt("Đổi tên tài liệu", initial: doc.title) { [weak self] v in
-            guard let self = self else { return }
+            guard let self = self, v != self.doc.title else { return }
             self.doc.title = v
+            self.dirty = true
             DocStore.shared.save(self.doc)
             self.titleBtn.setTitle(v, for: .normal)
         }
@@ -698,6 +731,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
 
     /// done = true: lưu tài liệu; false: quay lại màn hình chụp.
     func finishEditing(done: Bool) {
+        if finished { return }
         if pending > 0 {
             showWait()
             afterPending = { [weak self] in self?.finishEditing(done: done) }
@@ -716,15 +750,25 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             }
         }
         if done {
+            // chỉ xem mà không sửa gì thì giữ nguyên thời điểm sửa (không đẩy tài liệu lên đầu danh sách)
+            if doc.draft || dirty { doc.modified = Date() }
             doc.draft = false
-            doc.modified = Date()
         }
         DocStore.shared.save(doc)
         DocStore.shared.gc(doc)
-        onDone?(done)
+        complete(done)
+    }
+
+    /// Bỏ tài liệu vừa nhập (sau hộp thoại xác nhận) — cũng dùng cho tự kiểm thử.
+    func discardDraft() {
+        if finished { return }
+        afterPending = nil
+        DocStore.shared.delete(doc)
+        complete(false)
     }
 
     @objc private func backTapped() {
+        if finished || presentedViewController != nil { return }
         if filterPanelVisible {
             toggleFilterPanel()
             return
@@ -734,10 +778,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             finishEditing(done: false)
         case .newImport where doc.draft:
             confirm("Bỏ tài liệu này?", message: "Các trang vừa nhập sẽ không được lưu.", ok: "Bỏ") { [weak self] in
-                guard let self = self else { return }
-                self.afterPending = nil
-                DocStore.shared.delete(self.doc)
-                self.onDone?(false)
+                self?.discardDraft()
             }
         default:
             finishEditing(done: true)

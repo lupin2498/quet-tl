@@ -11,6 +11,8 @@ enum Theme {
     static let text2 = UIColor(rgb: 0xA6A5AA)
     static let red = UIColor(rgb: 0xFF5B4F)
     static let badge = UIColor(rgb: 0xFF6A55)
+    /// Độ dài tối đa của tên tài liệu.
+    static let maxTitle = 120
 
     static func applyAppearance() {
         let nav = UINavigationBarAppearance()
@@ -97,6 +99,15 @@ enum Theme {
         return f.string(from: d)
     }
 
+    /// Tên tài liệu hợp lệ từ chuỗi người dùng nhập: bỏ khoảng trắng thừa và xuống dòng, tối đa `maxTitle` ký tự;
+    /// rỗng thì giữ tên cũ.
+    static func cleanTitle(_ raw: String, fallback: String) -> String {
+        let oneLine = raw.components(separatedBy: .newlines).joined(separator: " ")
+        let v = String(oneLine.trimmingCharacters(in: .whitespacesAndNewlines).prefix(maxTitle))
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return v.isEmpty ? fallback : v
+    }
+
     static func newTitle(_ d: Date) -> String {
         let f = DateFormatter()
         f.locale = Locale(identifier: "en_US_POSIX")
@@ -152,13 +163,12 @@ extension UIViewController {
     func prompt(_ title: String, initial: String, done: @escaping (String) -> Void) {
         let a = UIAlertController(title: title, message: nil, preferredStyle: .alert)
         a.addTextField { tf in
-            tf.text = initial
+            tf.text = String(initial.prefix(Theme.maxTitle))
             tf.clearButtonMode = .whileEditing
         }
         a.addAction(UIAlertAction(title: "Hủy", style: .cancel))
         a.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            let v = (a.textFields?.first?.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-            if !v.isEmpty { done(v) }
+            done(Theme.cleanTitle(a.textFields?.first?.text ?? "", fallback: initial))
         })
         present(a, animated: true)
     }

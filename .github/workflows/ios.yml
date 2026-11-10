@@ -165,7 +165,7 @@ jobs:
           DATA=$(xcrun simctl get_app_container "$UDID" vn.quettailieu.scanner data)
           echo "DATA=$DATA"
           mkdir -p out/simctl
-          for i in $(seq 1 120); do
+          for i in $(seq 1 240); do
             if [ -f "$DATA/Documents/selftest/done.txt" ]; then echo "self-test xong sau ${i}x3s"; break; fi
             if [ $((i % 5)) -eq 0 ]; then xcrun simctl io "$UDID" screenshot "out/simctl/s_$(printf %03d $i).png" > /dev/null 2>&1; fi
             if ! xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "vn.quettailieu.scanner"; then

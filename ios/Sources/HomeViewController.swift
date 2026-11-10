@@ -11,6 +11,9 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     private let empty = UIStackView()
     private let busy = BusyOverlay()
     private let thumbCache = NSCache<NSString, UIImage>()
+    /// Số tài liệu đang quét dở vừa được khôi phục lúc mở ứng dụng (báo một lần khi màn hình hiện ra).
+    var recoveredCount = 0
+    private var importing = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +32,25 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if recoveredCount > 0 {
+            toast("Đã khôi phục \(recoveredCount) tài liệu đang quét dở")
+            recoveredCount = 0
+        }
+    }
+
+    /// Màn hình chính đang hiển thị trên cùng và không có gì che (để không mở trùng màn hình khi chạm đúp).
+    private var isFrontmost: Bool {
+        if importing { return false }
+        // hộp thoại / bộ chọn ảnh đang đóng dở không tính là đang che
+        if let p = presentedViewController, !p.isBeingDismissed { return false }
+        return navigationController?.topViewController === self
+    }
+
+    /// Đang ở giữa việc nhập ảnh (đọc ảnh / tìm mép ở luồng nền).
+    var isImporting: Bool { importing }
 
     private func buildUI() {
         search.searchBarStyle = .minimal
@@ -166,9 +188,15 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
 
+    /// Tìm không phân biệt hoa/thường và dấu tiếng Việt ("bien ban" ra "Biên bản").
+    static func matches(title: String, query: String) -> Bool {
+        let q = ImageOps.fold(query.trimmingCharacters(in: .whitespaces))
+        return q.isEmpty || ImageOps.fold(title).contains(q)
+    }
+
     private func applyFilter() {
-        let q = (search.text ?? "").trimmingCharacters(in: .whitespaces).lowercased()
-        shown = q.isEmpty ? all : all.filter { $0.title.lowercased().contains(q) }
+        let q = search.text ?? ""
+        shown = all.filter { HomeViewController.matches(title: $0.title, query: q) }
         table.reloadData()
         empty.isHidden = !all.isEmpty
         countLabel.text = all.isEmpty ? "" : "\(all.count) tài liệu"
@@ -181,6 +209,7 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     @objc private func batchTapped() { openCamera(batch: true) }
 
     func openCamera(batch: Bool?) {
+        guard isFrontmost else { return }
         let cam = CameraViewController(mode: .new(batch: batch))
         cam.onFinished = { [weak self] doc in
             guard let self = self else { return }
@@ -195,10 +224,13 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func openDocument(_ doc: Doc) {
+        // chạm đúp một dòng / gọi lại hai lần: chỉ mở một màn hình tài liệu
+        guard navigationController?.topViewController === self else { return }
         navigationController?.pushViewController(DocumentViewController(doc: doc), animated: true)
     }
 
     @objc private func importTapped() {
+        guard isFrontmost else { return }
         var cfg = PHPickerConfiguration()
         cfg.filter = .images
         cfg.selectionLimit = 0
@@ -208,19 +240,28 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
-        picker.dismiss(animated: true)
-        guard !results.isEmpty else { return }
+        // đợi bộ chọn ảnh đóng xong rồi mới xử lý: mở màn hình khác trong lúc nó đang đóng sẽ bị hệ thống bỏ qua
+        picker.dismiss(animated: true) { [weak self] in
+            self?.handlePicked(results)
+        }
+    }
+
+    private func handlePicked(_ results: [PHPickerResult]) {
+        guard !results.isEmpty, !importing else { return }
+        importing = true
         if results.count == 1 {
             busy.show(in: view, text: "Đang nhập ảnh…")
-            ImageLoader.forEach(results, { [weak self] img in
-                DispatchQueue.main.async {
-                    self?.busy.hide()
-                    self?.importImages([img])
-                }
-            }, completion: { [weak self] ok, _ in
-                if ok == 0 {
-                    self?.busy.hide()
-                    self?.toast("Không đọc được ảnh")
+            let slot = PickedImage()
+            ImageLoader.forEach(results, { img in
+                slot.image = img
+            }, completion: { [weak self] _, _ in
+                guard let self = self else { return }
+                self.busy.hide()
+                self.importing = false
+                if let img = slot.image {
+                    self.importImages([img])
+                } else {
+                    self.toast("Không đọc được ảnh")
                 }
             })
             return
@@ -232,8 +273,12 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
             let q = img.cgImage.flatMap { ImageOps.detect($0) }
             _ = try? DocStore.shared.addPage(doc, image: img, quad: q, auto: true)
         }, completion: { [weak self] _, failed in
-            guard let self = self else { return }
+            guard let self = self else {
+                DocStore.shared.delete(doc)
+                return
+            }
             self.busy.hide()
+            self.importing = false
             if doc.pages.isEmpty {
                 DocStore.shared.delete(doc)
                 self.toast("Không đọc được ảnh")
@@ -244,10 +289,18 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
         })
     }
 
+    private final class PickedImage {
+        var image: UIImage?
+    }
+
     /// Nhập ảnh: 1 ảnh -> màn hình cắt; nhiều ảnh -> tự tìm mép rồi mở trình chỉnh sửa.
     func importImages(_ images: [UIImage]) {
         guard !images.isEmpty else {
             toast("Không đọc được ảnh")
+            return
+        }
+        guard isFrontmost else {
+            toast("Hãy hoàn tất thao tác đang mở trước khi nhập ảnh")
             return
         }
         if images.count == 1 {
@@ -261,6 +314,7 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
                         try DocStore.shared.addPage(doc, image: img, quad: quad, auto: auto)
                         self.openEditor(doc, isNew: true)
                     } catch {
+                        DocStore.shared.delete(doc)
                         self.toast("Lỗi nhập ảnh: \(error.localizedDescription)")
                     }
                 }
@@ -270,20 +324,27 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
             present(crop, animated: true)
             return
         }
+        importing = true
         busy.show(in: view, text: "Đang tìm mép trang…")
         DispatchQueue.global(qos: .userInitiated).async {
             let doc = DocStore.shared.create(draft: true)
+            var failed = 0
             for raw in images {
-                let img = ImageOps.normalized(raw, maxDim: ImageOps.maxSrc)
-                let q = img.cgImage.flatMap { ImageOps.detect($0) }
-                _ = try? DocStore.shared.addPage(doc, image: img, quad: q, auto: true)
+                autoreleasepool {
+                    let img = ImageOps.normalized(raw, maxDim: ImageOps.maxSrc)
+                    let q = img.cgImage.flatMap { ImageOps.detect($0) }
+                    if (try? DocStore.shared.addPage(doc, image: img, quad: q, auto: true)) == nil { failed += 1 }
+                }
             }
+            let nFailed = failed
             DispatchQueue.main.async {
                 self.busy.hide()
+                self.importing = false
                 if doc.pages.isEmpty {
                     DocStore.shared.delete(doc)
                     self.toast("Không đọc được ảnh")
                 } else {
+                    if nFailed > 0 { self.toast("\(nFailed) ảnh không đọc được") }
                     self.openEditor(doc, isNew: true)
                 }
             }
@@ -291,6 +352,14 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     func openEditor(_ doc: Doc, isNew: Bool) {
+        guard navigationController?.topViewController === self else {
+            // màn hình chính không còn ở trên cùng (hiếm): giữ tài liệu vừa nhập như một tài liệu thường thay vì để mất
+            if isNew {
+                doc.draft = false
+                DocStore.shared.save(doc)
+            }
+            return
+        }
         let ed = EditorViewController(doc: doc, context: isNew ? .newImport : .existing)
         ed.onDone = { [weak self] saved in
             guard let self = self else { return }
@@ -340,7 +409,11 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let d = shown[indexPath.row]
         let del = UIContextualAction(style: .destructive, title: "Xoá") { [weak self] _, _, done in
-            self?.confirm("Xoá tài liệu?", message: "\"\(d.title)\" sẽ bị xoá vĩnh viễn.", ok: "Xoá") {
+            guard let self = self, self.isFrontmost else {
+                done(false)
+                return
+            }
+            self.confirm("Xoá tài liệu?", message: "\"\(d.title)\" sẽ bị xoá vĩnh viễn.", ok: "Xoá") { [weak self] in
                 DocStore.shared.delete(d)
                 self?.reload()
             }
@@ -350,9 +423,11 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
     }
 
     private func docMenu(_ d: Doc) {
+        guard isFrontmost else { return }
         let a = UIAlertController(title: d.title, message: nil, preferredStyle: .actionSheet)
         a.addAction(UIAlertAction(title: "Đổi tên", style: .default) { [weak self] _ in
             self?.prompt("Đổi tên tài liệu", initial: d.title) { v in
+                guard v != d.title else { return }
                 d.title = v
                 d.modified = Date()
                 DocStore.shared.save(d)
@@ -381,13 +456,32 @@ final class HomeViewController: UIViewController, UITableViewDataSource, UITable
             toast("Hãy mở tài liệu để hoàn tất xử lý trang")
             return
         }
+        let job: ImageOps.ExportJob
         do {
-            let items: [URL] = pdf ? [try ImageOps.exportPDF(doc: doc)] : try ImageOps.exportImages(doc: doc)
-            let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
-            vc.popoverPresentationController?.sourceView = view
-            present(vc, animated: true)
+            job = try ImageOps.exportJob(doc: doc)
         } catch {
             toast("Lỗi: \(error.localizedDescription)")
+            return
+        }
+        // tạo file ở luồng nền (tài liệu nhiều trang mất vài giây), giao diện không bị đứng
+        busy.show(in: view, text: pdf ? "Đang tạo PDF…" : "Đang chuẩn bị ảnh…")
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let result: Result<[URL], Error> = Result {
+                try (pdf ? [ImageOps.exportPDF(job: job)] : ImageOps.exportImages(job: job))
+            }
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.busy.hide()
+                switch result {
+                case .success(let items):
+                    guard self.isFrontmost else { return }
+                    let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
+                    vc.popoverPresentationController?.sourceView = self.view
+                    self.present(vc, animated: true)
+                case .failure(let error):
+                    self.toast("Lỗi: \(error.localizedDescription)")
+                }
+            }
         }
     }
 

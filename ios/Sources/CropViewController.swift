@@ -17,6 +17,8 @@ final class CropViewController: UIViewController {
     private var detected: [CGPoint]?
     private var detecting = false
     private var loaded = false
+    /// Đã bấm Xong/Hủy (chống báo kết quả hai lần khi chạm đúp -> thêm trùng trang).
+    private var finished = false
 
     private let crop = CropOverlayView()
     private let spinner = UIActivityIndicatorView(style: .large)
@@ -197,7 +199,7 @@ final class CropViewController: UIViewController {
     }
 
     @objc private func toggleAuto() {
-        guard loaded else { return }
+        guard loaded, !finished else { return }
         if autoOn {
             autoOn = false
             crop.setQuad(Geom.fullQuad(fullSize.width, fullSize.height), animated: true)
@@ -235,21 +237,31 @@ final class CropViewController: UIViewController {
     func testToggleAuto() { toggleAuto() }
     func testDragCorner(_ i: Int, by d: CGPoint) { crop.testDrag(corner: i, by: d) }
     func testEndDrag() { crop.testEndDrag() }
+    func testCancel() { cancelTapped() }
 
     @objc private func cancelTapped() {
+        if finished { return }
+        finished = true
         if let c = onCancel { c() } else { dismiss(animated: true) }
     }
 
     @objc func doneTapped() {
-        guard loaded else { return }
+        guard loaded, !finished else { return }
+        // kết thúc hoạt ảnh chuyển khung (nếu đang chạy) để lấy đúng khung đích, không phải khung trung gian
+        crop.finishAnimation()
         guard crop.isValidQuad else {
             toast("Vùng cắt không hợp lệ — hãy chỉnh lại các góc")
             return
         }
         var q = Geom.order(crop.quad)
         if !Geom.isConvex(q) { q = crop.quad }
+        finished = true
         onDone?(q, autoOn)
     }
+
+    /// Khung cắt hiện tại (toạ độ ảnh đầy đủ) — dùng cho tự kiểm thử.
+    var testQuad: [CGPoint] { crop.quad }
+    var testFullSize: CGSize { fullSize }
 }
 
 /// Ảnh + khung cắt. Ảnh và kính lúp do GPU vẽ (UIImageView), khung do CAShapeLayer vẽ nên kéo mượt.
@@ -338,8 +350,9 @@ final class CropOverlayView: UIView {
 
     func setQuad(_ q: [CGPoint], animated: Bool) {
         guard q.count == 4 else { return }
-        let target = Geom.clamp(q, imgW, imgH)
-        stopAnim()
+        let finite = q.map { CGPoint(x: $0.x.isFinite ? $0.x : 0, y: $0.y.isFinite ? $0.y : 0) }
+        let target = Geom.clamp(finite, imgW, imgH)
+        finishAnimation()
         if !animated || quad.count != 4 {
             quad = target
             redraw()
@@ -358,6 +371,16 @@ final class CropOverlayView: UIView {
     private func stopAnim() {
         link?.invalidate()
         link = nil
+    }
+
+    /// Kết thúc ngay hoạt ảnh chuyển khung: nhảy tới khung đích để không ai đọc phải khung trung gian.
+    func finishAnimation() {
+        guard link != nil else { return }
+        stopAnim()
+        if animTo.count == 4 {
+            quad = animTo
+            redraw()
+        }
     }
 
     @objc private func step() {
@@ -459,7 +482,7 @@ final class CropOverlayView: UIView {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let t = touches.first, quad.count == 4 else { return }
-        stopAnim()
+        finishAnimation()
         let p = t.location(in: self)
         dragCorner = -1
         dragEdge = -1
@@ -511,7 +534,7 @@ final class CropOverlayView: UIView {
     /// Mô phỏng kéo góc (toạ độ ảnh) cho tự kiểm thử; giữ trạng thái đang kéo để thấy kính lúp.
     func testDrag(corner i: Int, by d: CGPoint) {
         guard quad.count == 4, i >= 0, i < 4 else { return }
-        stopAnim()
+        finishAnimation()
         dragCorner = i
         dragEdge = -1
         quad[i] = CGPoint(x: min(max(quad[i].x + d.x, 0), imgW), y: min(max(quad[i].y + d.y, 0), imgH))

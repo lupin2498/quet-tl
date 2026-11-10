@@ -21,8 +21,9 @@ struct Page: Codable, Equatable {
     static func pack(_ pts: [CGPoint]) -> [Double] {
         var r = [Double]()
         for p in pts {
-            r.append(Double(p.x))
-            r.append(Double(p.y))
+            // giá trị không hữu hạn làm JSONEncoder báo lỗi -> tài liệu không lưu được nữa
+            r.append(p.x.isFinite ? Double(p.x) : 0)
+            r.append(p.y.isFinite ? Double(p.y) : 0)
         }
         return r
     }
@@ -35,6 +36,12 @@ final class Doc: Codable {
     var modified: Date
     var draft: Bool
     var pages: [Page]
+    /// Đã bị xoá: mọi lần lưu sau đó bị bỏ qua (không tạo lại thư mục). Không ghi vào doc.json.
+    var deleted = false
+
+    private enum CodingKeys: String, CodingKey {
+        case id, title, created, modified, draft, pages
+    }
 
     init(id: String, title: String, draft: Bool) {
         self.id = id
@@ -83,10 +90,12 @@ final class DocStore {
     }
 
     func save(_ doc: Doc) {
+        // tài liệu đã xoá (hoặc thư mục không còn) thì không ghi lại, tránh "hồi sinh" tài liệu rỗng
+        // khi một việc xử lý ảnh ở luồng nền xong muộn
+        guard !doc.deleted, fm.fileExists(atPath: dir(doc).path) else { return }
         let enc = JSONEncoder()
         enc.dateEncodingStrategy = .millisecondsSince1970
         guard let data = try? enc.encode(doc) else { return }
-        try? fm.createDirectory(at: dir(doc), withIntermediateDirectories: true)
         try? data.write(to: url(doc, "doc.json"), options: .atomic)
     }
 
@@ -108,18 +117,45 @@ final class DocStore {
     }
 
     func delete(_ doc: Doc) {
+        doc.deleted = true
         try? fm.removeItem(at: dir(doc))
     }
 
-    func cleanDrafts() {
-        guard let items = try? fm.contentsOfDirectory(atPath: root.path) else { return }
-        let now = Date()
-        for id in items {
-            guard let d = load(id) else { continue }
-            if (d.draft && now.timeIntervalSince(d.modified) > 24 * 3600) || (!d.draft && d.pages.isEmpty) {
-                delete(d)
+    /// Gọi một lần lúc mở ứng dụng (chưa màn hình nào dùng tài liệu):
+    /// - bản nháp còn trang là do lần trước ứng dụng bị đóng giữa lúc quét -> đưa trở lại danh sách thay vì để mất;
+    /// - bản nháp / tài liệu không có trang, thư mục chưa kịp ghi doc.json -> xoá;
+    /// - dọn file tạm đã chia sẻ.
+    /// Thư mục có doc.json nhưng không đọc được thì để nguyên (không xoá ảnh của người dùng).
+    /// Trả về số tài liệu được khôi phục.
+    @discardableResult
+    func startupMaintenance() -> Int {
+        var recovered = 0
+        if let items = try? fm.contentsOfDirectory(atPath: root.path) {
+            for id in items {
+                let dirURL = root.appendingPathComponent(id, isDirectory: true)
+                guard let d = load(id) else {
+                    // tạo tài liệu bị ngắt trước khi ghi doc.json -> thư mục rác
+                    if !fm.fileExists(atPath: dirURL.appendingPathComponent("doc.json").path) {
+                        try? fm.removeItem(at: dirURL)
+                    }
+                    continue
+                }
+                if d.draft {
+                    // bỏ trang mất ảnh gốc (không thể xử lý lại)
+                    d.pages.removeAll { !fm.fileExists(atPath: url(d, $0.src).path) }
+                }
+                if d.pages.isEmpty {
+                    delete(d)
+                } else if d.draft {
+                    d.draft = false
+                    save(d)
+                    recovered += 1
+                }
             }
         }
+        let share = fm.temporaryDirectory.appendingPathComponent("share", isDirectory: true)
+        try? fm.removeItem(at: share)
+        return recovered
     }
 
     /// Thêm trang mới từ ảnh (đã xoay đúng chiều). Trả về trang vừa thêm.
@@ -150,9 +186,10 @@ final class DocStore {
         guard let cg = img.cgImage, let data = UIImage(cgImage: cg).jpegData(compressionQuality: 0.92) else {
             throw NSError(domain: "DocStore", code: 1, userInfo: [NSLocalizedDescriptionKey: "Không lưu được ảnh"])
         }
-        removeFiles(doc, doc.pages[i])
+        // ghi ảnh mới xong mới xoá ảnh cũ: nếu ghi lỗi (hết dung lượng) thì trang cũ vẫn còn nguyên
         let name = newId("s") + "_src.jpg"
         try data.write(to: url(doc, name), options: .atomic)
+        removeFiles(doc, doc.pages[i])
         var p = doc.pages[i]
         p.src = name
         p.srcW = cg.width
