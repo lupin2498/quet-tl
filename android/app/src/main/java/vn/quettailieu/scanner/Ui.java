@@ -157,8 +157,8 @@ final class Ui {
     }
 
     /**
-     * Hàng công cụ chia đều bề ngang màn hình; nút nào có nhãn dài hơn phần được chia thì nở theo nhãn
-     * và cả hàng cuộn ngang (không cắt chữ trên màn hình hẹp hay khi phóng to cỡ chữ).
+     * Hàng công cụ trải hết bề ngang màn hình, mỗi nút rộng theo nhãn của nó; không đủ chỗ thì cả hàng
+     * cuộn ngang (không cắt chữ trên màn hình hẹp hay khi phóng to cỡ chữ).
      */
     static HorizontalScrollView toolRow(Context c, LinearLayout[] buttons, int bg) {
         HorizontalScrollView hs = new HorizontalScrollView(c);
@@ -167,10 +167,11 @@ final class Ui {
         hs.setBackgroundColor(bg);
         LinearLayout row = new LinearLayout(c);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        int minW = c.getResources().getDisplayMetrics().widthPixels / Math.max(1, buttons.length);
+        // Mỗi nút rộng theo nhãn của nó; phần thừa của màn hình chia đều cho các nút (fillViewport + weight),
+        // nên nhãn dài ("Thêm hình mờ") không bị đẩy sát mép trong khi nhãn ngắn còn dư chỗ. Hẹp quá thì cuộn ngang.
         for (LinearLayout b : buttons) {
             b.setPadding(dp(6), dp(6), dp(6), dp(6));
-            b.setMinimumWidth(minW);
+            b.setMinimumWidth(dp(56));
             row.addView(b, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, 1f));
         }
         hs.addView(row, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
