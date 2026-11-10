@@ -1442,7 +1442,10 @@ def t_permission_denied():
         # bấm chụp khi chưa có quyền: không được dừng ứng dụng
         tap(desc="Chụp")
         time.sleep(2)
-        deny = find_id("permission_deny_button") or find_id("permission_deny_and_dont_ask_again_button")
+        # lưu ý: phần tử ElementTree không có nút con bị coi là False -> phải so với None, không dùng "or"
+        deny = find_id("permission_deny_button")
+        if deny is None:
+            deny = find_id("permission_deny_and_dont_ask_again_button")
         if deny is not None:
             tap_xy(*bounds(deny))
             time.sleep(1.5)
@@ -1492,7 +1495,9 @@ def t_camera_blocked_retry():
     wait_activity("CameraActivity", 12)
     time.sleep(3.5)
     try:
+        # chặn ở cả mức gói và mức uid (Android mới chỉ xét mức uid với quyền thời gian chạy)
         sh("appops set %s CAMERA ignore" % PKG)
+        sh("appops set --uid %s CAMERA ignore" % PKG)
         time.sleep(3)
         blocked = exists(text="Thử lại", timeout=4)
         if not blocked:
@@ -1518,6 +1523,7 @@ def t_camera_blocked_retry():
         if top_activity() != "CameraActivity" or not exists(text="Thử lại", timeout=5):
             raise AssertionError("Máy ảnh vẫn bị chặn nhưng không còn thông báo / nút Thử lại")
         sh("appops set %s CAMERA allow" % PKG)
+        sh("appops set --uid %s CAMERA allow" % PKG)
         time.sleep(1.5)
         tap(text="Thử lại")
         time.sleep(4)

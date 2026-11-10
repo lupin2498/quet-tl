@@ -415,6 +415,8 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
         message.text = text
         message.isHidden = text == nil
         settingsBtn.isHidden = !settings
+        // đang báo lỗi thì ẩn khung xem trước (khung hình cuối còn đứng lại làm chữ khó đọc)
+        previewLayer.isHidden = text != nil
     }
 
     private func startSession() {
@@ -434,6 +436,11 @@ final class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegat
             }
             if self.device != nil && !self.session.isRunning {
                 self.session.startRunning()
+            }
+            let running = self.session.isRunning
+            DispatchQueue.main.async {
+                // phiên chạy (lại) được: bỏ thông báo lỗi còn lại từ lần trước
+                if running && self.cameraReady { self.showMessage(nil, settings: false) }
             }
         }
     }

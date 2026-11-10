@@ -204,7 +204,7 @@ public class CameraActivity extends BaseActivity {
         preview.addView(permPanel, Ui.frame(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(320), Gravity.CENTER));
         errorPanel = buildErrorPanel();
         errorPanel.setVisibility(View.GONE);
-        preview.addView(errorPanel, Ui.frame(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(320), Gravity.CENTER));
+        preview.addView(errorPanel, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         FrameLayout.LayoutParams plp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         plp.topMargin = Ui.dp(56);
         root.addView(preview, plp);
@@ -350,6 +350,9 @@ public class CameraActivity extends BaseActivity {
         p.setOrientation(LinearLayout.VERTICAL);
         p.setGravity(Gravity.CENTER);
         p.setPadding(Ui.dp(32), 0, Ui.dp(32), 0);
+        // phủ tối cả khung xem trước: khung hình cuối cùng của máy ảnh còn đứng lại bên dưới làm chữ khó đọc
+        p.setBackgroundColor(0xE6000000);
+        p.setClickable(true);
         errorText = Ui.text(this, "", 16, Ui.TEXT, false);
         errorText.setGravity(Gravity.CENTER);
         p.addView(errorText);
@@ -1043,7 +1046,7 @@ public class CameraActivity extends BaseActivity {
         if (!takePicture()) {
             Ui.toast(this, "Máy ảnh chưa sẵn sàng");
             // máy ảnh chưa mở được (bận, vừa bị ngắt...): bấm chụp cũng là một lần thử mở lại
-            if (device == null && !opening && resumed && bg != null && texture.isAvailable()) openCamera();
+            if (device == null && !opening) retryCamera();
             return;
         }
         busy = true;
