@@ -211,7 +211,12 @@ enum ImageOps {
     }
 
     static func outName(_ p: Page) -> String {
-        return "o_\(p.id)_\(fnv(warpName(p) + "|\(p.filter)|\(p.rot)")).jpg"
+        var key = warpName(p) + "|\(p.filter)|\(p.rot)"
+        // chỉ trộn khi có chỉnh sửa: trang không chỉnh sửa giữ nguyên tên file như các bản trước
+        if let e = p.erase, !e.isEmpty { key += "|e" + Edits.key(e) }
+        if let m = p.marks, !m.isEmpty { key += "|m" + Edits.key(m) }
+        if let h = p.hdr { key += "|h" + h }
+        return "o_\(p.id)_\(fnv(key)).jpg"
     }
 
     /// Sinh ảnh kết quả cho trang (chạy ở luồng nền). Tên file suy ra từ tham số nên dùng lại được.
@@ -239,13 +244,69 @@ enum ImageOps {
             try writeJPEG(w, to: warpURL, quality: 0.92)
             warped = w
         }
-        guard let base = warped, let f = filtered(base, mode: p.filter), let fin = rotated(f, degrees: p.rot) else {
-            throw OpError(message: "Không xử lý được ảnh")
+        guard let base = warped else { throw OpError(message: "Không xử lý được ảnh") }
+        // chuỗi xử lý: nắn phẳng -> (dò ngón tay, một lần cho mỗi ảnh nắn phẳng) -> xoá thông minh -> lọc -> đánh dấu -> xoay -> tiêu đề
+        let erase = (p.erase ?? []).map { $0.op }
+        let marks = p.marks ?? []
+        let needFinger = p.fingerKey != wn
+        var cur: CGImage = base
+        if p.filter != Enhancer.original || !erase.isEmpty || !marks.isEmpty || needFinger {
+            let w = base.width, h = base.height, bpr = w * 4
+            guard let ctx = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: bpr,
+                                      space: CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue),
+                  let data = ctx.data else { throw OpError(message: "Không đủ bộ nhớ để xử lý ảnh") }
+            ctx.draw(base, in: CGRect(x: 0, y: 0, width: w, height: h))
+            let px = data.bindMemory(to: UInt8.self, capacity: bpr * h)
+            if needFinger {
+                p.finger = Retouch.hasFinger(px, w, h, bpr) ? 1 : 2
+                p.fingerKey = wn
+            }
+            if !erase.isEmpty { Retouch.applyErase(px, w, h, bpr, erase) }
+            Enhancer.apply(px, width: w, height: h, bytesPerRow: bpr, mode: p.filter)
+            if !marks.isEmpty {
+                // khảm lấy màu từ ảnh nền lúc CHƯA vẽ đánh dấu nào (giống màn hình chỉnh sửa)
+                let clean = ctx.makeImage()
+                MarkRenderer(dir: dir).render(into: ctx, width: w, height: h, marks: marks, base: clean)
+            }
+            guard let img = ctx.makeImage() else { throw OpError(message: "Không xử lý được ảnh") }
+            cur = img
         }
+        guard var fin = rotated(cur, degrees: p.rot) else { throw OpError(message: "Không xử lý được ảnh") }
+        if let hdr = p.hdr, let withHdr = MarkRenderer.withHeader(fin, hdr) { fin = withHdr }
         try writeJPEG(fin, to: outURL, quality: 0.9)
         p.warp = wn
         p.out = on
         return p
+    }
+
+    /// Cạnh dài của ảnh xem trước ở màn hình Xóa thông minh / Đánh dấu.
+    static let previewMax: CGFloat = 1500
+
+    /// Điểm ảnh RGBA của ảnh đã nắn phẳng (chưa lọc, chưa xoay), cạnh dài không quá maxDim.
+    static func loadWarp(dir: URL, page p: Page, maxDim: CGFloat) -> (data: [UInt8], w: Int, h: Int)? {
+        guard let wn = p.warp, let cg = loadCG(dir.appendingPathComponent(wn)) else { return nil }
+        return rgbaPixels(cg, maxDim: maxDim)
+    }
+
+    /// Ảnh từ mảng điểm ảnh RGBX (byte thứ tư bị bỏ qua).
+    static func cgImage(rgba: [UInt8], w: Int, h: Int) -> CGImage? {
+        guard w > 0, h > 0, rgba.count >= w * h * 4, let provider = CGDataProvider(data: Data(rgba) as CFData) else { return nil }
+        return CGImage(width: w, height: h, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: w * 4,
+                       space: CGColorSpaceCreateDeviceRGB(),
+                       bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue),
+                       provider: provider, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+    }
+
+    /// Áp chuỗi xử lý điểm ảnh (xoá thông minh + bộ lọc) lên bản sao của ảnh xem trước; trả về ảnh mới.
+    static func process(_ base: [UInt8], _ w: Int, _ h: Int, erase: [Retouch.Op], filter: Int) -> CGImage? {
+        var px = base
+        px.withUnsafeMutableBufferPointer { buf in
+            guard let p = buf.baseAddress else { return }
+            if !erase.isEmpty { Retouch.applyErase(p, w, h, w * 4, erase) }
+            Enhancer.apply(p, width: w, height: h, bytesPerRow: w * 4, mode: filter)
+        }
+        return cgImage(rgba: px, w: w, h: h)
     }
 
     /// Nắn phẳng nhanh ở độ phân giải thấp để xem trước.

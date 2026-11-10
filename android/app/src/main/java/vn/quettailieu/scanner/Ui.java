@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
@@ -249,6 +250,16 @@ final class Ui {
         show(b.create());
     }
 
+    /** Ẩn bàn phím đang phục vụ ô nhập v (gọi lúc ô còn gắn vào cửa sổ, vd. trong nút của hộp thoại). */
+    static void hideKeyboard(View v) {
+        if (v == null) return;
+        try {
+            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null && v.getWindowToken() != null) imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        } catch (RuntimeException ignored) {
+        }
+    }
+
     /** Hộp thoại nhập chữ (đổi tên). */
     static void prompt(Context c, String title, String initial, final Cb<String> cb) {
         if (!canShow(c)) return;
@@ -263,10 +274,17 @@ final class Ui {
         box.setPadding(dp(20), dp(8), dp(20), 0);
         box.addView(et);
         final AlertDialog d = dialog(c).setTitle(title).setView(box)
-                .setNegativeButton("Hủy", null)
+                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        hideKeyboard(et);
+                    }
+                })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        // Android cũ để bàn phím ở lại sau khi hộp thoại đóng -> che thanh công cụ
+                        hideKeyboard(et);
                         String v = et.getText().toString().trim();
                         if (v.length() > 0) cb.done(v);
                     }

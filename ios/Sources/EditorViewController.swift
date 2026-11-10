@@ -1,6 +1,8 @@
 import UIKit
 
-/// Trình chỉnh sửa trang: lật trang, bộ lọc, xoay, cắt lại, chụp lại, so sánh, xoá, đổi tên.
+/// Trình chỉnh sửa trang. Thanh công cụ chia ba nhóm như CamScanner:
+/// Ảnh (Cắt, Xoay trái, Bộ lọc, Xóa thông minh, Chụp lại) · Đánh dấu (Ký tên, Thêm văn bản, Brush, Khảm, Thêm hình mờ)
+/// · Trang (Cắt dán, Tiêu đề trang). Kèm So sánh, Xoá trang, đổi tên, lời nhắc gỡ ngón tay; ✓ để lưu.
 /// Ảnh kết quả được sinh ở luồng nền theo thứ tự; mỗi trang có "thế hệ" để bỏ kết quả cũ.
 final class EditorViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     enum Context { case camera, newImport, existing }
@@ -43,6 +45,21 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     private var filterLabels = [UILabel]()
     private let applyAllBtn = UIButton(type: .custom)
     private let busy = BusyOverlay()
+    private static let tabNames = ["Ảnh", "Đánh dấu", "Trang"]
+    private let toolBar = UIView()
+    /// Thẻ nhóm + dải công cụ cuộn ngang + nút ✓.
+    private let toolsArea = UIView()
+    /// ✕ · Bộ lọc · ✓ (thay cho dải công cụ khi bảng lọc đang mở).
+    private let filterBar = UIView()
+    private let toolScroll = UIScrollView()
+    private var tabButtons = [UIButton]()
+    private var tabAnchors = [UIView]()
+    private var activeTab = -1
+    /// Bộ lọc của từng trang lúc mở bảng lọc (để nút ✕ trả lại).
+    private var filterBackup: [String: Int]?
+    private let banner = UIView()
+    /// Tài liệu ghép vừa tạo bằng "Cắt dán" (cho tự kiểm thử).
+    private(set) var lastCollageId: String?
 
     init(doc: Doc, context: Context, startPage: Int = 0) {
         self.doc = doc
@@ -74,8 +91,10 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         super.viewDidLoad()
         view.backgroundColor = Theme.bg
         buildUI()
+        setActiveTab(0)
         for p in doc.pages where !upToDate(p) { schedule(p) }
         updateIndicator()
+        updateBanner()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -179,24 +198,60 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         }
 
         buildFilterPanel()
+        buildBanner()
 
-        let bar = UIView()
-        bar.backgroundColor = Theme.bgDark
-        bar.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(bar)
-        let retake = Theme.toolButton("camera", "Chụp lại")
-        retake.addTarget(self, action: #selector(retakeTapped), for: .touchUpInside)
-        let rot = Theme.toolButton("rotate.left", "Bên trái")
-        rot.addTarget(self, action: #selector(rotateLeft), for: .touchUpInside)
-        let filt = Theme.toolButton("camera.filters", "Lọc")
-        filt.addTarget(self, action: #selector(toggleFilterPanel), for: .touchUpInside)
-        let cropB = Theme.toolButton("crop", "Cắt")
-        cropB.addTarget(self, action: #selector(openCrop), for: .touchUpInside)
-        let tools = UIStackView(arrangedSubviews: [retake, rot, filt, cropB])
-        tools.axis = .horizontal
-        tools.distribution = .fillEqually
-        tools.translatesAutoresizingMaskIntoConstraints = false
-        bar.addSubview(tools)
+        toolBar.backgroundColor = Theme.bgDark
+        toolBar.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(toolBar)
+        toolsArea.translatesAutoresizingMaskIntoConstraints = false
+        toolBar.addSubview(toolsArea)
+
+        // hàng thẻ: Ảnh | Đánh dấu | Trang — chạm để cuộn tới nhóm công cụ tương ứng
+        let tabs = UIStackView()
+        tabs.axis = .horizontal
+        tabs.spacing = 2
+        tabs.translatesAutoresizingMaskIntoConstraints = false
+        toolsArea.addSubview(tabs)
+        for (k, name) in EditorViewController.tabNames.enumerated() {
+            let b = UIButton(type: .system)
+            b.setTitle(name, for: .normal)
+            b.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+            b.tintColor = Theme.text2
+            b.tag = k
+            b.addTarget(self, action: #selector(tabTapped(_:)), for: .touchUpInside)
+            b.widthAnchor.constraint(greaterThanOrEqualToConstant: 62).isActive = true
+            tabs.addArrangedSubview(b)
+            tabButtons.append(b)
+        }
+
+        toolScroll.showsHorizontalScrollIndicator = false
+        toolScroll.delegate = self
+        toolScroll.translatesAutoresizingMaskIntoConstraints = false
+        toolsArea.addSubview(toolScroll)
+        let strip = UIStackView()
+        strip.axis = .horizontal
+        strip.alignment = .center
+        strip.spacing = 0
+        strip.translatesAutoresizingMaskIntoConstraints = false
+        toolScroll.addSubview(strip)
+        // ---- Ảnh
+        tabAnchors.append(addTool(strip, "crop", "Cắt", #selector(openCrop)))
+        addTool(strip, "rotate.left", "Bên trái", #selector(rotateLeft))
+        addTool(strip, "camera.filters", "Bộ lọc", #selector(toggleFilterPanel))
+        addTool(strip, "wand.and.rays", "Xóa thông minh", #selector(openErase))
+        addTool(strip, "camera", "Chụp lại", #selector(retakeTapped))
+        addDivider(strip)
+        // ---- Đánh dấu
+        tabAnchors.append(addTool(strip, "signature", "Ký tên", #selector(markSign)))
+        addTool(strip, "textformat", "Thêm văn bản", #selector(markText))
+        addTool(strip, "paintbrush", "Brush", #selector(markBrush))
+        addTool(strip, "square.grid.3x3.fill", "Khảm", #selector(markMosaic))
+        addTool(strip, "drop", "Thêm hình mờ", #selector(markWatermark))
+        addDivider(strip)
+        // ---- Trang
+        tabAnchors.append(addTool(strip, "square.grid.2x2", "Cắt dán", #selector(collageTapped)))
+        addTool(strip, "doc.plaintext", "Tiêu đề trang", #selector(editHeader))
+
         let ok = UIButton(type: .custom)
         ok.setImage(Theme.symbol("checkmark", size: 22, weight: .bold), for: .normal)
         ok.tintColor = .white
@@ -206,7 +261,20 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         ok.accessibilityIdentifier = "editorDone"
         ok.addTarget(self, action: #selector(doneTapped), for: .touchUpInside)
         ok.translatesAutoresizingMaskIntoConstraints = false
-        bar.addSubview(ok)
+        toolsArea.addSubview(ok)
+
+        filterBar.isHidden = true
+        filterBar.translatesAutoresizingMaskIntoConstraints = false
+        toolBar.addSubview(filterBar)
+        let fCancel = Theme.iconButton("xmark", size: 18, label: "Hủy bộ lọc")
+        fCancel.addTarget(self, action: #selector(cancelFilters), for: .touchUpInside)
+        let fKeep = Theme.iconButton("checkmark", size: 19, tint: Theme.accent, label: "Đóng bộ lọc")
+        fKeep.addTarget(self, action: #selector(keepFilters), for: .touchUpInside)
+        let fTitle = Theme.label("Bộ lọc", size: 16, weight: .semibold)
+        [fCancel, fKeep, fTitle].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            filterBar.addSubview($0)
+        }
 
         let g = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
@@ -223,28 +291,187 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             compareBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -14),
             compareBtn.bottomAnchor.constraint(equalTo: collection.bottomAnchor, constant: -10),
 
+            banner.topAnchor.constraint(equalTo: collection.topAnchor, constant: 2),
+            banner.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 14),
+            banner.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -14),
+
             nav.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             nav.heightAnchor.constraint(equalToConstant: 36),
             nav.bottomAnchor.constraint(equalTo: filterPanel.topAnchor, constant: -4),
 
             filterPanel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             filterPanel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            filterPanel.bottomAnchor.constraint(equalTo: bar.topAnchor),
+            filterPanel.bottomAnchor.constraint(equalTo: toolBar.topAnchor),
 
-            bar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            bar.topAnchor.constraint(equalTo: g.bottomAnchor, constant: -66),
+            toolBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            toolBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            toolBar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            toolBar.topAnchor.constraint(equalTo: g.bottomAnchor, constant: -96),
 
-            tools.leadingAnchor.constraint(equalTo: bar.leadingAnchor, constant: 4),
-            tools.topAnchor.constraint(equalTo: bar.topAnchor, constant: 4),
-            tools.heightAnchor.constraint(equalToConstant: 58),
-            tools.trailingAnchor.constraint(equalTo: ok.leadingAnchor, constant: -8),
-            ok.trailingAnchor.constraint(equalTo: bar.trailingAnchor, constant: -16),
-            ok.centerYAnchor.constraint(equalTo: tools.centerYAnchor),
+            toolsArea.topAnchor.constraint(equalTo: toolBar.topAnchor),
+            toolsArea.leadingAnchor.constraint(equalTo: toolBar.leadingAnchor),
+            toolsArea.trailingAnchor.constraint(equalTo: toolBar.trailingAnchor),
+            toolsArea.heightAnchor.constraint(equalToConstant: 96),
+            filterBar.topAnchor.constraint(equalTo: toolBar.topAnchor),
+            filterBar.leadingAnchor.constraint(equalTo: toolBar.leadingAnchor),
+            filterBar.trailingAnchor.constraint(equalTo: toolBar.trailingAnchor),
+            filterBar.heightAnchor.constraint(equalToConstant: 96),
+
+            tabs.topAnchor.constraint(equalTo: toolsArea.topAnchor, constant: 2),
+            tabs.leadingAnchor.constraint(equalTo: toolsArea.leadingAnchor, constant: 6),
+            tabs.heightAnchor.constraint(equalToConstant: 30),
+
+            toolScroll.topAnchor.constraint(equalTo: tabs.bottomAnchor, constant: 2),
+            toolScroll.leadingAnchor.constraint(equalTo: toolsArea.leadingAnchor, constant: 4),
+            toolScroll.heightAnchor.constraint(equalToConstant: 58),
+            toolScroll.trailingAnchor.constraint(equalTo: ok.leadingAnchor, constant: -8),
+            strip.topAnchor.constraint(equalTo: toolScroll.contentLayoutGuide.topAnchor),
+            strip.bottomAnchor.constraint(equalTo: toolScroll.contentLayoutGuide.bottomAnchor),
+            strip.leadingAnchor.constraint(equalTo: toolScroll.contentLayoutGuide.leadingAnchor),
+            strip.trailingAnchor.constraint(equalTo: toolScroll.contentLayoutGuide.trailingAnchor),
+            strip.heightAnchor.constraint(equalTo: toolScroll.frameLayoutGuide.heightAnchor),
+
+            ok.trailingAnchor.constraint(equalTo: toolsArea.trailingAnchor, constant: -16),
+            ok.centerYAnchor.constraint(equalTo: toolScroll.centerYAnchor),
             ok.widthAnchor.constraint(equalToConstant: 52),
-            ok.heightAnchor.constraint(equalToConstant: 52)
+            ok.heightAnchor.constraint(equalToConstant: 52),
+
+            fCancel.leadingAnchor.constraint(equalTo: filterBar.leadingAnchor, constant: 8),
+            fCancel.centerYAnchor.constraint(equalTo: filterBar.centerYAnchor, constant: -8),
+            fCancel.widthAnchor.constraint(equalToConstant: 48),
+            fCancel.heightAnchor.constraint(equalToConstant: 44),
+            fKeep.trailingAnchor.constraint(equalTo: filterBar.trailingAnchor, constant: -8),
+            fKeep.centerYAnchor.constraint(equalTo: fCancel.centerYAnchor),
+            fKeep.widthAnchor.constraint(equalToConstant: 48),
+            fKeep.heightAnchor.constraint(equalToConstant: 44),
+            fTitle.centerXAnchor.constraint(equalTo: filterBar.centerXAnchor),
+            fTitle.centerYAnchor.constraint(equalTo: fCancel.centerYAnchor)
         ])
+    }
+
+    /// Thêm một công cụ vào dải cuộn ngang: rộng theo nhãn (tối thiểu 66) để nhãn dài không bị cắt.
+    @discardableResult
+    private func addTool(_ strip: UIStackView, _ symbol: String, _ title: String, _ action: Selector) -> UIButton {
+        let b = Theme.toolButton(symbol, title)
+        b.addTarget(self, action: action, for: .touchUpInside)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        b.widthAnchor.constraint(greaterThanOrEqualToConstant: 66).isActive = true
+        b.heightAnchor.constraint(equalToConstant: 58).isActive = true
+        strip.addArrangedSubview(b)
+        return b
+    }
+
+    private func addDivider(_ strip: UIStackView) {
+        let d = UIView()
+        d.backgroundColor = UIColor(white: 1, alpha: 0.14)
+        d.translatesAutoresizingMaskIntoConstraints = false
+        d.widthAnchor.constraint(equalToConstant: 1).isActive = true
+        d.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        if let last = strip.arrangedSubviews.last { strip.setCustomSpacing(4, after: last) }
+        strip.addArrangedSubview(d)
+        strip.setCustomSpacing(4, after: d)
+    }
+
+    private func setActiveTab(_ i: Int) {
+        if activeTab == i { return }
+        activeTab = i
+        for (k, b) in tabButtons.enumerated() { b.tintColor = k == i ? Theme.accent : Theme.text2 }
+    }
+
+    @objc private func tabTapped(_ b: UIButton) {
+        let i = b.tag
+        guard i >= 0, i < tabAnchors.count else { return }
+        setActiveTab(i)
+        let maxX = max(0, toolScroll.contentSize.width - toolScroll.bounds.width)
+        let x = min(maxX, max(0, tabAnchors[i].frame.minX - 4))
+        toolScroll.setContentOffset(CGPoint(x: x, y: 0), animated: true)
+    }
+
+    /// Khi người dùng tự cuộn dải công cụ: thẻ sáng lên theo nhóm đang nằm ở mép trái.
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView === toolScroll, !tabAnchors.isEmpty, scrollView.isDragging || scrollView.isDecelerating else { return }
+        let x = scrollView.contentOffset.x + 40
+        let maxX = scrollView.contentSize.width - scrollView.bounds.width
+        var idx = 0
+        for (k, a) in tabAnchors.enumerated() where x >= a.frame.minX { idx = k }
+        // cuộn hết sang phải mà nhóm cuối chưa chạm mép trái thì vẫn tính là nhóm cuối
+        if maxX > 0 && scrollView.contentOffset.x >= maxX - 2 { idx = tabAnchors.count - 1 }
+        setActiveTab(idx)
+    }
+
+    /// Lời nhắc "Phát hiện ngón tay" kèm nút Gỡ bỏ (chuyển trang sang bộ lọc Thần kỳ).
+    private func buildBanner() {
+        banner.backgroundColor = UIColor(rgb: 0x2C2B2E, alpha: 0.96)
+        banner.layer.cornerRadius = 12
+        banner.isHidden = true
+        banner.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(banner)
+        let l = Theme.label("Phát hiện ngón tay. Thử bộ lọc Thần kỳ.", size: 13.5)
+        l.numberOfLines = 2
+        var cfg = UIButton.Configuration.filled()
+        cfg.title = "Gỡ bỏ"
+        cfg.baseBackgroundColor = Theme.accent
+        cfg.baseForegroundColor = .white
+        cfg.cornerStyle = .capsule
+        cfg.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 14, bottom: 6, trailing: 14)
+        cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var out = incoming
+            out.font = UIFont.systemFont(ofSize: 13.5, weight: .semibold)
+            return out
+        }
+        let go = UIButton(configuration: cfg)
+        go.addTarget(self, action: #selector(removeFinger), for: .touchUpInside)
+        go.setContentHuggingPriority(.required, for: .horizontal)
+        go.setContentCompressionResistancePriority(.required, for: .horizontal)
+        let x = Theme.iconButton("xmark", size: 13, tint: Theme.text2, label: "Đóng lời nhắc")
+        x.addTarget(self, action: #selector(dismissBanner), for: .touchUpInside)
+        [l, go, x].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            banner.addSubview($0)
+        }
+        NSLayoutConstraint.activate([
+            l.leadingAnchor.constraint(equalTo: banner.leadingAnchor, constant: 14),
+            l.topAnchor.constraint(equalTo: banner.topAnchor, constant: 8),
+            l.bottomAnchor.constraint(equalTo: banner.bottomAnchor, constant: -8),
+            go.leadingAnchor.constraint(equalTo: l.trailingAnchor, constant: 8),
+            go.centerYAnchor.constraint(equalTo: banner.centerYAnchor),
+            x.leadingAnchor.constraint(equalTo: go.trailingAnchor, constant: 2),
+            x.trailingAnchor.constraint(equalTo: banner.trailingAnchor, constant: -2),
+            x.centerYAnchor.constraint(equalTo: banner.centerYAnchor),
+            x.widthAnchor.constraint(equalToConstant: 40),
+            x.heightAnchor.constraint(equalToConstant: 40),
+            banner.heightAnchor.constraint(greaterThanOrEqualToConstant: 44)
+        ])
+    }
+
+    var bannerVisible: Bool { !banner.isHidden }
+
+    private func updateBanner() {
+        var show = false
+        if let p = current {
+            show = p.finger == 1 && p.fingerOff != true && p.filter != Enhancer.magicPro && !filterPanelVisible
+        }
+        banner.isHidden = !show
+    }
+
+    /// "Gỡ bỏ": chuyển trang sang bộ lọc Thần kỳ (gỡ ngón tay giữ giấy).
+    @objc func removeFinger() {
+        guard current != nil, !finished else { return }
+        if doc.pages[index].filter != Enhancer.magicPro {
+            doc.pages[index].filter = Enhancer.magicPro
+            dirty = true
+            DocStore.shared.save(doc)
+            schedule(doc.pages[index])
+        }
+        updateBanner()
+    }
+
+    /// ✕ trên lời nhắc: tắt hẳn cho trang này.
+    @objc func dismissBanner() {
+        guard current != nil, !finished else { return }
+        doc.pages[index].fingerOff = true
+        DocStore.shared.save(doc)
+        updateBanner()
     }
 
     private var filterPanelHeight: NSLayoutConstraint!
@@ -313,10 +540,6 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         applyAllBtn.addTarget(self, action: #selector(toggleApplyAll), for: .touchUpInside)
         applyAllBtn.translatesAutoresizingMaskIntoConstraints = false
         filterPanel.addSubview(applyAllBtn)
-        let close = Theme.iconButton("chevron.down", size: 16, label: "Đóng bộ lọc")
-        close.addTarget(self, action: #selector(toggleFilterPanel), for: .touchUpInside)
-        close.translatesAutoresizingMaskIntoConstraints = false
-        filterPanel.addSubview(close)
 
         NSLayoutConstraint.activate([
             scroll.topAnchor.constraint(equalTo: filterPanel.topAnchor, constant: 10),
@@ -330,16 +553,12 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             row.heightAnchor.constraint(equalTo: scroll.frameLayoutGuide.heightAnchor),
             applyAllBtn.topAnchor.constraint(equalTo: scroll.bottomAnchor, constant: 4),
             applyAllBtn.leadingAnchor.constraint(equalTo: filterPanel.leadingAnchor, constant: 8),
-            applyAllBtn.heightAnchor.constraint(equalToConstant: 36),
-            close.centerYAnchor.constraint(equalTo: applyAllBtn.centerYAnchor),
-            close.trailingAnchor.constraint(equalTo: filterPanel.trailingAnchor, constant: -12),
-            close.widthAnchor.constraint(equalToConstant: 44),
-            close.heightAnchor.constraint(equalToConstant: 36)
+            applyAllBtn.heightAnchor.constraint(equalToConstant: 36)
         ])
         updateApplyAll()
     }
 
-    var filterPanelVisible: Bool { filterPanelHeight.constant > 0 }
+    var filterPanelVisible: Bool { filterPanelHeight != nil && filterPanelHeight.constant > 0 }
 
     private func updateApplyAll() {
         let name = applyAll ? "checkmark.square.fill" : "square"
@@ -350,6 +569,8 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     @objc private func toggleApplyAll() {
         applyAll.toggle()
         updateApplyAll()
+        // vừa bật: áp bộ lọc của trang đang xem cho mọi trang
+        if applyAll, let p = current { applyFilter(p.filter) }
     }
 
     // MARK: dữ liệu trang
@@ -416,14 +637,11 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             if let result = result {
                 switch result {
                 case .success(let np):
-                    if let i = doc.index(of: pid) {
-                        var cur = doc.pages[i]
-                        if cur.src == np.src && cur.quad == np.quad && cur.filter == np.filter && cur.rot == np.rot {
-                            cur.warp = np.warp
-                            cur.out = np.out
-                            doc.pages[i] = cur
-                            DocStore.shared.save(doc)
-                        }
+                    // chỉ nhận kết quả nếu tham số trang vẫn như lúc bắt đầu xử lý
+                    if let i = doc.index(of: pid), ImageOps.outName(doc.pages[i]) == np.out {
+                        doc.pages[i].takeResult(np)
+                        DocStore.shared.save(doc)
+                        updateBanner()
                     }
                 case .failure(let e):
                     if let i = doc.index(of: pid) { failed.insert(ImageOps.outName(doc.pages[i])) }
@@ -518,11 +736,11 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        pageChanged()
+        if scrollView === collection { pageChanged() }
     }
 
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        pageChanged()
+        if scrollView === collection { pageChanged() }
     }
 
     private func pageChanged() {
@@ -532,6 +750,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         if i != index {
             index = i
             updateIndicator()
+            updateBanner()
             if filterPanelVisible { refreshFilterPanel() }
         }
     }
@@ -541,6 +760,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         index = i
         collection.setContentOffset(CGPoint(x: CGFloat(i) * collection.bounds.width, y: 0), animated: animated)
         updateIndicator()
+        updateBanner()
         if filterPanelVisible { refreshFilterPanel() }
     }
 
@@ -577,11 +797,47 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     // MARK: bộ lọc
 
     @objc func toggleFilterPanel() {
-        let show = !filterPanelVisible
-        filterPanelHeight.constant = show ? 154 : 0
+        if filterPanelVisible {
+            closeFilterPanel(keep: true)
+            return
+        }
+        if finished { return }
+        var backup = [String: Int]()
+        for p in doc.pages { backup[p.id] = p.filter }
+        filterBackup = backup
+        filterPanelHeight.constant = 154
+        toolsArea.isHidden = true
+        filterBar.isHidden = false
         UIView.animate(withDuration: 0.2) { self.view.layoutIfNeeded() }
-        if show { refreshFilterPanel() }
+        updateBanner()
+        refreshFilterPanel()
     }
+
+    /// keep = false: trả các trang về bộ lọc lúc mở bảng.
+    func closeFilterPanel(keep: Bool) {
+        guard filterPanelVisible else { return }
+        if !keep, let backup = filterBackup {
+            var any = false
+            for i in 0..<doc.pages.count {
+                if let old = backup[doc.pages[i].id], old != doc.pages[i].filter {
+                    doc.pages[i].filter = old
+                    any = true
+                    schedule(doc.pages[i])
+                }
+            }
+            if any { DocStore.shared.save(doc) }
+        }
+        filterBackup = nil
+        filterPanelHeight.constant = 0
+        toolsArea.isHidden = false
+        filterBar.isHidden = true
+        UIView.animate(withDuration: 0.2) { self.view.layoutIfNeeded() }
+        updateBanner()
+    }
+
+    @objc private func cancelFilters() { closeFilterPanel(keep: false) }
+
+    @objc private func keepFilters() { closeFilterPanel(keep: true) }
 
     private func refreshFilterSelection() {
         guard let p = current else { return }
@@ -629,6 +885,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         }
         DocStore.shared.save(doc)
         refreshFilterSelection()
+        updateBanner()
     }
 
     // MARK: thao tác
@@ -662,8 +919,13 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
                 crop.onDone = { [weak self, weak crop] q, auto in
                     crop?.dismiss(animated: true)
                     guard let self = self, let i = self.doc.index(of: pid) else { return }
-                    self.doc.pages[i].quad = Page.pack(q)
-                    self.doc.pages[i].auto = auto
+                    var pg = self.doc.pages[i]
+                    let newQuad = Page.pack(q)
+                    // nét xoá / đánh dấu đi theo vùng cắt mới để vẫn nằm đúng chỗ trên giấy
+                    Edits.remap(&pg, from: pg.quad, to: newQuad)
+                    pg.quad = newQuad
+                    pg.auto = auto
+                    self.doc.pages[i] = pg
                     self.dirty = true
                     DocStore.shared.save(self.doc)
                     self.schedule(self.doc.pages[i])
@@ -691,6 +953,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             self.collection.reloadData()
             for q in self.doc.pages where !self.upToDate(q) { self.schedule(q) }
             self.updateIndicator()
+            self.updateBanner()
         }
         let nav = UINavigationController(rootViewController: cam)
         nav.modalPresentationStyle = .fullScreen
@@ -725,7 +988,158 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         collection.layoutIfNeeded()
         collection.setContentOffset(CGPoint(x: CGFloat(index) * collection.bounds.width, y: 0), animated: false)
         updateIndicator()
+        updateBanner()
         if filterPanelVisible { refreshFilterPanel() }
+        // số trang đổi -> tiêu đề trang (nếu có đánh số) của các trang còn lại đổi theo
+        for q in doc.pages where !upToDate(q) && !processing.contains(q.id) { schedule(q) }
+    }
+
+    // MARK: xóa thông minh, đánh dấu
+
+    /// Trang hiện tại nếu đã có ảnh nắn phẳng; nếu còn đang xử lý thì chờ xong rồi gọi lại `retry` và trả về nil.
+    private func pageWithWarp(_ retry: @escaping () -> Void) -> Page? {
+        guard let p = current, !finished, presentedViewController == nil else { return nil }
+        let fm = FileManager.default
+        let has = p.warp.map { fm.fileExists(atPath: DocStore.shared.url(doc, $0).path) } ?? false
+        if pending > 0 || !has {
+            if pending == 0 {
+                if processing.contains(p.id) { return nil }
+                schedule(p)
+            }
+            showWait()
+            afterPending = { [weak self] in
+                guard let self = self, let c = self.current, let w = c.warp,
+                      FileManager.default.fileExists(atPath: DocStore.shared.url(self.doc, w).path) else { return }
+                retry()
+            }
+            return nil
+        }
+        return p
+    }
+
+    @objc func openErase() {
+        guard let p = pageWithWarp({ [weak self] in self?.openErase() }) else { return }
+        let pid = p.id
+        let vc = EraseViewController(doc: doc, page: p)
+        vc.onCancel = { [weak vc] in vc?.dismiss(animated: true) }
+        vc.onDone = { [weak self, weak vc] ops in
+            vc?.dismiss(animated: true)
+            guard let self = self, let i = self.doc.index(of: pid) else { return }
+            if (self.doc.pages[i].erase ?? []) == ops { return }
+            self.doc.pages[i].erase = ops.isEmpty ? nil : ops
+            self.dirty = true
+            DocStore.shared.save(self.doc)
+            self.schedule(self.doc.pages[i])
+        }
+        present(vc, animated: true)
+    }
+
+    func openMarkup(_ tool: Int) {
+        guard let p = pageWithWarp({ [weak self] in self?.openMarkup(tool) }) else { return }
+        let pid = p.id
+        let vc = MarkupViewController(doc: doc, page: p, tool: tool)
+        vc.onCancel = { [weak vc] in vc?.dismiss(animated: true) }
+        vc.onDone = { [weak self, weak vc] marks in
+            vc?.dismiss(animated: true)
+            guard let self = self, let i = self.doc.index(of: pid) else { return }
+            if (self.doc.pages[i].marks ?? []) == marks { return }
+            self.doc.pages[i].marks = marks.isEmpty ? nil : marks
+            self.dirty = true
+            DocStore.shared.save(self.doc)
+            self.schedule(self.doc.pages[i])
+        }
+        present(vc, animated: true)
+    }
+
+    @objc private func markSign() { openMarkup(MarkupViewController.sign) }
+    @objc private func markText() { openMarkup(MarkupViewController.text) }
+    @objc private func markBrush() { openMarkup(MarkupViewController.brush) }
+    @objc private func markMosaic() { openMarkup(MarkupViewController.mosaic) }
+    @objc private func markWatermark() { openMarkup(MarkupViewController.watermark) }
+
+    // MARK: tiêu đề trang, cắt dán
+
+    /// Tiêu đề trang: dòng chữ ở lề trên và/hoặc số trang ở lề dưới, áp cho mọi trang của tài liệu.
+    @objc func editHeader() {
+        guard !finished, presentedViewController == nil else { return }
+        let a = UIAlertController(title: "Tiêu đề trang", message: "Dòng chữ in ở lề trên và số trang ở lề dưới của mọi trang.",
+                                  preferredStyle: .alert)
+        let old = doc.header?.text ?? ""
+        a.addTextField { tf in
+            tf.text = old
+            tf.placeholder = "Dòng chữ ở lề trên (có thể để trống)"
+            tf.clearButtonMode = .whileEditing
+        }
+        func header(_ alert: UIAlertController?, _ num: Bool) -> PageHeader? {
+            let h = PageHeader(text: Theme.cleanTitle(alert?.textFields?.first?.text ?? "", fallback: ""), num: num)
+            return h.isEmpty ? nil : h
+        }
+        a.addAction(UIAlertAction(title: "Áp dụng + đánh số trang (1/\(doc.pages.count))", style: .default) { [weak self, weak a] _ in
+            self?.setHeader(header(a, true))
+        })
+        a.addAction(UIAlertAction(title: "Áp dụng, không đánh số", style: .default) { [weak self, weak a] _ in
+            self?.setHeader(header(a, false))
+        })
+        if doc.header != nil {
+            a.addAction(UIAlertAction(title: "Gỡ bỏ", style: .destructive) { [weak self] _ in self?.setHeader(nil) })
+        }
+        a.addAction(UIAlertAction(title: "Hủy", style: .cancel))
+        present(a, animated: true)
+    }
+
+    func setHeader(_ h: PageHeader?) {
+        if finished || doc.header == h { return }
+        doc.header = h
+        dirty = true
+        // save() điền lại tiêu đề từng trang; trang nào đổi thì dựng lại
+        DocStore.shared.save(doc)
+        for p in doc.pages where !upToDate(p) { schedule(p) }
+        toast(h == nil ? "Đã gỡ tiêu đề trang" : "Đã áp dụng tiêu đề trang cho \(doc.pages.count) trang")
+    }
+
+    /// Cắt dán: ghép các trang của tài liệu lên tờ A4 và lưu thành tài liệu mới.
+    @objc func collageTapped() {
+        guard !finished, presentedViewController == nil else { return }
+        let a = UIAlertController(title: "Cắt dán: ghép \(doc.pages.count) trang lên tờ A4", message: nil, preferredStyle: .actionSheet)
+        for (k, name) in Collage.layoutNames.enumerated() {
+            a.addAction(UIAlertAction(title: name, style: .default) { [weak self] _ in self?.collage(layout: k) })
+        }
+        a.addAction(UIAlertAction(title: "Hủy", style: .cancel))
+        present(a, animated: true)
+    }
+
+    func collage(layout: Int) {
+        if finished { return }
+        if pending > 0 {
+            showWait()
+            afterPending = { [weak self] in self?.collage(layout: layout) }
+            return
+        }
+        let job: ImageOps.ExportJob
+        do {
+            job = try ImageOps.exportJob(doc: doc)
+        } catch {
+            toast(error.localizedDescription)
+            return
+        }
+        let title = String(doc.title.prefix(Theme.maxTitle - 7)) + " - ghép"
+        busy.show(in: navigationController?.view ?? view, text: "Đang ghép trang…")
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let result = Result<Doc, Error> { try Collage.make(files: job.files, title: title, layout: layout) }
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                self.busy.hide()
+                switch result {
+                case .failure(let e):
+                    self.toast("Không ghép được: \(e.localizedDescription)")
+                case .success(let d):
+                    self.lastCollageId = d.id
+                    if self.finished { return }
+                    self.toast("Đã tạo tài liệu ghép")
+                    self.navigationController?.pushViewController(DocumentViewController(doc: d), animated: true)
+                }
+            }
+        }
     }
 
     @objc private func rename() {

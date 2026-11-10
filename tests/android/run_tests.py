@@ -2090,6 +2090,8 @@ def t_markup():
     tap(text="OK")
     time.sleep(1.5)
     shot("markup_text")
+    if "mInputShown=true" in sh("dumpsys input_method | grep mInputShown"):
+        raise AssertionError("Bàn phím không ẩn sau khi đóng hộp thoại nhập chữ (che thanh công cụ)")
     tap(text="Thêm hình mờ")
     time.sleep(1.5)
     if not dialog_open():
@@ -2163,9 +2165,9 @@ def t_markup():
     editor_tool("Cắt")
     wait_activity("CropActivity", 15)
     time.sleep(2.5)
-    w, h = screen_size()
-    sh("input swipe %d %d %d %d 600" % (int(w * 0.12), int(h * 0.12), int(w * 0.22), int(h * 0.2)))
-    time.sleep(0.5)
+    tap(text="Tự động cắt")  # tắt tự động cắt -> khung cắt phủ toàn ảnh (khác hẳn vùng cắt cũ)
+    time.sleep(1.5)
+    shot("markup_recrop_full")
     tap(text="Xong")
     wait_activity("EditorActivity", 15)
     pg2 = wait_page(doc_id, lambda p: p.get("out") not in (None, pg["out"]), 120, "dựng lại trang sau khi cắt lại")

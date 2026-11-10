@@ -19,6 +19,7 @@ final class SelfTest {
         if let items = try? fm.contentsOfDirectory(at: DocStore.shared.root, includingPropertiesForKeys: nil) {
             for u in items { try? fm.removeItem(at: u) }
         }
+        for u in DocStore.shared.signLibrary() { try? fm.removeItem(at: u) }
         NSSetUncaughtExceptionHandler { e in
             let s = "EXCEPTION \(e.name.rawValue): \(e.reason ?? "")\n\(e.callStackSymbols.joined(separator: "\n"))"
             try? s.write(to: SelfTest.outDir.appendingPathComponent("crash.txt"), atomically: true, encoding: .utf8)
@@ -59,6 +60,9 @@ final class SelfTest {
     private var modifiedBefore = Date()
     private var discardDoc: Doc?
     private var badDoc: Doc?
+    private var beautyId = ""
+    private var statBefore = [String: Double]()
+    private var marksBefore = [Mark]()
 
     private init(nav: UINavigationController) {
         self.nav = nav
@@ -150,6 +154,8 @@ final class SelfTest {
         return vc as? CameraViewController
     }
     private var crop: CropViewController? { topMost() as? CropViewController }
+    private var eraser: EraseViewController? { topMost() as? EraseViewController }
+    private var markup: MarkupViewController? { topMost() as? MarkupViewController }
     private var docVC: DocumentViewController? { topMost() as? DocumentViewController }
 
     // MARK: kịch bản
@@ -443,8 +449,350 @@ final class SelfTest {
             let n = DocStore.shared.list().count
             self.check(n == 5, "danh sách cuối: 5 tài liệu (\(n))")
         }
+        addBeautifySteps()
         addRegressionSteps()
         next()
+    }
+
+    // MARK: làm đẹp / chỉnh sửa trang
+
+    private enum Stat { case dark, red, blue, skin }
+
+    /// Ảnh thử edit_page.jpg (tests/tools/make_retouch_images.py): vị trí các chi tiết trên trang ĐÃ NẮN PHẲNG (chuẩn hoá).
+    private static let rFinger = CGRect(x: 0.005, y: 0.42, width: 0.045, height: 0.065)
+    private static let rSigner = CGRect(x: 0.15, y: 0.775, width: 0.15, height: 0.022)
+    private static let rStamp = CGRect(x: 0.65, y: 0.85, width: 0.16, height: 0.115)
+    private static let rScribble = CGRect(x: 0.14, y: 0.87, width: 0.28, height: 0.075)
+    private static let rScribbleTop = CGRect(x: 0.565, y: 0.237, width: 0.303, height: 0.036)
+    private static let rRow9 = CGRect(x: 0.18, y: 0.546, width: 0.13, height: 0.016)
+    private static let rRow9Line = CGRect(x: 0.19, y: 0.533, width: 0.11, height: 0.011)
+    private static let rBrush = CGRect(x: 0.25, y: 0.103, width: 0.30, height: 0.010)
+
+    /// Tỷ lệ điểm ảnh thuộc một loại trong vùng chuẩn hoá của ảnh kết quả một trang (-1 nếu không đọc được).
+    private func stat(_ doc: Doc?, _ index: Int, _ kind: Stat, _ box: CGRect) -> Double {
+        guard let d = doc, index >= 0, index < d.pages.count, let o = d.pages[index].out,
+              let cg = ImageOps.loadCG(DocStore.shared.url(d, o)), let px = ImageOps.rgbaPixels(cg, maxDim: 1400) else { return -1 }
+        let x0 = max(0, min(px.w - 1, Int(box.minX * CGFloat(px.w)))), x1 = min(px.w, max(x0 + 1, Int(box.maxX * CGFloat(px.w))))
+        let y0 = max(0, min(px.h - 1, Int(box.minY * CGFloat(px.h)))), y1 = min(px.h, max(y0 + 1, Int(box.maxY * CGFloat(px.h))))
+        var c = 0, n = 0
+        for y in y0..<y1 {
+            for x in x0..<x1 {
+                let i = (y * px.w + x) * 4
+                let r = Int(px.data[i]), g = Int(px.data[i + 1]), b = Int(px.data[i + 2])
+                var hit = false
+                switch kind {
+                case .dark: hit = r * 299 + g * 587 + b * 114 < 128000
+                case .red: hit = r > 140 && g < 115 && b < 115
+                case .blue: hit = b > r + 40 && b > 90
+                case .skin: hit = r > 120 && r - b > 45
+                }
+                if hit { c += 1 }
+                n += 1
+            }
+        }
+        return n == 0 ? -1 : Double(c) / Double(n)
+    }
+
+    private func cur(_ kind: Stat, _ box: CGRect) -> Double {
+        return stat(editor?.doc, editor?.index ?? 0, kind, box)
+    }
+
+    private func f3(_ v: Double) -> String { return String(format: "%.4f", v) }
+
+    private func editorIdle() -> Bool {
+        return nav.presentedViewController == nil && editor != nil && (editor?.pending ?? 1) == 0
+    }
+
+    /// Bộ lọc mới, lời nhắc ngón tay, Xóa thông minh, Đánh dấu, Tiêu đề trang, Cắt dán — trên ảnh thử có ngón tay + chữ viết tay.
+    private func addBeautifySteps() {
+        addRun("nhập ảnh có ngón tay + chữ viết tay") {
+            if let img = SelfTest.testImage("edit_page") { self.home?.importImages([img]) } else { self.check(false, "thiếu ảnh thử edit_page.jpg") }
+        }
+        addUntil("màn hình cắt (ảnh chỉnh sửa)", 20) { self.crop != nil }
+        addWait(1.2)
+        addRun("Xong (ảnh chỉnh sửa)") { self.crop?.doneTapped() }
+        addUntil("trình chỉnh sửa (ảnh chỉnh sửa)", 60) { self.editorIdle() }
+        addWait(1.0)
+        addSnap("40_finger_banner")
+        addRun("kiểm tra lời nhắc ngón tay") {
+            self.beautyId = self.editor?.doc.id ?? ""
+            self.check(self.editor?.current?.finger == 1, "phát hiện ngón tay giữ giấy trên ảnh thử (finger=\(String(describing: self.editor?.current?.finger)))")
+            self.check(self.editor?.bannerVisible == true, "hiện lời nhắc 'Phát hiện ngón tay'")
+            self.statBefore["skin"] = self.cur(.skin, SelfTest.rFinger)
+            self.statBefore["signer"] = self.cur(.dark, SelfTest.rSigner)
+            self.statBefore["stamp"] = self.cur(.red, SelfTest.rStamp)
+            self.statBefore["scribble"] = self.cur(.blue, SelfTest.rScribble)
+            self.statBefore["scribbleTop"] = self.cur(.blue, SelfTest.rScribbleTop)
+            self.statBefore["row9"] = self.cur(.dark, SelfTest.rRow9)
+        }
+        addRun("Gỡ bỏ") { self.editor?.removeFinger() }
+        addUntil("bộ lọc Thần kỳ", 60) { self.editorIdle() }
+        addWait(1.0)
+        addSnap("41_finger_removed")
+        addRun("kiểm tra gỡ ngón tay") {
+            self.check(self.editor?.current?.filter == Enhancer.magicPro && self.editor?.bannerVisible == false, "Gỡ bỏ -> bộ lọc Thần kỳ, lời nhắc ẩn")
+            let a = self.statBefore["skin"] ?? -1, b = self.cur(.skin, SelfTest.rFinger)
+            self.check(a > 0.3 && b >= 0 && b < 0.02, "Thần kỳ gỡ ngón tay (màu da \(self.f3(a)) -> \(self.f3(b)))")
+            let d0 = self.statBefore["signer"] ?? -1, d1 = self.cur(.dark, SelfTest.rSigner)
+            self.check(d0 > 0.03 && d1 > d0 * 0.5, "Thần kỳ giữ chữ in (\(self.f3(d0)) -> \(self.f3(d1)))")
+        }
+        addRun("mở bảng lọc") { self.editor?.toggleFilterPanel() }
+        addWait(1.5)
+        addSnap("42_filters_new")
+        addRun("Khử nhiễu") { self.editor?.applyFilter(Enhancer.denoise) }
+        addUntil("Khử nhiễu xong", 60) { self.editorIdle() }
+        addWait(0.6)
+        addSnap("42b_filter_denoise")
+        addRun("Không bóng") { self.editor?.applyFilter(Enhancer.noShadow) }
+        addUntil("Không bóng xong", 60) { self.editorIdle() }
+        addWait(0.6)
+        addSnap("42c_filter_noshadow")
+        addRun("Ko viết tay") { self.editor?.applyFilter(Enhancer.noHand) }
+        addUntil("Ko viết tay xong", 60) { self.editorIdle() }
+        addWait(0.6)
+        addSnap("42d_filter_nohand")
+        addRun("kiểm tra Ko viết tay") {
+            let b0 = self.statBefore["scribble"] ?? -1, b1 = self.cur(.blue, SelfTest.rScribble), red = self.cur(.red, SelfTest.rStamp)
+            self.check(b0 > 0.01 && b1 >= 0 && b1 < b0 * 0.15, "Ko viết tay xoá nét bút xanh (\(self.f3(b0)) -> \(self.f3(b1)))")
+            self.check(red > 0.03, "Ko viết tay giữ con dấu đỏ (\(self.f3(red)))")
+        }
+        addRun("✓ giữ bộ lọc") { self.editor?.closeFilterPanel(keep: true) }
+        addWait(0.6)
+        addRun("lời nhắc hiện lại rồi tắt hẳn") {
+            self.check(self.editor?.bannerVisible == true, "bỏ bộ lọc Thần kỳ -> lời nhắc ngón tay hiện lại")
+            self.editor?.dismissBanner()
+            self.check(self.editor?.bannerVisible == false && self.editor?.current?.fingerOff == true, "✕ tắt lời nhắc cho trang này")
+        }
+        addRun("mở bảng lọc + Đen trắng") {
+            self.editor?.toggleFilterPanel()
+            self.editor?.applyFilter(Enhancer.bw)
+        }
+        addUntil("Đen trắng xong", 60) { self.editorIdle() }
+        addRun("✕ trả lại bộ lọc cũ") { self.editor?.closeFilterPanel(keep: false) }
+        addUntil("trả lại bộ lọc", 60) { self.editorIdle() }
+        addRun("kiểm tra ✕") {
+            self.check(self.editor?.current?.filter == Enhancer.noHand && self.editor?.filterPanelVisible == false, "✕ ở bảng lọc trả lại bộ lọc lúc mở bảng")
+        }
+        addRun("về bộ lọc Tăng cường") {
+            self.editor?.toggleFilterPanel()
+            self.editor?.applyFilter(Enhancer.magic)
+            self.editor?.closeFilterPanel(keep: true)
+        }
+        addUntil("Tăng cường xong", 60) { self.editorIdle() }
+        // --- Xóa thông minh ---
+        addRun("mở Xóa thông minh") { self.editor?.openErase() }
+        addUntil("màn hình Xóa thông minh", 30) { self.eraser?.testReady == true }
+        addWait(0.8)
+        addSnap("43_erase_open")
+        addRun("Bút: tô lên dòng NGƯỜI LẬP") { self.eraser?.testStroke([CGPoint(x: 0.11, y: 0.786), CGPoint(x: 0.34, y: 0.786)]) }
+        addUntil("bút xong", 30) { self.eraser?.testReady == true }
+        addRun("Hình chữ nhật quanh con dấu") {
+            self.eraser?.testSelect(Retouch.rect)
+            self.eraser?.testStroke([CGPoint(x: 0.60, y: 0.838), CGPoint(x: 0.86, y: 0.985)])
+        }
+        addUntil("hình chữ nhật xong", 30) { self.eraser?.testReady == true }
+        addWait(0.4)
+        addSnap("43b_erase_pen_rect")
+        addRun("Thần kỳ: tô sơ qua nét bút xanh") {
+            self.eraser?.testSelect(Retouch.magic)
+            self.eraser?.testStroke([CGPoint(x: 0.16, y: 0.885), CGPoint(x: 0.24, y: 0.93)])
+        }
+        addUntil("thần kỳ xong", 30) { self.eraser?.testReady == true }
+        addRun("Xóa văn bản trong bảng") {
+            self.eraser?.testSelect(Retouch.text)
+            self.eraser?.testStroke([CGPoint(x: 0.17, y: 0.554), CGPoint(x: 0.33, y: 0.554)])
+        }
+        addUntil("xóa văn bản xong", 30) { self.eraser?.testReady == true }
+        addRun("Viết tay") { self.eraser?.eraseHandwriting() }
+        addUntil("viết tay xong", 30) { self.eraser?.testReady == true }
+        addWait(0.4)
+        addSnap("43c_erase_all")
+        addRun("hoàn tác") { self.eraser?.undoTapped() }
+        addUntil("hoàn tác xong", 30) { self.eraser?.testReady == true }
+        addRun("kiểm tra hoàn tác + làm lại") {
+            self.check(self.eraser?.ops.count == 4, "hoàn tác bỏ thao tác cuối (\(self.eraser?.ops.count ?? -1))")
+            self.eraser?.redoTapped()
+        }
+        addUntil("làm lại xong", 30) { self.eraser?.testReady == true }
+        addRun("giữ So sánh") { self.eraser?.testCompare(true) }
+        addWait(0.4)
+        addSnap("43d_erase_compare")
+        addRun("thả So sánh + ✓") {
+            self.eraser?.testCompare(false)
+            let kinds = self.eraser?.ops.map { $0.k } ?? []
+            self.check(kinds == [Retouch.pen, Retouch.rect, Retouch.magic, Retouch.text, Retouch.hand], "5 thao tác xoá theo thứ tự (\(kinds))")
+            self.eraser?.applyTapped()
+        }
+        addUntil("dựng lại trang sau Xóa thông minh", 60) { self.editorIdle() }
+        addWait(1.0)
+        addSnap("44_erase_applied")
+        addRun("kiểm tra ảnh sau Xóa thông minh") {
+            self.check(self.editor?.current?.erase?.count == 5, "trang lưu 5 thao tác xoá")
+            let rows: [(String, String, Stat, CGRect, Double, Double)] = [
+                ("chữ 'NGƯỜI LẬP' (Bút)", "signer", .dark, SelfTest.rSigner, 0.03, 0.01),
+                ("con dấu (Hình chữ nhật)", "stamp", .red, SelfTest.rStamp, 0.03, 0.003),
+                ("nét bút xanh dưới (Thần kỳ)", "scribble", .blue, SelfTest.rScribble, 0.01, 0.002),
+                ("chữ trong bảng (Xóa văn bản)", "row9", .dark, SelfTest.rRow9, 0.05, 0.02),
+                ("nét bút xanh trên (Viết tay)", "scribbleTop", .blue, SelfTest.rScribbleTop, 0.01, 0.003)
+            ]
+            for r in rows {
+                let a = self.statBefore[r.1] ?? -1, b = self.cur(r.2, r.3)
+                self.check(a >= r.4 && b >= 0 && b <= r.5, "xoá \(r.0): \(self.f3(a)) -> \(self.f3(b))")
+            }
+            let line = self.cur(.dark, SelfTest.rRow9Line)
+            self.check(line >= 0.06, "Xóa văn bản giữ đường kẻ bảng (\(self.f3(line)))")
+        }
+        // --- Đánh dấu ---
+        addRun("mở Đánh dấu (Brush)") { self.editor?.openMarkup(MarkupViewController.brush) }
+        addUntil("màn hình Đánh dấu", 30) { self.markup?.testReady == true }
+        addWait(0.8)
+        addRun("Brush đen + đỏ") {
+            self.markup?.testStroke([CGPoint(x: 0.04, y: 0.10), CGPoint(x: 0.04, y: 0.30)])
+            self.markup?.testPickColor(1)
+            self.markup?.testStroke([CGPoint(x: 0.2, y: 0.108), CGPoint(x: 0.6, y: 0.108)])
+        }
+        addRun("Khảm") {
+            self.markup?.testSelect(MarkupViewController.mosaic)
+            self.markup?.testStroke([CGPoint(x: 0.2, y: 0.45), CGPoint(x: 0.7, y: 0.45)])
+        }
+        addWait(0.4)
+        addSnap("45_markup_brush_mosaic")
+        addRun("Thêm văn bản + hình mờ") {
+            self.markup?.testSelect(MarkupViewController.text)
+            self.markup?.addText("Da_kiem_tra")
+            self.markup?.testSelect(MarkupViewController.watermark)
+            self.markup?.setWatermark("MAT")
+        }
+        addWait(0.4)
+        addSnap("45b_markup_text_watermark")
+        addRun("Ký tên: mở bảng ký") {
+            self.markup?.testSelect(MarkupViewController.sign)
+            self.markup?.openPad()
+        }
+        addWait(0.6)
+        addRun("ký") {
+            self.markup?.testSign([CGPoint(x: 0.15, y: 0.6), CGPoint(x: 0.4, y: 0.3), CGPoint(x: 0.6, y: 0.65), CGPoint(x: 0.85, y: 0.35)])
+        }
+        addWait(0.4)
+        addSnap("45c_sign_pad")
+        addRun("Lưu chữ ký") { self.markup?.savePad() }
+        addWait(0.6)
+        addSnap("45d_sign_placed")
+        addRun("kiểm tra chữ ký + kéo") {
+            self.check(self.markup?.padOpen == false && self.markup?.marks.count == 6, "lưu chữ ký: bảng ký đóng, có 6 đánh dấu (\(self.markup?.marks.count ?? -1))")
+            self.check(DocStore.shared.signLibrary().count == 1, "chữ ký được lưu vào thư viện")
+            self.markup?.testStroke([CGPoint(x: 0.5, y: 0.6), CGPoint(x: 0.72, y: 0.9)])
+        }
+        addWait(0.4)
+        addSnap("45e_sign_moved")
+        addRun("kiểm tra kéo + hoàn tác / làm lại") {
+            let m = self.markup?.marks.last
+            let ok = m != nil && m!.t == Mark.sign && abs(m!.x - 0.72) < 0.03 && abs(m!.y - 0.9) < 0.03
+            self.check(ok, "kéo chữ ký tới vị trí mới (\(m?.x ?? -1), \(m?.y ?? -1))")
+            self.markup?.undoTapped()
+            let back = self.markup?.marks.last
+            self.check(back != nil && abs(back!.x - 0.5) < 0.001, "hoàn tác trả chữ ký về chỗ cũ")
+            self.markup?.redoTapped()
+            let types = self.markup?.marks.map { $0.t } ?? []
+            self.check(types == [Mark.brush, Mark.brush, Mark.mosaic, Mark.text, Mark.watermark, Mark.sign], "6 đánh dấu theo thứ tự (\(types))")
+            self.markup?.applyTapped()
+        }
+        addUntil("dựng lại trang sau Đánh dấu", 60) { self.editorIdle() }
+        addWait(1.0)
+        addSnap("46_markup_applied")
+        addRun("kiểm tra ảnh sau Đánh dấu") {
+            let p = self.editor?.current
+            self.marksBefore = p?.marks ?? []
+            self.check(self.marksBefore.count == 6, "trang lưu 6 đánh dấu")
+            var signOk = false
+            if let d = self.editor?.doc, let f = self.marksBefore.last?.f {
+                signOk = f.hasPrefix("sg_") && FileManager.default.fileExists(atPath: DocStore.shared.url(d, f).path)
+            }
+            self.check(signOk, "file chữ ký nằm trong thư mục tài liệu")
+            let red = self.cur(.red, SelfTest.rBrush)
+            self.check(red > 0.5, "ảnh kết quả có nét brush đỏ (\(self.f3(red)))")
+        }
+        // --- Tiêu đề trang ---
+        addRun("Tiêu đề trang") {
+            self.statBefore["hdrTop"] = self.cur(.dark, CGRect(x: 0.40, y: 0.006, width: 0.20, height: 0.030))
+            self.editor?.setHeader(PageHeader(text: "BB_2026", num: true))
+        }
+        addUntil("dựng lại trang có tiêu đề", 60) { self.editorIdle() }
+        addWait(1.0)
+        addSnap("48_header")
+        addRun("kiểm tra tiêu đề trang") {
+            self.check(self.editor?.current?.hdr == "BB_2026\n1/1", "tiêu đề trang được điền số trang (\(self.editor?.current?.hdr ?? "nil"))")
+            let a = self.statBefore["hdrTop"] ?? -1, b = self.cur(.dark, CGRect(x: 0.40, y: 0.006, width: 0.20, height: 0.030))
+            self.check(a >= 0 && b - a > 0.02, "ảnh kết quả có dòng tiêu đề ở lề trên (\(self.f3(a)) -> \(self.f3(b)))")
+        }
+        // --- cắt lại + xoay sau khi đánh dấu ---
+        addRun("mở màn hình cắt") { self.editor?.openCrop() }
+        addUntil("màn hình cắt (sau đánh dấu)", 20) { self.crop != nil }
+        addWait(1.0)
+        addRun("tắt Tự động cắt") { self.crop?.testToggleAuto() }
+        addWait(0.8)
+        addRun("Xong (cắt lại)") { self.crop?.doneTapped() }
+        addUntil("dựng lại sau khi cắt lại", 60) { self.editorIdle() }
+        addWait(0.8)
+        addSnap("47_markup_recrop")
+        addRun("kiểm tra cắt lại") {
+            let now = self.editor?.current?.marks ?? []
+            self.check(now.count == 6 && now != self.marksBefore, "cắt lại: đánh dấu đi theo vùng cắt mới (còn \(now.count))")
+            self.check(self.editor?.current?.erase?.count == 5, "cắt lại: vẫn còn 5 thao tác xoá")
+            self.editor?.rotateLeft()
+        }
+        addUntil("xoay trang đã đánh dấu", 60) { self.editorIdle() }
+        addRun("Ký tên trên trang đã xoay") { self.editor?.openMarkup(MarkupViewController.sign) }
+        addUntil("màn hình Đánh dấu (trang xoay)", 30) { self.markup?.testReady == true }
+        addWait(0.8)
+        addRun("chọn chữ ký trong thư viện") {
+            self.check(self.markup?.padOpen == false, "đã có chữ ký trong thư viện -> không tự mở bảng ký")
+            if let u = DocStore.shared.signLibrary().first { self.markup?.placeSign(u) }
+        }
+        addWait(0.4)
+        addSnap("47b_sign_rotated")
+        addRun("✓ (chữ ký thứ hai)") {
+            let last = self.markup?.marks.last
+            self.check(self.markup?.marks.count == 7 && last?.t == Mark.sign && last?.a == 90, "chữ ký trên trang đã xoay nằm thẳng theo chiều hiển thị (góc \(last?.a ?? -1))")
+            self.markup?.applyTapped()
+        }
+        addUntil("dựng lại sau chữ ký thứ hai", 60) { self.editorIdle() }
+        // --- Cắt dán ---
+        addRun("Cắt dán 4 trang mỗi tờ") { self.editor?.collage(layout: 1) }
+        addUntil("tài liệu ghép", 60) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(1.0)
+        addSnap("49_collage")
+        addRun("kiểm tra tài liệu ghép") {
+            let d = self.docVC?.doc
+            let ok = d != nil && d!.pages.count == 1 && d!.title.hasSuffix(" - ghép") && !d!.draft && d!.id != self.beautyId
+            self.check(ok, "Cắt dán tạo tài liệu mới 1 tờ (\(d?.title ?? "nil"))")
+            if let d = d, let p = d.pages.first { self.check(p.srcW == 2480 && p.srcH == 3508 && p.out != nil, "tờ ghép là A4 dọc 2480x3508 (\(p.srcW)x\(p.srcH))") }
+            self.nav.popViewController(animated: false)
+        }
+        addUntil("về trình chỉnh sửa sau Cắt dán", 20) { self.editorIdle() }
+        addRun("xoá tài liệu ghép + gỡ tiêu đề") {
+            if let id = self.editor?.lastCollageId, let d = DocStore.shared.load(id) { DocStore.shared.delete(d) }
+            self.editor?.setHeader(nil)
+        }
+        addUntil("gỡ tiêu đề", 60) { self.editorIdle() }
+        addRun("lưu tài liệu đã chỉnh sửa") {
+            self.check(self.editor?.current?.hdr == nil, "gỡ tiêu đề trang")
+            self.editor?.finishEditing(done: true)
+        }
+        addUntil("tài liệu đã chỉnh sửa", 60) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(1.0)
+        addSnap("50_beauty_document")
+        addRun("kiểm tra PDF + dọn dẹp") {
+            self.verifyCurrentDocPdf()
+            let saved = DocStore.shared.load(self.beautyId)
+            self.check(saved != nil && saved!.draft == false && saved!.pages.first?.marks?.count == 7 && saved!.pages.first?.erase?.count == 5,
+                       "tài liệu lưu đủ chỉnh sửa (7 đánh dấu, 5 thao tác xoá)")
+            self.nav.popToRootViewController(animated: false)
+            if let d = saved { DocStore.shared.delete(d) }
+            for u in DocStore.shared.signLibrary() { try? FileManager.default.removeItem(at: u) }
+            self.home?.reload()
+        }
+        addWait(0.8)
     }
 
     /// Kiểm tra lại các lỗi đã sửa ở bản 1.2 (chạm đúp, đóng giữa chừng, trang lỗi, mở ảnh từ ứng dụng khác...).

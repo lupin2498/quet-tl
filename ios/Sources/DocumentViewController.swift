@@ -165,10 +165,9 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
                 var changed = false
                 for np in done {
                     guard let i = self.doc.index(of: np.id) else { continue }
-                    let cur = self.doc.pages[i]
-                    if cur.src == np.src && cur.quad == np.quad && cur.filter == np.filter && cur.rot == np.rot {
-                        self.doc.pages[i].warp = np.warp
-                        self.doc.pages[i].out = np.out
+                    // trang có thể đã được sửa ở màn hình khác trong lúc xử lý: chỉ nhận kết quả nếu còn đúng tham số
+                    if ImageOps.outName(self.doc.pages[i]) == np.out {
+                        self.doc.pages[i].takeResult(np)
                         changed = true
                     }
                 }

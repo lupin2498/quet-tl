@@ -1038,10 +1038,16 @@ public class EditorActivity extends BaseActivity {
         box.addView(et);
         box.addView(cb);
         android.app.AlertDialog.Builder b = Ui.dialog(this).setTitle("Tiêu đề trang").setView(box)
-                .setNegativeButton("Hủy", null)
+                .setNegativeButton("Hủy", new android.content.DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(android.content.DialogInterface dialog, int which) {
+                        Ui.hideKeyboard(et);
+                    }
+                })
                 .setPositiveButton("Áp dụng", new android.content.DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(android.content.DialogInterface dialog, int which) {
+                        Ui.hideKeyboard(et);
                         Edits.Header h = new Edits.Header();
                         h.text = et.getText().toString().trim();
                         h.pageNum = cb.isChecked();
@@ -1052,6 +1058,7 @@ public class EditorActivity extends BaseActivity {
             b.setNeutralButton("Gỡ bỏ", new android.content.DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(android.content.DialogInterface dialog, int which) {
+                    Ui.hideKeyboard(et);
                     setHeader(null);
                 }
             });
