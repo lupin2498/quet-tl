@@ -13,6 +13,9 @@ class EditScreenController: UIViewController {
     private let optionsScroll = UIScrollView()
     private let toolsScroll = UIScrollView()
     private let toolsRow = UIStackView()
+    /// Bề rộng từng nút công cụ: theo nhãn (toolNatural) cộng phần thừa của màn hình chia đều.
+    private var toolWidths = [NSLayoutConstraint]()
+    private var toolNatural = [CGFloat]()
 
     static func roundButton(_ symbol: String, _ label: String) -> UIButton {
         let b = UIButton(type: .system)
@@ -117,14 +120,18 @@ class EditScreenController: UIViewController {
         toolsRow.distribution = .fill
         toolsRow.translatesAutoresizingMaskIntoConstraints = false
         toolsScroll.addSubview(toolsRow)
-        let share = 1.0 / CGFloat(max(1, tools.count))
         for (k, t) in tools.enumerated() {
             let b = Theme.toolButton(t.0, t.1)
             b.tag = k
             b.addTarget(self, action: #selector(toolAction(_:)), for: .touchUpInside)
+            b.translatesAutoresizingMaskIntoConstraints = false
             toolsRow.addArrangedSubview(b)
-            // chia đều bề ngang; nhãn dài hơn phần được chia thì nút nở theo nhãn và cả hàng cuộn ngang
-            b.widthAnchor.constraint(greaterThanOrEqualTo: toolsScroll.frameLayoutGuide.widthAnchor, multiplier: share).isActive = true
+            // mỗi nút rộng theo nhãn; layoutToolRow() chia đều phần thừa, không đủ chỗ thì cả hàng cuộn ngang
+            let natural = Theme.toolWidth(t.1, minWidth: 56)
+            let c = b.widthAnchor.constraint(equalToConstant: natural)
+            c.isActive = true
+            toolWidths.append(c)
+            toolNatural.append(natural)
             toolButtons.append(b)
         }
 
@@ -197,6 +204,24 @@ class EditScreenController: UIViewController {
             titleLabel.centerXAnchor.constraint(equalTo: bar.centerXAnchor),
             titleLabel.centerYAnchor.constraint(equalTo: cancel.centerYAnchor)
         ])
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        layoutToolRow()
+    }
+
+    /// Hàng công cụ trải hết bề ngang màn hình: mỗi nút rộng theo nhãn, phần thừa chia đều cho các nút
+    /// (nhãn dài như "Thêm hình mờ" không bị đẩy ra ngoài mép); màn hình hẹp quá thì cả hàng cuộn ngang.
+    private func layoutToolRow() {
+        let avail = toolsScroll.bounds.width
+        guard avail > 0, !toolNatural.isEmpty else { return }
+        let sum = toolNatural.reduce(0, +)
+        let extra = sum < avail ? (avail - sum) / CGFloat(toolNatural.count) : 0
+        for (k, c) in toolWidths.enumerated() {
+            let w = toolNatural[k] + extra
+            if abs(c.constant - w) > 0.25 { c.constant = w }
+        }
     }
 
     /// Đặt vùng trang vào khung (dưới lời nhắc và các nút nổi).

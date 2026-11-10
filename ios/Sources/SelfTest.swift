@@ -503,6 +503,63 @@ final class SelfTest {
         return nav.presentedViewController == nil && editor != nil && (editor?.pending ?? 1) == 0
     }
 
+    /// Bề rộng một dòng của nhãn nút công cụ.
+    private func toolTitleWidth(_ title: String) -> CGFloat {
+        return (title as NSString).size(withAttributes: [.font: Theme.toolFont]).width
+    }
+
+    /// Hàng công cụ của màn hình Xóa thông minh / Đánh dấu: mọi nút nằm trọn trong bề ngang màn hình, nhãn không bị cắt.
+    private func checkToolRow(_ vc: EditScreenController?, _ name: String) {
+        guard let vc = vc, let row = vc.toolButtons.first?.superview else {
+            check(false, name + ": không thấy hàng công cụ")
+            return
+        }
+        vc.view.layoutIfNeeded()
+        var widths = [String]()
+        var cut = [String]()
+        for b in vc.toolButtons {
+            let title = b.configuration?.title ?? ""
+            let need = toolTitleWidth(title)
+            let have = b.titleLabel?.bounds.width ?? 0
+            widths.append(String(format: "%@ %.0f", title, Double(b.bounds.width)))
+            // nút phải rộng hơn nhãn (có lề); nhãn đã dàn không được hẹp hơn chữ
+            let tooNarrow = b.bounds.width < need + 8
+            let labelCut = have > 0 && have + 1 < need
+            if tooNarrow || labelCut {
+                cut.append(String(format: "%@ (nút %.1f, nhãn %.1f, cần %.1f)", title, Double(b.bounds.width), Double(have), Double(need)))
+            }
+        }
+        let screen = vc.view.bounds.width
+        // màn hình hẹp hơn 375 điểm thì hàng công cụ được phép cuộn ngang
+        let fits = screen < 375 || row.bounds.width <= screen + 0.5
+        var msg = name + ": hàng công cụ nằm trọn bề ngang, nhãn không bị cắt ("
+        msg += widths.joined(separator: ", ")
+        msg += String(format: "; hàng %.0f / màn hình %.0f)", Double(row.bounds.width), Double(screen))
+        if !cut.isEmpty { msg += " — bị cắt: " + cut.joined(separator: ", ") }
+        check(fits && cut.isEmpty, msg)
+    }
+
+    /// Dải công cụ của trình chỉnh sửa: trên máy rộng từ 390 điểm, bốn công cụ đầu hiện trọn vẹn, nút đủ rộng cho nhãn.
+    private func checkEditorStrip() {
+        guard let t = editor?.testToolFrames, t.tools.count >= 12 else {
+            check(false, "dải công cụ: không đủ 12 công cụ")
+            return
+        }
+        var widths = [String]()
+        var narrow = [String]()
+        for x in t.tools {
+            widths.append(String(format: "%@ %.0f", x.title, Double(x.frame.width)))
+            if x.frame.width < toolTitleWidth(x.title) + 8 { narrow.append(x.title) }
+        }
+        let screen = editor?.view.bounds.width ?? 0
+        let fourth = t.tools[3].frame.maxX
+        let fourVisible = screen < 390 || fourth <= t.visible + 0.5
+        var msg = String(format: "dải công cụ: bốn công cụ đầu hiện trọn (mép phải nút thứ tư %.0f / thấy được %.0f), nút đủ rộng cho nhãn (", Double(fourth), Double(t.visible))
+        msg += widths.joined(separator: ", ") + ")"
+        if !narrow.isEmpty { msg += " — hẹp: " + narrow.joined(separator: ", ") }
+        check(fourVisible && narrow.isEmpty, msg)
+    }
+
     /// Bộ lọc mới, lời nhắc ngón tay, Xóa thông minh, Đánh dấu, Tiêu đề trang, Cắt dán — trên ảnh thử có ngón tay + chữ viết tay.
     private func addBeautifySteps() {
         addRun("nhập ảnh có ngón tay + chữ viết tay") {
@@ -514,6 +571,7 @@ final class SelfTest {
         addUntil("trình chỉnh sửa (ảnh chỉnh sửa)", 60) { self.editorIdle() }
         addWait(1.0)
         addSnap("40_finger_banner")
+        addRun("kiểm tra dải công cụ") { self.checkEditorStrip() }
         addRun("kiểm tra lời nhắc ngón tay") {
             self.beautyId = self.editor?.doc.id ?? ""
             self.check(self.editor?.current?.finger == 1, "phát hiện ngón tay giữ giấy trên ảnh thử (finger=\(String(describing: self.editor?.current?.finger)))")
@@ -590,6 +648,7 @@ final class SelfTest {
         addUntil("màn hình Xóa thông minh", 30) { self.eraser?.testReady == true }
         addWait(0.8)
         addSnap("43_erase_open")
+        addRun("kiểm tra hàng công cụ Xóa thông minh") { self.checkToolRow(self.eraser, "Xóa thông minh") }
         addRun("Bút: tô lên dòng NGƯỜI LẬP") { self.eraser?.testStroke([CGPoint(x: 0.11, y: 0.786), CGPoint(x: 0.34, y: 0.786)]) }
         addUntil("bút xong", 30) { self.eraser?.testReady == true }
         addRun("Hình chữ nhật quanh con dấu") {
@@ -652,6 +711,7 @@ final class SelfTest {
         addRun("mở Đánh dấu (Brush)") { self.editor?.openMarkup(MarkupViewController.brush) }
         addUntil("màn hình Đánh dấu", 30) { self.markup?.testReady == true }
         addWait(0.8)
+        addRun("kiểm tra hàng công cụ Đánh dấu") { self.checkToolRow(self.markup, "Đánh dấu") }
         addRun("Brush đen + đỏ") {
             self.markup?.testStroke([CGPoint(x: 0.04, y: 0.10), CGPoint(x: 0.04, y: 0.30)])
             self.markup?.testPickColor(1)

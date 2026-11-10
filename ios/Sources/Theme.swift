@@ -30,6 +30,16 @@ enum Theme {
         return UIImage(systemName: name, withConfiguration: UIImage.SymbolConfiguration(pointSize: size, weight: weight))
     }
 
+    /// Cỡ chữ nhãn của nút công cụ.
+    static let toolFont = UIFont.systemFont(ofSize: 11.5)
+
+    /// Bề rộng cần cho một nút công cụ trong hàng cuộn ngang: theo nhãn (một dòng) cộng lề, không hẹp hơn `minWidth`.
+    /// Đặt bề rộng tường minh thay vì dựa vào kích thước nội tại của nút để mọi máy dàn giống nhau.
+    static func toolWidth(_ title: String, minWidth: CGFloat) -> CGFloat {
+        let w = (title as NSString).size(withAttributes: [.font: toolFont]).width
+        return max(minWidth, ceil(w) + 14)
+    }
+
     /// Nút trên thanh công cụ dưới: biểu tượng + nhãn nhỏ.
     static func toolButton(_ symbolName: String, _ title: String) -> UIButton {
         var cfg = UIButton.Configuration.plain()
@@ -39,9 +49,10 @@ enum Theme {
         cfg.imagePadding = 5
         cfg.baseForegroundColor = .white
         cfg.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 2, bottom: 6, trailing: 2)
+        cfg.titleLineBreakMode = .byClipping
         cfg.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
             var out = incoming
-            out.font = UIFont.systemFont(ofSize: 11.5)
+            out.font = Theme.toolFont
             return out
         }
         let b = UIButton(configuration: cfg)

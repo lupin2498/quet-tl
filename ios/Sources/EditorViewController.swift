@@ -349,13 +349,13 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         ])
     }
 
-    /// Thêm một công cụ vào dải cuộn ngang: rộng theo nhãn (tối thiểu 66) để nhãn dài không bị cắt.
+    /// Thêm một công cụ vào dải cuộn ngang: rộng theo nhãn (tối thiểu 60) để nhãn dài không bị cắt.
     @discardableResult
     private func addTool(_ strip: UIStackView, _ symbol: String, _ title: String, _ action: Selector) -> UIButton {
         let b = Theme.toolButton(symbol, title)
         b.addTarget(self, action: action, for: .touchUpInside)
         b.translatesAutoresizingMaskIntoConstraints = false
-        b.widthAnchor.constraint(greaterThanOrEqualToConstant: 66).isActive = true
+        b.widthAnchor.constraint(equalToConstant: Theme.toolWidth(title, minWidth: 60)).isActive = true
         b.heightAnchor.constraint(equalToConstant: 58).isActive = true
         strip.addArrangedSubview(b)
         return b
@@ -445,6 +445,18 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     }
 
     var bannerVisible: Bool { !banner.isHidden }
+
+    /// (tự kiểm thử) bề ngang nhìn thấy của dải công cụ và khung từng nút công cụ, theo thứ tự từ trái sang.
+    var testToolFrames: (visible: CGFloat, tools: [(title: String, frame: CGRect)]) {
+        view.layoutIfNeeded()
+        var out = [(title: String, frame: CGRect)]()
+        if let strip = toolScroll.subviews.first(where: { $0 is UIStackView }) as? UIStackView {
+            for case let b as UIButton in strip.arrangedSubviews {
+                out.append((title: b.configuration?.title ?? "", frame: b.frame))
+            }
+        }
+        return (visible: toolScroll.bounds.width, tools: out)
+    }
 
     private func updateBanner() {
         var show = false

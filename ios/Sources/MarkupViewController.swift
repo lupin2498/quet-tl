@@ -815,8 +815,12 @@ final class MarkupViewController: EditScreenController {
         save.addTarget(self, action: #selector(savePad), for: .touchUpInside)
         let btns = UIStackView(arrangedSubviews: [close, again, save])
         btns.axis = .horizontal
-        btns.distribution = .fillEqually
+        // "Lưu chữ ký" cần rộng hơn một phần ba hàng mới đủ một dòng; hai nút chữ chia đều phần còn lại
+        btns.distribution = .fill
         btns.spacing = 8
+        [close, again, save].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        save.widthAnchor.constraint(equalToConstant: 140).isActive = true
+        close.widthAnchor.constraint(equalTo: again.widthAnchor).isActive = true
         [title, pad, inkRow, btns].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             padLayer.addSubview($0)
