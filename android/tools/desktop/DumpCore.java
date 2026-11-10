@@ -2,6 +2,7 @@ import vn.quettailieu.scanner.core.DocDetector;
 import vn.quettailieu.scanner.core.Enhancer;
 import vn.quettailieu.scanner.core.Geom;
 import vn.quettailieu.scanner.core.PdfWriter;
+import vn.quettailieu.scanner.core.Retouch;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -53,7 +54,10 @@ public class DumpCore {
             }
             pw.println(sb);
             boolean full = name.startsWith("full_");
-            for (int mode : new int[]{Enhancer.MAGIC, Enhancer.LIGHTEN, Enhancer.GRAY, Enhancer.BW}) {
+            // ảnh trang đã nắn phẳng của make_retouch_images.py: so từng điểm ảnh ở các bộ lọc mới
+            boolean rt = name.startsWith("rt_");
+            for (int mode : new int[]{Enhancer.MAGIC, Enhancer.LIGHTEN, Enhancer.GRAY, Enhancer.BW,
+                    Enhancer.MAGIC_PRO, Enhancer.DENOISE, Enhancer.NO_SHADOW, Enhancer.NO_HAND}) {
                 int[] c = px.clone();
                 t0 = System.nanoTime();
                 Enhancer.apply(c, w, h, mode);
@@ -65,7 +69,22 @@ public class DumpCore {
                     sb2 += v & 255;
                 }
                 pw.println("enh " + name + " " + mode + " " + sr + " " + sg + " " + sb2);
-                if (full) writePPM(new File(out, name + "_m" + mode + ".ppm"), c, w, h);
+                if (full || (rt && mode >= Enhancer.MAGIC_PRO)) writePPM(new File(out, name + "_m" + mode + ".ppm"), c, w, h);
+            }
+            if (rt) dumpRetouch(pw, out, name, px, w, h);
+        }
+        // Retouch.remap: đổi vùng cắt
+        {
+            float[][] quads = {{100, 80, 900, 120, 880, 1300, 60, 1250}, {0, 0, 1000, 0, 1000, 1400, 0, 1400}, {50, 60, 950, 40, 990, 1380, 20, 1390}};
+            float[] pts = {0.25f, 0.5f, 0.9f, 0.1f, 0f, 0f, 1f, 1f};
+            int ri = 0;
+            for (float[] qa : quads) {
+                for (float[] qb : quads) {
+                    StringBuilder sb = new StringBuilder("remap " + ri++);
+                    for (float v : Retouch.remap(pts, qa, qb)) sb.append(String.format(Locale.US, " %.5f", v));
+                    sb.append(String.format(Locale.US, " %.5f", Retouch.remapScale(qa, qb)));
+                    pw.println(sb);
+                }
             }
         }
         // Geom
@@ -136,6 +155,59 @@ public class DumpCore {
         }
         pw.close();
         System.out.printf(Locale.US, "Java: %d ảnh, tìm mép %.0f ms, lọc %.0f ms%n", nImg, tDet / 1e6, tEnh / 1e6);
+    }
+
+    /** Các thao tác "Xóa thông minh" cố định dùng để đối chiếu (toạ độ chuẩn hoá trên trang của make_retouch_images.py). */
+    static List<Retouch.Op> retouchOps() {
+        List<Retouch.Op> ops = new ArrayList<>();
+        ops.add(new Retouch.Op(Retouch.PEN, 0.03f, new float[]{0.15f, 0.78f, 0.30f, 0.79f}));
+        ops.add(new Retouch.Op(Retouch.RECT, 0f, new float[]{0.6f, 0.84f, 0.86f, 0.84f, 0.86f, 0.985f, 0.6f, 0.985f}));
+        ops.add(new Retouch.Op(Retouch.MAGIC, 0.03f, new float[]{0.16f, 0.885f, 0.24f, 0.93f}));
+        ops.add(new Retouch.Op(Retouch.TEXT, 0.055f, new float[]{0.17f, 0.554f, 0.33f, 0.554f}));
+        ops.add(new Retouch.Op(Retouch.HAND, 0f, new float[0]));
+        return ops;
+    }
+
+    static String sums(int[] c) {
+        long sr = 0, sg = 0, sb = 0;
+        for (int v : c) {
+            sr += (v >> 16) & 255;
+            sg += (v >> 8) & 255;
+            sb += v & 255;
+        }
+        return " " + sr + " " + sg + " " + sb;
+    }
+
+    static void dumpRetouch(PrintWriter pw, File out, String name, int[] px, int w, int h) throws IOException {
+        byte[] fm = Retouch.fingerMask(px.clone(), w, h);
+        int cnt = 0;
+        if (fm != null) for (byte b : fm) if (b != 0) cnt++;
+        pw.println("ret " + name + " finger " + (fm != null ? 1 : 0) + " " + cnt);
+        List<Retouch.Op> ops = retouchOps();
+        String[] kinds = {"pen", "rect", "magic", "text", "hand"};
+        for (int k = 0; k < ops.size(); k++) {
+            int[] c = px.clone();
+            Retouch.Op op = ops.get(k);
+            boolean changed;
+            if (op.kind == Retouch.HAND) {
+                changed = Retouch.erase(c, w, h, Retouch.HAND, null);
+            } else {
+                byte[] m = new byte[w * h];
+                Retouch.opMask(m, w, h, op);
+                changed = Retouch.erase(c, w, h, op.kind, m);
+            }
+            pw.println("ret " + name + " " + kinds[k] + " " + (changed ? 1 : 0) + sums(c));
+        }
+        int[] c = px.clone();
+        Retouch.applyErase(c, w, h, ops);
+        pw.println("ret " + name + " all" + sums(c));
+        writePPM(new File(out, name + "_all.ppm"), c, w, h);
+        c = px.clone();
+        Retouch.sharpen(c, w, h, 96);
+        pw.println("ret " + name + " sharpen" + sums(c));
+        c = px.clone();
+        Retouch.cleanEdges(c, w, h);
+        pw.println("ret " + name + " clean" + sums(c));
     }
 
     static List<String> readLines(File f) throws IOException {

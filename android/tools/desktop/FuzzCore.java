@@ -2,6 +2,7 @@ import vn.quettailieu.scanner.core.DocDetector;
 import vn.quettailieu.scanner.core.Enhancer;
 import vn.quettailieu.scanner.core.Geom;
 import vn.quettailieu.scanner.core.PdfWriter;
+import vn.quettailieu.scanner.core.Retouch;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -54,6 +55,8 @@ public class FuzzCore {
         System.out.println("Geom: xong");
         fuzzEnhancer(rounds);
         System.out.println("Enhancer: xong");
+        fuzzRetouch(rounds);
+        System.out.println("Retouch: xong");
         fuzzPdf(outDir);
         System.out.println("PdfWriter: xong");
         System.out.printf("KẾT QUẢ FUZZ: %d kiểm tra, %d lỗi%n", checks, failures);
@@ -280,7 +283,8 @@ public class FuzzCore {
     static void fuzzEnhancer(int rounds) {
         int[][] sizes = {{1, 1}, {3, 3}, {4, 4}, {5, 4}, {4, 5}, {7, 9}, {8, 8}, {9, 8}, {100, 4}, {4, 100}, {2000, 5}, {5, 2000},
                 {97, 131}, {640, 480}, {1240, 1754}};
-        int[] modes = {Enhancer.ORIGINAL, Enhancer.MAGIC, Enhancer.LIGHTEN, Enhancer.GRAY, Enhancer.BW, 99, -1};
+        int[] modes = {Enhancer.ORIGINAL, Enhancer.MAGIC, Enhancer.LIGHTEN, Enhancer.GRAY, Enhancer.BW,
+                Enhancer.MAGIC_PRO, Enhancer.DENOISE, Enhancer.NO_SHADOW, Enhancer.NO_HAND, 99, -1};
         for (int[] s : sizes) {
             for (int kind = 0; kind <= 8; kind++) {
                 for (int m : modes) runEnhance(pattern(kind, s[0], s[1]), s[0], s[1], m, "mẫu " + kind);
@@ -299,7 +303,7 @@ public class FuzzCore {
             boolean ink = (y % 40 < 4) && x > 60 && x < 540;
             px[y * w + x] = ink ? 0xFF282420 : (0xFF000000 | (shade << 16) | ((shade - 8) << 8) | (shade - 30));
         }
-        for (int m : new int[]{Enhancer.MAGIC, Enhancer.LIGHTEN, Enhancer.GRAY, Enhancer.BW}) {
+        for (int m : new int[]{Enhancer.MAGIC, Enhancer.LIGHTEN, Enhancer.GRAY, Enhancer.BW, Enhancer.MAGIC_PRO, Enhancer.NO_SHADOW, Enhancer.NO_HAND}) {
             int[] c = px.clone();
             Enhancer.apply(c, w, h, m);
             int paper = c[20 * w + 300], ink = c[41 * w + 300];
@@ -327,6 +331,110 @@ public class FuzzCore {
             }
         } catch (Throwable t) {
             fail("Enhancer " + what + " " + w + "x" + h + " chế độ " + mode, t);
+        }
+    }
+
+    // ------------------------------------------------------------------ Retouch
+
+    /** Toạ độ chuẩn hoá ngẫu nhiên, thỉnh thoảng là giá trị bất thường. */
+    static float coord() {
+        switch (rnd.nextInt(14)) {
+            case 0: return Float.NaN;
+            case 1: return Float.POSITIVE_INFINITY;
+            case 2: return Float.NEGATIVE_INFINITY;
+            case 3: return -1e9f;
+            case 4: return 1e9f;
+            case 5: return -0.5f;
+            case 6: return 1.5f;
+            default: return rnd.nextFloat();
+        }
+    }
+
+    static Retouch.Op randomOp(int kind) {
+        int n = kind == Retouch.RECT ? 4 : rnd.nextInt(6);
+        if (rnd.nextInt(10) == 0) n = rnd.nextInt(3);
+        float[] p = new float[n * 2 + (rnd.nextInt(8) == 0 ? 1 : 0)];
+        for (int i = 0; i < p.length; i++) p[i] = coord();
+        float width = rnd.nextInt(6) == 0 ? coord() * 1e6f : rnd.nextFloat() * 0.2f;
+        return new Retouch.Op(kind, width, rnd.nextInt(25) == 0 ? null : p);
+    }
+
+    static void fuzzRetouch(int rounds) {
+        int[][] sizes = {{1, 1}, {3, 3}, {4, 4}, {5, 4}, {8, 8}, {9, 7}, {16, 16}, {17, 33}, {48, 48}, {47, 200}, {200, 47}, {100, 4}, {4, 100},
+                {2000, 5}, {5, 2000}, {97, 131}, {420, 300}, {640, 480}};
+        for (int[] s : sizes) {
+            for (int kind = 0; kind <= 8; kind++) runRetouch(pattern(kind, s[0], s[1]), s[0], s[1], "mẫu " + kind);
+        }
+        for (int r = 0; r < rounds; r++) {
+            int w = 1 + rnd.nextInt(300), h = 1 + rnd.nextInt(300);
+            runRetouch(pattern(rnd.nextInt(9), w, h), w, h, "ngẫu nhiên");
+        }
+        // tham số null / mảng ngắn hơn ảnh: không được ném lỗi
+        try {
+            int[] px = pattern(3, 40, 30);
+            Retouch.fill(null, 40, 30, new byte[1200]);
+            Retouch.fill(px, 40, 30, null);
+            Retouch.fill(px, 40, 30, new byte[10]);
+            Retouch.fill(new int[10], 40, 30, new byte[1200]);
+            Retouch.strokeMask(null, 40, 30, new float[]{1, 1}, 3);
+            Retouch.strokeMask(new byte[1200], 40, 30, null, 3);
+            Retouch.polyMask(null, 40, 30, new float[]{1, 1, 5, 1, 5, 5});
+            Retouch.polyMask(new byte[1200], 40, 30, null);
+            Retouch.opMask(new byte[1200], 40, 30, null);
+            Retouch.applyErase(px, 40, 30, null);
+            Retouch.applyErase(null, 40, 30, new ArrayList<Retouch.Op>());
+            check(!Retouch.erase(px, 40, 30, Retouch.PEN, null), "erase: không có vùng tô -> false");
+            check(!Retouch.erase(px, 40, 30, Retouch.MAGIC, new byte[10]), "erase: vùng tô ngắn hơn ảnh -> false");
+            check(!Retouch.erase(null, 40, 30, Retouch.HAND, null), "erase: ảnh null -> false");
+            check(Retouch.fingerMask(null, 100, 100) == null, "fingerMask null");
+            check(Retouch.fingerMask(new int[10], 100, 100) == null, "fingerMask mảng ngắn");
+            Retouch.cleanEdges(null, 40, 30);
+            Retouch.sharpen(null, 40, 30, 96);
+            Retouch.denoise(null, 40, 30);
+            Retouch.cleanEdges(new int[10], 40, 30);
+            Retouch.sharpen(new int[10], 40, 30, 96);
+            Retouch.denoise(new int[10], 40, 30);
+            check(Retouch.remap(null, null, null) == null, "remap null");
+            check(Retouch.remapScale(null, null) == 1f, "remapScale null");
+            checks++;
+        } catch (Throwable t) {
+            fail("Retouch tham số null / mảng ngắn", t);
+        }
+        // vùng tô phủ kín ảnh: tô nền không còn mẫu nào để ước lượng -> vẫn phải chạy xong, ảnh còn nguyên kích thước
+        try {
+            int w = 60, h = 50;
+            int[] px = pattern(3, w, h);
+            byte[] all = new byte[w * h];
+            java.util.Arrays.fill(all, (byte) 1);
+            for (int k = 0; k < 5; k++) Retouch.erase(px.clone(), w, h, k, all);
+            checks++;
+        } catch (Throwable t) {
+            fail("Retouch vùng tô phủ kín ảnh", t);
+        }
+    }
+
+    static void runRetouch(int[] px, int w, int h, String what) {
+        try {
+            byte[] fm = Retouch.fingerMask(px, w, h);
+            check(fm == null || fm.length == w * h, "fingerMask kích thước (" + what + " " + w + "x" + h + ")");
+            Retouch.removeFingers(px.clone(), w, h);
+            List<Retouch.Op> ops = new ArrayList<>();
+            int count = rnd.nextInt(5);
+            for (int i = 0; i < count; i++) ops.add(rnd.nextInt(12) == 0 ? null : randomOp(rnd.nextInt(5)));
+            Retouch.applyErase(px.clone(), w, h, ops);
+            for (int k = 0; k < 5; k++) {
+                byte[] m = new byte[w * h];
+                Retouch.opMask(m, w, h, randomOp(k));
+                Retouch.erase(px.clone(), w, h, k, m);
+                Retouch.erase(px.clone(), w, h, k, null);
+            }
+            int[] c = px.clone();
+            Retouch.cleanEdges(c, w, h);
+            Retouch.sharpen(c, w, h, 96);
+            Retouch.denoise(c, w, h);
+            checks++;
+        } catch (Throwable t) {
+            fail("Retouch " + what + " " + w + "x" + h, t);
         }
     }
 

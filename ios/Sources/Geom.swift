@@ -66,6 +66,34 @@ enum Geom {
         return Double(hypot(a.x - b.x, a.y - b.y))
     }
 
+    /// Ma trận đồng nhất 3x3 (hàng-chính, 9 phần tử) ánh xạ 4 điểm src -> 4 điểm dst (x0,y0,...,x3,y3).
+    /// nil nếu hệ suy biến. Port từ Geom.homography (Java).
+    static func homography(_ src: [Float], _ dst: [Float]) -> [Double]? {
+        guard src.count >= 8, dst.count >= 8 else { return nil }
+        var a = [[Double]](repeating: [Double](repeating: 0, count: 9), count: 8)
+        for i in 0..<4 {
+            let x = Double(src[2 * i]), y = Double(src[2 * i + 1])
+            let u = Double(dst[2 * i]), v = Double(dst[2 * i + 1])
+            a[2 * i] = [x, y, 1, 0, 0, 0, -u * x, -u * y, u]
+            a[2 * i + 1] = [0, 0, 0, x, y, 1, -v * x, -v * y, v]
+        }
+        // Khử Gauss có chọn trụ
+        for c in 0..<8 {
+            var piv = c
+            for r in (c + 1)..<8 where abs(a[r][c]) > abs(a[piv][c]) { piv = r }
+            a.swapAt(c, piv)
+            let d = a[c][c]
+            if !(abs(d) >= 1e-12) { return nil }
+            for k in c..<9 { a[c][k] /= d }
+            for r in 0..<8 where r != c {
+                let f = a[r][c]
+                if f == 0 { continue }
+                for k in c..<9 { a[r][k] -= f * a[c][k] }
+            }
+        }
+        return [a[0][8], a[1][8], a[2][8], a[3][8], a[4][8], a[5][8], a[6][8], a[7][8], 1]
+    }
+
     private static func cross(_ a: [Double], _ b: [Double]) -> [Double] {
         return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
     }

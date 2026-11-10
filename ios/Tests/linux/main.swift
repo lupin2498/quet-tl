@@ -1,8 +1,8 @@
-// Kiểm thử phần thuật toán Swift (DocDetector, Enhancer, Geom, PdfWriter) trên Linux — không cần UIKit.
+// Kiểm thử phần thuật toán Swift (DocDetector, Enhancer, Retouch, Geom, PdfWriter) trên Linux — không cần UIKit.
 //
 // Biên dịch:
-//   swiftc -O -o algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/Geom.swift \
-//          ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
+//   swiftc -O -o algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/Retouch.swift \
+//          ios/Sources/Geom.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
 // Cách chạy:
 //   ./algotest tests/images/gt.txt <thư-mục-ppm>     so với toạ độ góc thật + bộ lọc + PDF
 //   ./algotest --dump <dữ-liệu> <kết-quả>            xuất kết quả để đối chiếu với bản Java (DumpCore.java)
@@ -65,6 +65,69 @@ func enhance(_ rgba: [UInt8], _ w: Int, _ h: Int, _ mode: Int) -> [UInt8] {
     return px
 }
 
+func sums(_ c: [UInt8]) -> String {
+    var sr = 0, sg = 0, sb = 0
+    var i = 0
+    while i < c.count {
+        sr += Int(c[i])
+        sg += Int(c[i + 1])
+        sb += Int(c[i + 2])
+        i += 4
+    }
+    return " \(sr) \(sg) \(sb)"
+}
+
+/// Chạy một phép biến đổi tại chỗ trên bản sao của ảnh.
+func edited(_ rgba: [UInt8], _ body: (UnsafeMutablePointer<UInt8>) -> Void) -> [UInt8] {
+    var px = rgba
+    px.withUnsafeMutableBufferPointer { buf in
+        if let base = buf.baseAddress { body(base) }
+    }
+    return px
+}
+
+/// Các thao tác "Xóa thông minh" cố định dùng để đối chiếu (giống DumpCore.retouchOps).
+func retouchOps() -> [Retouch.Op] {
+    return [
+        Retouch.Op(kind: Retouch.pen, width: 0.03, pts: [0.15, 0.78, 0.30, 0.79]),
+        Retouch.Op(kind: Retouch.rect, width: 0, pts: [0.6, 0.84, 0.86, 0.84, 0.86, 0.985, 0.6, 0.985]),
+        Retouch.Op(kind: Retouch.magic, width: 0.03, pts: [0.16, 0.885, 0.24, 0.93]),
+        Retouch.Op(kind: Retouch.text, width: 0.055, pts: [0.17, 0.554, 0.33, 0.554]),
+        Retouch.Op(kind: Retouch.hand, width: 0, pts: []),
+    ]
+}
+
+func dumpRetouch(_ lines: inout [String], _ outDir: String, _ name: String, _ rgba: [UInt8], _ w: Int, _ h: Int) {
+    let bpr = w * 4
+    var fm: [UInt8]? = nil
+    _ = edited(rgba) { fm = Retouch.fingerMask($0, w, h, bpr) }
+    var cnt = 0
+    if let m = fm { for b in m where b != 0 { cnt += 1 } }
+    lines.append("ret \(name) finger \(fm != nil ? 1 : 0) \(cnt)")
+    let ops = retouchOps()
+    let kinds = ["pen", "rect", "magic", "text", "hand"]
+    for (k, op) in ops.enumerated() {
+        var changed = false
+        let c = edited(rgba) { p in
+            if op.kind == Retouch.hand {
+                changed = Retouch.erase(p, w, h, bpr, Retouch.hand, nil)
+            } else {
+                var m = [UInt8](repeating: 0, count: w * h)
+                Retouch.opMask(&m, w, h, op)
+                changed = Retouch.erase(p, w, h, bpr, op.kind, m)
+            }
+        }
+        lines.append("ret \(name) \(kinds[k]) \(changed ? 1 : 0)" + sums(c))
+    }
+    var c = edited(rgba) { Retouch.applyErase($0, w, h, bpr, ops) }
+    lines.append("ret \(name) all" + sums(c))
+    writePPM("\(outDir)/\(name)_all.ppm", c, w, h)
+    c = edited(rgba) { Retouch.sharpen($0, w, h, bpr, 96) }
+    lines.append("ret \(name) sharpen" + sums(c))
+    c = edited(rgba) { Retouch.cleanEdges($0, w, h, bpr) }
+    lines.append("ret \(name) clean" + sums(c))
+}
+
 func f(_ v: Double, _ digits: Int) -> String {
     return String(format: "%.\(digits)f", locale: Locale(identifier: "en_US_POSIX"), v)
 }
@@ -107,20 +170,31 @@ func runDump(_ inDir: String, _ outDir: String) -> Int32 {
         }
         lines.append(s)
         let full = name.hasPrefix("full_")
-        for mode in [Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw] {
+        // ảnh trang đã nắn phẳng của make_retouch_images.py: so từng điểm ảnh ở các bộ lọc mới
+        let rt = name.hasPrefix("rt_")
+        for mode in [Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw,
+                     Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand] {
             t0 = Date()
             let c = enhance(img.rgba, img.w, img.h, mode)
             tEnh += Date().timeIntervalSince(t0)
-            var sr = 0, sg = 0, sb = 0
-            var i = 0
-            while i < c.count {
-                sr += Int(c[i])
-                sg += Int(c[i + 1])
-                sb += Int(c[i + 2])
-                i += 4
+            lines.append("enh \(name) \(mode)" + sums(c))
+            if full || (rt && mode >= Enhancer.magicPro) { writePPM("\(outDir)/\(name)_m\(mode).ppm", c, img.w, img.h) }
+        }
+        if rt { dumpRetouch(&lines, outDir, name, img.rgba, img.w, img.h) }
+    }
+    // Retouch.remap: đổi vùng cắt
+    do {
+        let quads: [[Float]] = [[100, 80, 900, 120, 880, 1300, 60, 1250], [0, 0, 1000, 0, 1000, 1400, 0, 1400], [50, 60, 950, 40, 990, 1380, 20, 1390]]
+        let pts: [Float] = [0.25, 0.5, 0.9, 0.1, 0, 0, 1, 1]
+        var ri = 0
+        for qa in quads {
+            for qb in quads {
+                var s = "remap \(ri)"
+                ri += 1
+                for v in Retouch.remap(pts, qa, qb) { s += " " + f(Double(v), 5) }
+                s += " " + f(Double(Retouch.remapScale(qa, qb)), 5)
+                lines.append(s)
             }
-            lines.append("enh \(name) \(mode) \(sr) \(sg) \(sb)")
-            if full { writePPM("\(outDir)/\(name)_m\(mode).ppm", c, img.w, img.h) }
         }
     }
     // Geom
@@ -363,7 +437,8 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
     t0 = Date()
     let esizes: [(Int, Int)] = [(1, 1), (3, 3), (4, 4), (5, 4), (4, 5), (7, 9), (8, 8), (9, 8), (100, 4), (4, 100), (2000, 5), (5, 2000),
                                 (97, 131), (640, 480), (1240, 1754)]
-    let modes = [Enhancer.original, Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw, 99, -1]
+    let modes = [Enhancer.original, Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw,
+                 Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand, 99, -1]
     func runEnhance(_ px: [UInt8], _ w: Int, _ h: Int, _ mode: Int, _ what: String) {
         let out = enhance(px, w, h, mode)
         fuzzChecks += 1
@@ -409,7 +484,7 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
             let i = (y * w + x) * 4
             return (299 * Int(c[i]) + 587 * Int(c[i + 1]) + 114 * Int(c[i + 2])) / 1000
         }
-        for m in [Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw] {
+        for m in [Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw, Enhancer.magicPro, Enhancer.noShadow, Enhancer.noHand] {
             let c = enhance(px, w, h, m)
             let pl = lum(c, 300, 20), il = lum(c, 300, 41)
             fcheck(pl >= 235, "Enhancer chế độ \(m): nền giấy \(pl) (phải >= 235)")
@@ -417,6 +492,129 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
         }
     }
     print("Enhancer: xong (\(Int(Date().timeIntervalSince(t0) * 1000)) ms)")
+
+    // --- Retouch
+    t0 = Date()
+    /// Toạ độ chuẩn hoá ngẫu nhiên, thỉnh thoảng là giá trị bất thường.
+    func coord() -> Float {
+        switch rng.int(14) {
+        case 0: return Float.nan
+        case 1: return Float.infinity
+        case 2: return -Float.infinity
+        case 3: return -1e9
+        case 4: return 1e9
+        case 5: return -0.5
+        case 6: return 1.5
+        default: return Float(rng.unit())
+        }
+    }
+    func randomOp(_ kind: Int) -> Retouch.Op {
+        var n = kind == Retouch.rect ? 4 : rng.int(6)
+        if rng.int(10) == 0 { n = rng.int(3) }
+        var p = [Float](repeating: 0, count: n * 2 + (rng.int(8) == 0 ? 1 : 0))
+        for i in 0..<p.count { p[i] = coord() }
+        let width: Float = rng.int(6) == 0 ? coord() * 1e6 : Float(rng.unit()) * 0.2
+        return Retouch.Op(kind: kind, width: width, pts: p)
+    }
+    func runRetouch(_ px: [UInt8], _ w: Int, _ h: Int, _ what: String) {
+        let bpr = w * 4
+        var fm: [UInt8]? = nil
+        _ = edited(px) { fm = Retouch.fingerMask($0, w, h, bpr) }
+        fcheck(fm == nil || fm!.count == w * h, "fingerMask kích thước (\(what) \(w)x\(h))")
+        _ = edited(px) { Retouch.removeFingers($0, w, h, bpr) }
+        var ops = [Retouch.Op]()
+        for _ in 0..<rng.int(5) { ops.append(randomOp(rng.int(5))) }
+        _ = edited(px) { Retouch.applyErase($0, w, h, bpr, ops) }
+        for k in 0..<5 {
+            var m = [UInt8](repeating: 0, count: w * h)
+            Retouch.opMask(&m, w, h, randomOp(k))
+            _ = edited(px) { Retouch.erase($0, w, h, bpr, k, m) }
+            _ = edited(px) { Retouch.erase($0, w, h, bpr, k, nil) }
+        }
+        let c = edited(px) {
+            Retouch.cleanEdges($0, w, h, bpr)
+            Retouch.sharpen($0, w, h, bpr, 96)
+            Retouch.denoise($0, w, h, bpr)
+        }
+        fcheck(c.count == px.count, "Retouch giữ kích thước ảnh (\(what) \(w)x\(h))")
+    }
+    let rsizes: [(Int, Int)] = [(1, 1), (3, 3), (4, 4), (5, 4), (8, 8), (9, 7), (16, 16), (17, 33), (48, 48), (47, 200), (200, 47), (100, 4), (4, 100),
+                                (2000, 5), (5, 2000), (97, 131), (420, 300), (640, 480)]
+    for (w, h) in rsizes {
+        for kind in 0...8 { runRetouch(pattern(kind, w, h, &rng), w, h, "mẫu \(kind)") }
+    }
+    for _ in 0..<rounds {
+        let w = 1 + rng.int(300), h = 1 + rng.int(300)
+        runRetouch(pattern(rng.int(9), w, h, &rng), w, h, "ngẫu nhiên")
+    }
+    // mặt nạ ngắn hơn ảnh / vùng tô phủ kín ảnh: không được dừng đột ngột
+    do {
+        let w = 60, h = 50
+        let px = pattern(3, w, h, &rng)
+        let short = [UInt8](repeating: 1, count: 10)
+        let all = [UInt8](repeating: 1, count: w * h)
+        for k in 0..<5 {
+            var changed = true
+            _ = edited(px) { changed = Retouch.erase($0, w, h, w * 4, k, short) }
+            fcheck(!changed, "erase: vùng tô ngắn hơn ảnh -> false (kiểu \(k))")
+            _ = edited(px) { Retouch.erase($0, w, h, w * 4, k, all) }
+        }
+        _ = edited(px) { Retouch.fill($0, w, h, w * 4, short) }
+        var m = short
+        Retouch.strokeMask(&m, w, h, [1, 1, 5, 5], 3)
+        Retouch.polyMask(&m, w, h, [1, 1, 5, 1, 5, 5])
+        fcheck(m == short, "mặt nạ ngắn hơn ảnh phải được giữ nguyên")
+        fcheck(Retouch.remap([0.5, 0.5], [], []) == [0.5, 0.5], "remap với tứ giác rỗng")
+        fcheck(Retouch.remap([0.5, 0.5], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 1, 1, 0, 1]) == [0.5, 0.5], "remap với tứ giác suy biến")
+        fcheck(Retouch.remapScale([], []) == 1, "remapScale với tứ giác rỗng")
+    }
+    // bytesPerRow có đệm (CGContext thường đệm hàng): kết quả phải giống hệt khi không đệm
+    do {
+        let w = 157, h = 211, pad = 20
+        let bpr = w * 4 + pad
+        var flat = [UInt8](repeating: 255, count: w * h * 4)
+        for y in 0..<h {
+            for x in 0..<w {
+                let i = (y * w + x) * 4
+                let shade = 170 + 50 * x / w
+                var r = shade, g = shade - 6, b = shade - 22
+                if y % 18 < 2 && x > 20 && x < 140 { r = 40; g = 38; b = 36 }             // dòng chữ / đường kẻ
+                if x < 9 && y > 80 && y < 130 { r = 200; g = 140; b = 112 }               // ngón tay ở mép trái
+                if (x + y) % 37 < 2 && y > 150 { r = 40; g = 62; b = 170 }                 // nét bút xanh
+                if y < 3 || x > w - 3 { r = 30; g = 26; b = 24 }                           // mép bàn tối
+                flat[i] = UInt8(r); flat[i + 1] = UInt8(g); flat[i + 2] = UInt8(b)
+            }
+        }
+        var padded = [UInt8](repeating: 0x5A, count: bpr * h)
+        for y in 0..<h { for k in 0..<(w * 4) { padded[y * bpr + k] = flat[y * w * 4 + k] } }
+        func same(_ what: String, _ body: (UnsafeMutablePointer<UInt8>, Int) -> Void) {
+            let a = edited(flat) { body($0, w * 4) }
+            let b = edited(padded) { body($0, bpr) }
+            var ok = true
+            for y in 0..<h {
+                for k in 0..<(w * 4) where a[y * w * 4 + k] != b[y * bpr + k] { ok = false }
+                for k in (w * 4)..<bpr where b[y * bpr + k] != 0x5A { ok = false }
+            }
+            fcheck(ok, "bytesPerRow có đệm: \(what)")
+        }
+        for mode in [Enhancer.magic, Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand] {
+            same("bộ lọc \(mode)") { Enhancer.apply($0, width: w, height: h, bytesPerRow: $1, mode: mode) }
+        }
+        let ops = [Retouch.Op(kind: Retouch.pen, width: 0.05, pts: [0.2, 0.3, 0.7, 0.35]),
+                   Retouch.Op(kind: Retouch.rect, width: 0, pts: [0.5, 0.5, 0.8, 0.5, 0.8, 0.7, 0.5, 0.7]),
+                   Retouch.Op(kind: Retouch.magic, width: 0.06, pts: [0.3, 0.8, 0.5, 0.85]),
+                   Retouch.Op(kind: Retouch.text, width: 0.08, pts: [0.2, 0.09, 0.8, 0.09]),
+                   Retouch.Op(kind: Retouch.hand, width: 0, pts: [])]
+        same("applyErase") { Retouch.applyErase($0, w, h, $1, ops) }
+        same("removeFingers") { Retouch.removeFingers($0, w, h, $1) }
+        same("cleanEdges") { Retouch.cleanEdges($0, w, h, $1) }
+        same("sharpen") { Retouch.sharpen($0, w, h, $1, 96) }
+        var fa: [UInt8]? = nil, fb: [UInt8]? = nil
+        _ = edited(flat) { fa = Retouch.fingerMask($0, w, h, w * 4) }
+        _ = edited(padded) { fb = Retouch.fingerMask($0, w, h, bpr) }
+        fcheck(fa != nil && fa == fb, "bytesPerRow có đệm: fingerMask (\(fa == nil ? "không thấy ngón tay" : "khác nhau"))")
+    }
+    print("Retouch: xong (\(Int(Date().timeIntervalSince(t0) * 1000)) ms)")
 
     // --- PdfWriter
     for _ in 0..<3000 {
@@ -543,7 +741,8 @@ func runGroundTruth(_ gtPath: String, _ dir: String) -> Int32 {
                 acc += v
                 if acc >= half { med = k; break }
             }
-            let pass = mode == Enhancer.original || med >= 235
+            // Nguyên gốc và Khử nhiễu giữ nguyên tông ảnh; các bộ lọc còn lại phải đưa nền giấy về trắng
+            let pass = mode == Enhancer.original || mode == Enhancer.denoise || med >= 235
             if !pass { failures += 1 }
             print("\(pass ? "PASS" : "FAIL") Enhancer \(Enhancer.name(mode)): trung vị độ sáng \(med), \(ms)ms")
         }

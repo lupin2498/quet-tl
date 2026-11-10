@@ -368,12 +368,37 @@ def crash_buffer():
     return adb("logcat", "-d", "-b", "crash", timeout=30).strip()
 
 
+def app_crashes(buf):
+    """Các khối FATAL EXCEPTION thuộc tiến trình của ứng dụng (bỏ qua crash của dịch vụ hệ thống như Google Play services)."""
+    blocks, cur = [], None
+    for line in buf.splitlines():
+        if "FATAL EXCEPTION" in line:
+            cur = [line]
+            blocks.append(cur)
+        elif cur is not None:
+            cur.append(line)
+    mine = []
+    for b in blocks:
+        proc = [l for l in b[:6] if "Process:" in l]
+        # không thấy dòng "Process:" thì coi như của ứng dụng (thà báo nhầm còn hơn bỏ sót)
+        if not proc or any(("Process: " + PKG) in l for l in proc):
+            mine.append("\n".join(b))
+    return mine
+
+
 def check_no_crash(where):
     c = crash_buffer()
-    if "FATAL EXCEPTION" in c or ("AndroidRuntime" in c and PKG in c):
-        open(os.path.join(OUT, "crash_%s.txt" % where), "w").write(c)
+    mine = app_crashes(c)
+    if mine:
+        open(os.path.join(OUT, "crash_%s.txt" % re.sub(r"\W+", "_", where)), "w").write(c)
         adb("logcat", "-b", "crash", "-c")
-        raise AssertionError("Ứng dụng bị crash tại %s:\n%s" % (where, c[-3000:]))
+        raise AssertionError("Ứng dụng bị crash tại %s:\n%s" % (where, "\n".join(mine)[-3000:]))
+    if "FATAL EXCEPTION" in c:
+        other = sorted(set(re.findall(r"Process: ([\w.:]+)", c)))
+        note = "Tiến trình hệ thống bị crash trong lúc kiểm thử (không phải ứng dụng): %s" % ", ".join(other)
+        if note not in notes:
+            notes.append(note)
+        adb("logcat", "-b", "crash", "-c")
     anr = sh("dumpsys activity processes | grep -i 'notResponding' | head -3", timeout=20)
     if PKG in anr:
         raise AssertionError("ANR tại %s" % where)
@@ -1759,6 +1784,17 @@ def import_to_editor(names, wait=60):
     out = sh("am start -a %s.TEST_IMPORT --esa uris %s -n %s/.MainActivity" % (PKG, uris, PKG))
     if "Error" in out:
         raise AssertionError(out)
+    # một ảnh: ứng dụng mở màn hình cắt trước (tự tìm mép) rồi mới vào trình chỉnh sửa; nhiều ảnh: vào thẳng
+    deadline = time.time() + wait
+    cur = ""
+    while time.time() < deadline:
+        cur = top_activity()
+        if cur in ("EditorActivity", "CropActivity"):
+            break
+        time.sleep(0.7)
+    if cur == "CropActivity":
+        time.sleep(4.0)
+        tap(text="Xong")
     wait_activity("EditorActivity", wait)
     new = [i for i in doc_ids() if i not in before]
     if len(new) != 1:
@@ -2226,15 +2262,18 @@ def t_header_collage():
     if len(new) != 1:
         raise AssertionError("Cắt dán không tạo đúng một tài liệu mới: %s" % new)
     cd = wait_doc(new[0], lambda d: len(d["pages"]) == 1 and d["pages"][0].get("out"), 120, "xử lý tờ ghép")
-    if cd.get("draft") or not str(cd.get("title", "")).endswith(" - ghép") or cd["pages"][0].get("w") != 2480:
-        raise AssertionError("Tài liệu ghép sai: %s / %s" % (cd.get("title"), cd["pages"][0].get("w")))
+    size = sorted([cd["pages"][0].get("w"), cd["pages"][0].get("h")])
+    if cd.get("draft") or not str(cd.get("title", "")).endswith(" - ghép") or size != [2480, 3508]:
+        raise AssertionError("Tài liệu ghép sai: %s / %s" % (cd.get("title"), size))
     sheet = page_image(new[0], 0)
     if sheet is not None:
         log("tờ ghép: %sx%s" % sheet.size)
         if min(sheet.size) < 1500 or max(sheet.size) > 3508:
             raise AssertionError("Tờ ghép có kích thước lạ: %sx%s" % sheet.size)
-        # hai ô của tờ ghép (trên / dưới) đều phải có nội dung
-        for label, box in (("ô trên", (0.2, 0.08, 0.8, 0.45)), ("ô dưới", (0.2, 0.55, 0.8, 0.92))):
+        # hai trang dọc nằm cạnh nhau trên tờ A4 ngang: cả hai ô (trái / phải) đều phải có nội dung
+        if sheet.size[0] <= sheet.size[1]:
+            raise AssertionError("Ghép 2 trang dọc phải cho tờ A4 ngang, nhưng tờ ghép là %sx%s" % sheet.size)
+        for label, box in (("ô trái", (0.08, 0.2, 0.45, 0.8)), ("ô phải", (0.55, 0.2, 0.92, 0.8))):
             v = frac(sheet, box, "dark")
             log("tờ ghép %s: %.3f" % (label, v))
             if v < 0.005:

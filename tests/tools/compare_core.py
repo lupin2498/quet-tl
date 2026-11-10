@@ -52,6 +52,7 @@ def main():
     n_gt = 0
     n_enh = n_enh_exact = 0
     n_geom = 0
+    n_ret = 0
     for a, b in zip(ja, sw):
         pa, pb = a.split(" "), b.split(" ")
         tag = pa[0]
@@ -117,6 +118,24 @@ def main():
                     bad("geom %s: tỷ lệ %s vs %s" % (pa[1], pa[ka + 1], pb[kb + 1]))
                 if pa[ka + 3:ka + 5] != pb[kb + 3:kb + 5]:
                     bad("geom %s: kích thước %s vs %s" % (pa[1], pa[ka + 3:ka + 5], pb[kb + 3:kb + 5]))
+        elif tag in ("ret", "remap"):
+            # Retouch (xóa thông minh, dò ngón tay, làm nét, dọn mép, đổi vùng cắt): cờ phải trùng, số trong sai số làm tròn
+            n_ret += 1
+            if len(pa) != len(pb):
+                bad("%s %s: số trường khác nhau" % (tag, pa[1]))
+                continue
+            for x, y in zip(pa[2:], pb[2:]):
+                if x == y:
+                    continue
+                try:
+                    fx, fy = float(x), float(y)
+                except ValueError:
+                    bad("%s: java '%s' | swift '%s'" % (tag, a, b))
+                    break
+                tol = 1e-4 if tag == "remap" else 2e-4 * max(1.0, abs(fx))
+                if abs(fx - fy) > tol:
+                    bad("%s: java '%s' | swift '%s'" % (tag, a, b))
+                    break
         else:  # snap, pdf, jpeg: phải trùng hoàn toàn
             if a != b:
                 bad("%s: java '%s' | swift '%s'" % (tag, a, b))
@@ -171,7 +190,7 @@ def main():
         if acc["java"] < 0.6 * n_gt:
             bad("độ chính xác tìm mép thấp bất thường: %d/%d" % (acc["java"], n_gt))
     print("Bộ lọc: %d lượt, %d trùng tuyệt đối; %d ảnh so từng điểm (%d/%d giá trị lệch, lớn nhất %d)" % (n_enh, n_enh_exact, n_full, n_diff_px, n_px, max_px))
-    print("Hình học: %d tứ giác; PDF: %d file trùng từng byte" % (n_geom, n_pdf))
+    print("Hình học: %d tứ giác; PDF: %d file trùng từng byte; Retouch: %d dòng" % (n_geom, n_pdf, n_ret))
     if n_det == 0 or n_enh == 0 or n_geom == 0 or n_pdf == 0 or n_full == 0:
         bad("thiếu dữ liệu để đối chiếu")
     print("KẾT QUẢ ĐỐI CHIẾU JAVA/SWIFT: %s (%d điểm lệch)" % ("TRÙNG" if not problems else "LỆCH", len(problems)))
