@@ -290,6 +290,20 @@ enum ImageOps {
         return rgbaPixels(cg, maxDim: maxDim)
     }
 
+    /// Nền cho màn hình Đánh dấu: ảnh nắn phẳng qua xoá thông minh + bộ lọc đầy đủ (đánh dấu vẽ SAU bộ lọc, như render),
+    /// cạnh dài ~previewMax. Bộ lọc dời điểm ảnh ("Làm phẳng"): trường nắn phụ thuộc độ phân giải nên lọc trên ảnh nắn
+    /// phẳng đầy đủ — giống hệt ảnh kết quả — rồi mới thu nhỏ, để nét đánh dấu đặt trên ảnh xem trước nằm đúng chỗ trên
+    /// ảnh kết quả. Chạy trên luồng nền.
+    static func markupBase(dir: URL, page p: Page) -> CGImage? {
+        let erase = (p.erase ?? []).map { $0.op }
+        if Enhancer.movesPixels(p.filter), let px = loadWarp(dir: dir, page: p, maxDim: CGFloat(maxOut)),
+           let full = process(px.data, px.w, px.h, erase: erase, filter: p.filter, geometric: true) {
+            return scaledCG(full, maxDim: previewMax)
+        }
+        guard let px = loadWarp(dir: dir, page: p, maxDim: previewMax) else { return nil }
+        return process(px.data, px.w, px.h, erase: erase, filter: p.filter, geometric: true)
+    }
+
     /// Ảnh từ mảng điểm ảnh RGBX (byte thứ tư bị bỏ qua).
     static func cgImage(rgba: [UInt8], w: Int, h: Int) -> CGImage? {
         guard w > 0, h > 0, rgba.count >= w * h * 4, let provider = CGDataProvider(data: Data(rgba) as CFData) else { return nil }

@@ -41,6 +41,14 @@ public final class Enhancer {
         return mode == MAGIC_PRO || mode == FLATTEN;
     }
 
+    /**
+     * Bộ lọc dời điểm ảnh ("Làm phẳng" nắn thẳng nội dung). Trường nắn phụ thuộc độ phân giải: ảnh nền dùng để đặt nét
+     * đánh dấu phải được lọc ở đúng kích thước ảnh kết quả rồi mới thu nhỏ.
+     */
+    public static boolean movesPixels(int mode) {
+        return mode == FLATTEN;
+    }
+
     /** Áp bộ lọc tại chỗ lên mảng ARGB. */
     public static void apply(int[] px, int w, int h, int mode) {
         apply(px, w, h, mode, true);

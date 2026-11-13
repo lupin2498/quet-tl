@@ -609,12 +609,9 @@ final class MarkupViewController: EditScreenController {
         let dir = self.dir
         let snap = page
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            var out: CGImage?
-            if let px = ImageOps.loadWarp(dir: dir, page: snap, maxDim: ImageOps.previewMax) {
-                // đánh dấu vẽ SAU bộ lọc (như ImageOps.render): xem trước với đủ bộ lọc, kể cả bước nắn thẳng của "Làm phẳng"
-                out = ImageOps.process(px.data, px.w, px.h, erase: (snap.erase ?? []).map { $0.op }, filter: snap.filter,
-                                       geometric: true)
-            }
+            // đánh dấu vẽ SAU bộ lọc (như ImageOps.render): xem trước với đủ bộ lọc, kể cả bước nắn thẳng của "Làm phẳng"
+            // (nắn ở đúng kích thước ảnh kết quả rồi mới thu nhỏ)
+            let out = ImageOps.markupBase(dir: dir, page: snap)
             DispatchQueue.main.async {
                 guard let self = self, !self.finished else { return }
                 self.spinner.stopAnimating()
@@ -914,6 +911,9 @@ final class MarkupViewController: EditScreenController {
     // MARK: tự kiểm thử
 
     var testReady: Bool { loaded }
+
+    /// Ảnh nền đang hiển thị (đã qua bộ lọc đầy đủ của trang, như ảnh kết quả trước khi vẽ đánh dấu).
+    var testImage: UIImage? { canvas.image }
 
     func testSelect(_ t: Int) { selectTool(t, user: false) }
 

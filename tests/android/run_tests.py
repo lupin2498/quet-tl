@@ -2115,6 +2115,159 @@ def t_flatten():
         raise AssertionError("Tài liệu lưu sai bộ lọc: %s" % (d and d["pages"][0].get("filter")))
 
 
+def screen_image():
+    """Ảnh chụp màn hình hiện tại (PIL) hoặc None nếu máy chạy kiểm thử thiếu Pillow."""
+    try:
+        import io
+        from PIL import Image
+    except ImportError:
+        return None
+    data = subprocess.run(["adb", "exec-out", "screencap", "-p"], stdout=subprocess.PIPE, timeout=30).stdout
+    im = Image.open(io.BytesIO(data)).convert("RGB")
+    im.load()
+    return im
+
+
+def screen_page(view_desc, timeout=60):
+    """Vùng trang trên ảnh chụp màn hình Xóa thông minh / Đánh dấu (trang chưa xoay, chưa phóng to): chờ tới khi ảnh trang
+    đã hiện (có nét tối) và ổn định qua hai lần chụp. None nếu thiếu Pillow."""
+    P = page_mapper(view_desc)
+    (x1, y1), (x2, y2) = P(0.0, 0.0), P(1.0, 1.0)
+    deadline = time.time() + timeout
+    last = None
+    while time.time() < deadline:
+        im = screen_image()
+        if im is None:
+            return None
+        crop = im.crop((x1, y1, x2, y2))
+        dark = frac(crop, (0.1, 0.2, 0.9, 0.7), "dark")
+        if dark > 0.01 and last is not None and abs(dark - last) < 0.002:
+            return crop
+        last = dark if dark > 0.01 else None
+        time.sleep(2.0)
+    raise AssertionError("Ảnh trang không hiện (hoặc không ổn định) ở '%s'" % view_desc)
+
+
+def rule_rows(im, box, cover=0.6):
+    """Toạ độ dọc chuẩn hoá (theo chiều cao ảnh) của tâm từng đường kẻ ngang thẳng trong vùng: nhóm các hàng điểm ảnh liền
+    nhau tối trên >= cover bề ngang vùng."""
+    H = im.size[1]
+    y0 = int(box[1] * H)
+    groups = []
+    for i, c in enumerate(dark_rows(im, box)):
+        if c < cover:
+            continue
+        if groups and i - groups[-1][-1] <= 1:
+            groups[-1].append(i)
+        else:
+            groups.append([i])
+    return [(y0 + (g[0] + g[-1]) / 2.0 + 0.5) / H for g in groups]
+
+
+def red_center(im, box):
+    """(toạ độ dọc chuẩn hoá trung bình, số điểm) của các điểm đỏ trong vùng; (None, 0) nếu không có."""
+    W, H = im.size
+    x0, y0 = int(box[0] * W), int(box[1] * H)
+    x1, y1 = max(x0 + 1, int(box[2] * W)), max(y0 + 1, int(box[3] * H))
+    w = x1 - x0
+    n, s = 0, 0.0
+    for i, (r, g, b) in enumerate(rgb_pixels(im.crop((x0, y0, x1, y1)))):
+        if r > 140 and g < 115 and b < 115:
+            n += 1
+            s += i // w
+    return ((y0 + s / n + 0.5) / H, n) if n else (None, 0)
+
+
+def t_flatten_edit():
+    """Xóa thông minh + Đánh dấu trên trang dùng bộ lọc "Làm phẳng". Nét xoá áp lên ảnh TRƯỚC khi lọc nên ảnh xem trước ở
+    Xóa thông minh đã làm sạch nhưng CHƯA nắn; đánh dấu vẽ SAU bộ lọc nên ảnh xem trước ở Đánh dấu đã nắn thẳng giống hệt
+    ảnh kết quả. Xoá con dấu bằng Hình chữ nhật; nét brush vẽ dọc một đường kẻ bảng (thẳng) nằm đúng trên đường kẻ đó ở
+    ảnh kết quả."""
+    doc_id = import_to_editor(["wavy_page.jpg"])
+    pg = wait_page(doc_id, lambda p: p.get("out") and p.get("finger"), 90, "xử lý trang")
+    editor_tool("Bộ lọc")
+    time.sleep(2.5)
+    prev = pg["out"]
+    filter_pick("Làm phẳng")
+    pg = wait_page(doc_id, lambda p: p.get("filter") == F_FLATTEN and p.get("out") not in (None, prev), 120, "bộ lọc Làm phẳng")
+    time.sleep(1.0)
+    tap(desc="Đóng bộ lọc")
+    time.sleep(1.0)
+    # --- Xóa thông minh: xem trước đã hết nếp gấp, đường kẻ bảng vẫn uốn lượn (chưa nắn)
+    editor_tool("Xóa thông minh")
+    wait_activity("EraseActivity", 15)
+    sc = screen_page("Trang đang xóa")
+    shot("flatten_erase_open")
+    if sc is not None:
+        rows, fold = straight_rows(sc, R_WV_TABLE), frac(sc, R_WV_CLEAN, "nonwhite")
+        log("xem trước Xóa thông minh (Làm phẳng): hàng kẻ thẳng %d, nếp gấp trên giấy trắng %.4f" % (rows, fold))
+        if rows > 3:
+            raise AssertionError("Ảnh xem trước Xóa thông minh của trang Làm phẳng đã bị nắn (%d hàng kẻ thẳng): nét xoá áp lên "
+                                 "ảnh TRƯỚC khi lọc nên ảnh xem trước phải chưa nắn" % rows)
+        if fold > 0.004:
+            raise AssertionError("Ảnh xem trước Xóa thông minh chưa qua bước làm sạch của Làm phẳng (nếp gấp %.4f)" % fold)
+    P = page_mapper("Trang đang xóa")
+    tap(text="Hình chữ nhật")
+    swipe(P(0.60, 0.75), P(0.83, 0.93))
+    time.sleep(3.0)
+    apply_edit_screen("EraseActivity")
+    pg = wait_page(doc_id, lambda p: p.get("erase") and p.get("out") not in (None, pg["out"]), 120, "dựng lại trang sau Xóa thông minh")
+    time.sleep(1.5)
+    im = page_image(doc_id)
+    y_rule = None
+    if im is not None:
+        save_page(im, "flatten_erased")
+        red, blue, rows = frac(im, R_WV_STAMP, "red"), frac(im, R_WV_SIGN, "blue"), straight_rows(im, R_WV_TABLE)
+        log("sau xoá con dấu (Làm phẳng): đỏ %.4f, chữ ký xanh %.4f, hàng kẻ thẳng %d" % (red, blue, rows))
+        if red > 0.003:
+            raise AssertionError("Chưa xoá được con dấu trên trang Làm phẳng (%.4f)" % red)
+        if blue < 0.02 or rows < 7:
+            raise AssertionError("Xoá con dấu làm mất chữ ký / trang không còn được nắn (xanh %.4f, %d hàng kẻ thẳng)" % (blue, rows))
+        rules = rule_rows(im, R_WV_TABLE)
+        if not rules:
+            raise AssertionError("Không thấy đường kẻ ngang thẳng nào trên ảnh kết quả Làm phẳng")
+        mid = (R_WV_TABLE[1] + R_WV_TABLE[3]) / 2.0
+        y_rule = min(rules, key=lambda y: abs(y - mid))
+    # --- Đánh dấu: xem trước đã nắn thẳng như ảnh kết quả; nét brush dọc đường kẻ nằm trên đường kẻ ở ảnh kết quả
+    editor_tool("Brush")
+    wait_activity("MarkupActivity", 15)
+    sc = screen_page("Trang đang đánh dấu", 90)
+    shot("flatten_markup_open")
+    if sc is not None and y_rule is not None:
+        rows = straight_rows(sc, R_WV_TABLE)
+        rs = rule_rows(sc, R_WV_TABLE)
+        y_sc = min(rs, key=lambda y: abs(y - y_rule)) if rs else -1.0
+        log("xem trước Đánh dấu (Làm phẳng): hàng kẻ thẳng %d, đường kẻ giữa bảng %.4f (ảnh kết quả %.4f)" % (rows, y_sc, y_rule))
+        if rows < 7:
+            raise AssertionError("Ảnh xem trước Đánh dấu của trang Làm phẳng chưa nắn thẳng (%d hàng kẻ thẳng)" % rows)
+        if abs(y_sc - y_rule) > 0.004:
+            raise AssertionError("Đường kẻ bảng ở ảnh xem trước Đánh dấu lệch so với ảnh kết quả (%.4f / %.4f): nét đánh dấu "
+                                 "sẽ không nằm đúng chỗ" % (y_sc, y_rule))
+    P = page_mapper("Trang đang đánh dấu")
+    tap(desc="Màu đỏ")
+    v = y_rule if y_rule is not None else 0.43
+    swipe(P(0.25, v), P(0.75, v), 600)
+    time.sleep(1.0)
+    shot("flatten_markup_brush")
+    apply_edit_screen("MarkupActivity")
+    pg = wait_page(doc_id, lambda p: p.get("marks") and p.get("out") not in (None, pg["out"]), 120, "dựng lại trang sau Đánh dấu")
+    time.sleep(1.5)
+    im = page_image(doc_id)
+    if im is not None and y_rule is not None:
+        save_page(im, "flatten_marked")
+        yc, n = red_center(im, (0.30, y_rule - 0.03, 0.70, y_rule + 0.03))
+        log("nét brush đỏ trên ảnh kết quả: tâm %s (%d điểm), đường kẻ %.4f" % (yc, n, y_rule))
+        if yc is None or abs(yc - y_rule) > 0.004:
+            raise AssertionError("Nét brush vẽ dọc đường kẻ bảng không nằm trên đường kẻ ở ảnh kết quả (%s / %.4f)" % (yc, y_rule))
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(1.5)
+    d = read_doc(doc_id)
+    p0 = d and d["pages"][0]
+    if not p0 or p0.get("filter") != F_FLATTEN or len(p0.get("erase", [])) != 1 or len(p0.get("marks", [])) != 1:
+        raise AssertionError("Tài liệu lưu sai: %s" % (p0 and {k: v for k, v in p0.items() if k not in ("quad",)}))
+
+
 def t_smart_erase():
     """Xóa thông minh: Bút, Hình chữ nhật, Thần kỳ, Viết tay, Xóa văn bản; hoàn tác / làm lại; giữ trạng thái khi màn hình bị tạo lại."""
     doc_id = import_to_editor(["edit_page.jpg"])
@@ -2468,6 +2621,7 @@ def main():
     step("Nhập nhiều ảnh", t_import_multi)
     step("Bộ lọc mới + lời nhắc ngón tay", t_filters_new)
     step("Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)", t_flatten)
+    step("Làm phẳng + Xóa thông minh + Đánh dấu", t_flatten_edit)
     step("Xóa thông minh", t_smart_erase)
     step("Đánh dấu (ký tên, chữ, brush, khảm, hình mờ)", t_markup)
     step("Tiêu đề trang + Cắt dán", t_header_collage)

@@ -36,6 +36,12 @@ enum Enhancer {
         return mode == magicPro || mode == flatten
     }
 
+    /// Bộ lọc dời điểm ảnh ("Làm phẳng" nắn thẳng nội dung). Trường nắn phụ thuộc độ phân giải: ảnh nền dùng để đặt nét
+    /// đánh dấu phải được lọc ở đúng kích thước ảnh kết quả rồi mới thu nhỏ.
+    static func movesPixels(_ mode: Int) -> Bool {
+        return mode == flatten
+    }
+
     /// Lưới nền theo từng kênh màu, nội suy song tuyến tính.
     final class Bg {
         var gw = 0, gh = 0

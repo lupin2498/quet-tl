@@ -422,6 +422,9 @@ final class EraseViewController: EditScreenController {
 
     var testReady: Bool { loaded && busy == 0 }
 
+    /// Ảnh đang hiển thị (ảnh xem trước đã qua bộ lọc của trang, geometric: false).
+    var testImage: UIImage? { canvas.image }
+
     func testSelect(_ kind: Int) { selectTool(kind) }
 
     func testStroke(_ pts: [CGPoint]) { canvas.testStroke(pts) }

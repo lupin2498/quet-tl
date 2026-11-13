@@ -67,6 +67,16 @@ jobs:
           python3 tests/tools/make_wavy_images.py "$RUNNER_TEMP/wavy-in" 1400
           java -Dfile.encoding=UTF-8 -cp out/core-classes EvalFlatten "$RUNNER_TEMP/wavy-in" | tee out/core/flatten-tests.txt
 
+      - name: Kiểm thử Làm phẳng giữ nội dung ở ảnh độ phân giải thấp + không nắn méo trang phẳng (JVM)
+        # ảnh chụp tài liệu phẳng tests/images ở cạnh dài 500-1754 điểm ảnh (dấu thanh, chấm, đường kẻ mảnh, chữ ký mảnh phải
+        # còn); trang phẳng tổng hợp cỡ 1500 và 3000 (con dấu cạnh dòng chữ không được làm cong trang)
+        run: |
+          set -o pipefail
+          python3 tests/tools/make_retouch_images.py "$RUNNER_TEMP/flat-1500" 1500
+          python3 tests/tools/make_retouch_images.py "$RUNNER_TEMP/flat-3000" 3000
+          java -Djava.awt.headless=true -Dfile.encoding=UTF-8 -cp out/core-classes EvalKeep tests/images \
+            "$RUNNER_TEMP/flat-1500" "$RUNNER_TEMP/flat-3000" | tee out/core/keep-tests.txt
+
       - name: Kiểm thử độ bền thuật toán (fuzz) + kiểm tra PDF bằng trình phân tích thật
         run: |
           set -o pipefail

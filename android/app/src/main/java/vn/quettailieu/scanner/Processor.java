@@ -233,6 +233,44 @@ final class Processor {
         return b;
     }
 
+    /**
+     * Nền cho màn hình Đánh dấu: ảnh nắn phẳng qua xoá thông minh + bộ lọc đầy đủ (đánh dấu vẽ SAU bộ lọc, như render),
+     * cạnh dài ~PREVIEW_MAX. Bộ lọc dời điểm ảnh ("Làm phẳng"): trường nắn phụ thuộc độ phân giải nên lọc trên ảnh nắn
+     * phẳng đầy đủ — giống hệt ảnh kết quả — rồi mới thu nhỏ, để nét đánh dấu đặt trên ảnh xem trước nằm đúng chỗ trên ảnh
+     * kết quả. Thiếu bộ nhớ thì lọc trên ảnh xem trước. Chạy trên luồng nền.
+     */
+    static Bitmap markupBase(File dir, DocStore.Page p) {
+        List<Retouch.Op> erase = Edits.eraseFromJson(p.erase);
+        if (Enhancer.movesPixels(p.filter)) {
+            try {
+                Bitmap full = loadWarp(dir, p, MAX_OUT);
+                if (full != null) {
+                    int w = full.getWidth(), h = full.getHeight();
+                    int[] px = ImageUtil.pixels(full);
+                    full.recycle();
+                    if (!erase.isEmpty()) Retouch.applyErase(px, w, h, erase);
+                    Enhancer.apply(px, w, h, p.filter, true);
+                    Bitmap b = Bitmap.createBitmap(px, w, h, Bitmap.Config.ARGB_8888);
+                    px = null;
+                    int L = Math.max(w, h);
+                    if (L <= PREVIEW_MAX) return b;
+                    float k = PREVIEW_MAX / (float) L;
+                    Bitmap sb = Bitmap.createScaledBitmap(b, Math.max(8, Math.round(w * k)), Math.max(8, Math.round(h * k)), true);
+                    if (sb != b) b.recycle();
+                    return sb;
+                }
+            } catch (OutOfMemoryError ignored) {
+                // thử lại ở kích thước xem trước
+            }
+        }
+        Bitmap warp = loadWarp(dir, p, PREVIEW_MAX);
+        if (warp == null) return null;
+        int w = warp.getWidth(), h = warp.getHeight();
+        int[] px = ImageUtil.pixels(warp);
+        warp.recycle();
+        return process(px, w, h, erase, p.filter, true);
+    }
+
     /** Áp chuỗi xử lý điểm ảnh (xoá thông minh + bộ lọc đầy đủ) lên mảng điểm ảnh xem trước; trả về ảnh mới. */
     static Bitmap process(int[] base, int w, int h, List<Retouch.Op> erase, int filter) {
         return process(base, w, h, erase, filter, true);

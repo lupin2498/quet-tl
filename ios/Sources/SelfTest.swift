@@ -478,9 +478,20 @@ final class SelfTest {
         return ImageOps.rgbaPixels(cg, maxDim: 1400)
     }
 
+    /// Điểm ảnh RGBX (cạnh dài không quá 1400) của ảnh đang hiển thị ở màn hình Xóa thông minh / Đánh dấu (nil nếu chưa có).
+    private func shownPixels(_ img: UIImage?) -> (data: [UInt8], w: Int, h: Int)? {
+        guard let cg = img?.cgImage else { return nil }
+        return ImageOps.rgbaPixels(cg, maxDim: 1400)
+    }
+
     /// Tỷ lệ điểm ảnh thuộc một loại trong vùng chuẩn hoá của ảnh kết quả một trang (-1 nếu không đọc được).
     private func stat(_ doc: Doc?, _ index: Int, _ kind: Stat, _ box: CGRect) -> Double {
-        guard let px = outPixels(doc, index) else { return -1 }
+        return stat(outPixels(doc, index), kind, box)
+    }
+
+    /// Tỷ lệ điểm ảnh thuộc một loại trong vùng chuẩn hoá của ảnh (-1 nếu không có ảnh).
+    private func stat(_ pixels: (data: [UInt8], w: Int, h: Int)?, _ kind: Stat, _ box: CGRect) -> Double {
+        guard let px = pixels else { return -1 }
         let x0 = max(0, min(px.w - 1, Int(box.minX * CGFloat(px.w)))), x1 = min(px.w, max(x0 + 1, Int(box.maxX * CGFloat(px.w))))
         let y0 = max(0, min(px.h - 1, Int(box.minY * CGFloat(px.h)))), y1 = min(px.h, max(y0 + 1, Int(box.maxY * CGFloat(px.h))))
         var c = 0, n = 0
@@ -914,7 +925,12 @@ final class SelfTest {
 
     /// Tỷ lệ điểm tối (như .dark) của từng hàng điểm ảnh trong vùng chuẩn hoá box, ảnh kết quả trang đang sửa (rỗng nếu không đọc được).
     private func darkRows(_ box: CGRect) -> [Double] {
-        guard let px = outPixels(editor?.doc, editor?.index ?? 0) else { return [] }
+        return darkRows(outPixels(editor?.doc, editor?.index ?? 0), box)
+    }
+
+    /// Tỷ lệ điểm tối (như .dark) của từng hàng điểm ảnh trong vùng chuẩn hoá box của ảnh (rỗng nếu không có ảnh).
+    private func darkRows(_ pixels: (data: [UInt8], w: Int, h: Int)?, _ box: CGRect) -> [Double] {
+        guard let px = pixels else { return [] }
         let x0 = max(0, min(px.w - 1, Int(box.minX * CGFloat(px.w))))
         let x1 = min(px.w, max(x0 + 1, Int(box.maxX * CGFloat(px.w))))
         let y0 = max(0, min(px.h - 1, Int(box.minY * CGFloat(px.h))))
@@ -936,9 +952,49 @@ final class SelfTest {
     /// Số hàng điểm ảnh tối trên >= 60% bề ngang vùng: đường kẻ ngang thẳng cho vài hàng như vậy, đường kẻ uốn lượn thì không
     /// (mỗi hàng chỉ cắt qua một đoạn ngắn của nó). -1 nếu không đọc được ảnh.
     private func straightRows(_ box: CGRect) -> Int {
-        let rows = darkRows(box)
+        return straightRows(outPixels(editor?.doc, editor?.index ?? 0), box)
+    }
+
+    private func straightRows(_ pixels: (data: [UInt8], w: Int, h: Int)?, _ box: CGRect) -> Int {
+        let rows = darkRows(pixels, box)
         if rows.isEmpty { return -1 }
         return rows.filter { $0 >= 0.6 }.count
+    }
+
+    /// Toạ độ dọc chuẩn hoá (theo chiều cao ảnh) của tâm từng đường kẻ ngang thẳng trong vùng: nhóm các hàng điểm ảnh liền
+    /// nhau tối trên >= 60% bề ngang vùng.
+    private func ruleRows(_ pixels: (data: [UInt8], w: Int, h: Int)?, _ box: CGRect) -> [Double] {
+        guard let px = pixels else { return [] }
+        let rows = darkRows(px, box)
+        let y0 = max(0, min(px.h - 1, Int(box.minY * CGFloat(px.h))))
+        var groups = [[Int]]()
+        for (i, c) in rows.enumerated() where c >= 0.6 {
+            if let last = groups.last?.last, i - last <= 1 {
+                groups[groups.count - 1].append(i)
+            } else {
+                groups.append([i])
+            }
+        }
+        return groups.map { g in (Double(y0) + Double(g[0] + g[g.count - 1]) / 2 + 0.5) / Double(px.h) }
+    }
+
+    /// (toạ độ dọc chuẩn hoá trung bình, số điểm) của các điểm đỏ trong vùng của ảnh kết quả trang đang sửa; (-1, 0) nếu không có.
+    private func redCenter(_ box: CGRect) -> (Double, Int) {
+        guard let px = outPixels(editor?.doc, editor?.index ?? 0) else { return (-1, 0) }
+        let x0 = max(0, min(px.w - 1, Int(box.minX * CGFloat(px.w)))), x1 = min(px.w, max(x0 + 1, Int(box.maxX * CGFloat(px.w))))
+        let y0 = max(0, min(px.h - 1, Int(box.minY * CGFloat(px.h)))), y1 = min(px.h, max(y0 + 1, Int(box.maxY * CGFloat(px.h))))
+        var n = 0
+        var s = 0.0
+        for y in y0..<y1 {
+            for x in x0..<x1 {
+                let i = (y * px.w + x) * 4
+                if Int(px.data[i]) > 140 && Int(px.data[i + 1]) < 115 && Int(px.data[i + 2]) < 115 {
+                    n += 1
+                    s += Double(y)
+                }
+            }
+        }
+        return n == 0 ? (-1, 0) : ((s / Double(n) + 0.5) / Double(px.h), n)
     }
 
     /// Tỷ lệ điểm tối của chữ trong vùng, bỏ các hàng là đường kẻ ngang (tối trên >= 50% bề ngang vùng). -1 nếu không đọc được ảnh.
@@ -1002,6 +1058,7 @@ final class SelfTest {
         addRun("kiểm tra Làm phẳng") { self.checkFlatten() }
         addRun("✓ giữ bộ lọc") { self.editor?.closeFilterPanel(keep: true) }
         addWait(0.6)
+        addFlattenEditSteps()
         addRun("lưu tài liệu Làm phẳng") {
             let kept = self.editor?.current?.filter == Enhancer.flatten
             let closed = self.editor?.filterPanelVisible == false
@@ -1024,6 +1081,76 @@ final class SelfTest {
             self.home?.reload()
         }
         addWait(0.8)
+    }
+
+    /// Xóa thông minh + Đánh dấu trên trang Làm phẳng (như t_flatten_edit của tests/android/run_tests.py). Nét xoá áp lên ảnh
+    /// TRƯỚC khi lọc nên ảnh xem trước ở Xóa thông minh đã làm sạch nhưng CHƯA nắn; đánh dấu vẽ SAU bộ lọc nên ảnh xem trước ở
+    /// Đánh dấu đã nắn thẳng giống hệt ảnh kết quả. Xoá con dấu bằng Hình chữ nhật; nét brush vẽ dọc một đường kẻ bảng (thẳng)
+    /// nằm đúng trên đường kẻ đó ở ảnh kết quả.
+    private func addFlattenEditSteps() {
+        addUntil("đóng bảng lọc (Làm phẳng)", 30) { self.editorIdle() }
+        addRun("mở Xóa thông minh (Làm phẳng)") { self.editor?.openErase() }
+        addUntil("màn hình Xóa thông minh (Làm phẳng)", 60) { self.eraser?.testReady == true && self.eraser?.testImage != nil }
+        addWait(0.6)
+        addSnap("52a_flatten_erase")
+        addRun("kiểm tra xem trước Xóa thông minh (Làm phẳng)") {
+            let px = self.shownPixels(self.eraser?.testImage)
+            let rows = self.straightRows(px, SelfTest.wvTable)
+            let fold = self.stat(px, .nonWhite, SelfTest.wvClean)
+            self.check(rows >= 0 && rows <= 3, "xem trước Xóa thông minh của trang Làm phẳng chưa nắn (hàng kẻ thẳng \(rows))")
+            self.check(fold >= 0 && fold <= 0.004, "xem trước Xóa thông minh đã làm sạch nếp gấp (\(self.f3(fold)))")
+        }
+        addRun("Hình chữ nhật quanh con dấu (Làm phẳng)") {
+            self.eraser?.testSelect(Retouch.rect)
+            self.eraser?.testStroke([CGPoint(x: 0.60, y: 0.75), CGPoint(x: 0.83, y: 0.93)])
+        }
+        addUntil("hình chữ nhật xong (Làm phẳng)", 60) { self.eraser?.testReady == true }
+        addRun("✓ Xóa thông minh (Làm phẳng)") { self.eraser?.applyTapped() }
+        addUntil("dựng lại trang sau xoá (Làm phẳng)", 120) { self.editorIdle() }
+        addWait(0.6)
+        addRun("kiểm tra xoá con dấu (Làm phẳng)") {
+            let red = self.cur(.red, SelfTest.wvStamp), blue = self.cur(.blue, SelfTest.wvSign)
+            let rows = self.straightRows(SelfTest.wvTable)
+            self.check(self.editor?.current?.erase?.count == 1, "trang Làm phẳng lưu 1 thao tác xoá")
+            self.check(red >= 0 && red <= 0.003, "xoá con dấu trên trang Làm phẳng (đỏ \(self.f3(red)))")
+            self.check(blue >= 0.02 && rows >= 7,
+                       "xoá con dấu giữ chữ ký, trang vẫn nắn thẳng (xanh \(self.f3(blue)), hàng kẻ thẳng \(rows))")
+            let rules = self.ruleRows(self.outPixels(self.editor?.doc, self.editor?.index ?? 0), SelfTest.wvTable)
+            let mid = Double(SelfTest.wvTable.midY)
+            let y = rules.min(by: { abs($0 - mid) < abs($1 - mid) }) ?? -1
+            self.check(y > 0, "có đường kẻ ngang thẳng trên ảnh kết quả Làm phẳng (\(rules.count) đường)")
+            self.statBefore["wvRuleY"] = y
+            self.saveOut("flatten_out_erased")
+        }
+        addRun("mở Đánh dấu (Làm phẳng)") { self.editor?.openMarkup(MarkupViewController.brush) }
+        addUntil("màn hình Đánh dấu (Làm phẳng)", 120) { self.markup?.testReady == true && self.markup?.testImage != nil }
+        addWait(0.6)
+        addSnap("52b_flatten_markup")
+        addRun("kiểm tra xem trước Đánh dấu (Làm phẳng) + brush dọc đường kẻ") {
+            let y = self.statBefore["wvRuleY"] ?? -1
+            let px = self.shownPixels(self.markup?.testImage)
+            let rows = self.straightRows(px, SelfTest.wvTable)
+            let rs = self.ruleRows(px, SelfTest.wvTable)
+            let ys = rs.min(by: { abs($0 - y) < abs($1 - y) }) ?? -1
+            self.check(rows >= 7, "xem trước Đánh dấu của trang Làm phẳng đã nắn thẳng (hàng kẻ thẳng \(rows))")
+            self.check(y > 0 && abs(ys - y) <= 0.004, "đường kẻ ở xem trước Đánh dấu trùng ảnh kết quả (\(self.f3(ys)) / \(self.f3(y)))")
+            let v = CGFloat(y > 0 ? y : 0.43)
+            self.markup?.testPickColor(1)
+            self.markup?.testStroke([CGPoint(x: 0.25, y: v), CGPoint(x: 0.75, y: v)])
+        }
+        addWait(0.4)
+        addRun("✓ Đánh dấu (Làm phẳng)") { self.markup?.applyTapped() }
+        addUntil("dựng lại trang sau đánh dấu (Làm phẳng)", 120) { self.editorIdle() }
+        addWait(0.6)
+        addSnap("52c_flatten_marked")
+        addRun("kiểm tra nét brush trên đường kẻ (Làm phẳng)") {
+            let y = self.statBefore["wvRuleY"] ?? -1
+            let (yc, n) = self.redCenter(CGRect(x: 0.30, y: CGFloat(y) - 0.03, width: 0.40, height: 0.06))
+            self.check(self.editor?.current?.marks?.count == 1, "trang Làm phẳng lưu 1 đánh dấu")
+            self.check(y > 0 && n > 0 && abs(yc - y) <= 0.004,
+                       "nét brush dọc đường kẻ nằm trên đường kẻ ở ảnh kết quả (\(self.f3(yc)) / \(self.f3(y)), \(n) điểm)")
+            self.saveOut("flatten_out_marked")
+        }
     }
 
     /// So ảnh kết quả "Làm phẳng" với ảnh bộ lọc mặc định đã đo (cùng ngưỡng với t_flatten của tests/android/run_tests.py;
