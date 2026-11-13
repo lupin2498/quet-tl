@@ -49,17 +49,19 @@ jobs:
           javac -encoding UTF-8 -d out/core-classes android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/*.java
           java -Dfile.encoding=UTF-8 -DminOk=6 -cp out/core-classes EvalSynth tests/images/gt.txt out/core | tee out/core/core-tests.txt
 
+      # Ảnh vào / file trung gian của các bước kiểm thử JVM để ở $RUNNER_TEMP, không ở out/: bước đẩy kết quả chạy cả khi
+      # job lỗi và đẩy toàn bộ out/ (git add -A) — để trong out/ thì bước kiểm thử lỗi sẽ đẩy hàng chục MB ảnh PPM / PDF
+      # lên ci/android-build (gói quá nặng, đẩy dễ hỏng).
       - name: Kiểm thử làm đẹp trang / xóa thông minh (JVM, ảnh tổng hợp sinh tại chỗ)
         run: |
           set -o pipefail
           sudo apt-get install -y -q fonts-dejavu-core > /dev/null 2>&1 || true
           pip3 install --break-system-packages -q numpy pillow || pip3 install -q numpy pillow
-          python3 tests/tools/make_retouch_images.py out/retouch-in 1400
-          java -Dfile.encoding=UTF-8 -cp out/core-classes EvalRetouch out/retouch-in | tee out/core/retouch-tests.txt
-          rm -rf out/retouch-in
+          python3 tests/tools/make_retouch_images.py "$RUNNER_TEMP/retouch-in" 1400
+          java -Dfile.encoding=UTF-8 -cp out/core-classes EvalRetouch "$RUNNER_TEMP/retouch-in" | tee out/core/retouch-tests.txt
 
       - name: Kiểm thử bộ lọc Làm phẳng (JVM, trang giấy mấp mô / gấp nếp tổng hợp sinh tại chỗ)
-        # dùng phông DejaVu + numpy/pillow cài ở bước trên; ảnh vào để ở $RUNNER_TEMP (không đẩy lên ci/android-build)
+        # dùng phông DejaVu + numpy/pillow cài ở bước trên
         run: |
           set -o pipefail
           python3 tests/tools/make_wavy_images.py "$RUNNER_TEMP/wavy-in" 1400
@@ -68,11 +70,10 @@ jobs:
       - name: Kiểm thử độ bền thuật toán (fuzz) + kiểm tra PDF bằng trình phân tích thật
         run: |
           set -o pipefail
-          mkdir -p out/fuzz
-          java -Dfile.encoding=UTF-8 -cp out/core-classes FuzzCore out/fuzz 60 | tee out/core/fuzz.txt
+          mkdir -p "$RUNNER_TEMP/fuzz"
+          java -Dfile.encoding=UTF-8 -cp out/core-classes FuzzCore "$RUNNER_TEMP/fuzz" 60 | tee out/core/fuzz.txt
           pip3 install --break-system-packages -q pypdf pillow || pip3 install -q pypdf pillow
-          python3 tests/tools/check_pdfs.py out/fuzz | tee out/core/fuzz-pdf.txt
-          rm -rf out/fuzz
+          python3 tests/tools/check_pdfs.py "$RUNNER_TEMP/fuzz" | tee out/core/fuzz-pdf.txt
 
       - name: Gom kết quả
         if: always()

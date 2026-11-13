@@ -198,8 +198,9 @@ enum Flatten {
                     }
                     if seed {
                         cls[off + x] |= 4
-                        // lõi đậm / mực màu / đường kẻ: lan xa (3); lõi nhạt: lan ngắn (2)
-                        let sv: UInt8 = (q < dq || (f & 1) != 0 || (cls[off + x] & 8) != 0) ? 3 : 2
+                        // lõi đậm / mực màu: lan xa (3); lõi nhạt: lan ngắn (2); điểm đường kẻ bảng: chỉ giữ, không lan (1) —
+                        // vệt nếp gấp vắt qua đường kẻ không bị kéo theo
+                        let sv: UInt8 = (cls[off + x] & 8) != 0 ? 1 : ((q < dq || (f & 1) != 0) ? 3 : 2)
                         if bs[b] < sv { bs[b] = sv }
                     } else if (q < growQ || (f & 2) != 0) && bs[b] == 0 {
                         bs[b] = 1

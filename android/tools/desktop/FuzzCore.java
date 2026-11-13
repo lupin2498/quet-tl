@@ -767,8 +767,8 @@ public class FuzzCore {
             }
         }
         // trang chữ mấp mô tổng hợp (cỡ, hướng, bảng, nếp gấp, ngón tay ngẫu nhiên): không lỗi, alpha 255, trường hợp lệ,
-        // chạy lại cho cùng kết quả; dewarp = false không nắn và trùng kết quả lọc khi không cần nắn
-        int pages = Math.max(4, rounds / 6), nField = 0, nVert = 0, nVertRot = 0, nRot = 0;
+        // chạy lại cho cùng kết quả; dewarp = false không nắn và chỉ khác kết quả lọc ở bước nắn
+        int pages = Math.max(4, rounds / 6), nField = 0, nVert = 0, nVertRot = 0, nRot = 0, nSplit = 0;
         float worstShift = 0;
         for (int i = 0; i < pages; i++) {
             // một trang cỡ thật (cạnh dài tới 3508 = A4 300 dpi, khối phân tích k = 3, 4), vài trang k = 2, còn lại k = 1
@@ -793,25 +793,42 @@ public class FuzzCore {
                     worstShift = Math.max(worstShift, f.maxShift);
                     checkField(f, w, h, what);
                 }
-                if (L >= 1500) {
-                    // trang lớn: chỉ chạy một lần (giữ thời gian chạy)
-                } else if (i % 3 == 1) {
+                // trang lớn (L >= 1500): không chạy lại (giữ thời gian chạy) — trừ khi chưa trang nào kiểm tra tách bước nắn
+                boolean small = L < 1500;
+                if (small && i % 3 == 1) {
                     int[] c2 = pg[1].clone();
                     Flatten.Field f2 = Flatten.apply(c2, w, h);
                     check(java.util.Arrays.equals(c, c2) && sameField(f, f2), what + ": chạy lại phải cho cùng kết quả");
-                } else if (i % 3 == 2) {
+                }
+                if ((small && i % 3 != 1) || (f != null && nSplit == 0)) {
+                    // dewarp = false (ảnh xem trước của Xóa thông minh, Enhancer geometric = false): cùng bước làm sạch, chỉ bỏ
+                    // nắn — ảnh chỉ làm sạch, nắn theo đúng trường Flatten.apply trả về rồi làm nét (Retouch.sharpen 48, như
+                    // Flatten.apply) phải trùng kết quả lọc đầy đủ. Đồng thời xác nhận trường trả về (dòng flt của DumpCore,
+                    // EvalFlatten dùng) đúng là trường đã dùng để nắn ảnh.
                     int[] c3 = pg[1].clone();
                     check(Flatten.apply(c3, w, h, false) == null, what + ": dewarp = false không được nắn");
                     check(opaque(c3), what + ": dewarp = false: alpha = 255");
-                    if (f == null) check(java.util.Arrays.equals(c, c3), what + ": không nắn -> dewarp = false trùng kết quả lọc");
+                    if (f == null) {
+                        check(java.util.Arrays.equals(c, c3), what + ": không nắn -> dewarp = false trùng kết quả lọc");
+                    } else {
+                        Flatten.remap(c3, w, h, f);
+                        Retouch.sharpen(c3, w, h, 48);
+                        check(java.util.Arrays.equals(c, c3),
+                                what + ": dewarp = false rồi nắn theo trường trả về + làm nét phải trùng kết quả lọc đầy đủ");
+                        nSplit++;
+                    }
                 }
             } catch (Throwable t) {
                 fail(what, t);
             }
         }
         // chỉ thống kê (độ chính xác nắn do EvalFlatten kiểm tra): trang dòng chữ dọc có được nhận ra xoay ngang không
-        System.out.printf("   trang mấp mô tổng hợp: %d/%d có nắn, dịch tối đa %.1f; nhận ra xoay ngang %d trang (dòng chữ dọc: %d/%d)%n",
-                nField, pages, worstShift, nRot, nVertRot, nVert);
+        System.out.printf("   trang mấp mô tổng hợp: %d/%d có nắn (%d trang so với dewarp = false), dịch tối đa %.1f; nhận ra xoay ngang"
+                + " %d trang (dòng chữ dọc: %d/%d)%n", nField, pages, nSplit, worstShift, nRot, nVertRot, nVert);
+        // kiểm tra trường nắn (checkField) và tách bước nắn ở trên chỉ chạy trên trang được nắn: phải có, không thì chúng
+        // không kiểm gì (trang được nắn đầu tiên luôn được kiểm tra tách bước nắn, nên nSplit > 0 khi nField > 0)
+        check(nField > 0, "Flatten: không trang nào trong " + pages + " trang mấp mô tổng hợp được nắn — kiểm tra trường nắn không chạy");
+        check(nField == 0 || nSplit > 0, "Flatten: chưa kiểm tra dewarp = false trên trang được nắn");
         // bộ lọc qua Enhancer: chạy lại cho cùng kết quả (cả mẫu nhiễu / sọc / bàn cờ)
         for (int kind = 0; kind <= 8; kind++) {
             int w = 150 + rnd.nextInt(260), h = 150 + rnd.nextInt(260);

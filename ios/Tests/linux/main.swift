@@ -723,9 +723,28 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
                       + f(Double(fl.maxShift), 2) + ", xoay ngang \(fl.rotated ? 1 : 0)")
             }
             var clean: Flatten.Field? = Flatten.Field()
-            _ = edited(page) { clean = Flatten.apply($0, w, h, w * 4, dewarp: false) }
+            let cleaned = edited(page) { clean = Flatten.apply($0, w, h, w * 4, dewarp: false) }
             fcheck(clean == nil, "Làm phẳng chỉ làm sạch (dewarp = false) không được nắn")
+            // như FuzzCore: chỉ làm sạch rồi nắn theo đúng trường Flatten.apply trả về + làm nét 48 (như Flatten.apply) phải
+            // trùng kết quả lọc đầy đủ — trường trả về (dòng flt của --dump) đúng là trường đã dùng để nắn ảnh
+            if let fl = fa {
+                let full = edited(page) { _ = Flatten.apply($0, w, h, w * 4) }
+                let split = edited(cleaned) { p in
+                    Flatten.remap(p, w, h, w * 4, fl)
+                    Retouch.sharpen(p, w, h, w * 4, 48)
+                }
+                fcheck(split == full, "Làm phẳng (trang chữ cong \(lw0)): dewarp = false + nắn theo trường trả về + làm nét phải trùng kết quả lọc")
+            }
         }
+    }
+    /// Mọi điểm ảnh RGBA có alpha = 255.
+    func allOpaque(_ c: [UInt8]) -> Bool {
+        var i = 3
+        while i < c.count {
+            if c[i] != 255 { return false }
+            i += 4
+        }
+        return true
     }
     // nắn bằng trường cho sẵn: đệm hàng giữ nguyên; trường bất thường (NaN, vô cực, bước 0...) không được dừng đột ngột
     do {
@@ -765,6 +784,69 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
         short.dy = [0, 0]
         let kept = edited(src) { Flatten.remap($0, w, h, w * 4, short) }
         fcheck(kept == src, "Flatten.remap: trường thiếu nút phải giữ nguyên ảnh")
+        // trường hằng có giá trị bất thường, bước / gốc lưới bất thường (cùng danh sách với FuzzCore): không dừng đột ngột,
+        // alpha 255; dịch chuyển không hữu hạn / rất xa -> mọi điểm lấy mẫu ngoài ảnh -> ảnh trắng
+        let odd: [Float] = [Float.nan, Float.infinity, -Float.infinity, Float.greatestFiniteMagnitude, -Float.greatestFiniteMagnitude,
+                            1e30, -1e30, 1e9, -1e9, 3e5, Float.leastNonzeroMagnitude, -0.0, 0.5, -7.25, 60.9, -46.99]
+        for v in odd {
+            let fl = field(5, 4, 16, 0, { _ in v })
+            let c = edited(src) { Flatten.remap($0, w, h, w * 4, fl) }
+            fcheck(allOpaque(c), "Flatten.remap alpha = 255 (trường hằng \(v))")
+            if v.isNaN || v.isInfinite || abs(v) >= 1e9 {
+                fcheck(c.allSatisfy { $0 == 255 }, "Flatten.remap: dịch chuyển \(v) -> ảnh trắng")
+            }
+        }
+        let steps: [Float] = [Float.leastNonzeroMagnitude, 1e-30, 1e30, Float.greatestFiniteMagnitude, Float.infinity]
+        for st in steps {
+            let fl = field(5, 4, st, 0, { _ in 2.5 })
+            let c = edited(src) { Flatten.remap($0, w, h, w * 4, fl) }
+            fcheck(allOpaque(c), "Flatten.remap alpha = 255 (bước lưới \(st))")
+        }
+        let origins: [Float] = [Float.nan, Float.infinity, -Float.infinity, 1e30, -1e30, -5]
+        for o in origins {
+            let fl = field(5, 4, 16, o, { _ in 2.5 })
+            let c = edited(src) { Flatten.remap($0, w, h, w * 4, fl) }
+            fcheck(allOpaque(c), "Flatten.remap alpha = 255 (gốc lưới \(o))")
+        }
+    }
+    // ảnh rất nhỏ / rất dẹt (cùng danh sách với FuzzCore.fuzzFlatten): không nắn; cạnh < 16 giữ nguyên ảnh; khi không nắn,
+    // chỉ làm sạch (dewarp = false) phải trùng kết quả lọc
+    do {
+        let fsizes: [(Int, Int)] = [(1, 1), (3, 3), (15, 15), (15, 300), (16, 16), (16, 17), (17, 16), (17, 2000), (2000, 17), (31, 33), (239, 400)]
+        for (w, h) in fsizes {
+            for kind in 0...8 {
+                let px = pattern(kind, w, h, &rng)
+                let what = "Flatten mẫu \(kind) \(w)x\(h)"
+                var fl: Flatten.Field? = Flatten.Field()
+                let c = edited(px) { fl = Flatten.apply($0, w, h, w * 4) }
+                fcheck(fl == nil, what + ": ảnh nhỏ / dẹt không được nắn")
+                if w < 16 || h < 16 {
+                    fcheck(c == px, what + ": ảnh có cạnh < 16 phải giữ nguyên")
+                } else {
+                    fcheck(allOpaque(c), what + ": alpha = 255")
+                }
+                if kind == 3 || kind == 5 {
+                    var fl2: Flatten.Field? = Flatten.Field()
+                    let c2 = edited(px) { fl2 = Flatten.apply($0, w, h, w * 4, dewarp: false) }
+                    fcheck(fl2 == nil && c2 == c, what + ": dewarp = false trùng kết quả lọc")
+                }
+            }
+        }
+        // giấy trắng: kết quả vẫn trắng (>= 250 mọi kênh, alpha 255), không nắn
+        let wsizes: [(Int, Int)] = [(16, 16), (17, 40), (40, 17), (300, 420), (1000, 700), (1240, 1754)]
+        for (w, h) in wsizes {
+            var fl: Flatten.Field? = Flatten.Field()
+            let c = edited([UInt8](repeating: 255, count: w * h * 4)) { fl = Flatten.apply($0, w, h, w * 4) }
+            var worst = 255
+            var i = 0
+            while i < c.count {
+                worst = min(worst, Int(c[i]), Int(c[i + 1]), Int(c[i + 2]))
+                if c[i + 3] != 255 { worst = -1 }
+                i += 4
+            }
+            fcheck(worst >= 250, "Flatten giấy trắng \(w)x\(h): tối nhất \(worst) (phải >= 250, alpha 255)")
+            fcheck(fl == nil, "Flatten giấy trắng \(w)x\(h): không nắn")
+        }
     }
     print("Flatten: xong (\(Int(Date().timeIntervalSince(t0) * 1000)) ms)")
 

@@ -5,6 +5,9 @@ Dữ liệu: make_core_inputs.py + make_retouch_images.py (rt_*) + make_wavy_ima
 ghi chung một thư mục.
 Cách chạy: python3 tests/tools/compare_core.py <dữ-liệu> <kết-quả-java> <kết-quả-swift>
 Mã thoát 0 nếu hai bản cho cùng kết quả (trong sai số làm tròn), 1 nếu lệch.
+Bộ lọc Làm phẳng (chế độ 9) chỉ dùng phép tính cơ bản nên phải trùng TUYỆT ĐỐI: tổng kênh, từng điểm ảnh (*_m9.ppm),
+thông số trường nắn (dòng "flt", số thực chỉ được lệch một đơn vị chữ số cuối do cách làm tròn khi in); phải có ít nhất
+một trang được nắn và mọi trang wv_* đều được so từng điểm ảnh — không thì coi là thiếu dữ liệu.
 """
 import math
 import os
@@ -76,6 +79,8 @@ def main():
     # Làm phẳng (Enhancer.FLATTEN = 9): lượt lọc, dòng trường nắn "flt"
     n_enh9 = n_enh9_exact = 0
     n_flt = n_flt_field = n_flt_exact = 0
+    # trang mấp mô wv_* (theo dòng det) và các trang có dòng flt: mỗi trang wv_* phải có dòng flt + ảnh _m9 so từng điểm
+    wv_pages, flt_names = [], []
     for a, b in zip(ja, sw):
         pa, pb = a.split(" "), b.split(" ")
         tag = pa[0]
@@ -85,6 +90,8 @@ def main():
         if tag == "det":
             n_det += 1
             name = pa[1]
+            if name.startswith("wv_"):
+                wv_pages.append(name)
             if pa[4] != pb[4]:
                 bad("det %s: java %s, swift %s" % (name, pa[4], pb[4]))
                 continue
@@ -126,6 +133,9 @@ def main():
                 n_enh_exact += 1
                 if flat:
                     n_enh9_exact += 1
+            elif flat:
+                # Làm phẳng: bản port phải trùng tuyệt đối (không có sai số pow / exp như các bộ lọc khác)
+                bad("enh %s Làm phẳng: tổng kênh khác nhau: java %s | swift %s" % (pa[1], " ".join(pa[3:6]), " ".join(pb[3:6])))
             else:
                 rel = max(abs(x - y) / max(1.0, x) for x, y in zip(sa, sb))
                 if rel > 2e-4:
@@ -161,9 +171,11 @@ def main():
                 close_fields(tag, a, b, pa[2:], pb[2:], lambda fx: 2e-4 * max(1.0, abs(fx)))
         elif tag == "flt":
             # Làm phẳng: flt <tên> <có trường> <gw> <gh> <dòng chữ> <kẻ ngang> <kẻ dọc> <xoay> <dịch tối đa> <tổng dx> <tổng dy>
-            # số nguyên / cờ phải trùng; số thực (%.3f) như dòng ret: sai số tương đối 2e-4, nhưng không chặt hơn
-            # một đơn vị chữ số cuối (Java làm tròn nửa lên theo chuỗi thập phân ngắn nhất, printf theo giá trị nhị phân)
+            # số nguyên / cờ phải trùng; số thực (%.3f) tính bằng cùng phép tính nên chỉ được lệch MỘT đơn vị chữ số cuối
+            # (Java làm tròn nửa lên theo chuỗi thập phân ngắn nhất, printf theo giá trị nhị phân) — tổng dx / dy của
+            # cả lưới là chỗ nhạy nhất với lệch nhỏ của trường nắn (điểm ảnh lấy mẫu 8 bit có thể vẫn trùng)
             n_flt += 1
+            flt_names.append(pa[1])
             if len(pa) != 12 or len(pb) != 12:
                 bad("flt %s: số trường khác nhau (java %d, swift %d)" % (pa[1], len(pa), len(pb)))
                 continue
@@ -172,7 +184,7 @@ def main():
                 continue
             if pa[2] == "1":
                 n_flt_field += 1
-            if close_fields(tag, a, b, pa[9:], pb[9:], lambda fx: max(1.5e-3, 2e-4 * max(1.0, abs(fx)))) and pa == pb:
+            if close_fields(tag, a, b, pa[9:], pb[9:], lambda fx: 1.0005e-3) and pa == pb:
                 n_flt_exact += 1
         else:  # snap, pdf, jpeg: phải trùng hoàn toàn
             if a != b:
@@ -185,9 +197,11 @@ def main():
     max_px = 0
     n_diff_px = 0
     n_px = 0
-    # ảnh sau bộ lọc Làm phẳng (*_m9.ppm: trang wv_*, rt_*, full_*)
+    # ảnh sau bộ lọc Làm phẳng (*_m9.ppm: trang wv_*, rt_*, full_*) — phải trùng từng điểm ảnh
     n_m9 = n_m9_px = n_m9_diff = max_m9 = 0
-    for f in sorted(os.listdir(JAVA)):
+    m9_compared = set()
+    java_files = set(os.listdir(JAVA))
+    for f in sorted(java_files):
         if not f.endswith(".ppm"):
             continue
         other = os.path.join(SWIFT, f)
@@ -205,6 +219,7 @@ def main():
         if flat:
             n_m9 += 1
             n_m9_px += len(da)
+            m9_compared.add(f[:-len("_m9.ppm")])
         if da != db:
             diffs = [abs(x - y) for x, y in zip(da, db) if x != y]
             n_diff_px += len(diffs)
@@ -213,12 +228,13 @@ def main():
             if flat:
                 n_m9_diff += len(diffs)
                 max_m9 = max(max_m9, m)
-            if m > 2 or len(diffs) > 0.005 * len(da):
+                bad("%s: Làm phẳng phải trùng từng điểm ảnh (%d giá trị lệch, lớn nhất %d)" % (f, len(diffs), m))
+            elif m > 2 or len(diffs) > 0.005 * len(da):
                 bad("%s: %d giá trị lệch, lớn nhất %d" % (f, len(diffs), m))
 
     # PDF: trùng từng byte
     n_pdf = 0
-    for f in sorted(os.listdir(JAVA)):
+    for f in sorted(java_files):
         if not f.endswith(".pdf"):
             continue
         other = os.path.join(SWIFT, f)
@@ -228,6 +244,22 @@ def main():
         n_pdf += 1
         if open(os.path.join(JAVA, f), "rb").read() != open(other, "rb").read():
             bad("%s: nội dung PDF khác nhau" % f)
+
+    # bản Swift ghi ảnh / PDF mà bản Java không ghi: hai bản xuất khác bộ dữ liệu (vd. ảnh _m9 của trang wv_* chỉ có ở một
+    # bản thì phần so từng điểm ảnh của Làm phẳng bị bỏ qua mà không ai biết)
+    for f in sorted(os.listdir(SWIFT)):
+        if (f.endswith(".ppm") or f.endswith(".pdf")) and f not in java_files:
+            bad("thừa %s ở bản Swift (bản Java không ghi)" % f)
+
+    # Làm phẳng: mọi trang wv_* có dòng flt và ảnh _m9 đã so từng điểm; ít nhất một trang được nắn (nếu không, bước nắn
+    # thẳng — phần dễ lệch nhất của bản port — chưa hề được đối chiếu)
+    if sorted(wv_pages) != sorted(flt_names):
+        bad("trang wv_* và dòng flt không khớp: trang %s | flt %s" % (" ".join(wv_pages), " ".join(flt_names)))
+    for name in wv_pages:
+        if name not in m9_compared:
+            bad("trang %s: chưa so từng điểm ảnh kết quả Làm phẳng (%s_m9.ppm)" % (name, name))
+    if n_flt and n_flt_field == 0:
+        bad("Làm phẳng không nắn trang nào: chưa đối chiếu bước nắn thẳng (trang wv_* quá nhỏ hoặc bước nắn không chạy)")
 
     print("Tìm mép: %d ảnh, %d có tứ giác, %d trùng tới 0.001 px, lệch lớn nhất %.4f px" % (n_det, n_quad, n_exact, max_det))
     if n_gt:

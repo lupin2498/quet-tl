@@ -20,6 +20,8 @@ notes = []
 shot_no = [0]
 # Chỉ chạy các bước có tên khớp biểu thức này (để lặp nhanh khi sửa một tính năng); "Cài đặt" và "Mở ứng dụng" luôn chạy.
 ONLY = os.environ.get("TEST_ONLY", "").strip()
+# các bước có tên khớp TEST_ONLY (không bước nào khớp -> báo lỗi, không để kết quả "đạt" mà chẳng kiểm thử gì)
+only_hits = []
 
 
 def log(*a):
@@ -404,9 +406,24 @@ def check_no_crash(where):
         raise AssertionError("ANR tại %s" % where)
 
 
+def only_selects(name):
+    """TEST_ONLY có chọn bước này không: tên khớp biểu thức chính quy, hoặc chứa nguyên văn một phần của TEST_ONLY (các
+    phần ngăn bởi |). Tên bước có ngoặc đơn, như "Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)", chép nguyên văn từ summary.md
+    không khớp dưới dạng biểu thức chính quy (ngoặc là nhóm) nên so thêm theo nguyên văn."""
+    try:
+        if re.search(ONLY, name):
+            return True
+    except re.error:
+        pass
+    return any(p.strip() and p.strip() in name for p in ONLY.split("|"))
+
+
 def step(name, fn):
-    if ONLY and name not in ("Cài đặt", "Mở ứng dụng") and not re.search(ONLY, name):
-        return
+    if ONLY:
+        if only_selects(name):
+            only_hits.append(name)
+        elif name not in ("Cài đặt", "Mở ứng dụng"):
+            return
     log("=== %s" % name)
     t0 = time.time()
     try:
@@ -1862,11 +1879,18 @@ def page_image(doc_id, index=0):
     return im
 
 
+def rgb_pixels(im):
+    """Các điểm ảnh (r, g, b) của ảnh RGB, lần lượt từng hàng từ trên xuống. Pillow 12.1+ có get_flattened_data
+    (getdata bị đánh dấu bỏ, gỡ hẳn ở Pillow 14 — CI cài Pillow mới nhất); bản cũ hơn dùng getdata."""
+    flat = getattr(im, "get_flattened_data", None)
+    return list(flat() if flat is not None else im.getdata())
+
+
 def frac(im, box, kind):
-    """Tỷ lệ điểm ảnh thuộc một loại (dark / red / blue / skin) trong vùng chuẩn hoá box của ảnh trang."""
+    """Tỷ lệ điểm ảnh thuộc một loại (dark / red / blue / skin / nonwhite) trong vùng chuẩn hoá box của ảnh trang."""
     W, H = im.size
     crop = im.crop((int(box[0] * W), int(box[1] * H), max(int(box[0] * W) + 1, int(box[2] * W)), max(int(box[1] * H) + 1, int(box[3] * H))))
-    px = list(crop.getdata())
+    px = rgb_pixels(crop)
     if kind == "dark":
         c = sum(1 for r, g, b in px if r * 299 + g * 587 + b * 114 < 128000)
     elif kind == "red":
@@ -1889,7 +1913,7 @@ def dark_rows(im, box):
     x0, y0 = int(box[0] * W), int(box[1] * H)
     x1, y1 = max(x0 + 1, int(box[2] * W)), max(y0 + 1, int(box[3] * H))
     w = x1 - x0
-    px = list(im.crop((x0, y0, x1, y1)).getdata())
+    px = rgb_pixels(im.crop((x0, y0, x1, y1)))
     return [sum(1 for r, g, b in px[i:i + w] if r * 299 + g * 587 + b * 114 < 128000) / float(w) for i in range(0, len(px), w)]
 
 
@@ -2463,6 +2487,10 @@ def main():
     step("Máy ảnh bị chặn giữa chừng + Thử lại", t_camera_blocked_retry)
     step("Dừng ứng dụng giữa chừng", t_rotation_and_recreate)
     step("Monkey 2500 thao tác ngẫu nhiên", t_monkey)
+    if ONLY and not only_hits:
+        # TEST_ONLY gõ sai: chỉ "Cài đặt" + "Mở ứng dụng" chạy — báo lỗi thay vì "đạt" mà không kiểm thử bước nào
+        log("FAIL TEST_ONLY không khớp bước nào:", ONLY)
+        results.append({"step": "TEST_ONLY", "ok": False, "sec": 0, "error": "TEST_ONLY=%r không khớp bước nào" % ONLY})
 
     adb_log = adb("logcat", "-d", "-v", "threadtime", timeout=120)
     open(os.path.join(OUT, "logcat.txt"), "w").write(adb_log)

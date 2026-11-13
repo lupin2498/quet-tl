@@ -328,7 +328,7 @@ public class EvalRetouch {
             Enhancer.apply(e.px, e.w, e.h, Enhancer.FLATTEN);
             check(Arrays.equals(e.px, flattened(in, "rt_plain").px), "Enhancer.apply(Làm phẳng) trùng Flatten.apply (có nắn)");
             // trang phẳng: không được nắn méo (không có trường nắn, hoặc dịch tối đa <= 2 điểm ảnh như wv_plain của EvalFlatten)
-            String still = null;
+            String still = null, moved = null;
             for (String n : new String[]{"rt_plain", "rt_finger_l", "rt_finger_b", "rt_finger_c", "rt_stamp", "rt_strip", "rt_photo",
                     "rt_hand", "rt_shadow", "rt_edge"}) {
                 flattened(in, n);
@@ -336,13 +336,22 @@ public class EvalRetouch {
                 check(f == null || f.maxShift <= 2.0f, String.format(Locale.US, "%s: Làm phẳng không nắn méo trang phẳng (%s)", n,
                         f == null ? "không nắn" : String.format(Locale.US, "dịch tối đa %.2f", f.maxShift)));
                 if (f == null && still == null) still = n;
+                if (f != null && moved == null) moved = n;
             }
             // ảnh xem trước của Xóa thông minh (geometric = false: chỉ làm sạch, không dời điểm ảnh): trang không cần nắn thì
-            // trùng kết quả lọc
-            if (still != null) {
-                Img g = load(in, still);
+            // trùng kết quả lọc; trang có nắn thì chỉ khác ở bước nắn — nắn theo trường của kết quả lọc rồi làm nét
+            // (Retouch.sharpen 48, như Flatten.apply) phải ra đúng kết quả lọc (nét xoá trên ảnh xem trước = trên ảnh trước nắn)
+            for (String n : new String[]{still, moved}) {
+                if (n == null) continue;
+                Img g = load(in, n);
                 Enhancer.apply(g.px, g.w, g.h, Enhancer.FLATTEN, false);
-                check(Arrays.equals(g.px, flattened(in, still).px), still + ": Làm phẳng không nắn (xem trước Xóa thông minh) trùng kết quả lọc");
+                Flatten.Field f = FLAT_FIELD.get(n);
+                if (f != null) {
+                    Flatten.remap(g.px, g.w, g.h, f);
+                    Retouch.sharpen(g.px, g.w, g.h, 48);
+                }
+                check(Arrays.equals(g.px, flattened(in, n).px), n + ": Làm phẳng không nắn (xem trước Xóa thông minh) "
+                        + (f == null ? "trùng kết quả lọc" : "+ nắn theo trường của kết quả lọc trùng kết quả lọc"));
             }
         }
 

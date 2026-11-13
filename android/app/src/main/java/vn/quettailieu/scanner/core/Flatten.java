@@ -190,8 +190,9 @@ public final class Flatten {
                 }
                 if (seed) {
                     cls[off + x] |= 4;
-                    // lõi đậm / mực màu / đường kẻ: lan xa (3); lõi nhạt: lan ngắn (2)
-                    int sv = (q < dq || (f & 1) != 0 || (cls[off + x] & 8) != 0) ? 3 : 2;
+                    // lõi đậm / mực màu: lan xa (3); lõi nhạt: lan ngắn (2); điểm đường kẻ bảng: chỉ giữ, không lan (1) —
+                    // vệt nếp gấp vắt qua đường kẻ không bị kéo theo
+                    int sv = (cls[off + x] & 8) != 0 ? 1 : (q < dq || (f & 1) != 0) ? 3 : 2;
                     if (bs[b] < sv) bs[b] = (byte) sv;
                 } else if ((q < GROW_Q || (f & 2) != 0) && bs[b] == 0) {
                     bs[b] = 1;
