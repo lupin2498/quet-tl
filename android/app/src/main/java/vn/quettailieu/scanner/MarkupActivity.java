@@ -498,7 +498,9 @@ public class MarkupActivity extends BaseActivity {
                         int w = warp.getWidth(), h = warp.getHeight();
                         int[] px = ImageUtil.pixels(warp);
                         warp.recycle();
-                        out = Processor.process(px, w, h, Edits.eraseFromJson(snap.erase), snap.filter);
+                        // đánh dấu được vẽ SAU bộ lọc: nền phải qua bộ lọc đầy đủ như ảnh kết quả
+                        // ("Làm phẳng": đã nắn thẳng) để chữ ký, nét vẽ nằm đúng chỗ trên trang
+                        out = Processor.process(px, w, h, Edits.eraseFromJson(snap.erase), snap.filter, true);
                     }
                 } catch (Throwable t) {
                     out = null;

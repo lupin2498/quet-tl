@@ -1,8 +1,8 @@
-// Kiểm thử phần thuật toán Swift (DocDetector, Enhancer, Retouch, Geom, PdfWriter) trên Linux — không cần UIKit.
+// Kiểm thử phần thuật toán Swift (DocDetector, Enhancer, Retouch, Flatten, Geom, PdfWriter) trên Linux — không cần UIKit.
 //
 // Biên dịch:
 //   swiftc -O -o algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/Retouch.swift \
-//          ios/Sources/Geom.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
+//          ios/Sources/Flatten.swift ios/Sources/Geom.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
 // Cách chạy:
 //   ./algotest tests/images/gt.txt <thư-mục-ppm>     so với toạ độ góc thật + bộ lọc + PDF
 //   ./algotest --dump <dữ-liệu> <kết-quả>            xuất kết quả để đối chiếu với bản Java (DumpCore.java)
@@ -132,6 +132,76 @@ func f(_ v: Double, _ digits: Int) -> String {
     return String(format: "%.\(digits)f", locale: Locale(identifier: "en_US_POSIX"), v)
 }
 
+/// Bộ lọc "Làm phẳng" đầy đủ (gồm nắn thẳng) trên bản sao của ảnh: thông số trường dịch chuyển (giống DumpCore.java).
+func dumpFlatten(_ lines: inout [String], _ name: String, _ rgba: [UInt8], _ w: Int, _ h: Int) {
+    var field: Flatten.Field? = nil
+    _ = edited(rgba) { field = Flatten.apply($0, w, h, w * 4, dewarp: true) }
+    guard let fl = field else {
+        lines.append("flt \(name) 0 0 0 0 0 0 0 0.000 0.000 0.000")
+        return
+    }
+    var sdx = 0.0, sdy = 0.0
+    for v in fl.dx { sdx += Double(v) }
+    for v in fl.dy { sdy += Double(v) }
+    lines.append("flt \(name) 1 \(fl.gw) \(fl.gh) \(fl.lines) \(fl.hrules) \(fl.vrules) \(fl.rotated ? 1 : 0) "
+                 + f(Double(fl.maxShift), 3) + " " + f(sdx, 3) + " " + f(sdy, 3))
+}
+
+/// Trang chữ giả (khối chữ nhật xếp thành từ) có dòng chữ cong hình parabol (lệch tới 10 điểm ảnh ở hai mép) để thử
+/// bước nắn thẳng của "Làm phẳng". Chỉ dùng phép tính số nguyên (lw0: bề rộng ký tự nhỏ nhất).
+func curvedPage(_ w: Int, _ h: Int, _ lw0: Int) -> [UInt8] {
+    var px = [UInt8](repeating: 255, count: w * h * 4)
+    for i in 0..<(w * h) {
+        px[4 * i] = 236
+        px[4 * i + 1] = 233
+        px[4 * i + 2] = 226
+    }
+    var seed = 12345
+    for r in 0..<18 {
+        let base = 60 + 30 * r
+        var x0 = 40 + (r * 7) % 13
+        var inWord = 0, wordLen = 3
+        while true {
+            seed = (seed * 1103515245 + 12345) & 0x7FFFFFFF
+            let lw = lw0 + (seed >> 8) % 3
+            let tall = (seed >> 12) % 4 == 0 ? 3 : 0
+            if x0 + lw > 440 { break }
+            let off = (x0 - 240) * (x0 - 240) / 4000
+            for y in (base - 9 - tall + off)..<(base + off) {
+                for x in x0..<(x0 + lw) {
+                    let i = (y * w + x) * 4
+                    px[i] = 40
+                    px[i + 1] = 40
+                    px[i + 2] = 46
+                }
+            }
+            x0 += lw + 3
+            inWord += 1
+            if inWord >= wordLen {
+                inWord = 0
+                wordLen = 2 + (seed >> 16) % 5
+                x0 += 7
+            }
+        }
+    }
+    return px
+}
+
+/// Chạy body trên ảnh liền (bytesPerRow = w*4) và trên bản đệm thêm pad byte mỗi hàng: kết quả phải giống hệt,
+/// byte đệm phải giữ nguyên.
+func samePadded(_ flat: [UInt8], _ w: Int, _ h: Int, _ pad: Int, _ body: (UnsafeMutablePointer<UInt8>, Int) -> Void) -> Bool {
+    let bpr = w * 4 + pad
+    var padded = [UInt8](repeating: 0x5A, count: bpr * h)
+    for y in 0..<h { for k in 0..<(w * 4) { padded[y * bpr + k] = flat[y * w * 4 + k] } }
+    let a = edited(flat) { body($0, w * 4) }
+    let b = edited(padded) { body($0, bpr) }
+    for y in 0..<h {
+        for k in 0..<(w * 4) where a[y * w * 4 + k] != b[y * bpr + k] { return false }
+        for k in (w * 4)..<bpr where b[y * bpr + k] != 0x5A { return false }
+    }
+    return true
+}
+
 let pdfTitle = "Biên bản thử nghiệm số 12 — ấệữ 😀"
 
 // MARK: --dump
@@ -172,14 +242,19 @@ func runDump(_ inDir: String, _ outDir: String) -> Int32 {
         let full = name.hasPrefix("full_")
         // ảnh trang đã nắn phẳng của make_retouch_images.py: so từng điểm ảnh ở các bộ lọc mới
         let rt = name.hasPrefix("rt_")
+        // trang mấp mô / gấp nếp của make_wavy_images.py: so từng điểm ảnh ở bộ lọc Làm phẳng + thông số trường nắn
+        let wv = name.hasPrefix("wv_")
         for mode in [Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw,
-                     Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand] {
+                     Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand, Enhancer.flatten] {
             t0 = Date()
             let c = enhance(img.rgba, img.w, img.h, mode)
             tEnh += Date().timeIntervalSince(t0)
             lines.append("enh \(name) \(mode)" + sums(c))
-            if full || (rt && mode >= Enhancer.magicPro) { writePPM("\(outDir)/\(name)_m\(mode).ppm", c, img.w, img.h) }
+            if full || (rt && mode >= Enhancer.magicPro) || (wv && mode == Enhancer.flatten) {
+                writePPM("\(outDir)/\(name)_m\(mode).ppm", c, img.w, img.h)
+            }
         }
+        if wv { dumpFlatten(&lines, name, img.rgba, img.w, img.h) }
         if rt { dumpRetouch(&lines, outDir, name, img.rgba, img.w, img.h) }
     }
     // Retouch.remap: đổi vùng cắt
@@ -438,11 +513,12 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
     let esizes: [(Int, Int)] = [(1, 1), (3, 3), (4, 4), (5, 4), (4, 5), (7, 9), (8, 8), (9, 8), (100, 4), (4, 100), (2000, 5), (5, 2000),
                                 (97, 131), (640, 480), (1240, 1754)]
     let modes = [Enhancer.original, Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw,
-                 Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand, 99, -1]
+                 Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand, Enhancer.flatten, 99, -1]
     func runEnhance(_ px: [UInt8], _ w: Int, _ h: Int, _ mode: Int, _ what: String) {
         let out = enhance(px, w, h, mode)
         fuzzChecks += 1
-        if mode == Enhancer.original || w < 4 || h < 4 {
+        // Làm phẳng bỏ qua ảnh có cạnh dưới 16 điểm ảnh (giữ nguyên ảnh, như bản Java)
+        if mode == Enhancer.original || w < 4 || h < 4 || (mode == Enhancer.flatten && (w < 16 || h < 16)) {
             fcheck(out == px, "Enhancer giữ nguyên ảnh (\(what) \(w)x\(h) chế độ \(mode))")
         } else {
             var opaque = true
@@ -484,7 +560,8 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
             let i = (y * w + x) * 4
             return (299 * Int(c[i]) + 587 * Int(c[i + 1]) + 114 * Int(c[i + 2])) / 1000
         }
-        for m in [Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw, Enhancer.magicPro, Enhancer.noShadow, Enhancer.noHand] {
+        for m in [Enhancer.magic, Enhancer.lighten, Enhancer.gray, Enhancer.bw, Enhancer.magicPro, Enhancer.noShadow, Enhancer.noHand,
+                  Enhancer.flatten] {
             let c = enhance(px, w, h, m)
             let pl = lum(c, 300, 20), il = lum(c, 300, 41)
             fcheck(pl >= 235, "Enhancer chế độ \(m): nền giấy \(pl) (phải >= 235)")
@@ -597,8 +674,11 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
             }
             fcheck(ok, "bytesPerRow có đệm: \(what)")
         }
-        for mode in [Enhancer.magic, Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand] {
+        for mode in [Enhancer.magic, Enhancer.magicPro, Enhancer.denoise, Enhancer.noShadow, Enhancer.noHand, Enhancer.flatten] {
             same("bộ lọc \(mode)") { Enhancer.apply($0, width: w, height: h, bytesPerRow: $1, mode: mode) }
+        }
+        same("Làm phẳng chỉ làm sạch (geometric = false)") {
+            Enhancer.apply($0, width: w, height: h, bytesPerRow: $1, mode: Enhancer.flatten, geometric: false)
         }
         let ops = [Retouch.Op(kind: Retouch.pen, width: 0.05, pts: [0.2, 0.3, 0.7, 0.35]),
                    Retouch.Op(kind: Retouch.rect, width: 0, pts: [0.5, 0.5, 0.8, 0.5, 0.8, 0.7, 0.5, 0.7]),
@@ -615,6 +695,78 @@ func runFuzz(_ rounds: Int, _ pdfDir: String?) -> Int32 {
         fcheck(fa != nil && fa == fb, "bytesPerRow có đệm: fingerMask (\(fa == nil ? "không thấy ngón tay" : "khác nhau"))")
     }
     print("Retouch: xong (\(Int(Date().timeIntervalSince(t0) * 1000)) ms)")
+
+    // --- Flatten (Làm phẳng)
+    t0 = Date()
+    // trang chữ cong: bước nắn thẳng chạy thật (ước lượng trường + nắn ảnh); bytesPerRow có đệm phải cho kết quả giống hệt
+    do {
+        let w = 480, h = 640
+        for lw0 in [5, 6] {
+            let page = curvedPage(w, h, lw0)
+            var fa: Flatten.Field? = nil, fb: Flatten.Field? = nil
+            let ok = samePadded(page, w, h, 28) { p, rb in
+                if rb == w * 4 {
+                    fa = Flatten.apply(p, w, h, rb)
+                } else {
+                    fb = Flatten.apply(p, w, h, rb)
+                }
+            }
+            fcheck(ok, "bytesPerRow có đệm: Làm phẳng (trang chữ cong \(lw0))")
+            var sameField = (fa == nil) == (fb == nil)
+            if let ra = fa, let rb = fb {
+                sameField = ra.gw == rb.gw && ra.gh == rb.gh && ra.dx == rb.dx && ra.dy == rb.dy && ra.rotated == rb.rotated
+            }
+            fcheck(sameField, "bytesPerRow có đệm: trường dịch chuyển của Làm phẳng (trang chữ cong \(lw0))")
+            if lw0 == 5 { fcheck(fa != nil, "Làm phẳng: trang chữ cong phải được nắn thẳng") }
+            if let fl = fa {
+                print("Làm phẳng: trang chữ cong \(lw0): lưới \(fl.gw)x\(fl.gh), \(fl.lines) dòng, dịch tối đa "
+                      + f(Double(fl.maxShift), 2) + ", xoay ngang \(fl.rotated ? 1 : 0)")
+            }
+            var clean: Flatten.Field? = Flatten.Field()
+            _ = edited(page) { clean = Flatten.apply($0, w, h, w * 4, dewarp: false) }
+            fcheck(clean == nil, "Làm phẳng chỉ làm sạch (dewarp = false) không được nắn")
+        }
+    }
+    // nắn bằng trường cho sẵn: đệm hàng giữ nguyên; trường bất thường (NaN, vô cực, bước 0...) không được dừng đột ngột
+    do {
+        let w = 61, h = 47
+        let src = pattern(3, w, h, &rng)
+        func field(_ gw: Int, _ gh: Int, _ step: Float, _ ox: Float, _ v: (Int) -> Float) -> Flatten.Field {
+            let fl = Flatten.Field()
+            fl.gw = gw
+            fl.gh = gh
+            fl.step = step
+            fl.ox = ox
+            fl.dx = (0..<(gw * gh)).map { v($0) }
+            fl.dy = (0..<(gw * gh)).map { v($0 * 7 + 3) }
+            return fl
+        }
+        let fields: [Flatten.Field] = [
+            field(4, 3, 20, 0.5, { Float($0 % 5) - 2 }),
+            field(6, 5, 12, 0, { Float(($0 * 3) % 7) * 0.75 - 2 }),
+            field(2, 2, 100, 0, { _ in 1e30 }),
+            field(3, 3, 25, 0, { $0 % 2 == 0 ? Float.nan : Float.infinity }),
+            field(3, 3, 0, 0, { _ in 1 }),
+            field(3, 3, Float.nan, 0, { _ in 1 }),
+            field(3, 3, Float.leastNonzeroMagnitude, Float.nan, { _ in -1 }),
+            field(3, 3, 30, 1e30, { _ in 2 }),
+            field(3, 3, 30, -Float.infinity, { _ in 2 }),
+            field(1, 5, 30, 0, { _ in 2 }),
+        ]
+        for (k, fl) in fields.enumerated() {
+            let ok = samePadded(src, w, h, 12) { Flatten.remap($0, w, h, $1, fl) }
+            fcheck(ok, "bytesPerRow có đệm: Flatten.remap (trường \(k))")
+        }
+        let short = Flatten.Field()
+        short.gw = 3
+        short.gh = 3
+        short.step = 10
+        short.dx = [0, 0]
+        short.dy = [0, 0]
+        let kept = edited(src) { Flatten.remap($0, w, h, w * 4, short) }
+        fcheck(kept == src, "Flatten.remap: trường thiếu nút phải giữ nguyên ảnh")
+    }
+    print("Flatten: xong (\(Int(Date().timeIntervalSince(t0) * 1000)) ms)")
 
     // --- PdfWriter
     for _ in 0..<3000 {

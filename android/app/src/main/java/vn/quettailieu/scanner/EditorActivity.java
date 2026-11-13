@@ -465,7 +465,10 @@ public class EditorActivity extends BaseActivity {
         setActiveTab(idx);
     }
 
-    /** Lời nhắc "Phát hiện ngón tay" kèm nút Gỡ bỏ (chuyển trang sang bộ lọc Thần kỳ). */
+    /**
+     * Lời nhắc "Phát hiện ngón tay" kèm nút Gỡ bỏ (chuyển trang sang bộ lọc Thần kỳ); ẩn khi bộ lọc của trang đã gỡ
+     * ngón tay (Thần kỳ, Làm phẳng — Enhancer.removesFingers).
+     */
     private LinearLayout buildBanner() {
         LinearLayout b = new LinearLayout(this);
         b.setOrientation(LinearLayout.HORIZONTAL);
@@ -508,7 +511,8 @@ public class EditorActivity extends BaseActivity {
     private void updateBanner() {
         if (banner == null) return;
         DocStore.Page p = current();
-        boolean show = p != null && p.finger == 1 && !p.fingerOff && p.filter != Enhancer.MAGIC_PRO
+        // bộ lọc đã gỡ ngón tay (Thần kỳ, Làm phẳng): không cần nhắc
+        boolean show = p != null && p.finger == 1 && !p.fingerOff && !Enhancer.removesFingers(p.filter)
                 && filterPanel != null && filterPanel.getVisibility() != View.VISIBLE;
         banner.setVisibility(show ? View.VISIBLE : View.GONE);
     }
@@ -516,7 +520,7 @@ public class EditorActivity extends BaseActivity {
     private void removeFinger() {
         DocStore.Page p = current();
         if (p == null) return;
-        if (p.filter != Enhancer.MAGIC_PRO) {
+        if (!Enhancer.removesFingers(p.filter)) {
             p.filter = Enhancer.MAGIC_PRO;
             dirty = true;
             DocStore.save(doc);

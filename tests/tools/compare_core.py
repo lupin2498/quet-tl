@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Đối chiếu kết quả phần thuật toán giữa bản Java (DumpCore) và bản Swift (algotest --dump).
 
+Dữ liệu: make_core_inputs.py + make_retouch_images.py (rt_*) + make_wavy_images.py (wv_*: bộ lọc Làm phẳng, dòng "flt")
+ghi chung một thư mục.
 Cách chạy: python3 tests/tools/compare_core.py <dữ-liệu> <kết-quả-java> <kết-quả-swift>
 Mã thoát 0 nếu hai bản cho cùng kết quả (trong sai số làm tròn), 1 nếu lệch.
 """
@@ -36,6 +38,24 @@ def read_ppm(path):
     return w, h, parts[4][-w * h * 3:]
 
 
+def close_fields(tag, a, b, fa, fb, tol_of):
+    """Các trường số: trùng chuỗi, cùng NaN, hoặc lệch không quá tol_of(giá trị java). False (đã báo lệch) nếu khác."""
+    for x, y in zip(fa, fb):
+        if x == y:
+            continue
+        try:
+            fx, fy = float(x), float(y)
+        except ValueError:
+            bad("%s: java '%s' | swift '%s'" % (tag, a, b))
+            return False
+        if fx == fy or (math.isnan(fx) and math.isnan(fy)):  # "NaN"/"nan", "Infinity"/"inf", "-0.000"/"0.000"
+            continue
+        if not (abs(fx - fy) <= tol_of(fx)):
+            bad("%s: java '%s' | swift '%s'" % (tag, a, b))
+            return False
+    return True
+
+
 def main():
     ja, sw = read(JAVA), read(SWIFT)
     if len(ja) != len(sw):
@@ -53,6 +73,9 @@ def main():
     n_enh = n_enh_exact = 0
     n_geom = 0
     n_ret = 0
+    # Làm phẳng (Enhancer.FLATTEN = 9): lượt lọc, dòng trường nắn "flt"
+    n_enh9 = n_enh9_exact = 0
+    n_flt = n_flt_field = n_flt_exact = 0
     for a, b in zip(ja, sw):
         pa, pb = a.split(" "), b.split(" ")
         tag = pa[0]
@@ -92,9 +115,17 @@ def main():
                 n_gt += 1
         elif tag == "enh":
             n_enh += 1
+            if pa[2] != pb[2]:
+                bad("enh %s: thứ tự chế độ lọc khác nhau: java %s, swift %s" % (pa[1], pa[2], pb[2]))
+                continue
+            flat = pa[2] == "9"
+            if flat:
+                n_enh9 += 1
             sa, sb = nums(pa[3:6]), nums(pb[3:6])
             if sa == sb:
                 n_enh_exact += 1
+                if flat:
+                    n_enh9_exact += 1
             else:
                 rel = max(abs(x - y) / max(1.0, x) for x, y in zip(sa, sb))
                 if rel > 2e-4:
@@ -124,18 +155,25 @@ def main():
             if len(pa) != len(pb):
                 bad("%s %s: số trường khác nhau" % (tag, pa[1]))
                 continue
-            for x, y in zip(pa[2:], pb[2:]):
-                if x == y:
-                    continue
-                try:
-                    fx, fy = float(x), float(y)
-                except ValueError:
-                    bad("%s: java '%s' | swift '%s'" % (tag, a, b))
-                    break
-                tol = 1e-4 if tag == "remap" else 2e-4 * max(1.0, abs(fx))
-                if abs(fx - fy) > tol:
-                    bad("%s: java '%s' | swift '%s'" % (tag, a, b))
-                    break
+            if tag == "remap":
+                close_fields(tag, a, b, pa[2:], pb[2:], lambda fx: 1e-4)
+            else:
+                close_fields(tag, a, b, pa[2:], pb[2:], lambda fx: 2e-4 * max(1.0, abs(fx)))
+        elif tag == "flt":
+            # Làm phẳng: flt <tên> <có trường> <gw> <gh> <dòng chữ> <kẻ ngang> <kẻ dọc> <xoay> <dịch tối đa> <tổng dx> <tổng dy>
+            # số nguyên / cờ phải trùng; số thực (%.3f) như dòng ret: sai số tương đối 2e-4, nhưng không chặt hơn
+            # một đơn vị chữ số cuối (Java làm tròn nửa lên theo chuỗi thập phân ngắn nhất, printf theo giá trị nhị phân)
+            n_flt += 1
+            if len(pa) != 12 or len(pb) != 12:
+                bad("flt %s: số trường khác nhau (java %d, swift %d)" % (pa[1], len(pa), len(pb)))
+                continue
+            if pa[2:9] != pb[2:9]:
+                bad("flt %s: trường nắn khác nhau: java '%s' | swift '%s'" % (pa[1], " ".join(pa[2:9]), " ".join(pb[2:9])))
+                continue
+            if pa[2] == "1":
+                n_flt_field += 1
+            if close_fields(tag, a, b, pa[9:], pb[9:], lambda fx: max(1.5e-3, 2e-4 * max(1.0, abs(fx)))) and pa == pb:
+                n_flt_exact += 1
         else:  # snap, pdf, jpeg: phải trùng hoàn toàn
             if a != b:
                 bad("%s: java '%s' | swift '%s'" % (tag, a, b))
@@ -147,6 +185,8 @@ def main():
     max_px = 0
     n_diff_px = 0
     n_px = 0
+    # ảnh sau bộ lọc Làm phẳng (*_m9.ppm: trang wv_*, rt_*, full_*)
+    n_m9 = n_m9_px = n_m9_diff = max_m9 = 0
     for f in sorted(os.listdir(JAVA)):
         if not f.endswith(".ppm"):
             continue
@@ -159,13 +199,20 @@ def main():
         if (wa, ha) != (wb, hb) or len(da) != len(db):
             bad("%s: kích thước khác nhau" % f)
             continue
+        flat = f.endswith("_m9.ppm")
         n_full += 1
         n_px += len(da)
+        if flat:
+            n_m9 += 1
+            n_m9_px += len(da)
         if da != db:
             diffs = [abs(x - y) for x, y in zip(da, db) if x != y]
             n_diff_px += len(diffs)
             m = max(diffs)
             max_px = max(max_px, m)
+            if flat:
+                n_m9_diff += len(diffs)
+                max_m9 = max(max_m9, m)
             if m > 2 or len(diffs) > 0.005 * len(da):
                 bad("%s: %d giá trị lệch, lớn nhất %d" % (f, len(diffs), m))
 
@@ -191,8 +238,13 @@ def main():
             bad("độ chính xác tìm mép thấp bất thường: %d/%d" % (acc["java"], n_gt))
     print("Bộ lọc: %d lượt, %d trùng tuyệt đối; %d ảnh so từng điểm (%d/%d giá trị lệch, lớn nhất %d)" % (n_enh, n_enh_exact, n_full, n_diff_px, n_px, max_px))
     print("Hình học: %d tứ giác; PDF: %d file trùng từng byte; Retouch: %d dòng" % (n_geom, n_pdf, n_ret))
+    print("Làm phẳng: %d lượt lọc (%d trùng tuyệt đối), %d ảnh so từng điểm (%d/%d giá trị lệch, lớn nhất %d); "
+          "%d dòng trường nắn (%d có nắn, %d trùng tuyệt đối)"
+          % (n_enh9, n_enh9_exact, n_m9, n_m9_diff, n_m9_px, max_m9, n_flt, n_flt_field, n_flt_exact))
     if n_det == 0 or n_enh == 0 or n_geom == 0 or n_pdf == 0 or n_full == 0:
         bad("thiếu dữ liệu để đối chiếu")
+    if n_enh9 == 0 or n_m9 == 0 or n_flt == 0:
+        bad("thiếu dữ liệu Làm phẳng")
     print("KẾT QUẢ ĐỐI CHIẾU JAVA/SWIFT: %s (%d điểm lệch)" % ("TRÙNG" if not problems else "LỆCH", len(problems)))
     sys.exit(0 if not problems else 1)
 

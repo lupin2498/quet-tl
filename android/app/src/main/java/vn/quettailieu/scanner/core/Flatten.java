@@ -279,8 +279,8 @@ public final class Flatten {
     /** Kết quả phân tích ở độ phân giải thấp (cạnh dài ~ANALYSIS_LONG, khối k x k điểm ảnh). */
     static final class Analysis {
         int k, aw, ah;
-        /** Cỡ chữ (điểm ảnh phân tích); 0 = không đủ chữ để nắn. */
-        float hc;
+        /** Cỡ chữ (điểm ảnh phân tích); 0 = không đủ chữ để nắn. hcT: cỡ chữ theo chiều ngang (dùng khi trang xoay ngang). */
+        float hc, hcT;
         int tmax, stride;
         /**
          * Mặt nạ đường kẻ bảng (thuộc lưới), đã nới 1 điểm: rule — từ mặt nạ chặt (bảng in rõ), rule2 — từ mặt nạ lỏng
@@ -327,8 +327,10 @@ public final class Flatten {
         }
         int[] lab = new int[nA];
         int[] queue = new int[nA];
-        float hc = textHeight(strict, aw, ah, lab, queue);
+        float[] wOut = new float[1];
+        float hc = textHeight(strict, aw, ah, lab, queue, wOut);
         an.hc = hc;
+        an.hcT = wOut[0];
         if (hc <= 0f) return an;
         an.tmax = Math.max(2, Math.round(hc * 0.35f));
         an.stride = Math.max(4, Math.round(hc * 1.25f));
@@ -647,16 +649,18 @@ public final class Flatten {
         }
         Lines tl = new Lines();
         int nt = textLines(ink, aw, ah, an.hc, tl);
-        // hướng dòng chữ: thử cả ảnh chuyển vị, chọn hướng cho nhiều mẫu dòng hơn hẳn
+        // hướng dòng chữ: thử cả ảnh chuyển vị (cỡ chữ đo theo chiều ngang); hướng đúng cho dòng dài hơn và mượt hơn hẳn
         byte[] inkT = new byte[nA];
         for (int y = 0; y < ah; y++) {
             for (int x = 0; x < aw; x++) inkT[x * ah + y] = ink[y * aw + x];
         }
         ink = null;
+        float hcT = an.hcT > 0f ? an.hcT : an.hc;
         Lines tlT = new Lines();
-        int ntT = textLines(inkT, ah, aw, an.hc, tlT);
+        int ntT = textLines(inkT, ah, aw, hcT, tlT);
         inkT = null;
-        boolean rot = tlT.n > 2 * tl.n;
+        boolean rot = lineScore(tlT) > 1.5 * lineScore(tl);
+        int strd = rot ? Math.max(4, Math.round(hcT * 1.25f)) : an.stride;
         Lines hl = new Lines(), vl = new Lines();
         int nh;
         if (!rot) {
@@ -677,7 +681,7 @@ public final class Flatten {
         int gw = (fw + gs - 1) / gs + 1, gh = (fh + gs - 1) / gs + 1;
         int N = gw * gh;
         double[] dyF = new double[N], dxF = new double[N];
-        double mx = fitField(fw, fh, gs, gw, gh, hl, nh, vl, an.stride, dxF, dyF);
+        double mx = fitField(fw, fh, gs, gw, gh, hl, nh, vl, strd, dxF, dyF);
         if (!(mx >= 1.0)) return null;
         Field f = new Field();
         f.step = gs * k;
@@ -986,11 +990,15 @@ public final class Flatten {
         return out;
     }
 
-    /** Chiều cao điển hình của ký tự (phân vị 60% chiều cao khung thành phần cỡ chữ); 0 nếu quá ít chữ. */
-    static float textHeight(byte[] ink, int w, int h, int[] lab, int[] queue) {
+    /**
+     * Chiều cao điển hình của ký tự (phân vị 60% chiều cao khung thành phần cỡ chữ); 0 nếu quá ít chữ. widthOut[0]: bề
+     * rộng điển hình theo cùng cách (cỡ chữ khi trang xoay ngang), 0 nếu quá ít.
+     */
+    static float textHeight(byte[] ink, int w, int h, int[] lab, int[] queue, float[] widthOut) {
         int n = w * h;
         int[] hist = new int[h + 1];
-        int cnt = 0;
+        int[] histW = new int[w + 1];
+        int cnt = 0, cntW = 0;
         for (int i = 0; i < n; i++) lab[i] = 0;
         for (int start = 0; start < n; start++) {
             if (ink[start] == 0 || lab[start] != 0) continue;
@@ -1023,6 +1031,21 @@ public final class Flatten {
             if (tail >= 6 && ch >= 4 && ch <= h / 10 && cw <= 4 * ch) {
                 hist[ch]++;
                 cnt++;
+            }
+            if (tail >= 6 && cw >= 4 && cw <= w / 10 && ch <= 4 * cw) {
+                histW[cw]++;
+                cntW++;
+            }
+        }
+        widthOut[0] = 0f;
+        if (cntW >= 25) {
+            int needW = (cntW * 6 + 9) / 10, accW = 0;
+            for (int v = 0; v <= w; v++) {
+                accW += histW[v];
+                if (accW >= needW) {
+                    widthOut[0] = v;
+                    break;
+                }
             }
         }
         if (cnt < 25) return 0f;
@@ -1243,6 +1266,31 @@ public final class Flatten {
             if (t >= 0) out.add(t, sX[i], sY[i], 1f);
         }
         return lines;
+    }
+
+    /**
+     * Điểm "giống dòng chữ" của tập đường: số mẫu trung bình mỗi đường chia cho độ gồ ghề (trung bình |sai phân bậc hai|
+     * của vị trí dọc theo từng đường, tối thiểu 0,05). Hướng đúng của trang cho đường dài và mượt; 0 nếu không đủ mẫu.
+     */
+    static double lineScore(Lines ln) {
+        if (ln.count == 0 || ln.n == 0) return 0;
+        float[] p1 = new float[ln.count], p2 = new float[ln.count];
+        int[] seen = new int[ln.count];
+        double sum = 0;
+        int rc = 0;
+        for (int i = 0; i < ln.n; i++) {
+            int j = ln.line[i];
+            float y = ln.ys[i];
+            if (seen[j] >= 2) {
+                sum += Math.abs(y - 2f * p1[j] + p2[j]);
+                rc++;
+            }
+            p2[j] = p1[j];
+            p1[j] = y;
+            seen[j]++;
+        }
+        if (rc == 0) return 0;
+        return ((double) ln.n / ln.count) / Math.max(0.05, sum / rc);
     }
 
     /** Tổng trượt cửa sổ [i - r, i + r] (ngoài mảng = 0). */

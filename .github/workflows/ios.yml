@@ -44,7 +44,7 @@ jobs:
           cp tests/images/doc_1_wood.jpg out/algo/sample.jpg
       - name: Biên dịch + chạy
         run: |
-          swiftc -O -o out/algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/Retouch.swift ios/Sources/Geom.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
+          swiftc -O -o out/algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/Retouch.swift ios/Sources/Flatten.swift ios/Sources/Geom.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
           set -o pipefail
           ./out/algotest tests/images/gt.txt out/algo 2>&1 | tee out/algo/result.txt
 
@@ -64,6 +64,9 @@ jobs:
           # trang đã nắn phẳng có ngón tay / chữ viết tay / con dấu / bóng đổ: đối chiếu bộ lọc mới + Xóa thông minh
           sudo apt-get install -y -q fonts-dejavu-core > /dev/null 2>&1 || true
           python3 tests/tools/make_retouch_images.py out/core-in 700
+          # trang mấp mô / gấp nếp (wv_*.ppm; đáp án ở out/core-in/gt — hai bản bỏ qua vì chỉ đọc *.ppm ngay trong thư mục):
+          # đối chiếu bộ lọc Làm phẳng (làm sạch + nắn thẳng) từng điểm ảnh và thông số trường nắn
+          python3 tests/tools/make_wavy_images.py out/core-in 700
           mkdir -p out/jcls
           javac -encoding UTF-8 -d out/jcls android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/DumpCore.java
           java -Dfile.encoding=UTF-8 -cp out/jcls DumpCore out/core-in out/core-java 2>&1 | tee out/algo/compare.txt

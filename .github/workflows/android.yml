@@ -58,6 +58,13 @@ jobs:
           java -Dfile.encoding=UTF-8 -cp out/core-classes EvalRetouch out/retouch-in | tee out/core/retouch-tests.txt
           rm -rf out/retouch-in
 
+      - name: Kiểm thử bộ lọc Làm phẳng (JVM, trang giấy mấp mô / gấp nếp tổng hợp sinh tại chỗ)
+        # dùng phông DejaVu + numpy/pillow cài ở bước trên; ảnh vào để ở $RUNNER_TEMP (không đẩy lên ci/android-build)
+        run: |
+          set -o pipefail
+          python3 tests/tools/make_wavy_images.py "$RUNNER_TEMP/wavy-in" 1400
+          java -Dfile.encoding=UTF-8 -cp out/core-classes EvalFlatten "$RUNNER_TEMP/wavy-in" | tee out/core/flatten-tests.txt
+
       - name: Kiểm thử độ bền thuật toán (fuzz) + kiểm tra PDF bằng trình phân tích thật
         run: |
           set -o pipefail

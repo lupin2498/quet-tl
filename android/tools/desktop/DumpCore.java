@@ -1,5 +1,6 @@
 import vn.quettailieu.scanner.core.DocDetector;
 import vn.quettailieu.scanner.core.Enhancer;
+import vn.quettailieu.scanner.core.Flatten;
 import vn.quettailieu.scanner.core.Geom;
 import vn.quettailieu.scanner.core.PdfWriter;
 import vn.quettailieu.scanner.core.Retouch;
@@ -19,6 +20,7 @@ import java.util.Locale;
 
 /**
  * Xuất kết quả phần thuật toán (bản Java) trên bộ dữ liệu của tests/tools/make_core_inputs.py
+ * (+ make_retouch_images.py: ảnh rt_*, make_wavy_images.py: ảnh wv_* cùng thư mục)
  * để đối chiếu với bản Swift (ios/Tests/linux/main.swift --dump) bằng tests/tools/compare_core.py.
  *
  * Cách chạy: java -cp out DumpCore <thư-mục-dữ-liệu> <thư-mục-kết-quả>
@@ -56,8 +58,10 @@ public class DumpCore {
             boolean full = name.startsWith("full_");
             // ảnh trang đã nắn phẳng của make_retouch_images.py: so từng điểm ảnh ở các bộ lọc mới
             boolean rt = name.startsWith("rt_");
+            // trang giấy mấp mô / gấp nếp của make_wavy_images.py: so từng điểm ảnh ở bộ lọc Làm phẳng + trường nắn (dòng flt)
+            boolean wv = name.startsWith("wv_");
             for (int mode : new int[]{Enhancer.MAGIC, Enhancer.LIGHTEN, Enhancer.GRAY, Enhancer.BW,
-                    Enhancer.MAGIC_PRO, Enhancer.DENOISE, Enhancer.NO_SHADOW, Enhancer.NO_HAND}) {
+                    Enhancer.MAGIC_PRO, Enhancer.DENOISE, Enhancer.NO_SHADOW, Enhancer.NO_HAND, Enhancer.FLATTEN}) {
                 int[] c = px.clone();
                 t0 = System.nanoTime();
                 Enhancer.apply(c, w, h, mode);
@@ -69,8 +73,11 @@ public class DumpCore {
                     sb2 += v & 255;
                 }
                 pw.println("enh " + name + " " + mode + " " + sr + " " + sg + " " + sb2);
-                if (full || (rt && mode >= Enhancer.MAGIC_PRO)) writePPM(new File(out, name + "_m" + mode + ".ppm"), c, w, h);
+                if (full || (rt && mode >= Enhancer.MAGIC_PRO) || (wv && mode == Enhancer.FLATTEN)) {
+                    writePPM(new File(out, name + "_m" + mode + ".ppm"), c, w, h);
+                }
             }
+            if (wv) pw.println(flattenLine(name, px, w, h));
             if (rt) dumpRetouch(pw, out, name, px, w, h);
         }
         // Retouch.remap: đổi vùng cắt
@@ -155,6 +162,21 @@ public class DumpCore {
         }
         pw.close();
         System.out.printf(Locale.US, "Java: %d ảnh, tìm mép %.0f ms, lọc %.0f ms%n", nImg, tDet / 1e6, tEnh / 1e6);
+    }
+
+    /**
+     * Dòng "flt": trường nắn của bộ lọc Làm phẳng (Flatten.apply đầy đủ, có nắn, trên bản sao ảnh vào) —
+     * có trường hay không, kích thước lưới, số dòng chữ / kẻ ngang / kẻ dọc, trang xoay ngang, dịch chuyển lớn nhất,
+     * tổng dx, tổng dy (cộng dồn kiểu double theo thứ tự chỉ số). Bản Swift (main.swift --dump) in đúng dòng này.
+     */
+    static String flattenLine(String name, int[] px, int w, int h) {
+        Flatten.Field f = Flatten.apply(px.clone(), w, h);
+        if (f == null) return "flt " + name + " 0 0 0 0 0 0 0 0.000 0.000 0.000";
+        double sx = 0, sy = 0;
+        for (int i = 0; i < f.dx.length; i++) sx += f.dx[i];
+        for (int i = 0; i < f.dy.length; i++) sy += f.dy[i];
+        return "flt " + name + " 1 " + f.gw + " " + f.gh + " " + f.lines + " " + f.hrules + " " + f.vrules + " " + (f.rotated ? 1 : 0)
+                + String.format(Locale.US, " %.3f %.3f %.3f", (double) f.maxShift, sx, sy);
     }
 
     /** Các thao tác "Xóa thông minh" cố định dùng để đối chiếu (toạ độ chuẩn hoá trên trang của make_retouch_images.py). */

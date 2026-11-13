@@ -246,6 +246,7 @@ enum ImageOps {
         }
         guard let base = warped else { throw OpError(message: "Không xử lý được ảnh") }
         // chuỗi xử lý: nắn phẳng -> (dò ngón tay, một lần cho mỗi ảnh nắn phẳng) -> xoá thông minh -> lọc -> đánh dấu -> xoay -> tiêu đề
+        // (bộ lọc "Làm phẳng" còn nắn thẳng nội dung: nét xoá theo toạ độ ảnh trước khi lọc, đánh dấu theo ảnh sau khi lọc)
         let erase = (p.erase ?? []).map { $0.op }
         let marks = p.marks ?? []
         let needFinger = p.fingerKey != wn
@@ -299,12 +300,14 @@ enum ImageOps {
     }
 
     /// Áp chuỗi xử lý điểm ảnh (xoá thông minh + bộ lọc) lên bản sao của ảnh xem trước; trả về ảnh mới.
-    static func process(_ base: [UInt8], _ w: Int, _ h: Int, erase: [Retouch.Op], filter: Int) -> CGImage? {
+    /// geometric = false: bộ lọc dời điểm ảnh (Làm phẳng) chỉ làm sạch, không nắn (xem trước của Xóa thông minh).
+    static func process(_ base: [UInt8], _ w: Int, _ h: Int, erase: [Retouch.Op], filter: Int,
+                        geometric: Bool = true) -> CGImage? {
         var px = base
         px.withUnsafeMutableBufferPointer { buf in
             guard let p = buf.baseAddress else { return }
             if !erase.isEmpty { Retouch.applyErase(p, w, h, w * 4, erase) }
-            Enhancer.apply(p, width: w, height: h, bytesPerRow: w * 4, mode: filter)
+            Enhancer.apply(p, width: w, height: h, bytesPerRow: w * 4, mode: filter, geometric: geometric)
         }
         return cgImage(rgba: px, w: w, h: h)
     }

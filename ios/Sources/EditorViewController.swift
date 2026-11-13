@@ -461,15 +461,17 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     private func updateBanner() {
         var show = false
         if let p = current {
-            show = p.finger == 1 && p.fingerOff != true && p.filter != Enhancer.magicPro && !filterPanelVisible
+            // bộ lọc đã gỡ ngón tay (Thần kỳ, Làm phẳng): không cần nhắc
+            show = p.finger == 1 && p.fingerOff != true && !Enhancer.removesFingers(p.filter) && !filterPanelVisible
         }
         banner.isHidden = !show
     }
 
-    /// "Gỡ bỏ": chuyển trang sang bộ lọc Thần kỳ (gỡ ngón tay giữ giấy).
+    /// "Gỡ bỏ": chuyển trang sang bộ lọc Thần kỳ (gỡ ngón tay giữ giấy); trang đang dùng bộ lọc đã gỡ ngón tay
+    /// (Thần kỳ, Làm phẳng) thì giữ nguyên bộ lọc.
     @objc func removeFinger() {
         guard current != nil, !finished else { return }
-        if doc.pages[index].filter != Enhancer.magicPro {
+        if !Enhancer.removesFingers(doc.pages[index].filter) {
             doc.pages[index].filter = Enhancer.magicPro
             dirty = true
             DocStore.shared.save(doc)

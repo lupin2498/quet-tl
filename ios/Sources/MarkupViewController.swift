@@ -611,7 +611,9 @@ final class MarkupViewController: EditScreenController {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             var out: CGImage?
             if let px = ImageOps.loadWarp(dir: dir, page: snap, maxDim: ImageOps.previewMax) {
-                out = ImageOps.process(px.data, px.w, px.h, erase: (snap.erase ?? []).map { $0.op }, filter: snap.filter)
+                // đánh dấu vẽ SAU bộ lọc (như ImageOps.render): xem trước với đủ bộ lọc, kể cả bước nắn thẳng của "Làm phẳng"
+                out = ImageOps.process(px.data, px.w, px.h, erase: (snap.erase ?? []).map { $0.op }, filter: snap.filter,
+                                       geometric: true)
             }
             DispatchQueue.main.async {
                 guard let self = self, !self.finished else { return }

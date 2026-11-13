@@ -119,7 +119,8 @@ final class Processor {
             return;
         }
         // Nhanh: đã có ảnh kết quả cùng bộ lọc nhưng khác góc xoay -> chỉ cần xoay
-        // (tiêu đề trang được in sau khi xoay nên không dùng được cách này)
+        // (xoá, lọc — kể cả bước nắn thẳng của "Làm phẳng" — và đánh dấu đều làm trên ảnh chưa xoay nên hai kết quả chỉ
+        // khác nhau phép xoay; tiêu đề trang được in sau khi xoay nên không dùng được cách này)
         int wantRot = snap.rot;
         for (int r = 0; r < 360 && snap.hdr == null; r += 90) {
             if (r == wantRot) continue;
@@ -173,7 +174,9 @@ final class Processor {
             }
             if (snap.filter != Enhancer.ORIGINAL || !erase.isEmpty()) {
                 if (!erase.isEmpty()) Retouch.applyErase(px, w, h, erase);
-                Enhancer.apply(px, w, h, snap.filter);
+                // bộ lọc đầy đủ (geometric = true): "Làm phẳng" nắn thẳng dòng chữ SAU nét xoá (toạ độ trước khi lọc),
+                // TRƯỚC đánh dấu (toạ độ trên ảnh đã nắn thẳng)
+                Enhancer.apply(px, w, h, snap.filter, true);
                 if (!warped.isMutable()) {
                     Bitmap m = warped.copy(Bitmap.Config.ARGB_8888, true);
                     warped.recycle();
@@ -230,11 +233,19 @@ final class Processor {
         return b;
     }
 
-    /** Áp chuỗi xử lý điểm ảnh (xoá thông minh + bộ lọc) lên mảng điểm ảnh xem trước; trả về ảnh mới. */
+    /** Áp chuỗi xử lý điểm ảnh (xoá thông minh + bộ lọc đầy đủ) lên mảng điểm ảnh xem trước; trả về ảnh mới. */
     static Bitmap process(int[] base, int w, int h, List<Retouch.Op> erase, int filter) {
+        return process(base, w, h, erase, filter, true);
+    }
+
+    /**
+     * geometric = false: bộ lọc dời điểm ảnh ("Làm phẳng") chỉ làm sạch, không nắn — dùng cho xem trước của Xóa thông
+     * minh, nơi nét xoá được vẽ trên ảnh rồi áp lên ảnh TRƯỚC khi lọc nên hai ảnh phải trùng hình học.
+     */
+    static Bitmap process(int[] base, int w, int h, List<Retouch.Op> erase, int filter, boolean geometric) {
         int[] px = base.clone();
         if (erase != null && !erase.isEmpty()) Retouch.applyErase(px, w, h, erase);
-        Enhancer.apply(px, w, h, filter);
+        Enhancer.apply(px, w, h, filter, geometric);
         return Bitmap.createBitmap(px, w, h, Bitmap.Config.ARGB_8888);
     }
 

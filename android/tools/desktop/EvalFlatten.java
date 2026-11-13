@@ -165,6 +165,25 @@ public class EvalFlatten {
             String diag = f == null ? "không nắn" : String.format(Locale.US, "%d dòng, %d kẻ ngang, %d kẻ dọc, dịch tối đa %.1f",
                     f.lines, f.hrules, f.vrules, f.maxShift);
             System.out.printf(Locale.US, "%-11s %4d ms  %s  | lệch hàng %.2f/%.2f -> %.2f/%.2f%n", name, ms, diag, r0[0], r0[1], r1[0], r1[1]);
+            // ---- hướng trang: trang dựng đứng không bị nhận nhầm là xoay ngang; xoay 90 độ thì phải nhận ra
+            if (!blank) {
+                check(f == null || !f.rotated, name + ": không nhận nhầm là trang xoay ngang");
+                int[] rp = new int[w * h];
+                for (int y = 0; y < h; y++) {
+                    for (int x = 0; x < w; x++) rp[x * h + (h - 1 - y)] = p.px[y * w + x];
+                }
+                Flatten.Field fr = Flatten.apply(rp, h, w);
+                if (f != null && f.maxShift >= 3f) {
+                    check(fr != null && fr.rotated, name + ": xoay 90 độ vẫn nhận đúng hướng dòng chữ");
+                    if (fr != null) {
+                        check(fr.maxShift >= 0.5f * f.maxShift && fr.maxShift <= 1.6f * f.maxShift + 1f,
+                                String.format(Locale.US, "%s: xoay 90 độ — dịch chuyển tương đương (%.1f so với %.1f)", name, fr.maxShift, f.maxShift));
+                    }
+                } else {
+                    check(fr == null || fr.maxShift <= Math.max(3f, 2f * (f == null ? 0f : f.maxShift)),
+                            name + ": xoay 90 độ trang phẳng không bị nắn méo (" + (fr == null ? 0 : fr.maxShift) + ")");
+                }
+            }
             // ---- độ thẳng
             if (name.equals("wv_plain")) {
                 check(f == null || f.maxShift <= 2.0f, name + ": trang phẳng không bị nắn méo (dịch tối đa " + (f == null ? 0 : f.maxShift) + ")");
