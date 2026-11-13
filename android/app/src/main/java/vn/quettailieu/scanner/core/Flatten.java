@@ -49,6 +49,13 @@ public final class Flatten {
     static final float SEED_CHROMA = 0.20f, WEAK_CHROMA = 0.12f;
     /** Ảnh nhỏ (ảnh thu nhỏ của bảng lọc, cạnh dài < 600): nét chữ chỉ còn vài điểm ảnh — mọi điểm tối hơn GROW_Q là lõi. */
     static final int SMALL_L = 600;
+    /**
+     * Chữ nhỏ (ảnh chụp / ảnh nhập độ phân giải thấp, cỡ chữ <= FINE_HC_LO điểm ảnh): nét chữ chỉ 1-2 điểm ảnh nên dấu
+     * thanh, chấm chữ i, dấu câu nhạt hẳn đi và tách khỏi thân chữ. Cụm nhỏ gọn (<= FINE_DIM cỡ chữ) tối hơn ngưỡng
+     * nâng dần từ ngưỡng lõi nhạt tới GROW_Q, nằm trong FINE_NEAR cỡ chữ quanh lõi đậm, cũng là lõi. Giảm dần, hết hẳn ở
+     * cỡ chữ FINE_HC_HI (trang lớn không đổi).
+     */
+    static final float FINE_HC_LO = 10f, FINE_HC_HI = 15f, FINE_DIM = 1.5f, FINE_NEAR = 0.6f;
     static final float TONE_BP = 0.20f, TONE_WP = 0.86f;
     /** Mặt nạ "mực lỏng" (tối hơn 0,90) để tìm đường kẻ bảng mảnh / nhạt. */
     static final int LOOSE_Q = 230;
@@ -162,8 +169,64 @@ public final class Flatten {
         if (dg > 250) dg = 250;
         float hcFull = an.hc > 0f ? an.hc * an.k : L / 90f;
         byte[] keepB = clusters(lq, cls, w, h, Math.min(tq + 13, WEAK_Q - 13), d, Math.max(8, L / 20), 1.6f * hcFull);
-        // ô: 3 = có lõi đậm (lan xa), 2 = có lõi nhạt (lan ngắn), 1 = có điểm hơi tối (được lan qua)
+        // chữ nhỏ: cụm nhỏ gọn hơi tối (dấu thanh, chấm, dấu câu) sát lõi đậm cũng là lõi (keepF = cụm gọn, coreN = gần lõi)
+        float fine = hcFull >= FINE_HC_HI ? 0f : hcFull <= FINE_HC_LO ? 1f : (FINE_HC_HI - hcFull) / (FINE_HC_HI - FINE_HC_LO);
+        int fq = tq + Math.round(fine * (GROW_Q - tq));
+        // vệt nếp gấp nhạt: ô có điểm hơi tối không màu (tối hơn WEAK_Q, không tối hơn tq) và không sát ô có nét (tối hơn
+        // tq / mực màu) nối thành vạch mảnh, thẳng, dài (lineB) — không được lan qua, mẩu của nó không được lấy làm lõi; nét
+        // chữ chạm vệt chỉ kéo theo phần sát chỗ chạm
+        byte[] lineB;
+        {
+            byte[] inkB = new byte[nb], fb = new byte[nb];
+            for (int y = 0; y < h; y++) {
+                int off = y * w, boff = (y / d) * bw;
+                for (int x = 0; x < w; x++) {
+                    int q = lq[off + x] & 255;
+                    int f = cls[off + x];
+                    int b = boff + x / d;
+                    if (q < tq || (f & 1) != 0) inkB[b] = 1;
+                    else if (q < WEAK_Q && (f & 2) == 0) fb[b] = 1;
+                }
+            }
+            for (int by = 0; by < bh; by++) {
+                for (int bx = 0; bx < bw; bx++) {
+                    int b = by * bw + bx;
+                    if (fb[b] == 0) continue;
+                    boolean nearInk = false;
+                    for (int dy = -1; dy <= 1 && !nearInk; dy++) {
+                        int yy = by + dy;
+                        if (yy < 0 || yy >= bh) continue;
+                        for (int dx = -1; dx <= 1; dx++) {
+                            int xx = bx + dx;
+                            if (xx >= 0 && xx < bw && inkB[yy * bw + xx] != 0) {
+                                nearInk = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (nearInk) fb[b] = 0;
+                }
+            }
+            inkB = null;
+            lineB = lineBlocks(fb, bw, bh, d, 1.6f * hcFull);
+        }
+        byte[] keepF = null, coreN = null;
+        if (fine > 0f) {
+            keepF = clusters(lq, cls, w, h, fq, d, Math.max(3, Math.round(FINE_DIM * hcFull)), 1.6f * hcFull);
+            coreN = new byte[nb];
+            for (int y = 0; y < h; y++) {
+                int off = y * w, boff = (y / d) * bw;
+                for (int x = 0; x < w; x++) {
+                    if ((lq[off + x] & 255) < dq || (cls[off + x] & 1) != 0) coreN[boff + x / d] = 1;
+                }
+            }
+            Retouch.dilate(coreN, bw, bh, Math.max(1, Math.round(FINE_NEAR * hcFull / d)), Retouch.bounds(coreN, bw, bh));
+            for (int i = 0; i < nb; i++) if (lineB[i] != 0) coreN[i] = 0;
+        }
+        // ô: 3 = có lõi đậm (lan xa), 2 = có lõi nhạt (lan ngắn), 1 = có điểm hơi tối (được lan qua); colB: 2 = ô có mực
+        // màu rõ, 1 = ô có điểm hơi có màu tối hơn GROW_Q (phần nhạt của nét mực màu: chữ ký bút xanh mảnh)
         byte[] bs = new byte[nb];
+        byte[] colB = new byte[nb];
         int k = an.k, aw = an.aw, ah = an.ah;
         byte[] rule = an.rule, rule2 = an.rule2;
         boolean small = L < SMALL_L;
@@ -172,37 +235,66 @@ public final class Flatten {
             int ay = y / k;
             int roff = ay < ah ? ay * aw : -1;
             for (int x = 0; x < w; x++) {
-                int q = lq[off + x] & 255;
-                int f = cls[off + x];
+                int i = off + x;
+                int q = lq[i] & 255;
+                int f = cls[i];
                 int b = boff + x / d;
-                boolean seed = q < dq || (f & 1) != 0 || (q < tq && keepB[b] != 0) || (small && q < GROW_Q);
-                if (roff >= 0) {
+                boolean seed = q < dq || (f & 1) != 0 || (q < tq && keepB[b] != 0) || (small && q < GROW_Q)
+                        || (keepF != null && q < fq && keepF[b] != 0 && coreN[b] != 0);
+                boolean inMask = false;
+                // (lõi / điểm đường kẻ luôn tối hơn PROTECT_Q: điểm nền giấy khỏi đọc mặt nạ)
+                if (roff >= 0 && q < PROTECT_Q) {
                     int ax = x / k;
                     if (ax < aw) {
-                        if (rule != null && q < an.ruleQ && rule[roff + ax] != 0) {
-                            cls[off + x] |= 8;
-                            seed = true;
-                        } else if (rule2 != null && q < an.ruleQ2 && rule2[roff + ax] != 0) {
-                            cls[off + x] |= 8 | 32;
-                            seed = true;
+                        boolean m1 = rule != null && rule[roff + ax] != 0, m2 = rule2 != null && rule2[roff + ax] != 0;
+                        inMask = m1 || m2;
+                        if (inMask) {
+                            // đường kẻ mảnh ở ảnh nhỏ nằm vắt qua 2 hàng điểm ảnh (mỗi hàng chỉ nhạt): tính cả điểm sát bên
+                            // tối nhất (độ đậm hiệu dụng qe); chỉ xét điểm đủ tối (tối hơn tq) để vệt nếp gấp sát đường kẻ
+                            // không bị tính
+                            int qe = 255;
+                            if (q < tq) {
+                                int qn = 255;
+                                if (x > 0) qn = Math.min(qn, lq[i - 1] & 255);
+                                if (x + 1 < w) qn = Math.min(qn, lq[i + 1] & 255);
+                                if (y > 0) qn = Math.min(qn, lq[i - w] & 255);
+                                if (y + 1 < h) qn = Math.min(qn, lq[i + w] & 255);
+                                qe = 255 - Math.min(255, (255 - q) + (255 - qn));
+                            }
+                            if (m1 && (q < an.ruleQ || qe < an.ruleQE)) {
+                                cls[i] |= 8;
+                                seed = true;
+                            } else if (m2 && (q < an.ruleQ2 || qe < an.ruleQE2)) {
+                                cls[i] |= 8 | 32;
+                                seed = true;
+                            }
                         }
                     }
                 }
                 if (seed) {
-                    cls[off + x] |= 4;
-                    // lõi đậm / mực màu: lan xa (3); lõi nhạt: lan ngắn (2); điểm đường kẻ bảng: chỉ giữ, không lan (1) —
-                    // vệt nếp gấp vắt qua đường kẻ không bị kéo theo
-                    int sv = (cls[off + x] & 8) != 0 ? 1 : (q < dq || (f & 1) != 0) ? 3 : 2;
+                    cls[i] |= 4;
+                    // lõi đậm / mực màu: lan xa (3); lõi nhạt: lan ngắn (2); điểm thuộc (vùng) đường kẻ bảng: chỉ giữ,
+                    // không lan (1) — vệt nếp gấp vắt qua / chạm đường kẻ không bị kéo theo
+                    int sv = inMask ? 1 : (q < dq || (f & 1) != 0) ? 3 : 2;
                     if (bs[b] < sv) bs[b] = (byte) sv;
-                } else if ((q < GROW_Q || (f & 2) != 0) && bs[b] == 0) {
+                } else if ((q < GROW_Q || (f & 2) != 0) && bs[b] == 0 && lineB[b] == 0) {
                     bs[b] = 1;
                 }
+                if ((f & 1) != 0) colB[b] = 2;
+                else if ((f & 2) != 0 && q < GROW_Q && colB[b] == 0) colB[b] = 1;
             }
         }
         keepB = null;
+        keepF = null;
+        coreN = null;
+        lineB = null;
         byte[] reach = grow(bs, bw, bh, dg, Math.max(1, dg / 2));
         bs = null;
-        // giữ: lõi + điểm tối hơn GROW_Q lan tới được; rồi viền (tối hơn WEAK_Q) sát các điểm đó
+        // nét mực màu: lan không giới hạn từ ô có mực màu rõ qua các ô hơi có màu (vệt nếp gấp, bóng mờ không có màu)
+        byte[] reachC = colorReach(colB, bw, bh);
+        colB = null;
+        // giữ: lõi + điểm tối hơn GROW_Q lan tới được + điểm hơi có màu nối với mực màu; rồi viền (tối hơn WEAK_Q) sát các
+        // điểm đó
         byte[] near = new byte[n];
         boolean any = false;
         for (int y = 0; y < h; y++) {
@@ -210,7 +302,10 @@ public final class Flatten {
             for (int x = 0; x < w; x++) {
                 int i = off + x;
                 int f = cls[i];
-                if ((f & 4) != 0 || (reach[boff + x / d] != 0 && ((lq[i] & 255) < GROW_Q || (f & 2) != 0))) {
+                int q = lq[i] & 255;
+                int b = boff + x / d;
+                if ((f & 4) != 0 || (reach[b] != 0 && (q < GROW_Q || (f & 2) != 0))
+                        || (reachC != null && reachC[b] != 0 && (f & 2) != 0 && q < GROW_Q)) {
                     cls[i] |= 16;
                     near[i] = 1;
                     any = true;
@@ -218,6 +313,7 @@ public final class Flatten {
             }
         }
         reach = null;
+        reachC = null;
         if (any) Retouch.dilate(near, w, h, Math.max(1, Math.round(L / 1400f)), Retouch.bounds(near, w, h));
         // đường cong tông: chuẩn hoá v (0..2) -> 0..255, mũ 1,5 (t * sqrt(t))
         final int LUT_SCALE = 1024, LUT_N = 2048;
@@ -288,10 +384,11 @@ public final class Flatten {
         int tmax, stride;
         /**
          * Mặt nạ đường kẻ bảng (thuộc lưới), đã nới 1 điểm: rule — từ mặt nạ chặt (bảng in rõ), rule2 — từ mặt nạ lỏng
-         * (thêm đường kẻ mảnh / nhạt); null nếu không có. Điểm trong mặt nạ tối hơn ruleQ / ruleQ2 được giữ và làm đậm.
+         * (thêm đường kẻ mảnh / nhạt); null nếu không có. Điểm trong mặt nạ tối hơn ruleQ / ruleQ2, hoặc có độ đậm hiệu
+         * dụng (cộng điểm sát bên tối nhất) tối hơn ruleQE / ruleQE2, được giữ và làm đậm.
          */
         byte[] rule, rule2;
-        int ruleQ = PROTECT_Q, ruleQ2 = PROTECT_Q;
+        int ruleQ = PROTECT_Q, ruleQ2 = PROTECT_Q, ruleQE = 0, ruleQE2 = 0;
         /** Hệ số làm đậm đường kẻ của từng mặt nạ (1 = giữ nguyên tông). */
         float ruleGain = 1f, ruleGain2 = 1f;
         /** Mẫu đường tâm các đường kẻ ngang / dọc thuộc lưới (dùng để nắn). */
@@ -379,12 +476,13 @@ public final class Flatten {
             if (hId[i] != 0 && vId[i] != 0) pair[(hId[i] - 1) * nv + vId[i] - 1] = true;
         }
         // lõi lưới: lặp loại đường cắt < 2 đường vuông góc còn lại, hoặc nhạt hơn hẳn các đường kẻ khác của bảng
-        // (vệt nếp gấp vắt qua bảng in đậm); cần >= 3 đường một hướng và >= 2 đường hướng kia
+        // (vệt nếp gấp vắt qua bảng in đậm) theo cả độ đậm lẫn độ đậm hiệu dụng (đường kẻ mảnh ở ảnh nhỏ nằm vắt qua 2 hàng
+        // điểm ảnh thì từng hàng nhạt nhưng tổng vẫn đậm như các đường khác); cần >= 3 đường một hướng và >= 2 đường hướng kia
         boolean[] gH = new boolean[nh], gV = new boolean[nv];
         for (int a = 0; a < nh; a++) gH[a] = hs.ok[a];
         for (int b = 0; b < nv; b++) gV[b] = vs.ok[b];
         int[] dk = new int[nh + nv];
-        int lim = 255;
+        int lim = 255, limE = 255;
         boolean changed = true;
         while (changed) {
             changed = false;
@@ -394,11 +492,16 @@ public final class Flatten {
             if (nd == 0) break;
             java.util.Arrays.sort(dk, 0, nd);
             lim = dk[nd / 2] + RULE_DARK_SPREAD_Q;
+            nd = 0;
+            for (int a = 0; a < nh; a++) if (gH[a]) dk[nd++] = hs.darkE[a];
+            for (int b = 0; b < nv; b++) if (gV[b]) dk[nd++] = vs.darkE[b];
+            java.util.Arrays.sort(dk, 0, nd);
+            limE = dk[nd / 2] + RULE_DARK_SPREAD_Q;
             for (int a = 0; a < nh; a++) {
                 if (!gH[a]) continue;
                 int c = 0;
                 for (int b = 0; b < nv; b++) if (gV[b] && pair[a * nv + b]) c++;
-                if (c < 2 || hs.dark[a] > lim) {
+                if (c < 2 || (hs.dark[a] > lim && hs.darkE[a] > limE)) {
                     gH[a] = false;
                     changed = true;
                 }
@@ -407,7 +510,7 @@ public final class Flatten {
                 if (!gV[b]) continue;
                 int c = 0;
                 for (int a = 0; a < nh; a++) if (gH[a] && pair[a * nv + b]) c++;
-                if (c < 2 || vs.dark[b] > lim) {
+                if (c < 2 || (vs.dark[b] > lim && vs.darkE[b] > limE)) {
                     gV[b] = false;
                     changed = true;
                 }
@@ -458,10 +561,12 @@ public final class Flatten {
         if (an.rule == null) {
             an.rule = rule;
             an.ruleQ = Math.min(PROTECT_Q, lim + 1);
+            an.ruleQE = Math.min(PROTECT_Q, limE + 1);
             an.ruleGain = gain;
         } else {
             an.rule2 = rule;
             an.ruleQ2 = Math.min(PROTECT_Q, lim + 1);
+            an.ruleQE2 = Math.min(PROTECT_Q, limE + 1);
             an.ruleGain2 = gain;
         }
         if (!primary) return true;
@@ -481,17 +586,21 @@ public final class Flatten {
         int[] a0 = new int[16], a1 = new int[16];
         float[][] cen = new float[16][];
         int[][] cov = new int[16][];
-        /** Độ đậm (trung vị độ sáng nhỏ nhất theo bề ngang nét, 0..255) và cờ "đủ thẳng" của từng đường. */
-        int[] dark = new int[16];
+        /**
+         * Độ đậm (trung vị độ sáng nhỏ nhất theo bề ngang nét, 0..255), độ đậm hiệu dụng (trung vị của 255 - tổng độ tối
+         * điểm tối nhất và điểm sát bên tối hơn theo bề ngang nét, không âm) và cờ "đủ thẳng" của từng đường.
+         */
+        int[] dark = new int[16], darkE = new int[16];
         boolean[] ok = new boolean[16];
 
-        void add(int s, int e, float[] c, int[] v, int dk, boolean straight) {
+        void add(int s, int e, float[] c, int[] v, int dk, int dkE, boolean straight) {
             if (n == a0.length) {
                 a0 = java.util.Arrays.copyOf(a0, n * 2);
                 a1 = java.util.Arrays.copyOf(a1, n * 2);
                 cen = java.util.Arrays.copyOf(cen, n * 2);
                 cov = java.util.Arrays.copyOf(cov, n * 2);
                 dark = java.util.Arrays.copyOf(dark, n * 2);
+                darkE = java.util.Arrays.copyOf(darkE, n * 2);
                 ok = java.util.Arrays.copyOf(ok, n * 2);
             }
             a0[n] = s;
@@ -499,6 +608,7 @@ public final class Flatten {
             cen[n] = c;
             cov[n] = v;
             dark[n] = dk;
+            darkE[n] = dkE;
             ok[n] = straight;
             n++;
         }
@@ -533,7 +643,7 @@ public final class Flatten {
      */
     static void findRules(byte[] m, byte[] amin, int w, int h, boolean horiz, int minLen, int tmax, int[] lab,
                           int[] queue, int[] id, Rules out) {
-        int[] dh = new int[256];
+        int[] dh = new int[256], dhE = new int[256];
         int n = w * h;
         for (int i = 0; i < n; i++) lab[i] = 0;
         int cur = 0;
@@ -572,9 +682,13 @@ public final class Flatten {
             float[] cen = new float[len];
             int[] cov = new int[len];
             int covered = 0;
-            for (int q = 0; q < 256; q++) dh[q] = 0;
+            for (int q = 0; q < 256; q++) {
+                dh[q] = 0;
+                dhE[q] = 0;
+            }
+            int bLim = horiz ? h : w;
             for (int a = a0; a <= a1; a++) {
-                int c = 0, mn = 255;
+                int c = 0, mn = 255, bm = -1;
                 long sum = 0;
                 for (int b = b0; b <= b1; b++) {
                     int i = horiz ? b * w + a : a * w + b;
@@ -582,7 +696,10 @@ public final class Flatten {
                         c++;
                         sum += b;
                         int q = amin[i] & 255;
-                        if (q < mn) mn = q;
+                        if (q < mn) {
+                            mn = q;
+                            bm = b;
+                        }
                     }
                 }
                 cov[a - a0] = c;
@@ -590,6 +707,11 @@ public final class Flatten {
                     covered++;
                     cen[a - a0] = sum / (float) c;
                     dh[mn]++;
+                    // điểm sát bên (theo bề ngang nét) tối hơn của điểm tối nhất
+                    int qn = 255;
+                    if (bm > 0) qn = amin[horiz ? (bm - 1) * w + a : a * w + bm - 1] & 255;
+                    if (bm + 1 < bLim) qn = Math.min(qn, amin[horiz ? (bm + 1) * w + a : a * w + bm + 1] & 255);
+                    dhE[255 - Math.min(255, (255 - mn) + (255 - qn))]++;
                 }
             }
             if (covered * 4 < len * 3 || tail > covered * (tmax + 2)) continue;
@@ -599,6 +721,14 @@ public final class Flatten {
                 acc += dh[q];
                 if (acc * 2 >= covered) {
                     dk = q;
+                    break;
+                }
+            }
+            int accE = 0, dkE = 255;
+            for (int q = 0; q < 256; q++) {
+                accE += dhE[q];
+                if (accE * 2 >= covered) {
+                    dkE = q;
                     break;
                 }
             }
@@ -616,7 +746,7 @@ public final class Flatten {
                 }
             }
             boolean straight = c0 > 0 && c1 > 0 && Math.abs(s1 / c1 - s0 / c0) <= 0.25f * len;
-            out.add(a0, a1, cen, cov, dk, straight);
+            out.add(a0, a1, cen, cov, dk, dkE, straight);
             int rid = out.n;
             for (int q = 0; q < tail; q++) id[queue[q]] = rid;
         }
@@ -632,27 +762,48 @@ public final class Flatten {
         int k = an.k, aw = an.aw, ah = an.ah;
         if (Math.min(aw, ah) < MIN_ANALYSIS || an.hc < 3f) return null;
         int nA = aw * ah;
-        // mực chữ: trung bình khối k x k của ảnh đã làm sạch tối hơn 160, trừ đường kẻ bảng
-        byte[] ink = new byte[nA];
+        // mực chữ: trung bình khối k x k của ảnh đã làm sạch tối hơn 160, trừ đường kẻ bảng và mực màu rõ (con dấu, chữ ký:
+        // vòng dấu cạnh một dòng chữ bị ghép nhầm thành đoạn dòng chữ, làm cong trang phẳng) — trừ khi không có mực màu thì
+        // không đủ dòng (trang viết tay bút xanh)
+        byte[] ink = new byte[nA], inkC = new byte[nA];
         int kk = k * k;
+        boolean anyColor = false;
         for (int y = 0; y < ah; y++) {
             for (int x = 0; x < aw; x++) {
-                int s = 0;
+                int s = 0, sc = 0;
                 for (int dy = 0; dy < k; dy++) {
                     int o = (y * k + dy) * w + x * k;
                     for (int dx = 0; dx < k; dx++) {
                         int c = px[o + dx];
-                        s += 299 * ((c >> 16) & 255) + 587 * ((c >> 8) & 255) + 114 * (c & 255);
+                        int r = (c >> 16) & 255, g = (c >> 8) & 255, b = c & 255;
+                        int l = 299 * r + 587 * g + 114 * b;
+                        s += l;
+                        int mx = r > g ? (r > b ? r : b) : (g > b ? g : b);
+                        int mn = r < g ? (r < b ? r : b) : (g < b ? g : b);
+                        sc += mx - mn > 60 ? 255000 : l;
                     }
                 }
                 int i = y * aw + x;
-                if (s < 160 * 1000 * kk && (an.rule == null || an.rule[i] == 0) && (an.rule2 == null || an.rule2[i] == 0)) {
-                    ink[i] = 1;
+                if ((an.rule == null || an.rule[i] == 0) && (an.rule2 == null || an.rule2[i] == 0)) {
+                    if (s < 160 * 1000 * kk) ink[i] = 1;
+                    if (sc < 160 * 1000 * kk) inkC[i] = 1;
+                    if (ink[i] != inkC[i]) anyColor = true;
                 }
             }
         }
         Lines tl = new Lines();
-        int nt = textLines(ink, aw, ah, an.hc, tl);
+        int nt = -1;
+        if (anyColor) {
+            nt = textLines(inkC, aw, ah, an.hc, tl);
+            if (nt >= 3) {
+                ink = inkC;
+            } else {
+                tl = new Lines();
+                nt = -1;
+            }
+        }
+        inkC = null;
+        if (nt < 0) nt = textLines(ink, aw, ah, an.hc, tl);
         // hướng dòng chữ: thử cả ảnh chuyển vị (cỡ chữ đo theo chiều ngang); hướng đúng cho dòng dài hơn và mượt hơn hẳn
         byte[] inkT = new byte[nA];
         for (int y = 0; y < ah; y++) {
@@ -949,6 +1100,101 @@ public final class Flatten {
             for (int q = 0; q < tail; q++) keepB[queue[q]] = 1;
         }
         return keepB;
+    }
+
+    /**
+     * Ô thuộc vạch mảnh, thẳng, dài hơn longLine điểm ảnh (thành phần liên thông 8 hướng của các ô blk; tỷ số trị riêng >
+     * 30, như clusters). Trả về mảng ô (1 = thuộc vạch).
+     */
+    static byte[] lineBlocks(byte[] blk, int bw, int bh, int d, float longLine) {
+        int nb = bw * bh;
+        byte[] out = new byte[nb];
+        byte[] seen = new byte[nb];
+        int[] queue = new int[nb];
+        for (int start = 0; start < nb; start++) {
+            if (blk[start] == 0 || seen[start] != 0) continue;
+            int head = 0, tail = 0;
+            queue[tail++] = start;
+            seen[start] = 1;
+            int minX = bw, maxX = -1, minY = bh, maxY = -1;
+            long sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+            while (head < tail) {
+                int i = queue[head++];
+                int x = i % bw, y = i / bw;
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+                sx += x;
+                sy += y;
+                sxx += (long) x * x;
+                syy += (long) y * y;
+                sxy += (long) x * y;
+                for (int dy = -1; dy <= 1; dy++) {
+                    int yy = y + dy;
+                    if (yy < 0 || yy >= bh) continue;
+                    for (int dx = -1; dx <= 1; dx++) {
+                        int xx = x + dx;
+                        if (xx < 0 || xx >= bw) continue;
+                        int j = yy * bw + xx;
+                        if (blk[j] != 0 && seen[j] == 0) {
+                            seen[j] = 1;
+                            queue[tail++] = j;
+                        }
+                    }
+                }
+            }
+            int span = Math.max(maxX - minX + 1, maxY - minY + 1);
+            if (span * d <= longLine) continue;
+            double nq = tail;
+            double mx = sx / nq, my = sy / nq;
+            double cxx = sxx / nq - mx * mx, cyy = syy / nq - my * my, cxy = sxy / nq - mx * my;
+            double tr = cxx + cyy, det = cxx * cyy - cxy * cxy;
+            double disc = Math.sqrt(Math.max(0.0, tr * tr * 0.25 - det));
+            double l1 = tr * 0.5 + disc, l2 = tr * 0.5 - disc;
+            if (l1 <= 30.0 * Math.max(l2, 0.0833)) continue;
+            for (int q = 0; q < tail; q++) out[queue[q]] = 1;
+        }
+        return out;
+    }
+
+    /**
+     * Lan 8 hướng, không giới hạn bước, từ các ô có mực màu rõ (col = 2) qua các ô hơi có màu (col = 1). Trả về mảng ô
+     * (1 = tới được), null nếu không có ô mực màu rõ nào.
+     */
+    static byte[] colorReach(byte[] col, int bw, int bh) {
+        int nb = bw * bh;
+        int[] queue = null;
+        byte[] out = null;
+        int tail = 0;
+        for (int i = 0; i < nb; i++) {
+            if (col[i] != 2) continue;
+            if (out == null) {
+                out = new byte[nb];
+                queue = new int[nb];
+            }
+            out[i] = 1;
+            queue[tail++] = i;
+        }
+        if (out == null) return null;
+        int head = 0;
+        while (head < tail) {
+            int i = queue[head++];
+            int x = i % bw, y = i / bw;
+            for (int dy = -1; dy <= 1; dy++) {
+                int yy = y + dy;
+                if (yy < 0 || yy >= bh) continue;
+                for (int dx = -1; dx <= 1; dx++) {
+                    int xx = x + dx;
+                    if (xx < 0 || xx >= bw) continue;
+                    int j = yy * bw + xx;
+                    if (col[j] == 0 || out[j] != 0) continue;
+                    out[j] = 1;
+                    queue[tail++] = j;
+                }
+            }
+        }
+        return out;
     }
 
     /**

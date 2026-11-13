@@ -72,20 +72,30 @@ jobs:
           # vị, nhân k), ảnh nhỏ < 600 điểm ảnh (ảnh mẫu của bảng lọc) — thêm vào out/core-in với tên wv_* khác
           python3 tests/tools/make_wavy_images.py out/wv-big 2700
           python3 tests/tools/make_wavy_images.py out/wv-small 520
+          # cỡ chữ 10-15 điểm ảnh (ngưỡng "chữ nhỏ" nâng dần: trang 1000) và ảnh chụp tài liệu phẳng độ phân giải thấp
+          # (dấu thanh, chấm, đường kẻ bảng mảnh, chữ ký bút xanh mảnh — tests/images/doc_*, cắt theo khung trang, thu nhỏ)
+          python3 tests/tools/make_wavy_images.py out/wv-mid 1000
           python3 - <<'PY'
           from PIL import Image
           for src, names, prefix, rot in (("out/wv-big", ("wv_mixed",), "wv_big_", False),
                                           ("out/wv-big", ("wv_curl",), "wv_big_rot_", True),
                                           ("out/core-in", ("wv_waves",), "wv_rot_", True),
                                           ("out/wv-small", ("wv_mixed", "wv_waves"), "wv_small_", False),
-                                          ("out/wv-small", ("wv_curl",), "wv_small_rot_", True)):
+                                          ("out/wv-small", ("wv_curl",), "wv_small_rot_", True),
+                                          ("out/wv-mid", ("wv_folds", "wv_mixed", "wv_crumple"), "wv_mid_", False)):
               for n in names:
                   im = Image.open("%s/%s.ppm" % (src, n))
                   if rot:
                       im = im.transpose(Image.Transpose.ROTATE_270)  # xoay 90 độ theo chiều kim đồng hồ
                   im.save("out/core-in/%s%s.ppm" % (prefix, n[3:]))
+          for doc, box, s in (("doc_1_wood", (214, 277, 1017, 1425), 1.0), ("doc_4_beige", (271, 333, 1016, 1380), 0.7),
+                              ("doc_5_blue", (98, 226, 1000, 1383), 0.6)):
+              im = Image.open("tests/images/%s.jpg" % doc).convert("RGB").crop(box)
+              if s != 1.0:
+                  im = im.resize((round(im.width * s), round(im.height * s)), Image.BOX)
+              im.save("out/core-in/wv_doc_%s.ppm" % doc.split("_")[1])
           PY
-          rm -rf out/wv-big out/wv-small
+          rm -rf out/wv-big out/wv-small out/wv-mid
           mkdir -p out/jcls
           javac -encoding UTF-8 -d out/jcls android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/DumpCore.java
           java -Dfile.encoding=UTF-8 -cp out/jcls DumpCore out/core-in out/core-java 2>&1 | tee out/algo/compare.txt

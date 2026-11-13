@@ -42,6 +42,11 @@ enum Flatten {
     static let seedChroma: Float = 0.20, weakChroma: Float = 0.12
     /// Ảnh nhỏ (ảnh thu nhỏ của bảng lọc, cạnh dài < 600): nét chữ chỉ còn vài điểm ảnh — mọi điểm tối hơn growQ là lõi.
     static let smallL = 600
+    /// Chữ nhỏ (ảnh chụp / ảnh nhập độ phân giải thấp, cỡ chữ <= fineHcLo điểm ảnh): nét chữ chỉ 1-2 điểm ảnh nên dấu
+    /// thanh, chấm chữ i, dấu câu nhạt hẳn đi và tách khỏi thân chữ. Cụm nhỏ gọn (<= fineDim cỡ chữ) tối hơn ngưỡng
+    /// nâng dần từ ngưỡng lõi nhạt tới growQ, nằm trong fineNear cỡ chữ quanh lõi đậm, cũng là lõi. Giảm dần, hết hẳn ở
+    /// cỡ chữ fineHcHi (trang lớn không đổi).
+    static let fineHcLo: Float = 10, fineHcHi: Float = 15, fineDim: Float = 1.5, fineNear: Float = 0.6
     static let toneBP: Float = 0.20, toneWP: Float = 0.86
     /// Mặt nạ "mực lỏng" (tối hơn 0,90) để tìm đường kẻ bảng mảnh / nhạt.
     static let looseQ = 230
@@ -168,47 +173,138 @@ enum Flatten {
         let near: [UInt8]
         do {
             let keepB = clusters(lq, cls, w, h, min(tq + 13, weakQ - 13), d, max(8, L / 20), 1.6 * hcFull)
-            // ô: 3 = có lõi đậm (lan xa), 2 = có lõi nhạt (lan ngắn), 1 = có điểm hơi tối (được lan qua)
+            // chữ nhỏ: cụm nhỏ gọn hơi tối (dấu thanh, chấm, dấu câu) sát lõi đậm cũng là lõi (keepF = cụm gọn, coreN = gần lõi)
+            let fine: Float = hcFull >= fineHcHi ? 0 : (hcFull <= fineHcLo ? 1 : (fineHcHi - hcFull) / (fineHcHi - fineHcLo))
+            let fq = tq + Int((fine * Float(growQ - tq)).rounded())
+            // vệt nếp gấp nhạt: ô có điểm hơi tối không màu (tối hơn weakQ, không tối hơn tq) và không sát ô có nét (tối hơn
+            // tq / mực màu) nối thành vạch mảnh, thẳng, dài (lineB) — không được lan qua, mẩu của nó không được lấy làm lõi;
+            // nét chữ chạm vệt chỉ kéo theo phần sát chỗ chạm
+            let lineB: [UInt8]
+            do {
+                var inkB = [UInt8](repeating: 0, count: nb), fb = [UInt8](repeating: 0, count: nb)
+                for y in 0..<h {
+                    let off = y * w, boff = (y / d) * bw
+                    for x in 0..<w {
+                        let q = Int(lq[off + x])
+                        let f = cls[off + x]
+                        let b = boff + x / d
+                        if q < tq || (f & 1) != 0 {
+                            inkB[b] = 1
+                        } else if q < weakQ && (f & 2) == 0 {
+                            fb[b] = 1
+                        }
+                    }
+                }
+                for by in 0..<bh {
+                    for bx in 0..<bw {
+                        let b = by * bw + bx
+                        if fb[b] == 0 { continue }
+                        var nearInk = false
+                        for dy in -1...1 where !nearInk {
+                            let yy = by + dy
+                            if yy < 0 || yy >= bh { continue }
+                            for dx in -1...1 {
+                                let xx = bx + dx
+                                if xx >= 0 && xx < bw && inkB[yy * bw + xx] != 0 {
+                                    nearInk = true
+                                    break
+                                }
+                            }
+                        }
+                        if nearInk { fb[b] = 0 }
+                    }
+                }
+                inkB = []
+                lineB = lineBlocks(fb, bw, bh, d, 1.6 * hcFull)
+            }
+            var keepF = [UInt8](), coreN = [UInt8]()
+            let hasF = fine > 0
+            if hasF {
+                keepF = clusters(lq, cls, w, h, fq, d, max(3, Int((fineDim * hcFull).rounded())), 1.6 * hcFull)
+                coreN = [UInt8](repeating: 0, count: nb)
+                for y in 0..<h {
+                    let off = y * w, boff = (y / d) * bw
+                    for x in 0..<w where Int(lq[off + x]) < dq || (cls[off + x] & 1) != 0 {
+                        coreN[boff + x / d] = 1
+                    }
+                }
+                let cbb = Retouch.bounds(coreN, bw, bh)
+                Retouch.dilate(&coreN, bw, bh, max(1, Int((fineNear * hcFull / Float(d)).rounded())), cbb)
+                for i in 0..<nb where lineB[i] != 0 { coreN[i] = 0 }
+            }
+            // ô: 3 = có lõi đậm (lan xa), 2 = có lõi nhạt (lan ngắn), 1 = có điểm hơi tối (được lan qua); colB: 2 = ô có mực
+            // màu rõ, 1 = ô có điểm hơi có màu tối hơn growQ (phần nhạt của nét mực màu: chữ ký bút xanh mảnh)
             var bs = [UInt8](repeating: 0, count: nb)
+            var colB = [UInt8](repeating: 0, count: nb)
             let k = an.k, aw = an.aw, ah = an.ah
             let small = L < smallL
             let hasRule = an.rule != nil, hasRule2 = an.rule2 != nil
             let rule = an.rule ?? [], rule2 = an.rule2 ?? []
-            let ruleQ = an.ruleQ, ruleQ2 = an.ruleQ2
+            let ruleQ = an.ruleQ, ruleQ2 = an.ruleQ2, ruleQE = an.ruleQE, ruleQE2 = an.ruleQE2
             for y in 0..<h {
                 let off = y * w, boff = (y / d) * bw
                 let ay = y / k
                 let roff = ay < ah ? ay * aw : -1
                 for x in 0..<w {
-                    let q = Int(lq[off + x])
-                    let f = Int(cls[off + x])
+                    let i = off + x
+                    let q = Int(lq[i])
+                    let f = Int(cls[i])
                     let b = boff + x / d
                     var seed = q < dq || (f & 1) != 0 || (q < tq && keepB[b] != 0) || (small && q < growQ)
-                    if roff >= 0 {
+                        || (hasF && q < fq && keepF[b] != 0 && coreN[b] != 0)
+                    var inMask = false
+                    // (lõi / điểm đường kẻ luôn tối hơn protectQ: điểm nền giấy khỏi đọc mặt nạ)
+                    if roff >= 0 && q < protectQ {
                         let ax = x / k
                         if ax < aw {
-                            if hasRule && q < ruleQ && rule[roff + ax] != 0 {
-                                cls[off + x] |= 8
-                                seed = true
-                            } else if hasRule2 && q < ruleQ2 && rule2[roff + ax] != 0 {
-                                cls[off + x] |= 8 | 32
-                                seed = true
+                            let m1 = hasRule && rule[roff + ax] != 0, m2 = hasRule2 && rule2[roff + ax] != 0
+                            inMask = m1 || m2
+                            if inMask {
+                                // đường kẻ mảnh ở ảnh nhỏ nằm vắt qua 2 hàng điểm ảnh (mỗi hàng chỉ nhạt): tính cả điểm sát
+                                // bên tối nhất (độ đậm hiệu dụng qe); chỉ xét điểm đủ tối (tối hơn tq) để vệt nếp gấp sát
+                                // đường kẻ không bị tính
+                                var qe = 255
+                                if q < tq {
+                                    var qn = 255
+                                    if x > 0 { qn = min(qn, Int(lq[i - 1])) }
+                                    if x + 1 < w { qn = min(qn, Int(lq[i + 1])) }
+                                    if y > 0 { qn = min(qn, Int(lq[i - w])) }
+                                    if y + 1 < h { qn = min(qn, Int(lq[i + w])) }
+                                    qe = 255 - min(255, (255 - q) + (255 - qn))
+                                }
+                                if m1 && (q < ruleQ || qe < ruleQE) {
+                                    cls[i] |= 8
+                                    seed = true
+                                } else if m2 && (q < ruleQ2 || qe < ruleQE2) {
+                                    cls[i] |= 8 | 32
+                                    seed = true
+                                }
                             }
                         }
                     }
                     if seed {
-                        cls[off + x] |= 4
-                        // lõi đậm / mực màu: lan xa (3); lõi nhạt: lan ngắn (2); điểm đường kẻ bảng: chỉ giữ, không lan (1) —
-                        // vệt nếp gấp vắt qua đường kẻ không bị kéo theo
-                        let sv: UInt8 = (cls[off + x] & 8) != 0 ? 1 : ((q < dq || (f & 1) != 0) ? 3 : 2)
+                        cls[i] |= 4
+                        // lõi đậm / mực màu: lan xa (3); lõi nhạt: lan ngắn (2); điểm thuộc (vùng) đường kẻ bảng: chỉ giữ,
+                        // không lan (1) — vệt nếp gấp vắt qua / chạm đường kẻ không bị kéo theo
+                        let sv: UInt8 = inMask ? 1 : ((q < dq || (f & 1) != 0) ? 3 : 2)
                         if bs[b] < sv { bs[b] = sv }
-                    } else if (q < growQ || (f & 2) != 0) && bs[b] == 0 {
+                    } else if (q < growQ || (f & 2) != 0) && bs[b] == 0 && lineB[b] == 0 {
                         bs[b] = 1
+                    }
+                    if (f & 1) != 0 {
+                        colB[b] = 2
+                    } else if (f & 2) != 0 && q < growQ && colB[b] == 0 {
+                        colB[b] = 1
                     }
                 }
             }
             let reach = grow(bs, bw, bh, dg, max(1, dg / 2))
-            // giữ: lõi + điểm tối hơn growQ lan tới được; rồi viền (tối hơn weakQ) sát các điểm đó
+            // nét mực màu: lan không giới hạn từ ô có mực màu rõ qua các ô hơi có màu (vệt nếp gấp, bóng mờ không có màu)
+            let reachC = colorReach(colB, bw, bh)
+            let hasC = reachC != nil
+            let rc = reachC ?? []
+            // giữ: lõi + điểm tối hơn growQ lan tới được + điểm hơi có màu nối với mực màu; rồi viền (tối hơn weakQ) sát các
+            // điểm đó
             var nr = [UInt8](repeating: 0, count: n)
             var any = false
             for y in 0..<h {
@@ -216,7 +312,10 @@ enum Flatten {
                 for x in 0..<w {
                     let i = off + x
                     let f = cls[i]
-                    if (f & 4) != 0 || (reach[boff + x / d] != 0 && (Int(lq[i]) < growQ || (f & 2) != 0)) {
+                    let q = Int(lq[i])
+                    let b = boff + x / d
+                    if (f & 4) != 0 || (reach[b] != 0 && (q < growQ || (f & 2) != 0))
+                        || (hasC && rc[b] != 0 && (f & 2) != 0 && q < growQ) {
                         cls[i] |= 16
                         nr[i] = 1
                         any = true
@@ -313,9 +412,10 @@ enum Flatten {
         var hc: Float = 0, hcT: Float = 0
         var tmax = 0, stride = 0
         /// Mặt nạ đường kẻ bảng (thuộc lưới), đã nới 1 điểm: rule — từ mặt nạ chặt (bảng in rõ), rule2 — từ mặt nạ lỏng
-        /// (thêm đường kẻ mảnh / nhạt); nil nếu không có. Điểm trong mặt nạ tối hơn ruleQ / ruleQ2 được giữ và làm đậm.
+        /// (thêm đường kẻ mảnh / nhạt); nil nếu không có. Điểm trong mặt nạ tối hơn ruleQ / ruleQ2, hoặc có độ đậm hiệu
+        /// dụng (cộng điểm sát bên tối nhất) tối hơn ruleQE / ruleQE2, được giữ và làm đậm.
         var rule: [UInt8]? = nil, rule2: [UInt8]? = nil
-        var ruleQ = Flatten.protectQ, ruleQ2 = Flatten.protectQ
+        var ruleQ = Flatten.protectQ, ruleQ2 = Flatten.protectQ, ruleQE = 0, ruleQE2 = 0
         /// Hệ số làm đậm đường kẻ của từng mặt nạ (1 = giữ nguyên tông).
         var ruleGain: Float = 1, ruleGain2: Float = 1
         /// Mẫu đường tâm các đường kẻ ngang / dọc thuộc lưới (dùng để nắn).
@@ -400,11 +500,12 @@ enum Flatten {
             pair[(hId[i] - 1) * nv + vId[i] - 1] = true
         }
         // lõi lưới: lặp loại đường cắt < 2 đường vuông góc còn lại, hoặc nhạt hơn hẳn các đường kẻ khác của bảng
-        // (vệt nếp gấp vắt qua bảng in đậm); cần >= 3 đường một hướng và >= 2 đường hướng kia
+        // (vệt nếp gấp vắt qua bảng in đậm) theo cả độ đậm lẫn độ đậm hiệu dụng (đường kẻ mảnh ở ảnh nhỏ nằm vắt qua 2 hàng
+        // điểm ảnh thì từng hàng nhạt nhưng tổng vẫn đậm như các đường khác); cần >= 3 đường một hướng và >= 2 đường hướng kia
         var gH = [Bool](repeating: false, count: nh), gV = [Bool](repeating: false, count: nv)
         for a in 0..<nh { gH[a] = hs.ok[a] }
         for b in 0..<nv { gV[b] = vs.ok[b] }
-        var lim = 255
+        var lim = 255, limE = 255
         var changed = true
         while changed {
             changed = false
@@ -416,11 +517,17 @@ enum Flatten {
             if nd == 0 { break }
             dk.sort()
             lim = dk[nd / 2] + ruleDarkSpreadQ
+            var dkE = [Int]()
+            dkE.reserveCapacity(nh + nv)
+            for a in 0..<nh where gH[a] { dkE.append(hs.darkE[a]) }
+            for b in 0..<nv where gV[b] { dkE.append(vs.darkE[b]) }
+            dkE.sort()
+            limE = dkE[nd / 2] + ruleDarkSpreadQ
             for a in 0..<nh {
                 if !gH[a] { continue }
                 var c = 0
                 for b in 0..<nv where gV[b] && pair[a * nv + b] { c += 1 }
-                if c < 2 || hs.dark[a] > lim {
+                if c < 2 || (hs.dark[a] > lim && hs.darkE[a] > limE) {
                     gH[a] = false
                     changed = true
                 }
@@ -429,7 +536,7 @@ enum Flatten {
                 if !gV[b] { continue }
                 var c = 0
                 for a in 0..<nh where gH[a] && pair[a * nv + b] { c += 1 }
-                if c < 2 || vs.dark[b] > lim {
+                if c < 2 || (vs.dark[b] > lim && vs.darkE[b] > limE) {
                     gV[b] = false
                     changed = true
                 }
@@ -476,10 +583,12 @@ enum Flatten {
         if an.rule == nil {
             an.rule = rule
             an.ruleQ = min(protectQ, lim + 1)
+            an.ruleQE = min(protectQ, limE + 1)
             an.ruleGain = gain
         } else {
             an.rule2 = rule
             an.ruleQ2 = min(protectQ, lim + 1)
+            an.ruleQE2 = min(protectQ, limE + 1)
             an.ruleGain2 = gain
         }
         if !primary { return true }
@@ -498,15 +607,17 @@ enum Flatten {
         var n = 0
         var a0 = [Int](), a1 = [Int]()
         var cen = [[Float]](), cov = [[Int]]()
-        /// Độ đậm (trung vị độ sáng nhỏ nhất theo bề ngang nét, 0..255) và cờ "đủ thẳng" của từng đường.
-        var dark = [Int](), ok = [Bool]()
+        /// Độ đậm (trung vị độ sáng nhỏ nhất theo bề ngang nét, 0..255), độ đậm hiệu dụng (trung vị của 255 - tổng độ tối
+        /// điểm tối nhất và điểm sát bên tối hơn theo bề ngang nét, không âm) và cờ "đủ thẳng" của từng đường.
+        var dark = [Int](), darkE = [Int](), ok = [Bool]()
 
-        func add(_ s: Int, _ e: Int, _ c: [Float], _ v: [Int], _ dk: Int, _ straight: Bool) {
+        func add(_ s: Int, _ e: Int, _ c: [Float], _ v: [Int], _ dk: Int, _ dkE: Int, _ straight: Bool) {
             a0.append(s)
             a1.append(e)
             cen.append(c)
             cov.append(v)
             dark.append(dk)
+            darkE.append(dkE)
             ok.append(straight)
             n += 1
         }
@@ -543,7 +654,7 @@ enum Flatten {
     /// gần hết chiều dài và mỏng. Ghi chỉ số (1..) của đường vào id, đường tâm vào out.
     static func findRules(_ m: [UInt8], _ amin: [UInt8], _ w: Int, _ h: Int, _ horiz: Bool, _ minLen: Int, _ tmax: Int,
                           _ lab: inout [Int], _ queue: inout [Int], _ id: inout [Int], _ out: Rules) {
-        var dh = [Int](repeating: 0, count: 256)
+        var dh = [Int](repeating: 0, count: 256), dhE = [Int](repeating: 0, count: 256)
         let n = w * h
         for i in 0..<n { lab[i] = 0 }
         var cur = 0
@@ -585,9 +696,13 @@ enum Flatten {
             var cen = [Float](repeating: 0, count: len)
             var cov = [Int](repeating: 0, count: len)
             var covered = 0
-            for q in 0..<256 { dh[q] = 0 }
+            for q in 0..<256 {
+                dh[q] = 0
+                dhE[q] = 0
+            }
+            let bLim = horiz ? h : w
             for a in a0...a1 {
-                var c = 0, mn = 255
+                var c = 0, mn = 255, bm = -1
                 var sum = 0
                 for b in b0...b1 {
                     let i = horiz ? b * w + a : a * w + b
@@ -595,7 +710,10 @@ enum Flatten {
                         c += 1
                         sum += b
                         let q = Int(amin[i])
-                        if q < mn { mn = q }
+                        if q < mn {
+                            mn = q
+                            bm = b
+                        }
                     }
                 }
                 cov[a - a0] = c
@@ -603,6 +721,11 @@ enum Flatten {
                     covered += 1
                     cen[a - a0] = Float(sum) / Float(c)
                     dh[mn] += 1
+                    // điểm sát bên (theo bề ngang nét) tối hơn của điểm tối nhất
+                    var qn = 255
+                    if bm > 0 { qn = Int(amin[horiz ? (bm - 1) * w + a : a * w + bm - 1]) }
+                    if bm + 1 < bLim { qn = min(qn, Int(amin[horiz ? (bm + 1) * w + a : a * w + bm + 1])) }
+                    dhE[255 - min(255, (255 - mn) + (255 - qn))] += 1
                 }
             }
             if covered * 4 < len * 3 || tail > covered * (tmax + 2) { continue }
@@ -612,6 +735,14 @@ enum Flatten {
                 acc += dh[q]
                 if acc * 2 >= covered {
                     dk = q
+                    break
+                }
+            }
+            var accE = 0, dkE = 255
+            for q in 0..<256 {
+                accE += dhE[q]
+                if accE * 2 >= covered {
+                    dkE = q
                     break
                 }
             }
@@ -633,7 +764,7 @@ enum Flatten {
                 let tilt: Float = abs(s1 / Float(c1) - s0 / Float(c0))
                 straight = tilt <= 0.25 * Float(len)
             }
-            out.add(a0, a1, cen, cov, dk, straight)
+            out.add(a0, a1, cen, cov, dk, dkE, straight)
             let rid = out.n
             for q in 0..<tail { id[queue[q]] = rid }
         }
@@ -647,29 +778,51 @@ enum Flatten {
         let k = an.k, aw = an.aw, ah = an.ah
         if min(aw, ah) < minAnalysis || an.hc < 3 { return nil }
         let nA = aw * ah
-        // mực chữ: trung bình khối k x k của ảnh đã làm sạch tối hơn 160, trừ đường kẻ bảng
+        // mực chữ: trung bình khối k x k của ảnh đã làm sạch tối hơn 160, trừ đường kẻ bảng và mực màu rõ (con dấu, chữ ký:
+        // vòng dấu cạnh một dòng chữ bị ghép nhầm thành đoạn dòng chữ, làm cong trang phẳng) — trừ khi không có mực màu thì
+        // không đủ dòng (trang viết tay bút xanh)
         var ink = [UInt8](repeating: 0, count: nA)
+        var inkC = [UInt8](repeating: 0, count: nA)
         let kk = k * k
         let hasRule = an.rule != nil, hasRule2 = an.rule2 != nil
         let rule = an.rule ?? [], rule2 = an.rule2 ?? []
+        var anyColor = false
         for y in 0..<ah {
             for x in 0..<aw {
-                var s = 0
+                var s = 0, sc = 0
                 for dy in 0..<k {
                     let row = px + (y * k + dy) * bpr + x * k * 4
                     for dx in 0..<k {
                         let p = row + dx * 4
-                        s += 299 * Int(p[0]) + 587 * Int(p[1]) + 114 * Int(p[2])
+                        let r = Int(p[0]), g = Int(p[1]), b = Int(p[2])
+                        let l = 299 * r + 587 * g + 114 * b
+                        s += l
+                        let mx = r > g ? (r > b ? r : b) : (g > b ? g : b)
+                        let mn = r < g ? (r < b ? r : b) : (g < b ? g : b)
+                        sc += mx - mn > 60 ? 255000 : l
                     }
                 }
                 let i = y * aw + x
-                if s < 160 * 1000 * kk && (!hasRule || rule[i] == 0) && (!hasRule2 || rule2[i] == 0) {
-                    ink[i] = 1
+                if (!hasRule || rule[i] == 0) && (!hasRule2 || rule2[i] == 0) {
+                    if s < 160 * 1000 * kk { ink[i] = 1 }
+                    if sc < 160 * 1000 * kk { inkC[i] = 1 }
+                    if ink[i] != inkC[i] { anyColor = true }
                 }
             }
         }
-        let tl = Lines()
-        let nt = textLines(ink, aw, ah, an.hc, tl)
+        var tl = Lines()
+        var nt = -1
+        if anyColor {
+            nt = textLines(inkC, aw, ah, an.hc, tl)
+            if nt >= 3 {
+                ink = inkC
+            } else {
+                tl = Lines()
+                nt = -1
+            }
+        }
+        inkC = []
+        if nt < 0 { nt = textLines(ink, aw, ah, an.hc, tl) }
         // hướng dòng chữ: thử cả ảnh chuyển vị (cỡ chữ đo theo chiều ngang); hướng đúng cho dòng dài hơn và mượt hơn hẳn
         var inkT = [UInt8](repeating: 0, count: nA)
         for y in 0..<ah {
@@ -973,6 +1126,102 @@ enum Flatten {
             for q in 0..<tail { keepB[queue[q]] = 1 }
         }
         return keepB
+    }
+
+    /// Ô thuộc vạch mảnh, thẳng, dài hơn longLine điểm ảnh (thành phần liên thông 8 hướng của các ô blk; tỷ số trị riêng >
+    /// 30, như clusters). Trả về mảng ô (1 = thuộc vạch).
+    static func lineBlocks(_ blk: [UInt8], _ bw: Int, _ bh: Int, _ d: Int, _ longLine: Float) -> [UInt8] {
+        let nb = bw * bh
+        var out = [UInt8](repeating: 0, count: nb)
+        var seen = [UInt8](repeating: 0, count: nb)
+        var queue = [Int](repeating: 0, count: nb)
+        for start in 0..<nb {
+            if blk[start] == 0 || seen[start] != 0 { continue }
+            var head = 0, tail = 0
+            queue[tail] = start
+            tail += 1
+            seen[start] = 1
+            var minX = bw, maxX = -1, minY = bh, maxY = -1
+            var sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0
+            while head < tail {
+                let i = queue[head]
+                head += 1
+                let x = i % bw, y = i / bw
+                if x < minX { minX = x }
+                if x > maxX { maxX = x }
+                if y < minY { minY = y }
+                if y > maxY { maxY = y }
+                sx += x
+                sy += y
+                sxx += x * x
+                syy += y * y
+                sxy += x * y
+                for dy in -1...1 {
+                    let yy = y + dy
+                    if yy < 0 || yy >= bh { continue }
+                    for dx in -1...1 {
+                        let xx = x + dx
+                        if xx < 0 || xx >= bw { continue }
+                        let j = yy * bw + xx
+                        if blk[j] != 0 && seen[j] == 0 {
+                            seen[j] = 1
+                            queue[tail] = j
+                            tail += 1
+                        }
+                    }
+                }
+            }
+            let span = max(maxX - minX + 1, maxY - minY + 1)
+            if Float(span * d) <= longLine { continue }
+            let nq = Double(tail)
+            let mx = Double(sx) / nq, my = Double(sy) / nq
+            let cxx = Double(sxx) / nq - mx * mx, cyy = Double(syy) / nq - my * my, cxy = Double(sxy) / nq - mx * my
+            let tr = cxx + cyy, det = cxx * cyy - cxy * cxy
+            let disc = max(0.0, tr * tr * 0.25 - det).squareRoot()
+            let l1 = tr * 0.5 + disc, l2 = tr * 0.5 - disc
+            if l1 <= 30.0 * max(l2, 0.0833) { continue }
+            for q in 0..<tail { out[queue[q]] = 1 }
+        }
+        return out
+    }
+
+    /// Lan 8 hướng, không giới hạn bước, từ các ô có mực màu rõ (col = 2) qua các ô hơi có màu (col = 1). Trả về mảng ô
+    /// (1 = tới được), nil nếu không có ô mực màu rõ nào.
+    static func colorReach(_ col: [UInt8], _ bw: Int, _ bh: Int) -> [UInt8]? {
+        let nb = bw * bh
+        var queue = [Int]()
+        var out = [UInt8]()
+        var tail = 0
+        for i in 0..<nb where col[i] == 2 {
+            if out.isEmpty {
+                out = [UInt8](repeating: 0, count: nb)
+                queue = [Int](repeating: 0, count: nb)
+            }
+            out[i] = 1
+            queue[tail] = i
+            tail += 1
+        }
+        if out.isEmpty { return nil }
+        var head = 0
+        while head < tail {
+            let i = queue[head]
+            head += 1
+            let x = i % bw, y = i / bw
+            for dy in -1...1 {
+                let yy = y + dy
+                if yy < 0 || yy >= bh { continue }
+                for dx in -1...1 {
+                    let xx = x + dx
+                    if xx < 0 || xx >= bw { continue }
+                    let j = yy * bw + xx
+                    if col[j] == 0 || out[j] != 0 { continue }
+                    out[j] = 1
+                    queue[tail] = j
+                    tail += 1
+                }
+            }
+        }
+        return out
     }
 
     /// Lan qua các ô có điểm hơi tối (bs >= 1), 8 hướng: từ ô lõi đậm (bs = 3) tối đa lim bước, từ ô lõi nhạt (bs = 2)
