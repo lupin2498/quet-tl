@@ -10,8 +10,8 @@ android {
         applicationId = "vn.quettailieu.scanner"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.3"
+        versionCode = 5
+        versionName = "1.4"
     }
 
     // Khoá ký riêng (không đưa lên GitHub). Có file keystore thì bản release được ký,

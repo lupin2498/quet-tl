@@ -16,9 +16,10 @@ public final class Enhancer {
     public static final int DENOISE = 6;   // Khử nhiễu: làm mịn hạt/vân, giữ nguyên tông ảnh
     public static final int NO_SHADOW = 7; // Không bóng: khử bóng đổ, giữ màu tự nhiên
     public static final int NO_HAND = 8;   // Ko viết tay: xoá nét bút màu
+    public static final int FLATTEN = 9;   // Làm phẳng: giấy mấp mô / gấp nếp — chỉ giữ chữ + bảng, nắn thẳng (Flatten)
 
     /** Thứ tự hiển thị trong bảng lọc. */
-    public static final int[] MODES = {ORIGINAL, LIGHTEN, MAGIC, MAGIC_PRO, DENOISE, NO_SHADOW, NO_HAND, BW, GRAY};
+    public static final int[] MODES = {ORIGINAL, LIGHTEN, MAGIC, MAGIC_PRO, FLATTEN, DENOISE, NO_SHADOW, NO_HAND, BW, GRAY};
 
     public static String name(int mode) {
         switch (mode) {
@@ -30,15 +31,32 @@ public final class Enhancer {
             case DENOISE: return "Khử nhiễu";
             case NO_SHADOW: return "Không bóng";
             case NO_HAND: return "Ko viết tay";
+            case FLATTEN: return "Làm phẳng";
             default: return "Tăng cường";
         }
     }
 
+    /** Bộ lọc có gỡ ngón tay giữ giấy (khi đã chọn thì không cần lời nhắc ngón tay). */
+    public static boolean removesFingers(int mode) {
+        return mode == MAGIC_PRO || mode == FLATTEN;
+    }
+
     /** Áp bộ lọc tại chỗ lên mảng ARGB. */
     public static void apply(int[] px, int w, int h, int mode) {
+        apply(px, w, h, mode, true);
+    }
+
+    /**
+     * geometric = false: bộ lọc dời điểm ảnh (Làm phẳng) bỏ bước nắn thẳng, chỉ làm sạch — dùng cho ảnh xem trước của
+     * "Xóa thông minh" (nét xoá được áp lên ảnh trước khi lọc nên phải vẽ trên ảnh chưa nắn).
+     */
+    public static void apply(int[] px, int w, int h, int mode, boolean geometric) {
         if (mode == ORIGINAL || px == null || w < 4 || h < 4) return;
         if (px.length < w * h) return;
         switch (mode) {
+            case FLATTEN:
+                Flatten.apply(px, w, h, geometric);
+                return;
             case MAGIC_PRO:
                 Retouch.removeFingers(px, w, h);
                 tonePro(px, w, h, backgroundFine(px, w, h, null), 0.24f, 0.86f, 1.45f);
