@@ -1,0 +1,130 @@
+14:18:46 device: 10 29 Physical size: 1080x2400 Physical density: 420
+14:18:46 === Cài đặt
+14:18:50 Performing Streamed Install
+Success
+14:18:53 PASS Cài đặt
+14:18:53 === Mở ứng dụng
+14:18:56 Starting: Intent { cmp=vn.quettailieu.scanner/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: vn.quettailieu.scanner/.MainActivity
+TotalTime: 2166
+WaitTime: 2168
+Complete
+14:19:07 PASS Mở ứng dụng
+14:19:07 === Chụp đơn + màn hình cắt
+14:19:59 PASS Chụp đơn + màn hình cắt
+14:19:59 === Công cụ chỉnh sửa (lọc, xoay, so sánh, cắt lại)
+14:21:23 PASS Công cụ chỉnh sửa (lọc, xoay, so sánh, cắt lại)
+14:21:23 === Lưu tài liệu
+14:21:29 PASS Lưu tài liệu
+14:21:29 === Chia sẻ PDF/JPG
+14:21:52 PASS Chia sẻ PDF/JPG
+14:21:52 === Lưu ảnh vào Thư viện
+14:22:02 ảnh trong Thư viện: ['Scan 13-11-2026 14.19.jpg', 'Scan 13-11-2026 14.19 (1).jpg']
+14:22:02 PASS Lưu ảnh vào Thư viện
+14:22:02 === Lưu PDF (bộ chọn tệp)
+14:22:11 PASS Lưu PDF (bộ chọn tệp)
+14:22:11 === Thêm trang
+14:22:46 PASS Thêm trang
+14:22:46 === Đổi tên
+14:23:02 PASS Đổi tên
+14:23:02 === Chế độ hàng loạt + hoàn tác
+14:23:57 PASS Chế độ hàng loạt + hoàn tác
+14:23:57 === Nút trên máy ảnh
+14:24:37 PASS Nút trên máy ảnh
+14:24:37 === Nhập ảnh doc_1_wood.jpg
+14:24:39 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:25:02 PASS Nhập ảnh doc_1_wood.jpg
+14:25:02 === Nhập ảnh doc_4_beige.jpg
+14:25:06 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:25:30 PASS Nhập ảnh doc_4_beige.jpg
+14:25:30 === Nhập ảnh doc_5_blue.jpg
+14:25:34 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:25:58 PASS Nhập ảnh doc_5_blue.jpg
+14:25:58 === Nhập nhiều ảnh
+14:26:03 Starting: Intent { act=vn.quettailieu.scanner.TEST_IMPORT cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:26:30 PASS Nhập nhiều ảnh
+14:26:30 === Bộ lọc mới + lời nhắc ngón tay
+14:26:52 ngón tay (tỷ lệ màu da ở mép trái) trước/sau Thần kỳ: 0.995 -> 0.000
+14:27:17 Ko viết tay: nét bút xanh 0.0614 -> 0.0000, con dấu đỏ còn 0.170
+14:27:38 PASS Bộ lọc mới + lời nhắc ngón tay
+14:27:38 === Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)
+14:28:06 Tăng cường -> Làm phẳng: hàng kẻ thẳng 0 -> 24, nếp gấp trên giấy trắng 0.0189 -> 0.0000, con dấu đỏ 0.167 -> 0.159, chữ ký xanh 0.0598 -> 0.0501, chữ trong bảng 0.0815 -> 0.0426
+14:28:13 PASS Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)
+14:28:13 === Làm phẳng + Xóa thông minh + Đánh dấu
+14:28:46 xem trước Xóa thông minh (Làm phẳng): hàng kẻ thẳng 0, nếp gấp trên giấy trắng 0.0000
+14:29:00 sau xoá con dấu (Làm phẳng): đỏ 0.0000, chữ ký xanh 0.0501, hàng kẻ thẳng 24
+14:29:14 xem trước Đánh dấu (Làm phẳng): hàng kẻ thẳng 27, đường kẻ giữa bảng 0.4417 (ảnh kết quả 0.4417)
+14:29:26 nét brush đỏ trên ảnh kết quả: tâm 0.4416910560247663 (7760 điểm), đường kẻ 0.4417
+14:29:30 PASS Làm phẳng + Xóa thông minh + Đánh dấu
+14:29:30 === Xóa thông minh
+14:30:55 thao tác xoá đã lưu: [0, 1, 2, 3, 4]
+14:30:55 xoá chữ 'NGƯỜI LẬP' (Bút): 0.2098 -> 0.0000
+14:30:55 xoá con dấu (Hình chữ nhật): 0.1982 -> 0.0000
+14:30:55 xoá nét bút xanh dưới (Thần kỳ): 0.0614 -> 0.0000
+14:30:55 xoá chữ trong bảng (Xóa văn bản): 0.2165 -> 0.0000
+14:30:55 xoá nét bút xanh trên (Viết tay): 0.1084 -> 0.0000
+14:30:55 đường kẻ bảng sau Xóa văn bản: 0.133
+14:31:13 PASS Xóa thông minh
+14:31:13 === Đánh dấu (ký tên, chữ, brush, khảm, hình mờ)
+14:32:55 đánh dấu đã lưu: [0, 0, 1, 2, 4, 3]
+14:32:56 vị trí chữ ký sau khi kéo: 0.718, 0.897
+14:32:56 nét brush đỏ trên ảnh kết quả: 1.000
+14:33:47 PASS Đánh dấu (ký tên, chữ, brush, khảm, hình mờ)
+14:33:47 === Tiêu đề trang + Cắt dán
+14:34:22 tiêu đề lề trên 0.000 -> 0.061, số trang lề dưới 0.000 -> 0.030
+14:34:39 tờ ghép: 3508x2480
+14:34:40 tờ ghép ô trái: 0.056
+14:34:40 tờ ghép ô phải: 0.063
+14:34:58 PASS Tiêu đề trang + Cắt dán
+14:34:58 === Nhập 12 ảnh lớn (12 MP)
+14:35:12 nhập 12 ảnh lớn: 2.5s đến trình chỉnh sửa
+14:35:39 nhập + xử lý 12 ảnh lớn: 29.2s
+14:35:57 PASS Nhập 12 ảnh lớn (12 MP)
+14:35:57 === Danh sách + tìm kiếm
+14:36:14 PASS Danh sách + tìm kiếm
+14:36:14 === Xoá tài liệu
+14:36:27 số tài liệu: 14 -> 13
+14:36:27 PASS Xoá tài liệu
+14:36:27 === Chạm đúp không mở trùng màn hình
+14:37:15 PASS Chạm đúp không mở trùng màn hình
+14:37:15 === Lật trang rồi thao tác ngay
+14:37:45 xoay trước/sau: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] [0, 0, 270, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+14:38:00 PASS Lật trang rồi thao tác ngay
+14:38:00 === Nhập tệp hỏng / không phải ảnh
+14:38:07 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:38:12 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:38:17 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:38:38 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:38:43 nhập bad_trunc.jpg -> CropActivity
+14:39:05 Starting: Intent { act=android.intent.action.SEND typ=image/jpeg cmp=vn.quettailieu.scanner/.MainActivity (has extras) }
+14:39:10 nhập bad_head.jpg -> MainActivity
+14:39:10 PASS Nhập tệp hỏng / không phải ảnh
+14:39:10 === Nhiều định dạng ảnh + EXIF + kiểm tra PDF/JPG xuất ra
+14:39:27 định dạng: 13/13 trang, kích thước [(611, 803), (604, 806), (613, 807), (401, 303), (305, 407), (615, 809), (617, 811), (300, 412), (310, 420), (430, 320), (9, 11), (3000, 61), (6000, 8000)]
+14:39:48 PDF Letter: Scan 13-11-2026 14.39.pdf, 597144 byte
+14:40:07 PDF Theo kích thước ảnh: Scan 13-11-2026 14.39.pdf, 597128 byte
+14:40:24 PDF A4: Scan 13-11-2026 14.39.pdf, 597137 byte
+14:40:36 PASS Nhiều định dạng ảnh + EXIF + kiểm tra PDF/JPG xuất ra
+14:40:36 === Tìm kiếm không dấu + tên dài
+14:41:30 PASS Tìm kiếm không dấu + tên dài
+14:41:30 === Đổi cấu hình (cỡ chữ) ở từng màn hình
+14:42:44 PASS Đổi cấu hình (cỡ chữ) ở từng màn hình
+14:42:44 === Không giữ hoạt động (lưu/khôi phục trạng thái)
+14:44:33 PASS Không giữ hoạt động (lưu/khôi phục trạng thái)
+14:44:33 === Tiến trình bị thu hồi khi ở nền
+14:45:45 tiến trình trước/sau am kill: '19339' -> ''
+14:46:07 PASS Tiến trình bị thu hồi khi ở nền
+14:46:07 === Khôi phục bản nháp sau khi bị buộc dừng
+14:46:47 số tài liệu trước/sau khi buộc dừng: 19 -> 20
+14:47:19 PASS Khôi phục bản nháp sau khi bị buộc dừng
+14:47:19 === Từ chối quyền máy ảnh
+14:48:10 PASS Từ chối quyền máy ảnh
+14:48:10 === Máy ảnh bị chặn giữa chừng + Thử lại
+14:48:55 PASS Máy ảnh bị chặn giữa chừng + Thử lại
+14:48:55 === Dừng ứng dụng giữa chừng
+14:49:07 PASS Dừng ứng dụng giữa chừng
+14:49:07 === Monkey 2500 thao tác ngẫu nhiên
+14:50:18 PASS Monkey 2500 thao tác ngẫu nhiên
+14:50:21 DONE 38/38

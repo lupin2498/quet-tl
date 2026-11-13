@@ -1,0 +1,2 @@
+Row: 0 _display_name=Scan 13-11-2026 14.19.jpg
+Row: 1 _display_name=Scan 13-11-2026 14.19 (1).jpg

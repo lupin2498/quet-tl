@@ -1,0 +1,196 @@
+{
+ "passed": 38,
+ "total": 38,
+ "results": [
+  {
+   "step": "Cài đặt",
+   "ok": true,
+   "sec": 6.5
+  },
+  {
+   "step": "Mở ứng dụng",
+   "ok": true,
+   "sec": 14.1
+  },
+  {
+   "step": "Chụp đơn + màn hình cắt",
+   "ok": true,
+   "sec": 52.2
+  },
+  {
+   "step": "Công cụ chỉnh sửa (lọc, xoay, so sánh, cắt lại)",
+   "ok": true,
+   "sec": 84.1
+  },
+  {
+   "step": "Lưu tài liệu",
+   "ok": true,
+   "sec": 5.9
+  },
+  {
+   "step": "Chia sẻ PDF/JPG",
+   "ok": true,
+   "sec": 22.7
+  },
+  {
+   "step": "Lưu ảnh vào Thư viện",
+   "ok": true,
+   "sec": 10.4
+  },
+  {
+   "step": "Lưu PDF (bộ chọn tệp)",
+   "ok": true,
+   "sec": 8.8
+  },
+  {
+   "step": "Thêm trang",
+   "ok": true,
+   "sec": 34.9
+  },
+  {
+   "step": "Đổi tên",
+   "ok": true,
+   "sec": 15.5
+  },
+  {
+   "step": "Chế độ hàng loạt + hoàn tác",
+   "ok": true,
+   "sec": 55.6
+  },
+  {
+   "step": "Nút trên máy ảnh",
+   "ok": true,
+   "sec": 39.8
+  },
+  {
+   "step": "Nhập ảnh doc_1_wood.jpg",
+   "ok": true,
+   "sec": 25.4
+  },
+  {
+   "step": "Nhập ảnh doc_4_beige.jpg",
+   "ok": true,
+   "sec": 27.8
+  },
+  {
+   "step": "Nhập ảnh doc_5_blue.jpg",
+   "ok": true,
+   "sec": 27.7
+  },
+  {
+   "step": "Nhập nhiều ảnh",
+   "ok": true,
+   "sec": 32.3
+  },
+  {
+   "step": "Bộ lọc mới + lời nhắc ngón tay",
+   "ok": true,
+   "sec": 68.4
+  },
+  {
+   "step": "Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)",
+   "ok": true,
+   "sec": 34.7
+  },
+  {
+   "step": "Làm phẳng + Xóa thông minh + Đánh dấu",
+   "ok": true,
+   "sec": 76.8
+  },
+  {
+   "step": "Xóa thông minh",
+   "ok": true,
+   "sec": 103.0
+  },
+  {
+   "step": "Đánh dấu (ký tên, chữ, brush, khảm, hình mờ)",
+   "ok": true,
+   "sec": 154.1
+  },
+  {
+   "step": "Tiêu đề trang + Cắt dán",
+   "ok": true,
+   "sec": 70.9
+  },
+  {
+   "step": "Nhập 12 ảnh lớn (12 MP)",
+   "ok": true,
+   "sec": 59.2
+  },
+  {
+   "step": "Danh sách + tìm kiếm",
+   "ok": true,
+   "sec": 17.1
+  },
+  {
+   "step": "Xoá tài liệu",
+   "ok": true,
+   "sec": 12.8
+  },
+  {
+   "step": "Chạm đúp không mở trùng màn hình",
+   "ok": true,
+   "sec": 47.8
+  },
+  {
+   "step": "Lật trang rồi thao tác ngay",
+   "ok": true,
+   "sec": 45.5
+  },
+  {
+   "step": "Nhập tệp hỏng / không phải ảnh",
+   "ok": true,
+   "sec": 69.4
+  },
+  {
+   "step": "Nhiều định dạng ảnh + EXIF + kiểm tra PDF/JPG xuất ra",
+   "ok": true,
+   "sec": 86.6
+  },
+  {
+   "step": "Tìm kiếm không dấu + tên dài",
+   "ok": true,
+   "sec": 53.2
+  },
+  {
+   "step": "Đổi cấu hình (cỡ chữ) ở từng màn hình",
+   "ok": true,
+   "sec": 73.9
+  },
+  {
+   "step": "Không giữ hoạt động (lưu/khôi phục trạng thái)",
+   "ok": true,
+   "sec": 109.7
+  },
+  {
+   "step": "Tiến trình bị thu hồi khi ở nền",
+   "ok": true,
+   "sec": 93.9
+  },
+  {
+   "step": "Khôi phục bản nháp sau khi bị buộc dừng",
+   "ok": true,
+   "sec": 72.0
+  },
+  {
+   "step": "Từ chối quyền máy ảnh",
+   "ok": true,
+   "sec": 50.6
+  },
+  {
+   "step": "Máy ảnh bị chặn giữa chừng + Thử lại",
+   "ok": true,
+   "sec": 45.1
+  },
+  {
+   "step": "Dừng ứng dụng giữa chừng",
+   "ok": true,
+   "sec": 11.9
+  },
+  {
+   "step": "Monkey 2500 thao tác ngẫu nhiên",
+   "ok": true,
+   "sec": 71.7
+  }
+ ]
+}
