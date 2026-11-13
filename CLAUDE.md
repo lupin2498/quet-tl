@@ -46,7 +46,9 @@ Giao diện tiếng Việt.
   `make_wavy_images.py <thư-mục> 1400 <thư-mục-ảnh>`) cho bộ lọc Làm phẳng (bản sao ở `ios/Resources/TestImages/`).
 - `tests/tools/` — `make_core_inputs.py` + `make_retouch_images.py` + `make_wavy_images.py` + `compare_core.py` (đối chiếu
   Java ↔ Swift trên cùng dữ liệu tổng hợp), `check_pdfs.py` (kiểm tra PDF bằng pypdf). `make_wavy_images.py` sinh trang
-  nhàu / gấp nếp / gợn sóng `wv_*.ppm` kèm đáp án trong thư mục con `gt/` (trang phẳng, bản đồ biến dạng, vị trí nếp gấp...).
+  nhàu / gấp nếp / gợn sóng `wv_*.ppm` kèm đáp án trong thư mục con `gt/` (trang phẳng, bản đồ biến dạng, vị trí nếp gấp...);
+  `make_flatten_cases.py` sinh các ca hồi quy cùng định dạng (con dấu đè lên bảng, chữ viết bút xanh dưới tiêu đề in đen,
+  bảng gấp nếp sâu, giấy vở kẻ dòng; trang `wv_flat_*` là trang phẳng đối chứng) — chạy bằng `EvalFlatten`.
 
 ## Lệnh thường dùng
 - Build Android: `cd android && ./gradlew assembleDebug assembleRelease`

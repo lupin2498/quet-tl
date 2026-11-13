@@ -66,6 +66,11 @@ jobs:
           set -o pipefail
           python3 tests/tools/make_wavy_images.py "$RUNNER_TEMP/wavy-in" 1400
           java -Dfile.encoding=UTF-8 -cp out/core-classes EvalFlatten "$RUNNER_TEMP/wavy-in" | tee out/core/flatten-tests.txt
+          # ca hồi quy (con dấu đè lên bảng, chữ viết bút xanh, bảng gấp nếp sâu, giấy vở kẻ dòng) ở cỡ 1000 và 2000
+          for L in 1000 2000; do
+            python3 tests/tools/make_flatten_cases.py "$RUNNER_TEMP/cases-$L" $L
+            java -Dfile.encoding=UTF-8 -cp out/core-classes EvalFlatten "$RUNNER_TEMP/cases-$L" | tee -a out/core/flatten-cases.txt
+          done
 
       - name: Kiểm thử Làm phẳng giữ nội dung ở ảnh độ phân giải thấp + không nắn méo trang phẳng (JVM)
         # ảnh chụp tài liệu phẳng tests/images ở cạnh dài 500-1754 điểm ảnh (dấu thanh, chấm, đường kẻ mảnh, chữ ký mảnh phải

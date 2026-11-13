@@ -2130,7 +2130,8 @@ def screen_image():
 
 def screen_page(view_desc, timeout=60):
     """Vùng trang trên ảnh chụp màn hình Xóa thông minh / Đánh dấu (trang chưa xoay, chưa phóng to): chờ tới khi ảnh trang
-    đã hiện (có nét tối) và ổn định qua hai lần chụp. None nếu thiếu Pillow."""
+    đã hiện (giấy sáng có nét tối — lúc đang tải vùng này chỉ có nền tối của màn hình + vòng xoay, tối gần hết) và ổn định
+    qua hai lần chụp. None nếu thiếu Pillow."""
     P = page_mapper(view_desc)
     (x1, y1), (x2, y2) = P(0.0, 0.0), P(1.0, 1.0)
     deadline = time.time() + timeout
@@ -2141,9 +2142,10 @@ def screen_page(view_desc, timeout=60):
             return None
         crop = im.crop((x1, y1, x2, y2))
         dark = frac(crop, (0.1, 0.2, 0.9, 0.7), "dark")
-        if dark > 0.01 and last is not None and abs(dark - last) < 0.002:
+        ok = 0.01 < dark < 0.5
+        if ok and last is not None and abs(dark - last) < 0.002:
             return crop
-        last = dark if dark > 0.01 else None
+        last = dark if ok else None
         time.sleep(2.0)
     raise AssertionError("Ảnh trang không hiện (hoặc không ổn định) ở '%s'" % view_desc)
 

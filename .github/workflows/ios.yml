@@ -96,6 +96,8 @@ jobs:
               im.save("out/core-in/wv_doc_%s.ppm" % doc.split("_")[1])
           PY
           rm -rf out/wv-big out/wv-small out/wv-mid
+          # ca hồi quy của Làm phẳng (con dấu đè lên bảng, chữ viết bút xanh, bảng gấp nếp sâu, giấy vở kẻ dòng): cỡ 1000
+          python3 tests/tools/make_flatten_cases.py out/core-in 1000
           mkdir -p out/jcls
           javac -encoding UTF-8 -d out/jcls android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/DumpCore.java
           java -Dfile.encoding=UTF-8 -cp out/jcls DumpCore out/core-in out/core-java 2>&1 | tee out/algo/compare.txt

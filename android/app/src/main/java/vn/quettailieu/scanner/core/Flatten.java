@@ -248,18 +248,27 @@ public final class Flatten {
                     if (ax < aw) {
                         boolean m1 = rule != null && rule[roff + ax] != 0, m2 = rule2 != null && rule2[roff + ax] != 0;
                         inMask = m1 || m2;
-                        if (inMask) {
+                        // mực màu rõ (con dấu, chữ ký đè lên đường kẻ) không tính là đường kẻ: giữ màu, vẫn là lõi không lan
+                        if (inMask && (f & 1) == 0) {
                             // đường kẻ mảnh ở ảnh nhỏ nằm vắt qua 2 hàng điểm ảnh (mỗi hàng chỉ nhạt): tính cả điểm sát bên
-                            // tối nhất (độ đậm hiệu dụng qe); chỉ xét điểm đủ tối (tối hơn tq) để vệt nếp gấp sát đường kẻ
-                            // không bị tính
+                            // tối hơn theo bề ngang nét (độ đậm hiệu dụng qe). Chỉ xét điểm không màu (con dấu, chữ ký đè lên
+                            // đường kẻ giữ màu), đủ tối (tối hơn tq) và thuộc nét mảnh: hai điểm cách 2 về hai phía là giấy —
+                            // vệt nếp gấp rộng chạm / vắt qua đường kẻ không được tính
                             int qe = 255;
-                            if (q < tq) {
+                            if (q < tq && (f & 2) == 0) {
                                 int qn = 255;
-                                if (x > 0) qn = Math.min(qn, lq[i - 1] & 255);
-                                if (x + 1 < w) qn = Math.min(qn, lq[i + 1] & 255);
-                                if (y > 0) qn = Math.min(qn, lq[i - w] & 255);
-                                if (y + 1 < h) qn = Math.min(qn, lq[i + w] & 255);
-                                qe = 255 - Math.min(255, (255 - q) + (255 - qn));
+                                boolean thin = false;
+                                if ((y < 2 || (lq[i - 2 * w] & 255) >= LOOSE_Q) && (y + 2 >= h || (lq[i + 2 * w] & 255) >= LOOSE_Q)) {
+                                    thin = true;
+                                    if (y > 0) qn = Math.min(qn, lq[i - w] & 255);
+                                    if (y + 1 < h) qn = Math.min(qn, lq[i + w] & 255);
+                                }
+                                if ((x < 2 || (lq[i - 2] & 255) >= LOOSE_Q) && (x + 2 >= w || (lq[i + 2] & 255) >= LOOSE_Q)) {
+                                    thin = true;
+                                    if (x > 0) qn = Math.min(qn, lq[i - 1] & 255);
+                                    if (x + 1 < w) qn = Math.min(qn, lq[i + 1] & 255);
+                                }
+                                if (thin) qe = 255 - Math.min(255, (255 - q) + (255 - qn));
                             }
                             if (m1 && (q < an.ruleQ || qe < an.ruleQE)) {
                                 cls[i] |= 8;
@@ -290,8 +299,9 @@ public final class Flatten {
         lineB = null;
         byte[] reach = grow(bs, bw, bh, dg, Math.max(1, dg / 2));
         bs = null;
-        // nét mực màu: lan không giới hạn từ ô có mực màu rõ qua các ô hơi có màu (vệt nếp gấp, bóng mờ không có màu)
-        byte[] reachC = colorReach(colB, bw, bh);
+        // nét mực màu: lan từ ô có mực màu rõ qua các ô hơi có màu (vệt nếp gấp, bóng mờ không có màu) tối đa 2 cỡ chữ —
+        // nối liền phần nhạt của nét ký mảnh mà không kéo theo cả dòng kẻ in màu nhạt của giấy vở chạm vào nét chữ
+        byte[] reachC = colorReach(colB, bw, bh, Math.max(dg, Math.round(2f * hcFull / d)));
         colB = null;
         // giữ: lõi + điểm tối hơn GROW_Q lan tới được + điểm hơi có màu nối với mực màu; rồi viền (tối hơn WEAK_Q) sát các
         // điểm đó
@@ -707,11 +717,14 @@ public final class Flatten {
                     covered++;
                     cen[a - a0] = sum / (float) c;
                     dh[mn]++;
-                    // điểm sát bên (theo bề ngang nét) tối hơn của điểm tối nhất
-                    int qn = 255;
+                    // điểm sát bên (theo bề ngang nét) tối hơn của điểm tối nhất; chỉ nét mảnh (hai điểm cách 2 về hai phía
+                    // là giấy) mới được tính độ đậm hiệu dụng — vệt nếp gấp rộng thì lấy đúng điểm tối nhất
+                    int qn = 255, far = 255;
                     if (bm > 0) qn = amin[horiz ? (bm - 1) * w + a : a * w + bm - 1] & 255;
                     if (bm + 1 < bLim) qn = Math.min(qn, amin[horiz ? (bm + 1) * w + a : a * w + bm + 1] & 255);
-                    dhE[255 - Math.min(255, (255 - mn) + (255 - qn))]++;
+                    if (bm > 1) far = amin[horiz ? (bm - 2) * w + a : a * w + bm - 2] & 255;
+                    if (bm + 2 < bLim) far = Math.min(far, amin[horiz ? (bm + 2) * w + a : a * w + bm + 2] & 255);
+                    dhE[far >= LOOSE_Q ? 255 - Math.min(255, (255 - mn) + (255 - qn)) : mn]++;
                 }
             }
             if (covered * 4 < len * 3 || tail > covered * (tmax + 2)) continue;
@@ -762,9 +775,9 @@ public final class Flatten {
         int k = an.k, aw = an.aw, ah = an.ah;
         if (Math.min(aw, ah) < MIN_ANALYSIS || an.hc < 3f) return null;
         int nA = aw * ah;
-        // mực chữ: trung bình khối k x k của ảnh đã làm sạch tối hơn 160, trừ đường kẻ bảng và mực màu rõ (con dấu, chữ ký:
-        // vòng dấu cạnh một dòng chữ bị ghép nhầm thành đoạn dòng chữ, làm cong trang phẳng) — trừ khi không có mực màu thì
-        // không đủ dòng (trang viết tay bút xanh)
+        // mực chữ: trung bình khối k x k của ảnh đã làm sạch tối hơn 160, trừ đường kẻ bảng và các khối mực màu rõ cỡ con
+        // dấu (khung lớn hơn 2,5 cỡ chữ theo cả hai chiều: vòng dấu cạnh một dòng chữ bị ghép nhầm thành đoạn dòng chữ, làm
+        // cong trang phẳng); chữ viết bút xanh vẫn được tính — trừ khi bỏ khối màu thì không còn đủ dòng
         byte[] ink = new byte[nA], inkC = new byte[nA];
         int kk = k * k;
         boolean anyColor = false;
@@ -791,6 +804,7 @@ public final class Flatten {
                 }
             }
         }
+        if (anyColor) anyColor = keepSmallColor(ink, inkC, aw, ah, 2.5f * an.hc);
         Lines tl = new Lines();
         int nt = -1;
         if (anyColor) {
@@ -1103,6 +1117,52 @@ public final class Flatten {
     }
 
     /**
+     * Đưa trở lại inkC các thành phần liên thông (8 hướng) của mực chỉ có màu (ink và không inkC) có khung không vượt big
+     * theo ít nhất một chiều (chữ viết bút màu, nét ký); chỉ khối lớn theo cả hai chiều (con dấu) bị bỏ. Trả về true nếu
+     * còn khối bị bỏ.
+     */
+    static boolean keepSmallColor(byte[] ink, byte[] inkC, int w, int h, float big) {
+        int n = w * h;
+        byte[] seen = new byte[n];
+        int[] queue = new int[n];
+        boolean any = false;
+        for (int start = 0; start < n; start++) {
+            if (ink[start] == 0 || inkC[start] != 0 || seen[start] != 0) continue;
+            int head = 0, tail = 0;
+            queue[tail++] = start;
+            seen[start] = 1;
+            int x0 = w, x1 = -1, y0 = h, y1 = -1;
+            while (head < tail) {
+                int i = queue[head++];
+                int x = i % w, y = i / w;
+                if (x < x0) x0 = x;
+                if (x > x1) x1 = x;
+                if (y < y0) y0 = y;
+                if (y > y1) y1 = y;
+                for (int dy = -1; dy <= 1; dy++) {
+                    int yy = y + dy;
+                    if (yy < 0 || yy >= h) continue;
+                    for (int dx = -1; dx <= 1; dx++) {
+                        int xx = x + dx;
+                        if (xx < 0 || xx >= w) continue;
+                        int j = yy * w + xx;
+                        if (ink[j] != 0 && inkC[j] == 0 && seen[j] == 0) {
+                            seen[j] = 1;
+                            queue[tail++] = j;
+                        }
+                    }
+                }
+            }
+            if (x1 - x0 + 1 > big && y1 - y0 + 1 > big) {
+                any = true;
+                continue;
+            }
+            for (int q = 0; q < tail; q++) inkC[queue[q]] = 1;
+        }
+        return any;
+    }
+
+    /**
      * Ô thuộc vạch mảnh, thẳng, dài hơn longLine điểm ảnh (thành phần liên thông 8 hướng của các ô blk; tỷ số trị riêng >
      * 30, như clusters). Trả về mảng ô (1 = thuộc vạch).
      */
@@ -1159,10 +1219,10 @@ public final class Flatten {
     }
 
     /**
-     * Lan 8 hướng, không giới hạn bước, từ các ô có mực màu rõ (col = 2) qua các ô hơi có màu (col = 1). Trả về mảng ô
-     * (1 = tới được), null nếu không có ô mực màu rõ nào.
+     * Lan 8 hướng, tối đa lim bước, từ các ô có mực màu rõ (col = 2) qua các ô hơi có màu (col = 1). Trả về mảng ô
+     * (khác 0 = tới được: số bước + 1, tối đa 255), null nếu không có ô mực màu rõ nào.
      */
-    static byte[] colorReach(byte[] col, int bw, int bh) {
+    static byte[] colorReach(byte[] col, int bw, int bh, int lim) {
         int nb = bw * bh;
         int[] queue = null;
         byte[] out = null;
@@ -1180,6 +1240,8 @@ public final class Flatten {
         int head = 0;
         while (head < tail) {
             int i = queue[head++];
+            int dd = out[i] & 255;
+            if (dd > lim) continue;
             int x = i % bw, y = i / bw;
             for (int dy = -1; dy <= 1; dy++) {
                 int yy = y + dy;
@@ -1189,7 +1251,7 @@ public final class Flatten {
                     if (xx < 0 || xx >= bw) continue;
                     int j = yy * bw + xx;
                     if (col[j] == 0 || out[j] != 0) continue;
-                    out[j] = 1;
+                    out[j] = (byte) Math.min(255, dd + 1);
                     queue[tail++] = j;
                 }
             }

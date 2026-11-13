@@ -158,6 +158,8 @@ public class EvalFlatten {
             total += ms;
             if (outDir != null) DumpCore.writePPM(new File(outDir, name + "_out.ppm"), out, w, h);
             boolean blank = name.equals("wv_blank");
+            // trang phẳng đối chứng (wv_plain, các ca wv_flat_* của make_flatten_cases.py): không được nắn méo
+            boolean flat = name.equals("wv_plain") || name.startsWith("wv_flat_");
             int[] box = p.box != null && p.box[2] > p.box[0] ? p.box : new int[]{0, 0, w - 1, h - 1};
             int[] inkNear = inkNear(p, 4);
             float[] r0 = straightness(p, null, true, box[1], box[3], box[0], box[2], inkNear);
@@ -185,7 +187,7 @@ public class EvalFlatten {
                 }
             }
             // ---- độ thẳng
-            if (name.equals("wv_plain")) {
+            if (flat) {
                 check(f == null || f.maxShift <= 2.0f, name + ": trang phẳng không bị nắn méo (dịch tối đa " + (f == null ? 0 : f.maxShift) + ")");
                 check(r1[0] <= 0.8f, String.format(Locale.US, "%s: hàng vẫn thẳng (%.2f)", name, r1[0]));
             } else if (!blank) {
@@ -204,7 +206,7 @@ public class EvalFlatten {
                 float[] c0 = straightness(p, null, false, x0, x1, y0, y1, inkNear);
                 float[] c1 = straightness(p, f, false, x0, x1, y0, y1, inkNear);
                 System.out.printf(Locale.US, "            lệch cột (vùng bảng) %.2f/%.2f -> %.2f/%.2f%n", c0[0], c0[1], c1[0], c1[1]);
-                if (!name.equals("wv_plain")) {
+                if (!flat) {
                     check(c1[0] <= Math.max(1.6f, 0.45f * c0[0]), String.format(Locale.US, "%s: đường kẻ dọc thẳng lại (lệch TB %.2f -> %.2f)", name, c0[0], c1[0]));
                 }
             }
@@ -214,6 +216,20 @@ public class EvalFlatten {
             int[] farInk = inkNear(p, Math.max(4, Math.round(12f * Math.max(w, h) / 1400f)));
             int[] fl = new int[w * h];
             for (int i = 0; i < w * h; i++) fl[i] = lum(p.flat[i]);
+            File rf = new File(dir, "gt/" + name + ".rules");
+            int[] rules = null;
+            int rx0 = 0, rx1 = 0, band = Math.max(2, Math.round(15f * h / 1400f));
+            boolean[][] ruleCov = null;
+            if (rf.exists()) {
+                List<String> rl = DumpCore.readLines(rf);
+                String[] xr = rl.get(0).trim().split(" ");
+                rx0 = Integer.parseInt(xr[0]);
+                rx1 = Math.min(w, Integer.parseInt(xr[1]));
+                String[] ys = rl.get(1).trim().split(" ");
+                rules = new int[ys.length];
+                for (int r = 0; r < ys.length; r++) rules[r] = Integer.parseInt(ys[r]);
+                ruleCov = new boolean[rules.length][Math.max(1, rx1 - rx0)];
+            }
             int paper = 0, dirt = 0, core = 0, kept = 0, regP = 0, regD = 0, red0 = 0, red1 = 0, blue0 = 0, blue1 = 0;
             for (int v = 0; v < h; v++) {
                 for (int u = 0; u < w; u++) {
@@ -224,6 +240,11 @@ public class EvalFlatten {
                     if (gx < 3 || gy < 3 || gx >= w - 3 || gy >= h - 3) continue;
                     int o = out[v * w + u];
                     int ol = lum(o);
+                    if (rules != null && ol < 215 && gx >= rx0 && gx < rx1) {
+                        for (int r = 0; r < rules.length; r++) {
+                            if (Math.abs(gy - rules[r]) <= band) ruleCov[r][gx - rx0] = true;
+                        }
+                    }
                     int mn = 255, mxv = 0;
                     for (int dy = -3; dy <= 3; dy++) {
                         for (int dx = -3; dx <= 3; dx++) {
@@ -269,6 +290,19 @@ public class EvalFlatten {
             if (!blank) check(keptPct >= 93f, String.format(Locale.US, "%s: giữ nét chữ / đường kẻ (%.1f%%)", name, keptPct));
             if (red0 > 50) check(red1 * 100 >= red0 * 85, name + ": giữ con dấu đỏ (" + red0 + " -> " + red1 + ")");
             if (blue0 > 50) check(blue1 * 100 >= blue0 * 80, name + ": giữ chữ ký bút xanh (" + blue0 + " -> " + blue1 + ")");
+            // dòng kẻ in sẵn màu nhạt của giấy vở (gt/<tên>.rules): ở vùng không có chữ, dòng kẻ không được giữ lại (phủ quá
+            // nửa bề ngang vùng, đo trên trang phẳng qua trường nắn + bản đồ thật)
+            if (rules != null) {
+                int keptRules = 0;
+                for (int r = 0; r < rules.length; r++) {
+                    int cols = 0;
+                    for (int x = 0; x < rx1 - rx0; x++) if (ruleCov[r][x]) cols++;
+                    if (cols * 2 > rx1 - rx0) keptRules++;
+                }
+                System.out.printf(Locale.US, "            dòng kẻ in sẵn của giấy vở còn lại (vùng không có chữ): %d/%d%n", keptRules, rules.length);
+                check(keptRules <= 2, String.format(Locale.US, "%s: không giữ lại dòng kẻ in sẵn của giấy vở (%d/%d dòng)", name, keptRules,
+                        rules.length));
+            }
             if (p.finger != null) {
                 int skin = 0;
                 for (int i = 0; i < w * h; i++) {

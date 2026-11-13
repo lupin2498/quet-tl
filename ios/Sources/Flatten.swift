@@ -259,18 +259,27 @@ enum Flatten {
                         if ax < aw {
                             let m1 = hasRule && rule[roff + ax] != 0, m2 = hasRule2 && rule2[roff + ax] != 0
                             inMask = m1 || m2
-                            if inMask {
+                            // mực màu rõ (con dấu, chữ ký đè lên đường kẻ) không tính là đường kẻ: giữ màu, vẫn là lõi không lan
+                            if inMask && (f & 1) == 0 {
                                 // đường kẻ mảnh ở ảnh nhỏ nằm vắt qua 2 hàng điểm ảnh (mỗi hàng chỉ nhạt): tính cả điểm sát
-                                // bên tối nhất (độ đậm hiệu dụng qe); chỉ xét điểm đủ tối (tối hơn tq) để vệt nếp gấp sát
-                                // đường kẻ không bị tính
+                                // bên tối hơn theo bề ngang nét (độ đậm hiệu dụng qe). Chỉ xét điểm không màu (con dấu, chữ
+                                // ký đè lên đường kẻ giữ màu), đủ tối (tối hơn tq) và thuộc nét mảnh: hai điểm cách 2 về hai
+                                // phía là giấy — vệt nếp gấp rộng chạm / vắt qua đường kẻ không được tính
                                 var qe = 255
-                                if q < tq {
+                                if q < tq && (f & 2) == 0 {
                                     var qn = 255
-                                    if x > 0 { qn = min(qn, Int(lq[i - 1])) }
-                                    if x + 1 < w { qn = min(qn, Int(lq[i + 1])) }
-                                    if y > 0 { qn = min(qn, Int(lq[i - w])) }
-                                    if y + 1 < h { qn = min(qn, Int(lq[i + w])) }
-                                    qe = 255 - min(255, (255 - q) + (255 - qn))
+                                    var thin = false
+                                    if (y < 2 || Int(lq[i - 2 * w]) >= looseQ) && (y + 2 >= h || Int(lq[i + 2 * w]) >= looseQ) {
+                                        thin = true
+                                        if y > 0 { qn = min(qn, Int(lq[i - w])) }
+                                        if y + 1 < h { qn = min(qn, Int(lq[i + w])) }
+                                    }
+                                    if (x < 2 || Int(lq[i - 2]) >= looseQ) && (x + 2 >= w || Int(lq[i + 2]) >= looseQ) {
+                                        thin = true
+                                        if x > 0 { qn = min(qn, Int(lq[i - 1])) }
+                                        if x + 1 < w { qn = min(qn, Int(lq[i + 1])) }
+                                    }
+                                    if thin { qe = 255 - min(255, (255 - q) + (255 - qn)) }
                                 }
                                 if m1 && (q < ruleQ || qe < ruleQE) {
                                     cls[i] |= 8
@@ -299,8 +308,9 @@ enum Flatten {
                 }
             }
             let reach = grow(bs, bw, bh, dg, max(1, dg / 2))
-            // nét mực màu: lan không giới hạn từ ô có mực màu rõ qua các ô hơi có màu (vệt nếp gấp, bóng mờ không có màu)
-            let reachC = colorReach(colB, bw, bh)
+            // nét mực màu: lan từ ô có mực màu rõ qua các ô hơi có màu (vệt nếp gấp, bóng mờ không có màu) tối đa 2 cỡ chữ —
+            // nối liền phần nhạt của nét ký mảnh mà không kéo theo cả dòng kẻ in màu nhạt của giấy vở chạm vào nét chữ
+            let reachC = colorReach(colB, bw, bh, max(dg, Int((2 * hcFull / Float(d)).rounded())))
             let hasC = reachC != nil
             let rc = reachC ?? []
             // giữ: lõi + điểm tối hơn growQ lan tới được + điểm hơi có màu nối với mực màu; rồi viền (tối hơn weakQ) sát các
@@ -721,11 +731,14 @@ enum Flatten {
                     covered += 1
                     cen[a - a0] = Float(sum) / Float(c)
                     dh[mn] += 1
-                    // điểm sát bên (theo bề ngang nét) tối hơn của điểm tối nhất
-                    var qn = 255
+                    // điểm sát bên (theo bề ngang nét) tối hơn của điểm tối nhất; chỉ nét mảnh (hai điểm cách 2 về hai phía
+                    // là giấy) mới được tính độ đậm hiệu dụng — vệt nếp gấp rộng thì lấy đúng điểm tối nhất
+                    var qn = 255, far = 255
                     if bm > 0 { qn = Int(amin[horiz ? (bm - 1) * w + a : a * w + bm - 1]) }
                     if bm + 1 < bLim { qn = min(qn, Int(amin[horiz ? (bm + 1) * w + a : a * w + bm + 1])) }
-                    dhE[255 - min(255, (255 - mn) + (255 - qn))] += 1
+                    if bm > 1 { far = Int(amin[horiz ? (bm - 2) * w + a : a * w + bm - 2]) }
+                    if bm + 2 < bLim { far = min(far, Int(amin[horiz ? (bm + 2) * w + a : a * w + bm + 2])) }
+                    dhE[far >= looseQ ? 255 - min(255, (255 - mn) + (255 - qn)) : mn] += 1
                 }
             }
             if covered * 4 < len * 3 || tail > covered * (tmax + 2) { continue }
@@ -778,9 +791,9 @@ enum Flatten {
         let k = an.k, aw = an.aw, ah = an.ah
         if min(aw, ah) < minAnalysis || an.hc < 3 { return nil }
         let nA = aw * ah
-        // mực chữ: trung bình khối k x k của ảnh đã làm sạch tối hơn 160, trừ đường kẻ bảng và mực màu rõ (con dấu, chữ ký:
-        // vòng dấu cạnh một dòng chữ bị ghép nhầm thành đoạn dòng chữ, làm cong trang phẳng) — trừ khi không có mực màu thì
-        // không đủ dòng (trang viết tay bút xanh)
+        // mực chữ: trung bình khối k x k của ảnh đã làm sạch tối hơn 160, trừ đường kẻ bảng và các khối mực màu rõ cỡ con
+        // dấu (khung lớn hơn 2,5 cỡ chữ theo cả hai chiều: vòng dấu cạnh một dòng chữ bị ghép nhầm thành đoạn dòng chữ, làm
+        // cong trang phẳng); chữ viết bút xanh vẫn được tính — trừ khi bỏ khối màu thì không còn đủ dòng
         var ink = [UInt8](repeating: 0, count: nA)
         var inkC = [UInt8](repeating: 0, count: nA)
         let kk = k * k
@@ -810,6 +823,7 @@ enum Flatten {
                 }
             }
         }
+        if anyColor { anyColor = keepSmallColor(ink, &inkC, aw, ah, 2.5 * an.hc) }
         var tl = Lines()
         var nt = -1
         if anyColor {
@@ -1128,6 +1142,53 @@ enum Flatten {
         return keepB
     }
 
+    /// Đưa trở lại inkC các thành phần liên thông (8 hướng) của mực chỉ có màu (ink và không inkC) có khung không vượt big
+    /// theo ít nhất một chiều (chữ viết bút màu, nét ký); chỉ khối lớn theo cả hai chiều (con dấu) bị bỏ. Trả về true nếu
+    /// còn khối bị bỏ.
+    static func keepSmallColor(_ ink: [UInt8], _ inkC: inout [UInt8], _ w: Int, _ h: Int, _ big: Float) -> Bool {
+        let n = w * h
+        var seen = [UInt8](repeating: 0, count: n)
+        var queue = [Int](repeating: 0, count: n)
+        var any = false
+        for start in 0..<n {
+            if ink[start] == 0 || inkC[start] != 0 || seen[start] != 0 { continue }
+            var head = 0, tail = 0
+            queue[tail] = start
+            tail += 1
+            seen[start] = 1
+            var x0 = w, x1 = -1, y0 = h, y1 = -1
+            while head < tail {
+                let i = queue[head]
+                head += 1
+                let x = i % w, y = i / w
+                if x < x0 { x0 = x }
+                if x > x1 { x1 = x }
+                if y < y0 { y0 = y }
+                if y > y1 { y1 = y }
+                for dy in -1...1 {
+                    let yy = y + dy
+                    if yy < 0 || yy >= h { continue }
+                    for dx in -1...1 {
+                        let xx = x + dx
+                        if xx < 0 || xx >= w { continue }
+                        let j = yy * w + xx
+                        if ink[j] != 0 && inkC[j] == 0 && seen[j] == 0 {
+                            seen[j] = 1
+                            queue[tail] = j
+                            tail += 1
+                        }
+                    }
+                }
+            }
+            if Float(x1 - x0 + 1) > big && Float(y1 - y0 + 1) > big {
+                any = true
+                continue
+            }
+            for q in 0..<tail { inkC[queue[q]] = 1 }
+        }
+        return any
+    }
+
     /// Ô thuộc vạch mảnh, thẳng, dài hơn longLine điểm ảnh (thành phần liên thông 8 hướng của các ô blk; tỷ số trị riêng >
     /// 30, như clusters). Trả về mảng ô (1 = thuộc vạch).
     static func lineBlocks(_ blk: [UInt8], _ bw: Int, _ bh: Int, _ d: Int, _ longLine: Float) -> [UInt8] {
@@ -1185,9 +1246,9 @@ enum Flatten {
         return out
     }
 
-    /// Lan 8 hướng, không giới hạn bước, từ các ô có mực màu rõ (col = 2) qua các ô hơi có màu (col = 1). Trả về mảng ô
-    /// (1 = tới được), nil nếu không có ô mực màu rõ nào.
-    static func colorReach(_ col: [UInt8], _ bw: Int, _ bh: Int) -> [UInt8]? {
+    /// Lan 8 hướng, tối đa lim bước, từ các ô có mực màu rõ (col = 2) qua các ô hơi có màu (col = 1). Trả về mảng ô
+    /// (khác 0 = tới được: số bước + 1, tối đa 255), nil nếu không có ô mực màu rõ nào.
+    static func colorReach(_ col: [UInt8], _ bw: Int, _ bh: Int, _ lim: Int) -> [UInt8]? {
         let nb = bw * bh
         var queue = [Int]()
         var out = [UInt8]()
@@ -1206,6 +1267,8 @@ enum Flatten {
         while head < tail {
             let i = queue[head]
             head += 1
+            let dd = Int(out[i])
+            if dd > lim { continue }
             let x = i % bw, y = i / bw
             for dy in -1...1 {
                 let yy = y + dy
@@ -1215,7 +1278,7 @@ enum Flatten {
                     if xx < 0 || xx >= bw { continue }
                     let j = yy * bw + xx
                     if col[j] == 0 || out[j] != 0 { continue }
-                    out[j] = 1
+                    out[j] = UInt8(min(255, dd + 1))
                     queue[tail] = j
                     tail += 1
                 }
