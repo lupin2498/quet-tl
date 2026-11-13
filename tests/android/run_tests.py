@@ -1699,8 +1699,9 @@ def t_monkey():
 
 # ----------------------------------------------------------------------------- làm đẹp / chỉnh sửa trang
 
-FILTER_ORDER = ["Nguyên gốc", "Làm sáng", "Tăng cường", "Thần kỳ", "Khử nhiễu", "Không bóng", "Ko viết tay", "Đen trắng", "Thang xám"]
-F_MAGIC, F_GRAY, F_BW, F_PRO, F_DENOISE, F_NOSHADOW, F_NOHAND = 1, 3, 4, 5, 6, 7, 8
+# thứ tự trong bảng lọc = Enhancer.MODES (ORIGINAL, LIGHTEN, MAGIC, MAGIC_PRO, FLATTEN, DENOISE, NO_SHADOW, NO_HAND, BW, GRAY)
+FILTER_ORDER = ["Nguyên gốc", "Làm sáng", "Tăng cường", "Thần kỳ", "Làm phẳng", "Khử nhiễu", "Không bóng", "Ko viết tay", "Đen trắng", "Thang xám"]
+F_MAGIC, F_GRAY, F_BW, F_PRO, F_DENOISE, F_NOSHADOW, F_NOHAND, F_FLATTEN = 1, 3, 4, 5, 6, 7, 8, 9
 # Ảnh thử tests/images/edit_page.jpg (sinh bằng tests/tools/make_retouch_images.py): vị trí các chi tiết trên trang
 # ĐÃ NẮN PHẲNG, chuẩn hoá theo bề ngang / bề cao trang: (u1, v1, u2, v2)
 R_FINGER = (0.005, 0.42, 0.05, 0.485)        # đầu ngón tay giữ giấy ở mép trái
@@ -1711,6 +1712,15 @@ R_SCRIBBLE_TOP = (0.565, 0.237, 0.868, 0.273)  # nét bút xanh vắt qua đầu
 R_ROW9 = (0.18, 0.546, 0.31, 0.562)          # chữ "Bộ lưu điện" trong bảng
 R_ROW9_LINE = (0.19, 0.533, 0.30, 0.544)     # đường kẻ ngang phía trên dòng đó
 PAGE_RATIO = 970.0 / 1373.0
+# Ảnh thử tests/images/wavy_page.jpg (tests/tools/make_wavy_images.py, trang wv_mixed "chụp" nghiêng trên mặt bàn): biểu mẫu
+# giấy nhàu — bảng 10 dòng + hàng tiêu đề (12 đường kẻ ngang, 6 đường kẻ dọc) bị uốn lượn, nếp gấp ngang cắt qua giữa bảng,
+# nếp gấp dọc giữa trang, chữ ký bút xanh, con dấu đỏ, hai vết vân tay. Vị trí trên trang ĐÃ NẮN PHẲNG theo 4 góc, chuẩn hoá
+# (u1, v1, u2, v2):
+R_WV_TABLE = (0.12, 0.235, 0.89, 0.625)      # bề ngang bảng (trong hai đường kẻ dọc ngoài cùng) x dải chứa các đường kẻ ngang
+R_WV_CLEAN = (0.42, 0.70, 0.58, 0.95)        # giấy trắng giữa chữ ký và con dấu, nếp gấp dọc chạy qua
+R_WV_STAMP = (0.62, 0.77, 0.80, 0.90)        # con dấu đỏ
+R_WV_SIGN = (0.14, 0.81, 0.40, 0.88)         # chữ ký bút xanh
+R_WV_TEXT = (0.185, 0.29, 0.50, 0.59)        # chữ trong cột "Tên thiết bị" (hàng 1–10)
 
 
 def density():
@@ -1865,9 +1875,43 @@ def frac(im, box, kind):
         c = sum(1 for r, g, b in px if b > r + 40 and b > 90)
     elif kind == "skin":
         c = sum(1 for r, g, b in px if r > 120 and r - b > 45)
+    elif kind == "nonwhite":
+        # không còn trắng hẳn (độ sáng < 200): vệt nếp gấp, bóng mờ, vết bẩn còn sót trên giấy trắng
+        c = sum(1 for r, g, b in px if r * 299 + g * 587 + b * 114 < 200000)
     else:
         raise ValueError(kind)
     return c / float(max(1, len(px)))
+
+
+def dark_rows(im, box):
+    """Tỷ lệ điểm tối (như frac 'dark') của từng hàng điểm ảnh trong vùng chuẩn hoá box, từ trên xuống."""
+    W, H = im.size
+    x0, y0 = int(box[0] * W), int(box[1] * H)
+    x1, y1 = max(x0 + 1, int(box[2] * W)), max(y0 + 1, int(box[3] * H))
+    w = x1 - x0
+    px = list(im.crop((x0, y0, x1, y1)).getdata())
+    return [sum(1 for r, g, b in px[i:i + w] if r * 299 + g * 587 + b * 114 < 128000) / float(w) for i in range(0, len(px), w)]
+
+
+def straight_rows(im, box, cover=0.6):
+    """Số hàng điểm ảnh tối trên >= cover bề ngang vùng: đường kẻ ngang thẳng cho vài hàng như vậy, đường kẻ uốn lượn
+    thì không (mỗi hàng chỉ cắt qua một đoạn ngắn của nó)."""
+    return sum(1 for c in dark_rows(im, box) if c >= cover)
+
+
+def text_dark(im, box, rule=0.5):
+    """Tỷ lệ điểm tối của chữ trong vùng, bỏ các hàng là đường kẻ ngang (tối trên >= rule bề ngang vùng)."""
+    rows = [c for c in dark_rows(im, box) if c < rule]
+    return sum(rows) / float(max(1, len(rows)))
+
+
+def save_page(im, name):
+    """Lưu ảnh kết quả của trang (đã kéo về) cạnh ảnh chụp màn hình để xem lại."""
+    shot_no[0] += 1
+    try:
+        im.save(os.path.join(OUT, "screens", "%02d_%s.jpg" % (shot_no[0], name)), quality=85)
+    except Exception as e:
+        log("không lưu được ảnh trang", e)
 
 
 def page_mapper(view_desc):
@@ -1983,6 +2027,67 @@ def t_filters_new():
     shot("filters_document")
     d = read_doc(doc_id)
     if d is None or d.get("draft") or d["pages"][0].get("filter") != F_NOHAND:
+        raise AssertionError("Tài liệu lưu sai bộ lọc: %s" % (d and d["pages"][0].get("filter")))
+
+
+def t_flatten():
+    """Bộ lọc "Làm phẳng" trên ảnh chụp biểu mẫu giấy nhàu: so với bộ lọc mặc định (Tăng cường), đường kẻ bảng được nắn
+    thẳng, nếp gấp trên giấy trắng bị xoá, chữ trong bảng + con dấu đỏ + chữ ký xanh vẫn còn; tài liệu lưu đúng bộ lọc."""
+    doc_id = import_to_editor(["wavy_page.jpg"])
+    pg = wait_page(doc_id, lambda p: p.get("out") and p.get("finger"), 90, "xử lý trang (bộ lọc mặc định)")
+    time.sleep(1.5)
+    shot("flatten_default")
+    editor_tool("Bộ lọc")
+    time.sleep(2.5)
+    shot("flatten_panel")
+    if pg.get("filter") != F_MAGIC:
+        # ảnh đối chứng luôn là bộ lọc Tăng cường (mặc định hiện nay của trang mới)
+        log("bộ lọc mặc định của trang mới: %s -> chọn Tăng cường làm ảnh đối chứng" % pg.get("filter"))
+        prev = pg["out"]
+        filter_pick("Tăng cường")
+        pg = wait_page(doc_id, lambda p: p.get("filter") == F_MAGIC and p.get("out") not in (None, prev), 90, "bộ lọc Tăng cường")
+    im1 = page_image(doc_id)
+    prev = pg["out"]
+    filter_pick("Làm phẳng")
+    pg = wait_page(doc_id, lambda p: p.get("filter") == F_FLATTEN and p.get("out") not in (None, prev), 120, "bộ lọc Làm phẳng")
+    time.sleep(2.0)
+    shot("filter_flatten")
+    im9 = page_image(doc_id)
+    if im1 is not None and im9 is not None:
+        save_page(im1, "flatten_out_default")
+        save_page(im9, "flatten_out_flatten")
+        rows1, rows9 = straight_rows(im1, R_WV_TABLE), straight_rows(im9, R_WV_TABLE)
+        fold1, fold9 = frac(im1, R_WV_CLEAN, "nonwhite"), frac(im9, R_WV_CLEAN, "nonwhite")
+        red1, red9 = frac(im1, R_WV_STAMP, "red"), frac(im9, R_WV_STAMP, "red")
+        blue1, blue9 = frac(im1, R_WV_SIGN, "blue"), frac(im9, R_WV_SIGN, "blue")
+        text1, text9 = text_dark(im1, R_WV_TEXT), text_dark(im9, R_WV_TEXT)
+        log("Tăng cường -> Làm phẳng: hàng kẻ thẳng %d -> %d, nếp gấp trên giấy trắng %.4f -> %.4f, con dấu đỏ %.3f -> %.3f, "
+            "chữ ký xanh %.4f -> %.4f, chữ trong bảng %.4f -> %.4f" % (rows1, rows9, fold1, fold9, red1, red9, blue1, blue9, text1, text9))
+        # ảnh thử phải đúng như mong đợi: bảng uốn lượn, có vệt nếp gấp, con dấu, chữ ký, chữ ở các vùng đo
+        if rows1 > 3 or fold1 < 0.006 or red1 < 0.08 or blue1 < 0.02 or text1 < 0.03:
+            raise AssertionError("Ảnh thử không có bảng uốn lượn / nếp gấp / con dấu / chữ ký / chữ ở vị trí mong đợi "
+                                 "(Tăng cường: %d hàng kẻ thẳng, nếp gấp %.4f, đỏ %.3f, xanh %.4f, chữ %.4f)" % (rows1, fold1, red1, blue1, text1))
+        # (a) thẳng: đường kẻ ngang của bảng nằm trên một hàng điểm ảnh (Tăng cường: 0 hàng; Làm phẳng trên máy tính: ~25)
+        if rows9 < 7 or rows9 <= rows1:
+            raise AssertionError("Làm phẳng chưa nắn thẳng đường kẻ bảng (%d hàng kẻ thẳng, Tăng cường %d)" % (rows9, rows1))
+        # (b) sạch: vệt nếp gấp dọc trên giấy trắng bị xoá (Tăng cường ~0,019; Làm phẳng ~0)
+        if fold9 > 0.003:
+            raise AssertionError("Làm phẳng chưa xoá vệt nếp gấp trên giấy trắng (%.4f, Tăng cường %.4f)" % (fold9, fold1))
+        # (c) giữ nội dung: con dấu đỏ, chữ ký xanh, chữ trong bảng (bỏ các hàng là đường kẻ; chữ bị xoá hết thì còn ~0,004)
+        if red9 < red1 * 0.5:
+            raise AssertionError("Làm phẳng làm mất con dấu đỏ (%.3f -> %.3f)" % (red1, red9))
+        if blue9 < blue1 * 0.4:
+            raise AssertionError("Làm phẳng làm mất chữ ký bút xanh (%.4f -> %.4f)" % (blue1, blue9))
+        if text9 < 0.02:
+            raise AssertionError("Làm phẳng làm mất chữ trong bảng (%.4f -> %.4f)" % (text1, text9))
+    tap(desc="Đóng bộ lọc")
+    time.sleep(1.0)
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(2.0)
+    shot("flatten_document")
+    d = read_doc(doc_id)
+    if d is None or d.get("draft") or d["pages"][0].get("filter") != F_FLATTEN:
         raise AssertionError("Tài liệu lưu sai bộ lọc: %s" % (d and d["pages"][0].get("filter")))
 
 
@@ -2338,6 +2443,7 @@ def main():
         step("Nhập ảnh %s" % n, t_import(n))
     step("Nhập nhiều ảnh", t_import_multi)
     step("Bộ lọc mới + lời nhắc ngón tay", t_filters_new)
+    step("Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)", t_flatten)
     step("Xóa thông minh", t_smart_erase)
     step("Đánh dấu (ký tên, chữ, brush, khảm, hình mờ)", t_markup)
     step("Tiêu đề trang + Cắt dán", t_header_collage)

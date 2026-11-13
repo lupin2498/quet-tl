@@ -63,6 +63,7 @@ final class SelfTest {
     private var beautyId = ""
     private var statBefore = [String: Double]()
     private var marksBefore = [Mark]()
+    private var flattenId = ""
 
     private init(nav: UINavigationController) {
         self.nav = nav
@@ -450,13 +451,15 @@ final class SelfTest {
             self.check(n == 5, "danh sách cuối: 5 tài liệu (\(n))")
         }
         addBeautifySteps()
+        addFlattenSteps()
         addRegressionSteps()
         next()
     }
 
     // MARK: làm đẹp / chỉnh sửa trang
 
-    private enum Stat { case dark, red, blue, skin }
+    /// nonWhite: không còn trắng hẳn (độ sáng < 200) — vệt nếp gấp, bóng mờ, vết bẩn còn sót trên giấy trắng.
+    private enum Stat { case dark, red, blue, skin, nonWhite }
 
     /// Ảnh thử edit_page.jpg (tests/tools/make_retouch_images.py): vị trí các chi tiết trên trang ĐÃ NẮN PHẲNG (chuẩn hoá).
     private static let rFinger = CGRect(x: 0.005, y: 0.42, width: 0.045, height: 0.065)
@@ -468,10 +471,16 @@ final class SelfTest {
     private static let rRow9Line = CGRect(x: 0.19, y: 0.533, width: 0.11, height: 0.011)
     private static let rBrush = CGRect(x: 0.25, y: 0.103, width: 0.30, height: 0.010)
 
+    /// Điểm ảnh RGBX của ảnh kết quả một trang, cạnh dài không quá 1400 (nil nếu không đọc được).
+    private func outPixels(_ doc: Doc?, _ index: Int) -> (data: [UInt8], w: Int, h: Int)? {
+        guard let d = doc, index >= 0, index < d.pages.count, let o = d.pages[index].out,
+              let cg = ImageOps.loadCG(DocStore.shared.url(d, o)) else { return nil }
+        return ImageOps.rgbaPixels(cg, maxDim: 1400)
+    }
+
     /// Tỷ lệ điểm ảnh thuộc một loại trong vùng chuẩn hoá của ảnh kết quả một trang (-1 nếu không đọc được).
     private func stat(_ doc: Doc?, _ index: Int, _ kind: Stat, _ box: CGRect) -> Double {
-        guard let d = doc, index >= 0, index < d.pages.count, let o = d.pages[index].out,
-              let cg = ImageOps.loadCG(DocStore.shared.url(d, o)), let px = ImageOps.rgbaPixels(cg, maxDim: 1400) else { return -1 }
+        guard let px = outPixels(doc, index) else { return -1 }
         let x0 = max(0, min(px.w - 1, Int(box.minX * CGFloat(px.w)))), x1 = min(px.w, max(x0 + 1, Int(box.maxX * CGFloat(px.w))))
         let y0 = max(0, min(px.h - 1, Int(box.minY * CGFloat(px.h)))), y1 = min(px.h, max(y0 + 1, Int(box.maxY * CGFloat(px.h))))
         var c = 0, n = 0
@@ -485,6 +494,7 @@ final class SelfTest {
                 case .red: hit = r > 140 && g < 115 && b < 115
                 case .blue: hit = b > r + 40 && b > 90
                 case .skin: hit = r > 120 && r - b > 45
+                case .nonWhite: hit = r * 299 + g * 587 + b * 114 < 200000
                 }
                 if hit { c += 1 }
                 n += 1
@@ -888,6 +898,172 @@ final class SelfTest {
             self.home?.reload()
         }
         addWait(0.8)
+    }
+
+    // MARK: Làm phẳng (giấy nhàu, gấp nếp)
+
+    /// Ảnh thử wavy_page.jpg (tests/tools/make_wavy_images.py, trang wv_mixed "chụp" nghiêng trên mặt bàn): biểu mẫu giấy nhàu —
+    /// bảng 10 dòng + hàng tiêu đề (12 đường kẻ ngang, 6 đường kẻ dọc) bị uốn lượn, nếp gấp ngang cắt qua giữa bảng, nếp gấp dọc
+    /// giữa trang, chữ ký bút xanh, con dấu đỏ, hai vết vân tay. Vị trí trên trang ĐÃ NẮN PHẲNG theo 4 góc (chuẩn hoá) — cùng các
+    /// vùng R_WV_* của tests/android/run_tests.py.
+    private static let wvTable = CGRect(x: 0.12, y: 0.235, width: 0.77, height: 0.39)   // bề ngang bảng x dải các đường kẻ ngang
+    private static let wvClean = CGRect(x: 0.42, y: 0.70, width: 0.16, height: 0.25)    // giấy trắng có nếp gấp dọc chạy qua
+    private static let wvStamp = CGRect(x: 0.62, y: 0.77, width: 0.18, height: 0.13)    // con dấu đỏ
+    private static let wvSign = CGRect(x: 0.14, y: 0.81, width: 0.26, height: 0.07)     // chữ ký bút xanh
+    private static let wvText = CGRect(x: 0.185, y: 0.29, width: 0.315, height: 0.30)   // chữ trong cột "Tên thiết bị" (hàng 1–10)
+
+    /// Tỷ lệ điểm tối (như .dark) của từng hàng điểm ảnh trong vùng chuẩn hoá box, ảnh kết quả trang đang sửa (rỗng nếu không đọc được).
+    private func darkRows(_ box: CGRect) -> [Double] {
+        guard let px = outPixels(editor?.doc, editor?.index ?? 0) else { return [] }
+        let x0 = max(0, min(px.w - 1, Int(box.minX * CGFloat(px.w))))
+        let x1 = min(px.w, max(x0 + 1, Int(box.maxX * CGFloat(px.w))))
+        let y0 = max(0, min(px.h - 1, Int(box.minY * CGFloat(px.h))))
+        let y1 = min(px.h, max(y0 + 1, Int(box.maxY * CGFloat(px.h))))
+        let width = Double(x1 - x0)
+        var rows = [Double]()
+        for y in y0..<y1 {
+            var c = 0
+            for x in x0..<x1 {
+                let i = (y * px.w + x) * 4
+                let r = Int(px.data[i]), g = Int(px.data[i + 1]), b = Int(px.data[i + 2])
+                if r * 299 + g * 587 + b * 114 < 128000 { c += 1 }
+            }
+            rows.append(Double(c) / width)
+        }
+        return rows
+    }
+
+    /// Số hàng điểm ảnh tối trên >= 60% bề ngang vùng: đường kẻ ngang thẳng cho vài hàng như vậy, đường kẻ uốn lượn thì không
+    /// (mỗi hàng chỉ cắt qua một đoạn ngắn của nó). -1 nếu không đọc được ảnh.
+    private func straightRows(_ box: CGRect) -> Int {
+        let rows = darkRows(box)
+        if rows.isEmpty { return -1 }
+        return rows.filter { $0 >= 0.6 }.count
+    }
+
+    /// Tỷ lệ điểm tối của chữ trong vùng, bỏ các hàng là đường kẻ ngang (tối trên >= 50% bề ngang vùng). -1 nếu không đọc được ảnh.
+    private func textDark(_ box: CGRect) -> Double {
+        let rows = darkRows(box).filter { $0 < 0.5 }
+        if rows.isEmpty { return -1 }
+        let sum = rows.reduce(0.0, +)
+        return sum / Double(rows.count)
+    }
+
+    /// Chép ảnh kết quả của trang đang sửa vào thư mục kết quả tự kiểm thử (xem lại trên nhánh ci/ios).
+    private func saveOut(_ name: String) {
+        guard let d = editor?.doc, let o = editor?.current?.out else { return }
+        let dst = SelfTest.outDir.appendingPathComponent(name + ".jpg")
+        try? FileManager.default.removeItem(at: dst)
+        try? FileManager.default.copyItem(at: DocStore.shared.url(d, o), to: dst)
+    }
+
+    /// Bộ lọc "Làm phẳng" trên ảnh chụp biểu mẫu giấy nhàu: so với bộ lọc mặc định (Tăng cường), đường kẻ bảng được nắn thẳng,
+    /// nếp gấp trên giấy trắng bị xoá, chữ trong bảng + con dấu đỏ + chữ ký xanh vẫn còn; tài liệu lưu đúng bộ lọc, xuất được PDF.
+    private func addFlattenSteps() {
+        addRun("nhập ảnh biểu mẫu giấy nhàu") {
+            if let img = SelfTest.testImage("wavy_page") { self.home?.importImages([img]) } else { self.check(false, "thiếu ảnh thử wavy_page.jpg") }
+        }
+        addUntil("màn hình cắt (giấy nhàu)", 20) { self.crop != nil }
+        addUntil("tự tìm mép giấy (giấy nhàu)", 20) {
+            // khung cắt rời góc ảnh = đã tìm thấy mép giấy (lúc đầu khung là cả ảnh)
+            guard let q = self.crop?.testQuad, q.count == 4 else { return false }
+            return q[0].x > 1 && q[0].y > 1
+        }
+        addWait(0.6)
+        addRun("Xong (giấy nhàu)") { self.crop?.doneTapped() }
+        addUntil("trình chỉnh sửa (giấy nhàu)", 60) { self.editorIdle() && self.editor?.current?.out != nil }
+        addWait(1.0)
+        addSnap("51_flatten_default")
+        addRun("ảnh đối chứng: bộ lọc Tăng cường") {
+            // Tăng cường là bộ lọc mặc định của trang mới; nếu mặc định đổi thì chọn lại để có cùng ảnh đối chứng
+            let f = self.editor?.current?.filter ?? -1
+            self.log("bộ lọc mặc định của trang mới: \(Enhancer.name(f)) (\(f))")
+            if f != Enhancer.magic { self.editor?.applyFilter(Enhancer.magic) }
+        }
+        addUntil("Tăng cường (giấy nhàu)", 60) { self.editorIdle() }
+        addRun("đo ảnh bộ lọc Tăng cường") {
+            self.flattenId = self.editor?.doc.id ?? ""
+            let f = self.editor?.current?.filter ?? -1
+            self.check(f == Enhancer.magic, "ảnh đối chứng dùng bộ lọc Tăng cường (\(f))")
+            self.saveOut("flatten_out_default")
+            self.statBefore["wvRows"] = Double(self.straightRows(SelfTest.wvTable))
+            self.statBefore["wvFold"] = self.cur(.nonWhite, SelfTest.wvClean)
+            self.statBefore["wvRed"] = self.cur(.red, SelfTest.wvStamp)
+            self.statBefore["wvBlue"] = self.cur(.blue, SelfTest.wvSign)
+            self.statBefore["wvText"] = self.textDark(SelfTest.wvText)
+        }
+        addRun("mở bảng lọc + Làm phẳng") {
+            self.editor?.toggleFilterPanel()
+            self.editor?.applyFilter(Enhancer.flatten)
+        }
+        addUntil("Làm phẳng xong", 120) { self.editorIdle() }
+        addWait(1.0)
+        addSnap("52_filter_flatten")
+        addRun("kiểm tra Làm phẳng") { self.checkFlatten() }
+        addRun("✓ giữ bộ lọc") { self.editor?.closeFilterPanel(keep: true) }
+        addWait(0.6)
+        addRun("lưu tài liệu Làm phẳng") {
+            let kept = self.editor?.current?.filter == Enhancer.flatten
+            let closed = self.editor?.filterPanelVisible == false
+            self.check(kept && closed, "✓ đóng bảng lọc, giữ bộ lọc Làm phẳng")
+            self.editor?.finishEditing(done: true)
+        }
+        addUntil("tài liệu Làm phẳng", 60) { self.docVC != nil && self.docVC?.rendering == false }
+        addWait(1.0)
+        addSnap("53_flatten_document")
+        addRun("kiểm tra tài liệu Làm phẳng + PDF, dọn dẹp") {
+            let saved = DocStore.shared.load(self.flattenId)
+            var ok = false
+            if let d = saved, let p = d.pages.first {
+                ok = !d.draft && d.pages.count == 1 && p.filter == Enhancer.flatten
+            }
+            self.check(ok, "tài liệu lưu 1 trang với bộ lọc Làm phẳng")
+            if let d = self.docVC?.doc { self.checkPdf(d, label: "PDF trang Làm phẳng", file: "flatten") }
+            self.nav.popToRootViewController(animated: false)
+            if let d = saved { DocStore.shared.delete(d) }
+            self.home?.reload()
+        }
+        addWait(0.8)
+    }
+
+    /// So ảnh kết quả "Làm phẳng" với ảnh bộ lọc mặc định đã đo (cùng ngưỡng với t_flatten của tests/android/run_tests.py;
+    /// trên máy tính: hàng kẻ thẳng 0 -> ~25, nếp gấp 0,019 -> 0, đỏ 0,165 -> 0,158, xanh 0,059 -> 0,050, chữ 0,082 -> 0,043).
+    private func checkFlatten() {
+        let isFlat = editor?.current?.filter == Enhancer.flatten
+        check(isFlat, "trang dùng bộ lọc Làm phẳng")
+        saveOut("flatten_out_flatten")
+        let rows1 = Int(statBefore["wvRows"] ?? -1)
+        let fold1 = statBefore["wvFold"] ?? -1
+        let red1 = statBefore["wvRed"] ?? -1
+        let blue1 = statBefore["wvBlue"] ?? -1
+        let text1 = statBefore["wvText"] ?? -1
+        let rows9 = straightRows(SelfTest.wvTable)
+        let fold9 = cur(.nonWhite, SelfTest.wvClean)
+        let red9 = cur(.red, SelfTest.wvStamp)
+        let blue9 = cur(.blue, SelfTest.wvSign)
+        let text9 = textDark(SelfTest.wvText)
+        // ảnh thử phải đúng như mong đợi: bảng uốn lượn, có vệt nếp gấp, con dấu, chữ ký, chữ ở các vùng đo
+        let wavy = rows1 >= 0 && rows1 <= 3
+        let folded = fold1 >= 0.006
+        let inked = red1 >= 0.08 && blue1 >= 0.02
+        let texted = text1 >= 0.03
+        var msg = "ảnh thử có bảng uốn lượn, nếp gấp, con dấu, chữ ký, chữ ở vị trí mong đợi (Tăng cường: \(rows1) hàng kẻ thẳng"
+        msg += ", nếp gấp \(f3(fold1)), đỏ \(f3(red1))"
+        msg += ", xanh \(f3(blue1)), chữ \(f3(text1)))"
+        check(wavy && folded && inked && texted, msg)
+        // (a) thẳng: đường kẻ ngang của bảng nằm trên một hàng điểm ảnh
+        let straight = rows9 >= 7 && rows9 > rows1
+        check(straight, "Làm phẳng nắn thẳng đường kẻ bảng (hàng kẻ thẳng \(rows1) -> \(rows9))")
+        // (b) sạch: vệt nếp gấp dọc trên giấy trắng bị xoá
+        let clean = fold9 >= 0 && fold9 <= 0.003
+        check(clean, "Làm phẳng xoá vệt nếp gấp trên giấy trắng (\(f3(fold1)) -> \(f3(fold9)))")
+        // (c) giữ nội dung: con dấu đỏ, chữ ký xanh, chữ trong bảng (bỏ các hàng là đường kẻ; chữ bị xoá hết thì còn ~0,004)
+        let redKept = red9 > 0 && red9 >= red1 * 0.5
+        check(redKept, "Làm phẳng giữ con dấu đỏ (\(f3(red1)) -> \(f3(red9)))")
+        let blueKept = blue9 > 0 && blue9 >= blue1 * 0.4
+        check(blueKept, "Làm phẳng giữ chữ ký bút xanh (\(f3(blue1)) -> \(f3(blue9)))")
+        let textKept = text9 >= 0.02
+        check(textKept, "Làm phẳng giữ chữ trong bảng (\(f3(text1)) -> \(f3(text9)))")
     }
 
     /// Kiểm tra lại các lỗi đã sửa ở bản 1.2 (chạm đúp, đóng giữa chừng, trang lỗi, mở ảnh từ ứng dụng khác...).
@@ -1379,11 +1555,18 @@ final class SelfTest {
         }
     }
 
-    private func checkPdf(_ d: Doc, label: String) {
+    /// file: tên (không đuôi) của bản PDF ghi vào thư mục kết quả; mặc định test_<số trang>p.
+    private func checkPdf(_ d: Doc, label: String, file: String? = nil) {
+        var pdfName = "test_\(d.pages.count)p"
+        var pngName = "pdf_\(d.pages.count)p_page1"
+        if let f = file {
+            pdfName = f
+            pngName = f + "_page1"
+        }
         do {
             let job = try ImageOps.exportJob(doc: d)
             let data = try Data(contentsOf: try ImageOps.exportPDF(job: job))
-            try data.write(to: SelfTest.outDir.appendingPathComponent("test_\(d.pages.count)p.pdf"))
+            try data.write(to: SelfTest.outDir.appendingPathComponent(pdfName + ".pdf"))
             // bản ghi theo luồng (đọc từng trang từ đĩa) phải trùng từng byte với bản tạo trong bộ nhớ
             let jpegs = try job.files.map { try Data(contentsOf: $0) }
             let same = try PdfWriter.make(jpegs: jpegs, sizeMode: job.pdfSize, title: job.title) == data
@@ -1404,7 +1587,7 @@ final class SelfTest {
                         c.scaleBy(x: k, y: -k)
                         c.drawPDFPage(page)
                     }
-                    try? img.pngData()?.write(to: SelfTest.outDir.appendingPathComponent("pdf_\(d.pages.count)p_page1.png"))
+                    try? img.pngData()?.write(to: SelfTest.outDir.appendingPathComponent(pngName + ".png"))
                 }
             }
             check(head.hasPrefix("%PDF-1.4") && tail.contains("%%EOF") && pages == d.pages.count && same,
