@@ -47,6 +47,8 @@ public final class Flatten {
     static final int GROW_Q = 204, WEAK_Q = 219;
     /** Mực màu (con dấu, bút xanh) là nội dung. */
     static final float SEED_CHROMA = 0.20f, WEAK_CHROMA = 0.12f;
+    /** Ảnh nhỏ (ảnh thu nhỏ của bảng lọc, cạnh dài < 600): nét chữ chỉ còn vài điểm ảnh — mọi điểm tối hơn GROW_Q là lõi. */
+    static final int SMALL_L = 600;
     static final float TONE_BP = 0.20f, TONE_WP = 0.86f;
     /** Mặt nạ "mực lỏng" (tối hơn 0,90) để tìm đường kẻ bảng mảnh / nhạt. */
     static final int LOOSE_Q = 230;
@@ -164,6 +166,7 @@ public final class Flatten {
         byte[] bs = new byte[nb];
         int k = an.k, aw = an.aw, ah = an.ah;
         byte[] rule = an.rule, rule2 = an.rule2;
+        boolean small = L < SMALL_L;
         for (int y = 0; y < h; y++) {
             int off = y * w, boff = (y / d) * bw;
             int ay = y / k;
@@ -172,7 +175,7 @@ public final class Flatten {
                 int q = lq[off + x] & 255;
                 int f = cls[off + x];
                 int b = boff + x / d;
-                boolean seed = q < dq || (f & 1) != 0 || (q < tq && keepB[b] != 0);
+                boolean seed = q < dq || (f & 1) != 0 || (q < tq && keepB[b] != 0) || (small && q < GROW_Q);
                 if (roff >= 0) {
                     int ax = x / k;
                     if (ax < aw) {

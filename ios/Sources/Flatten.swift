@@ -40,6 +40,8 @@ enum Flatten {
     static let growQ = 204, weakQ = 219
     /// Mực màu (con dấu, bút xanh) là nội dung.
     static let seedChroma: Float = 0.20, weakChroma: Float = 0.12
+    /// Ảnh nhỏ (ảnh thu nhỏ của bảng lọc, cạnh dài < 600): nét chữ chỉ còn vài điểm ảnh — mọi điểm tối hơn growQ là lõi.
+    static let smallL = 600
     static let toneBP: Float = 0.20, toneWP: Float = 0.86
     /// Mặt nạ "mực lỏng" (tối hơn 0,90) để tìm đường kẻ bảng mảnh / nhạt.
     static let looseQ = 230
@@ -169,6 +171,7 @@ enum Flatten {
             // ô: 3 = có lõi đậm (lan xa), 2 = có lõi nhạt (lan ngắn), 1 = có điểm hơi tối (được lan qua)
             var bs = [UInt8](repeating: 0, count: nb)
             let k = an.k, aw = an.aw, ah = an.ah
+            let small = L < smallL
             let hasRule = an.rule != nil, hasRule2 = an.rule2 != nil
             let rule = an.rule ?? [], rule2 = an.rule2 ?? []
             let ruleQ = an.ruleQ, ruleQ2 = an.ruleQ2
@@ -180,7 +183,7 @@ enum Flatten {
                     let q = Int(lq[off + x])
                     let f = Int(cls[off + x])
                     let b = boff + x / d
-                    var seed = q < dq || (f & 1) != 0 || (q < tq && keepB[b] != 0)
+                    var seed = q < dq || (f & 1) != 0 || (q < tq && keepB[b] != 0) || (small && q < growQ)
                     if roff >= 0 {
                         let ax = x / k
                         if ax < aw {
