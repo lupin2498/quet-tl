@@ -188,10 +188,16 @@ public class EditorActivity extends BaseActivity {
             public Bitmap compareBitmap(int i) {
                 return sourceBitmap(i);
             }
+
+            @Override
+            public Bitmap zoomBitmap(int i) {
+                return hiResBitmap(i);
+            }
         });
         strip.setListener(new PageStripView.Listener() {
             @Override
             public void onPageChanged(int index) {
+                dropHiRes();
                 updateIndicator();
                 updateBanner();
                 if (filterPanel.getVisibility() == View.VISIBLE) refreshFilterPanel();
@@ -674,6 +680,75 @@ public class EditorActivity extends BaseActivity {
         return "pv_" + Processor.warpName(p) + "_" + p.rot;
     }
 
+    // ---- ảnh độ phân giải cao cho trang đang phóng to (chỉ giữ MỘT ảnh, ngoài bộ đệm chung)
+
+    /** Cạnh dài tối thiểu của ảnh xem khi phóng to; ảnh kết quả đầy đủ dài tới Processor.MAX_OUT. */
+    private static final int HI_MAX = 2400;
+    private Bitmap hiBitmap;
+    private String hiKey, hiLoading;
+
+    private Bitmap hiResBitmap(int i) {
+        if (i < 0 || i >= doc.pages.size()) return null;
+        DocStore.Page p = doc.pages.get(i);
+        if (p.out == null || processing.contains(p.id)) return null;
+        if (p.out.equals(hiKey)) return hiBitmap != null && !hiBitmap.isRecycled() ? hiBitmap : null;
+        loadHiRes(p);
+        return null;
+    }
+
+    private void dropHiRes() {
+        Bitmap old = hiBitmap;
+        hiBitmap = null;
+        hiKey = null;
+        hiLoading = null;
+        if (old != null && !old.isRecycled()) old.recycle();
+    }
+
+    private void loadHiRes(DocStore.Page p) {
+        final String key = p.out;
+        if (key == null || key.equals(hiLoading)) return;
+        // máy ít bộ nhớ: ảnh đầy đủ ~35 MB có thể làm tràn bộ nhớ -> xem bằng ảnh thường
+        if (Runtime.getRuntime().maxMemory() < 160L * 1024 * 1024) return;
+        Bitmap cur = cache.get(key);
+        final int have = cur == null ? 0 : Math.max(cur.getWidth(), cur.getHeight());
+        hiLoading = key;
+        final String path = doc.file(key).getPath();
+        Processor.IO.execute(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap b = null;
+                try {
+                    int[] bd = ImageUtil.bounds(path);
+                    // ảnh thường đã đủ nét (trang nhỏ) thì không cần nạp thêm
+                    if (Math.max(bd[0], bd[1]) > have * 1.2f) b = ImageUtil.decodeSampled(path, HI_MAX);
+                } catch (Throwable ignored) {
+                }
+                final Bitmap fb = b;
+                Ui.MAIN.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!key.equals(hiLoading) || !Ui.alive(EditorActivity.this)) {
+                            if (fb != null) fb.recycle();
+                            return;
+                        }
+                        hiLoading = null;
+                        DocStore.Page c = current();
+                        if (c == null || !key.equals(c.out)) {
+                            if (fb != null) fb.recycle();
+                            return;
+                        }
+                        Bitmap old = hiBitmap;
+                        hiBitmap = fb;
+                        // nạp không được (hoặc không cần): vẫn ghi nhận khoá để không nạp lại mỗi lần vẽ
+                        hiKey = key;
+                        if (old != null && old != fb && !old.isRecycled()) old.recycle();
+                        strip.invalidate();
+                    }
+                });
+            }
+        });
+    }
+
     private void loadOut(DocStore.Page p) {
         final String key = p.out;
         if (key == null || loading.contains(key)) return;
@@ -852,6 +927,8 @@ public class EditorActivity extends BaseActivity {
     private void rotateLeft() {
         DocStore.Page p = current();
         if (p == null) return;
+        // trang xoay thì vùng đang xem không còn ý nghĩa -> về vừa khung
+        strip.resetZoom();
         p.rot = (p.rot + 270) % 360;
         dirty = true;
         DocStore.save(doc);
@@ -1232,6 +1309,7 @@ public class EditorActivity extends BaseActivity {
                 p.srcH = sz[1];
             }
             dirty = true;
+            strip.resetZoom();
             DocStore.save(doc);
             schedule(p);
         } else if (req == REQ_RETAKE) {
@@ -1347,6 +1425,7 @@ public class EditorActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         dismissWait();
+        dropHiRes();
         super.onDestroy();
     }
 }

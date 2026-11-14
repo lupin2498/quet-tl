@@ -183,14 +183,53 @@ final class SelfTest {
         addUntil("trình chỉnh sửa sẵn sàng", 40) { (self.editor?.pending ?? 1) == 0 }
         addWait(1.0)
         addSnap("04_editor")
+        // --- phóng to trang bằng hai ngón (ở đây gọi thẳng vùng cuộn phóng to của ô trang) ---
+        addRun("phóng to trang 2,5 lần") {
+            self.check(abs((self.editor?.zoomScale ?? 0) - 1) < 0.001, "trình chỉnh sửa mở ở mức vừa khung")
+            self.editor?.testZoom(2.5)
+        }
+        addWait(0.8)
+        addSnap("04b_editor_zoom")
+        addRun("kiểm tra phóng to") {
+            let z = self.editor?.zoomScale ?? 0
+            let f = self.editor?.testImageFrame ?? .zero
+            let vw = self.editor?.view.bounds.width ?? 0
+            self.check(abs(z - 2.5) < 0.01, "phóng to trang: mức 2,5× (\(z))")
+            self.check(vw > 0 && f.width > vw * 1.5, "phóng to: ảnh trang rộng hơn khung (\(Int(f.width)) / \(Int(vw)))")
+        }
+        addUntil("ảnh đầy đủ khi phóng to", 20) { self.editor?.testShowsHiRes == true }
         addRun("mở bảng lọc") { self.editor?.toggleFilterPanel() }
         addWait(1.5)
         addSnap("05_filters")
+        addRun("kiểm tra giữ mức phóng khi mở bảng lọc") {
+            let z = self.editor?.zoomScale ?? 0
+            self.check(abs(z - 2.5) < 0.01, "mở bảng lọc: vẫn phóng 2,5× (\(z))")
+        }
         addRun("lọc Đen trắng") { self.editor?.applyFilter(Enhancer.bw) }
         addUntil("áp bộ lọc", 40) { (self.editor?.pending ?? 1) == 0 }
         addWait(0.8)
         addSnap("06_filter_bw")
-        addRun("kiểm tra bộ lọc") { self.check(self.editor?.current?.filter == Enhancer.bw, "trang 1 dùng bộ lọc Đen trắng") }
+        addRun("kiểm tra bộ lọc") {
+            self.check(self.editor?.current?.filter == Enhancer.bw, "trang 1 dùng bộ lọc Đen trắng")
+            let z = self.editor?.zoomScale ?? 0
+            self.check(abs(z - 2.5) < 0.01, "đổi bộ lọc khi đang phóng to: vẫn phóng 2,5× (\(z))")
+        }
+        addUntil("ảnh đầy đủ của bộ lọc mới", 20) { self.editor?.testShowsHiRes == true }
+        addRun("giữ So sánh khi đang phóng") { self.editor?.testCompare(true) }
+        addWait(0.5)
+        addSnap("06b_zoom_compare")
+        addRun("thả So sánh, về vừa khung") {
+            self.editor?.testCompare(false)
+            self.editor?.testZoom(1)
+        }
+        addWait(0.5)
+        addRun("kiểm tra về vừa khung") {
+            let z = self.editor?.zoomScale ?? 0
+            let f = self.editor?.testImageFrame ?? .zero
+            let vw = self.editor?.view.bounds.width ?? 0
+            self.check(abs(z - 1) < 0.001, "về vừa khung: mức 1× (\(z))")
+            self.check(f.width <= vw + 1, "về vừa khung: ảnh trang nằm trong khung (\(Int(f.width)) / \(Int(vw)))")
+        }
         addRun("xoay trái") { self.editor?.rotateLeft() }
         addUntil("xoay", 40) { (self.editor?.pending ?? 1) == 0 }
         addWait(0.8)

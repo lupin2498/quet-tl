@@ -2595,6 +2595,155 @@ def t_header_collage():
 
 
 
+# ----------------------------------------------------------------------------- phóng to bằng hai ngón
+
+def monkey_script(cmds, wait_ms=400):
+    """Chạy một kịch bản monkey: thao tác chạm chính xác mà `input` không làm được (PinchZoom hai ngón, chạm đúp...)."""
+    lines = ["type= user", "count= 1", "speed= 1.0", "start data >>"] + list(cmds) + ["UserWait(%d)" % wait_ms]
+    adb("shell", "cat > /sdcard/qt_script.txt", inp=("\n".join(lines) + "\n").encode(), timeout=20)
+    out = sh("monkey -f /sdcard/qt_script.txt 1", timeout=90)
+    if "Events injected" not in out:
+        log("monkey script:", out.strip()[-300:])
+    time.sleep(0.8)
+
+
+def pinch(cx, cy, d0, d1, steps=20):
+    """Hai ngón đặt hai bên điểm (cx, cy), mỗi ngón cách nó d0 điểm ảnh theo phương ngang, rồi dang ra / chụm lại tới d1."""
+    monkey_script(["PinchZoom(%d,%d,%d,%d,%d,%d,%d,%d,%d)" % (cx - d0, cy, cx - d1, cy, cx + d0, cy, cx + d1, cy, steps)])
+
+
+def strip_state():
+    """Dải trang của trình chỉnh sửa: (khung, trang đang xem, số trang, mức phóng) đọc từ mô tả của nó
+    ("Trang 1/2" hoặc "Trang 1/2, phóng 2,5×")."""
+    for _ in range(4):
+        root = dump()
+        for n in nodes(root):
+            m = re.match(r"Trang (\d+)/(\d+)(?:, phóng ([\d,]+)×)?$", n.get("content-desc", ""))
+            if m:
+                z = float(m.group(3).replace(",", ".")) if m.group(3) else 1.0
+                return rect(n), int(m.group(1)), int(m.group(2)), z
+        time.sleep(1.0)
+    raise AssertionError("Không thấy dải trang của trình chỉnh sửa")
+
+
+def edge_dark(box):
+    """Tỷ lệ điểm không trắng ở dải sát mép trái của dải trang (giữa chiều cao): vừa khung thì đó là nền tối của màn hình,
+    phóng to thì trang giấy tràn tới mép. None nếu thiếu Pillow."""
+    im = screen_image()
+    if im is None:
+        return None
+    x1, y1, x2, y2 = box
+    w, h = x2 - x1, y2 - y1
+    return frac(im.crop((x1, y1 + int(h * 0.35), x1 + max(2, int(w * 0.04)), y1 + int(h * 0.65))), (0, 0, 1, 1), "nonwhite")
+
+
+def t_pinch_zoom():
+    """Phóng to bằng hai ngón ở trình chỉnh sửa: dang hai ngón để phóng, một ngón kéo ảnh mà không lật trang, mức phóng giữ
+    nguyên khi mở bảng lọc và đổi bộ lọc, chạm đúp về vừa khung / phóng lại, sang trang khác thì về vừa khung, chụm hai ngón
+    để thu nhỏ, vừa khung thì vuốt lật trang như cũ."""
+    doc_id = import_to_editor(["doc_1_wood.jpg", "doc_4_beige.jpg"])
+    d = wait_doc(doc_id, lambda d: len(d["pages"]) == 2 and all(p.get("out") for p in d["pages"]), 150, "xử lý 2 trang")
+    time.sleep(2.0)
+    box, page, total, z = strip_state()
+    if (page, total) != (1, 2) or z != 1.0:
+        raise AssertionError("Trình chỉnh sửa không mở ở trang 1/2 vừa khung: trang %d/%d, phóng %.1f" % (page, total, z))
+    x1, y1, x2, y2 = box
+    cx, cy, w = (x1 + x2) // 2, (y1 + y2) // 2, x2 - x1
+    e0 = edge_dark(box)
+    shot("zoom_fit")
+    # dang hai ngón (khoảng cách x4) -> phóng to quanh giữa trang
+    pinch(cx, cy, int(w * 0.07), int(w * 0.28))
+    box, page, total, z1 = strip_state()
+    e1 = edge_dark(box)
+    shot("zoom_in")
+    log("phóng to: %.1f× (mép trái không trắng %s -> %s)" % (z1, e0, e1))
+    if z1 < 2.0:
+        raise AssertionError("Dang hai ngón không phóng to trang (mức phóng %.1f)" % z1)
+    if e0 is not None and e1 is not None and not (e0 > 0.9 and e1 < 0.75):
+        raise AssertionError("Ảnh trang không tràn khung khi phóng to (mép trái không trắng %.2f -> %.2f)" % (e0, e1))
+    # một ngón kéo ngang khi đang phóng: kéo ảnh, KHÔNG lật trang, không đổi mức phóng
+    before = screen_image()
+    swipe((int(cx + w * 0.25), cy), (int(cx - w * 0.25), cy), 500)
+    box, page, total, z2 = strip_state()
+    after = screen_image()
+    if page != 1 or abs(z2 - z1) > 0.05:
+        raise AssertionError("Kéo một ngón khi đang phóng to: trang %d, phóng %.1f (trước đó %.1f)" % (page, z2, z1))
+    if before is not None and after is not None:
+        a = before.crop((x1, y1, x2, y2)).convert("L").resize((64, 64))
+        b = after.crop((x1, y1, x2, y2)).convert("L").resize((64, 64))
+        diff = sum(abs(p - q) for p, q in zip(rgb_pixels(a), rgb_pixels(b))) / (64.0 * 64.0)
+        log("kéo ảnh khi đang phóng: khác biệt trung bình %.1f" % diff)
+        if diff < 2.0:
+            raise AssertionError("Kéo một ngón khi đang phóng to không dời ảnh (khác biệt %.1f)" % diff)
+    # mở bảng lọc + đổi bộ lọc: vẫn giữ mức phóng (xem chi tiết từng bộ lọc)
+    editor_tool("Bộ lọc")
+    time.sleep(2.5)
+    _, page, total, z3 = strip_state()
+    if abs(z3 - z1) > 0.05:
+        raise AssertionError("Mở bảng lọc làm mất mức phóng (%.1f -> %.1f)" % (z1, z3))
+    prev = d["pages"][0]["out"]
+    filter_pick("Đen trắng")
+    wait_page(doc_id, lambda p: p.get("filter") == F_BW and p.get("out") not in (None, prev), 90, "bộ lọc Đen trắng khi đang phóng")
+    time.sleep(2.5)
+    box3, page, total, z4 = strip_state()
+    shot("zoom_filter_bw")
+    if page != 1 or abs(z4 - z1) > 0.05:
+        raise AssertionError("Đổi bộ lọc khi đang phóng to: trang %d, phóng %.1f (trước đó %.1f)" % (page, z4, z1))
+    # giữ So sánh khi đang phóng: không được làm mất mức phóng
+    hold(text="So sánh", ms=1200)
+    time.sleep(0.8)
+    _, _, _, z5 = strip_state()
+    if abs(z5 - z1) > 0.05:
+        raise AssertionError("Giữ So sánh làm mất mức phóng (%.1f -> %.1f)" % (z1, z5))
+    tap(desc="Đóng bộ lọc")
+    time.sleep(1.2)
+    box, page, total, z = strip_state()
+    x1, y1, x2, y2 = box
+    cx, cy, w = (x1 + x2) // 2, (y1 + y2) // 2, x2 - x1
+    # chạm đúp: về vừa khung; chạm đúp lần nữa: phóng 2,5 lần
+    fast_taps([(cx, cy), (cx, cy)], gap_ms=90)
+    time.sleep(1.0)
+    _, _, _, z = strip_state()
+    if z != 1.0:
+        raise AssertionError("Chạm đúp khi đang phóng to không về vừa khung (%.1f)" % z)
+    time.sleep(0.6)
+    fast_taps([(cx, cy), (cx, cy)], gap_ms=90)
+    time.sleep(1.0)
+    _, _, _, z = strip_state()
+    shot("zoom_double_tap")
+    if abs(z - 2.5) > 0.05:
+        raise AssertionError("Chạm đúp ở mức vừa khung không phóng 2,5 lần (%.1f)" % z)
+    # sang trang sau: trang mới ở mức vừa khung
+    tap(desc="Trang sau")
+    time.sleep(1.5)
+    box, page, total, z = strip_state()
+    if page != 2 or z != 1.0:
+        raise AssertionError("Sang trang sau khi đang phóng to: trang %d, phóng %.1f" % (page, z))
+    # phóng to trang 2 rồi chụm hai ngón để thu về vừa khung
+    pinch(cx, cy, int(w * 0.07), int(w * 0.28))
+    _, _, _, z = strip_state()
+    if z < 2.0:
+        raise AssertionError("Dang hai ngón ở trang 2 không phóng to (%.1f)" % z)
+    pinch(cx, cy, int(w * 0.30), int(w * 0.03))
+    _, page, _, z = strip_state()
+    if page != 2 or z != 1.0:
+        raise AssertionError("Chụm hai ngón không thu về vừa khung: trang %d, phóng %.1f" % (page, z))
+    # vừa khung: vuốt ngang lật trang như cũ
+    swipe((int(cx - w * 0.3), cy), (int(cx + w * 0.3), cy), 300)
+    time.sleep(1.2)
+    _, page, _, z = strip_state()
+    shot("zoom_back_to_page1")
+    if page != 1 or z != 1.0:
+        raise AssertionError("Vuốt lật trang sau khi thu nhỏ: trang %d, phóng %.1f" % (page, z))
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(1.5)
+    d = read_doc(doc_id)
+    if d is None or d.get("draft") or len(d["pages"]) != 2 or d["pages"][0].get("filter") != F_BW:
+        raise AssertionError("Tài liệu lưu sai sau khi phóng to + đổi bộ lọc")
+
+
+
 def screen_size():
     out = sh("wm size")
     m = re.findall(r"(\d+)x(\d+)", out)
@@ -2621,6 +2770,7 @@ def main():
     for n in ["doc_1_wood.jpg", "doc_4_beige.jpg", "doc_5_blue.jpg"]:
         step("Nhập ảnh %s" % n, t_import(n))
     step("Nhập nhiều ảnh", t_import_multi)
+    step("Phóng to bằng hai ngón (trình chỉnh sửa, bộ lọc)", t_pinch_zoom)
     step("Bộ lọc mới + lời nhắc ngón tay", t_filters_new)
     step("Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)", t_flatten)
     step("Làm phẳng + Xóa thông minh + Đánh dấu", t_flatten_edit)
