@@ -1,0 +1,21 @@
+{
+ "passed": 3,
+ "total": 3,
+ "results": [
+  {
+   "step": "Cài đặt",
+   "ok": true,
+   "sec": 23.8
+  },
+  {
+   "step": "Mở ứng dụng",
+   "ok": true,
+   "sec": 6.6
+  },
+  {
+   "step": "Chuyển sang Word (nhận dạng chữ, bảng, huỷ, chia sẻ / lưu)",
+   "ok": true,
+   "sec": 71.0
+  }
+ ]
+}

@@ -1,0 +1,313 @@
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:40.032  3934  4117 E ProviderInstaller: Failed to install provider: null
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: Google play services not available
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: fux
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at hnk.a(Unknown Source)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:40.161  2375  2604 E Icing   : Aborting indexing of corpus movies
+11-14 09:27:40.178  2375  2604 E Icing   : Aborting indexing of corpus shows
+11-14 09:27:40.272  4134  4134 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:40.273  4134  4134 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:40.312  4134  4134 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:40.312  4134  4134 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:40.317  4134  4134 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+11-14 09:27:40.339  1646  2020 I ActivityManager: START u0 {flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity} from uid 2000 on display 0
+11-14 09:27:40.369  1646  1657 I ActivityManager: Start proc 4148:vn.quettailieu.scanner/u0a78 for activity vn.quettailieu.scanner/.MainActivity
+11-14 09:27:40.583  1311  1682 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:27:40.689  4148  4166 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+11-14 09:27:40.689  4148  4166 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+11-14 09:27:41.246  1646  1667 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +888ms
+11-14 09:27:41.250  4134  4134 D AndroidRuntime: Shutting down VM
+11-14 09:27:41.283  2375  2572 E GmsClient: unable to connect to service: com.google.android.gms.auth.key.retrieval.service.START on com.google.android.gms
+11-14 09:27:41.314  1646  1667 I WindowManager: Destroying surface Surface(name=Starting vn.quettailieu.scanner) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:27:41.548  1403  1843 E MetadataRetrieverClient: failed to extract an album art
+11-14 09:27:41.570  1403  1843 E MetadataRetrieverClient: failed to extract an album art
+11-14 09:27:41.680  1403  1942 E MetadataRetrieverClient: failed to extract an album art
+11-14 09:27:41.700  1403  1403 E MetadataRetrieverClient: failed to extract an album art
+11-14 09:27:41.754  2978  4191 E GmsUtils: Failed to connect to Google API client: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+11-14 09:27:43.352  1646  1751 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-14 09:27:43.952  4195  4195 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:43.953  4195  4195 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:44.160  4195  4195 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:44.160  4195  4195 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:44.164  4195  4195 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:45.219  4195  4195 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80009249; boundsInParent: Rect(0, 0 - 0, 47); boundsInScreen: Rect(1038, 526 - 1038, 573); packageName: vn.quettailieu.scanner; className: android.widget.TextView; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:45.231  4195  4195 D AndroidRuntime: Shutting down VM
+11-14 09:27:45.379  4221  4221 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:45.380  4221  4221 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:45.461  4221  4221 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:45.461  4221  4221 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:45.465  4221  4221 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:46.487  4221  4221 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80009250; boundsInParent: Rect(0, 0 - 0, 47); boundsInScreen: Rect(1038, 526 - 1038, 573); packageName: vn.quettailieu.scanner; className: android.widget.TextView; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:46.492  4221  4221 D AndroidRuntime: Shutting down VM
+11-14 09:27:46.551  1311  1325 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:27:46.913  4254  4254 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:46.914  4254  4254 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:46.955  4254  4254 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:46.955  4254  4254 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:46.960  4254  4254 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:47.981  4254  4254 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80009257; boundsInParent: Rect(0, 0 - 0, 47); boundsInScreen: Rect(1038, 526 - 1038, 573); packageName: vn.quettailieu.scanner; className: android.widget.TextView; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:47.987  4254  4254 D AndroidRuntime: Shutting down VM
+11-14 09:27:49.216  4284  4284 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:49.217  4284  4284 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:49.246  4284  4284 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:49.246  4284  4284 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:49.250  4284  4284 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+11-14 09:27:49.258  1646  3567 I ActivityManager: START u0 {act=vn.quettailieu.scanner.TEST_IMPORT flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity (has extras)} from uid 2000 on display 0
+11-14 09:27:49.261  4284  4284 D AndroidRuntime: Shutting down VM
+11-14 09:27:49.689  1646  1667 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +425ms
+11-14 09:27:49.732  1646  1816 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+11-14 09:27:49.876  1646  2211 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+11-14 09:27:51.069  1646  1667 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +1s189ms
+11-14 09:27:51.254  1646  1816 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+11-14 09:27:52.765  1646  1751 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-14 09:27:52.771  4316  4316 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:52.772  4316  4316 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:52.800  4316  4316 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:52.800  4316  4316 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:52.804  4316  4316 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:53.069  3934  4327 E ProviderInstaller: Failed to install provider: null
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: Google play services not available
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: fux
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at hnk.a(Unknown Source)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@8001a82f; boundsInParent: Rect(0, 0 - 63, 63); boundsInScreen: Rect(894, 2131 - 880, 2194); packageName: vn.quettailieu.scanner; className: android.widget.ImageView; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@800182a5; boundsInParent: Rect(0, 0 - 3, 89); boundsInScreen: Rect(1031, 2143 - 880, 2232); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80013b52; boundsInParent: Rect(0, 0 - 189, 173); boundsInScreen: Rect(1045, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80013f13; boundsInParent: Rect(0, 0 - 231, 173); boundsInScreen: Rect(1234, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@800142d4; boundsInParent: Rect(0, 0 - 189, 173); boundsInScreen: Rect(1465, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80014695; boundsInParent: Rect(0, 0 - 189, 173); boundsInScreen: Rect(1654, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80014a56; boundsInParent: Rect(0, 0 - 234, 173); boundsInScreen: Rect(1843, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80018666; boundsInParent: Rect(0, 0 - 3, 89); boundsInScreen: Rect(2088, 2143 - 880, 2232); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80014e17; boundsInParent: Rect(0, 0 - 189, 173); boundsInScreen: Rect(2102, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@800151d8; boundsInParent: Rect(0, 0 - 218, 173); boundsInScreen: Rect(2291, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.828  4316  4316 D AndroidRuntime: Shutting down VM
+11-14 09:27:53.977  4332  4332 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:53.978  4332  4332 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:54.004  4332  4332 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:54.004  4332  4332 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:54.008  4332  4332 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:27:54.014  4332  4332 D AndroidRuntime: Shutting down VM
+11-14 09:27:54.032  1646  1658 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+11-14 09:27:54.330  1646  1667 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +284ms
+11-14 09:27:54.400  1646  2211 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+11-14 09:27:56.665  1311  1323 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:27:57.078  4357  4357 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:57.079  4357  4357 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:57.109  4357  4357 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:57.109  4357  4357 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:57.113  4357  4357 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:57.539  1646  1751 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-14 09:27:58.134  4357  4357 D AndroidRuntime: Shutting down VM
+11-14 09:27:58.294  4374  4374 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:58.295  4374  4374 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:58.323  4374  4374 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:58.324  4374  4374 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:58.327  4374  4374 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:59.348  4374  4374 D AndroidRuntime: Shutting down VM
+11-14 09:27:59.495  4387  4387 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:59.496  4387  4387 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:59.521  4387  4387 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:59.521  4387  4387 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:59.525  4387  4387 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:27:59.530  4387  4387 D AndroidRuntime: Shutting down VM
+11-14 09:28:01.163  1311  1323 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:01.614  4405  4405 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:01.616  4405  4405 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:01.684  4405  4405 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:01.684  4405  4405 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:01.696  4405  4405 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:02.731  4405  4405 D AndroidRuntime: Shutting down VM
+11-14 09:28:02.888  4418  4418 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:02.889  4418  4418 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:02.915  4418  4418 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:02.915  4418  4418 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:02.919  4418  4418 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:02.926  4418  4418 D AndroidRuntime: Shutting down VM
+11-14 09:28:03.130  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:03.144  4148  4431 W GooglePlayServicesUtil: Google Play services out of date for vn.quettailieu.scanner.  Requires 203400000 but found 202414023
+11-14 09:28:04.042  4450  4450 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:04.043  4450  4450 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:04.101  4450  4450 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:04.101  4450  4450 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:04.105  4450  4450 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:05.147  4450  4450 D AndroidRuntime: Shutting down VM
+11-14 09:28:05.542  4470  4470 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:05.543  4470  4470 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:05.621  4470  4470 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:05.621  4470  4470 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:05.634  4470  4470 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:05.651  4470  4470 D AndroidRuntime: Shutting down VM
+11-14 09:28:05.830  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:12.058  4148  4431 W GooglePlayServicesUtil: Google Play services out of date for vn.quettailieu.scanner.  Requires 203400000 but found 202414023
+11-14 09:28:18.428  4509  4509 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:18.429  4509  4509 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:18.456  4509  4509 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:18.456  4509  4509 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:18.460  4509  4509 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:19.480  4509  4509 D AndroidRuntime: Shutting down VM
+11-14 09:28:19.632  4522  4522 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:19.632  4522  4522 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:19.656  4522  4522 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:19.656  4522  4522 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:19.660  4522  4522 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:19.665  4522  4522 D AndroidRuntime: Shutting down VM
+11-14 09:28:21.383  4532  4532 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:21.384  4532  4532 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:21.413  4532  4532 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:21.413  4532  4532 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:21.418  4532  4532 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:22.464  4532  4532 D AndroidRuntime: Shutting down VM
+11-14 09:28:22.622  4545  4545 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:22.623  4545  4545 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:22.648  4545  4545 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:22.648  4545  4545 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:22.652  4545  4545 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:22.657  4545  4545 D AndroidRuntime: Shutting down VM
+11-14 09:28:22.851  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:28:23.146  3934  4569 E ProviderInstaller: Failed to install provider: null
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: Google play services not available
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: fux
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at hnk.a(Unknown Source)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:28:24.863  1311  1323 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: Background execution failure.
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: java.lang.SecurityException: Permission denied (missing INTERNET permission?)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.net.Inet6AddressImpl.lookupHostByName(Inet6AddressImpl.java:119)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.net.Inet6AddressImpl.lookupAllHostAddr(Inet6AddressImpl.java:74)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.net.InetAddress.getAllByName(InetAddress.java:752)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.Network$1.resolveInetAddresses(Network.java:29)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.RouteSelector.resetNextInetSocketAddress(RouteSelector.java:187)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.RouteSelector.nextProxy(RouteSelector.java:156)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.RouteSelector.next(RouteSelector.java:98)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.HttpEngine.createNextConnection(HttpEngine.java:345)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:328)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:246)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:457)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.connect(HttpURLConnectionImpl.java:126)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getOutputStream(HttpURLConnectionImpl.java:257)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getOutputStream(DelegatingHttpsURLConnection.java:218)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getOutputStream(HttpsURLConnectionImpl.java)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.cct.CctTransportBackend.doSend(CctTransportBackend.java:304)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.cct.CctTransportBackend.access$lambda$0(CctTransportBackend.java)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.cct.CctTransportBackend$$Lambda$1.apply(CctTransportBackend.java)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.retries.Retries.retry(Retries.java:54)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.cct.CctTransportBackend.send(CctTransportBackend.java:373)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.scheduling.jobscheduling.Uploader.logAndUpdateState(Uploader.java:121)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.scheduling.jobscheduling.Uploader.lambda$upload$1(Uploader.java:88)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.scheduling.jobscheduling.Uploader$$Lambda$1.run(Uploader.java)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.SafeLoggingExecutor$SafeLoggingRunnable.run(SafeLoggingExecutor.java:47)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: Caused by: android.system.GaiException: android_getaddrinfo failed: EAI_NODATA (No address associated with hostname)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at libcore.io.Posix.android_getaddrinfo(Native Method)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:55)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.net.Inet6AddressImpl.lookupHostByName(Inet6AddressImpl.java:106)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	... 26 more
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: Caused by: android.system.ErrnoException: android_getaddrinfo failed: EACCES (Permission denied)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	... 29 more
+11-14 09:28:41.464  1646  1657 I ActivityManager: START u0 {act=android.intent.action.CHOOSER flg=0x1 cmp=android/com.android.internal.app.ChooserActivity clip={text/uri-list U:content://vn.quettailieu.scanner.share/Scan%2014-11-2026%2009.27.docx} (has extras)} from uid 10078 on display 0
+11-14 09:28:41.497  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:41.764  1311  4397 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:41.857  4638  4653 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+11-14 09:28:41.857  4638  4653 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+11-14 09:28:44.555  1311  1323 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:44.965  4669  4669 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:44.967  4669  4669 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:44.991  4669  4669 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:44.991  4669  4669 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:44.995  4669  4669 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:45.015  4669  4669 D AndroidRuntime: Shutting down VM
+11-14 09:28:47.088  4685  4685 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:47.089  4685  4685 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:47.158  4685  4685 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:47.158  4685  4685 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:47.164  4685  4685 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:48.186  4685  4685 D AndroidRuntime: Shutting down VM
+11-14 09:28:48.334  4698  4698 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:48.335  4698  4698 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:48.360  4698  4698 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:48.360  4698  4698 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:48.364  4698  4698 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:48.368  4698  4698 D AndroidRuntime: Shutting down VM
+11-14 09:28:49.085  4710  4710 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:49.086  4710  4710 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:49.113  4710  4710 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:49.113  4710  4710 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:49.118  4710  4710 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:50.174  4710  4710 D AndroidRuntime: Shutting down VM
+11-14 09:28:50.398  4723  4723 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:50.399  4723  4723 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:50.476  4723  4723 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:50.476  4723  4723 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:50.485  4723  4723 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:50.498  4723  4723 D AndroidRuntime: Shutting down VM
+11-14 09:28:50.740  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:50.864  1311  1325 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:51.009  4733  4778 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+11-14 09:28:51.009  4733  4778 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+11-14 09:28:51.183  4785  4785 E art     : The String#value field is not present on Android versions >= 6.0
+11-14 09:28:51.754  1646  2292 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+11-14 09:28:51.904  2375  2572 E GmsClient: unable to connect to service: com.google.android.gms.auth.key.retrieval.service.START on com.google.android.gms
+11-14 09:28:53.567  1646  1751 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-14 09:28:55.142  1311  1682 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:55.408  4888  4888 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:55.409  4888  4888 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:55.436  4888  4888 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:55.436  4888  4888 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:55.440  4888  4888 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:55.451  4888  4888 D AndroidRuntime: Shutting down VM

@@ -1,0 +1,1198 @@
+--------- beginning of main
+11-14 09:27:39.986  2375  2384 W SQLiteConnectionPool: A SQLiteConnection object for database '/data/user/0/com.google.android.gms/databases/lighter_registration.db' was leaked!  Please fix your application to end transactions in progress properly and to close the database when it is no longer needed.
+--------- beginning of system
+11-14 09:27:39.997  1646  2020 I Telecom : PhoneAccountRegistrar: SimCallManager queried, returning: null: TSI.gSCM@AE8
+11-14 09:27:39.998  3934  4117 I MS_RegisterService: RegisterService intent:Intent { act=register_intent_action flg=0x10 cmp=com.google.android.talk/com.google.android.libraries.matchstick.net.SilentRegisterService } isPeriodic:false
+11-14 09:27:40.006  3934  4117 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:27:40.006  3934  4117 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:27:40.008  2375  4115 I LT_StubFactory: tachyonHostName = instantmessaging-pa.googleapis.com and tachyonPortNumber = 443
+11-14 09:27:40.008  2375  4115 D LT_OkHttpChannelBuilder: Using Spatula header keyless authentication.
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: Unable to load native code from existing library /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at java.lang.Runtime.load0(Runtime.java:897)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at java.lang.System.load(System.java:1505)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):42)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:40.013  3934  4117 W GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: Unable to load native code from existing library /data/user_de/0/com.google.android.gms/app_extracted_libs/x86_64/libconscrypt_gmscore_jni.so
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/data/user_de/0/com.google.android.gms/app_extracted_libs/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at java.lang.Runtime.load0(Runtime.java:897)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at java.lang.System.load(System.java:1505)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):56)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:40.021  3934  4117 W GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:40.032  3934  4117 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:40.032  3934  4117 E ProviderInstaller: Failed to install provider: null
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: Google play services not available
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: fux
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at hnk.a(Unknown Source)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:40.033  3934  4117 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:40.034  4051  4051 W dex2oat : Compilation of boolean com.google.maps.api.android.lib6.streetview.gl.w.a(com.google.maps.api.android.lib6.streetview.gl.p, double, double, float[], com.google.maps.api.android.lib6.streetview.model.i, boolean) took 120.962ms
+11-14 09:27:40.062  3452  3452 I Babel_telephony: TeleModule.updateConnectionManagerRegistration, registration preference changed from false to false
+11-14 09:27:40.062  3452  3452 W Babel   : BAM#gBA: invalid account id: -1
+11-14 09:27:40.062  3452  3452 W Babel   : BAM#gBA: invalid account id: -1
+11-14 09:27:40.062  3452  3452 I Babel_telephony: TeleModule.updateIncomingCallRegistration, preferred account for incoming calls changed from: null to null
+11-14 09:27:40.064  1646  1741 I Telecom : PhoneAccountRegistrar: SimCallManager queried, returning: null: TSI.gSCM@AFE
+11-14 09:27:40.078  1760  1787 W GLSUser : [DeviceKeyStore] Cannot load key: Device key file not found.
+11-14 09:27:40.078  1760  1787 W GLSUser : [DeviceKeyStore] Cannot load key: Device key file not found.
+11-14 09:27:40.098  2375  4115 D LT_Lighter: finalizing
+11-14 09:27:40.098  2375  4115 D LT_LiMsgController: No accounts with open bind channel
+11-14 09:27:40.099  2375  4123 I LT_PhenotypeApiImplV12: Retrieve experiment configurations for: 
+11-14 09:27:40.101  2375  2375 I LT_PhenotypeApiImplV12: Phenotype registration succeeded
+11-14 09:27:40.107  2375  2375 D LT_ClntIntrcptrFctryV12: Spatula header: CjYKFmNvbS5nb29nbGUuYW5kcm9pZC5nbXMaHFdPSEVFejkwUWV3OUxDY0NjS0ZJQXRwSHVnND0YofrL8sS7oNU/
+11-14 09:27:40.161  2375  2604 I Icing   : Not indexing corpus from package com.google.android.videos as it has never connected
+11-14 09:27:40.161  2375  2604 E Icing   : Aborting indexing of corpus movies
+11-14 09:27:40.166  2375  2604 W Icing   : No valid account for uploading user actions
+11-14 09:27:40.178  2375  2604 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-14 09:27:40.178  2375  2604 I Icing   : Not indexing corpus from package com.google.android.videos as it has never connected
+11-14 09:27:40.178  2375  2604 E Icing   : Aborting indexing of corpus shows
+11-14 09:27:40.179  2252  4099 I UpdateIcingCorporaServi: UpdateCorporaTask done [took 398 ms] updated apps [took 398 ms] 
+11-14 09:27:40.272  4134  4134 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:40.273  4134  4134 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:40.282  4051  4051 W dex2oat : Compilation of void com.google.maps.api.android.lib6.streetview.network.k.a(com.google.maps.api.android.lib6.streetview.network.m, aha, byte[]) took 115.600ms
+11-14 09:27:40.299  4134  4134 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:40.302  4134  4134 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:40.310  3452  3471 W BabelGcmRegistration: Error registering for GCM
+11-14 09:27:40.312  4134  4134 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:40.312  4134  4134 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:40.313  4134  4134 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: java.io.IOException: DEPRECATED_ENDPOINT
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at gpx.a(Unknown Source)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at hso.a(SourceFile:38)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at eih.a(SourceFile:366)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at eih.doInBackground(SourceFile:361)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at android.os.AsyncTask$2.call(AsyncTask.java:304)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at java.util.concurrent.FutureTask.run(FutureTask.java:237)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at android.os.AsyncTask$SerialExecutor$1.run(AsyncTask.java:243)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+11-14 09:27:40.317  3452  3471 W BabelGcmRegistration: 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:27:40.317  4134  4134 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+11-14 09:27:40.334  1646  2210 D VoldConnector: SND -> {34 volume mkdirs /storage/emulated/0/Android/media/com.google.android.talk/}
+11-14 09:27:40.335  1646  1691 D VoldConnector: RCV <- {200 34 Command succeeded}
+11-14 09:27:40.339  1646  2020 I ActivityManager: START u0 {flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity} from uid 2000 on display 0
+11-14 09:27:40.340  2887  2887 D MediaScannerReceiver: action: android.intent.action.MEDIA_SCANNER_SCAN_FILE path: /storage/emulated/0/Android/media/com.google.android.talk/Notifications/hangouts_message.ogg
+11-14 09:27:40.362  4148  4148 I art     : Late-enabling -Xcheck:jni
+11-14 09:27:40.369  1646  1657 I ActivityManager: Start proc 4148:vn.quettailieu.scanner/u0a78 for activity vn.quettailieu.scanner/.MainActivity
+11-14 09:27:40.394  4148  4148 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:40.447  1311  1323 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+11-14 09:27:40.452  2887  2887 D MediaScannerReceiver: action: android.intent.action.MEDIA_SCANNER_SCAN_FILE path: /storage/emulated/0/Android/media/com.google.android.talk/Ringtones/hangouts_incoming_call.ogg
+11-14 09:27:40.560  2351  2453 D EGL_emulation: eglMakeCurrent: 0x7f33a98498c0: ver 3 0 (tinfo 0x7f33a980cfe0)
+11-14 09:27:40.583  1311  1682 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:27:40.585  4148  4148 D         : HostConnection::get() New Host Connection established 0x7f33a6fb4dc0, tid 4148
+11-14 09:27:40.668  4148  4166 D         : HostConnection::get() New Host Connection established 0x7f33a6fb4f40, tid 4166
+11-14 09:27:40.678  1760  3544 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:27:40.678  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:27:40.678  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:27:40.683  4148  4166 I OpenGLRenderer: Initialized EGL, version 1.4
+11-14 09:27:40.684  4148  4166 D OpenGLRenderer: Swap behavior 1
+11-14 09:27:40.685  4148  4166 D EGL_emulation: eglCreateContext: 0x7f33a6fb9f60: maj 3 min 0 rcv 3
+11-14 09:27:40.687  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:40.689  4148  4166 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+11-14 09:27:40.689  4148  4166 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+11-14 09:27:40.701  1760  3544 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:27:40.702  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:27:40.702  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:27:40.710  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:40.914  2887  3668 W MediaScanner: Error opening directory '/oem/media/', skipping: No such file or directory.
+11-14 09:27:40.915  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui; assuming invalid
+11-14 09:27:40.935  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Andromeda.ogg; assuming invalid
+11-14 09:27:40.937  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Aquila.ogg; assuming invalid
+11-14 09:27:40.938  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/ArgoNavis.ogg; assuming invalid
+11-14 09:27:40.947  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Atria.ogg; assuming invalid
+11-14 09:27:40.957  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/BOOTES.ogg; assuming invalid
+11-14 09:27:40.977  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Backroad.ogg; assuming invalid
+11-14 09:27:40.987  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/BeatPlucker.ogg; assuming invalid
+11-14 09:27:40.999  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/BentleyDubs.ogg; assuming invalid
+11-14 09:27:41.017  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Big_Easy.ogg; assuming invalid
+11-14 09:27:41.039  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/BirdLoop.ogg; assuming invalid
+11-14 09:27:41.040  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Bollywood.ogg; assuming invalid
+11-14 09:27:41.047  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/BussaMove.ogg; assuming invalid
+11-14 09:27:41.067  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/CANISMAJOR.ogg; assuming invalid
+11-14 09:27:41.077  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/CASSIOPEIA.ogg; assuming invalid
+11-14 09:27:41.087  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Cairo.ogg; assuming invalid
+11-14 09:27:41.107  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Calypso_Steel.ogg; assuming invalid
+11-14 09:27:41.110  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/CanisMajor.ogg; assuming invalid
+11-14 09:27:41.127  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/CaribbeanIce.ogg; assuming invalid
+11-14 09:27:41.137  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Carina.ogg; assuming invalid
+11-14 09:27:41.142  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Centaurus.ogg; assuming invalid
+11-14 09:27:41.143  2375  2604 I Icing   : Indexing com.google.android.gms-apps from com.google.android.gms
+11-14 09:27:41.144  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Champagne_Edition.ogg; assuming invalid
+11-14 09:27:41.153  1760  3931 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Updating password complexity components state.
+11-14 09:27:41.153  1760  3931 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.admin.DeviceAdminReceiver
+11-14 09:27:41.154  1760  3931 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.ui.SetNewPasswordActivity
+11-14 09:27:41.159  1760  4055 I aorp    : updateFromConfigurations using legacy put method [CONTEXT service_id=204 ]
+11-14 09:27:41.173  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Club_Cubano.ogg; assuming invalid
+11-14 09:27:41.175  1760  3544 I aopq    : Scheduling adaptive one off task with window [14400, 604800] in seconds [CONTEXT service_id=51 ]
+11-14 09:27:41.205  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/CrayonRock.ogg; assuming invalid
+11-14 09:27:41.236  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/CrazyDream.ogg; assuming invalid
+11-14 09:27:41.244  1760  4055 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Updating password complexity components state.
+11-14 09:27:41.244  1760  4055 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.admin.DeviceAdminReceiver
+11-14 09:27:41.244  1760  4055 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.ui.SetNewPasswordActivity
+11-14 09:27:41.245  4148  4148 I Choreographer: Skipped 31 frames!  The application may be doing too much work on its main thread.
+11-14 09:27:41.246  1646  1667 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +888ms
+11-14 09:27:41.248  2375  3564 I ChromeSync: [Sync,SyncIntentOperation] Handling the intent: Intent { act=com.google.android.gms.phenotype.COMMITTED flg=0x10 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }.
+11-14 09:27:41.250  4134  4134 D AndroidRuntime: Shutting down VM
+11-14 09:27:41.250  1646  1741 W ActivityManager: Unable to start service Intent { act=com.google.android.gms.auth.key.retrieval.service.START pkg=com.google.android.gms } U=0: not found
+11-14 09:27:41.253  2375  3564 I MdiSyncModule: flag handling is skipping irrelevant intent.
+11-14 09:27:41.254  2375  3976 W ModuleInitIntentOp: Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
+11-14 09:27:41.257  1760  3959 I PTCommittedOperation: Receive new configuration for com.google.android.gms.clearcut.public
+11-14 09:27:41.271  1646  1741 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@1953f26
+11-14 09:27:41.272  1760  4055 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Updating password complexity components state.
+11-14 09:27:41.272  1760  4055 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.admin.DeviceAdminReceiver
+11-14 09:27:41.272  1760  4055 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.ui.SetNewPasswordActivity
+11-14 09:27:41.283  2375  2572 E GmsClient: unable to connect to service: com.google.android.gms.auth.key.retrieval.service.START on com.google.android.gms
+11-14 09:27:41.283  1760  2510 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Updating password complexity components state.
+11-14 09:27:41.283  1760  2510 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.admin.DeviceAdminReceiver
+11-14 09:27:41.284  1760  2510 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.ui.SetNewPasswordActivity
+11-14 09:27:41.314  1646  1667 I WindowManager: Destroying surface Surface(name=Starting vn.quettailieu.scanner) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:27:41.341  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/CurveBall.ogg; assuming invalid
+11-14 09:27:41.352  1646  4116 I WindowManager: Destroying surface Surface(name=com.android.launcher3/com.android.launcher3.Launcher) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+11-14 09:27:41.352  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Cygnus.ogg; assuming invalid
+11-14 09:27:41.368  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/DancinFool.ogg; assuming invalid
+11-14 09:27:41.371  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Ding.ogg; assuming invalid
+11-14 09:27:41.372  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/DonMessWivIt.ogg; assuming invalid
+11-14 09:27:41.377  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Draco.ogg; assuming invalid
+11-14 09:27:41.379  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/DreamTheme.ogg; assuming invalid
+11-14 09:27:41.392  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Eastern_Sky.ogg; assuming invalid
+11-14 09:27:41.398  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Enter_the_Nexus.ogg; assuming invalid
+11-14 09:27:41.400  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Eridani.ogg; assuming invalid
+11-14 09:27:41.404  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/EtherShake.ogg; assuming invalid
+11-14 09:27:41.407  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/FreeFlight.ogg; assuming invalid
+11-14 09:27:41.407  2375  2604 I Icing   : Indexing done com.google.android.gms-apps
+11-14 09:27:41.408  2375  2604 I Icing   : Indexing com.google.android.gms-internal.3p:MobileApplication from com.google.android.gms
+11-14 09:27:41.411  2375  2604 I Icing   : Indexing com.google.android.googlequicksearchbox-applications_uri from com.google.android.googlequicksearchbox
+11-14 09:27:41.411  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/FriendlyGhost.ogg; assuming invalid
+11-14 09:27:41.412  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Funk_Yall.ogg; assuming invalid
+11-14 09:27:41.412  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/GameOverGuitar.ogg; assuming invalid
+11-14 09:27:41.413  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Gimme_Mo_Town.ogg; assuming invalid
+11-14 09:27:41.417  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Girtab.ogg; assuming invalid
+11-14 09:27:41.418  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Glacial_Groove.ogg; assuming invalid
+11-14 09:27:41.419  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Growl.ogg; assuming invalid
+11-14 09:27:41.420  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/HalfwayHome.ogg; assuming invalid
+11-14 09:27:41.427  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Hydra.ogg; assuming invalid
+11-14 09:27:41.430  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/InsertCoin.ogg; assuming invalid
+11-14 09:27:41.431  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Kuma.ogg; assuming invalid
+11-14 09:27:41.434  2375  2604 I Icing   : Indexing done com.google.android.gms-internal.3p:MobileApplication
+11-14 09:27:41.437  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/LoopyLounge.ogg; assuming invalid
+11-14 09:27:41.437  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/LoveFlute.ogg; assuming invalid
+11-14 09:27:41.443  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Lyra.ogg; assuming invalid
+11-14 09:27:41.444  2375  2604 I Icing   : Indexing done com.google.android.googlequicksearchbox-applications_uri
+11-14 09:27:41.445  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Machina.ogg; assuming invalid
+11-14 09:27:41.457  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/MidEvilJaunt.ogg; assuming invalid
+11-14 09:27:41.467  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/MildlyAlarming.ogg; assuming invalid
+11-14 09:27:41.468  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Nairobi.ogg; assuming invalid
+11-14 09:27:41.477  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Nassau.ogg; assuming invalid
+11-14 09:27:41.487  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/NewPlayer.ogg; assuming invalid
+11-14 09:27:41.497  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/No_Limits.ogg; assuming invalid
+11-14 09:27:41.507  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Noises1.ogg; assuming invalid
+11-14 09:27:41.517  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Noises2.ogg; assuming invalid
+11-14 09:27:41.527  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Noises3.ogg; assuming invalid
+11-14 09:27:41.530  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/OrganDub.ogg; assuming invalid
+11-14 09:27:41.532  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Orion.ogg; assuming invalid
+11-14 09:27:41.537  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/PERSEUS.ogg; assuming invalid
+11-14 09:27:41.538  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Paradise_Island.ogg; assuming invalid
+11-14 09:27:41.539  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Pegasus.ogg; assuming invalid
+11-14 09:27:41.539  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Perseus.ogg; assuming invalid
+11-14 09:27:41.540  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Playa.ogg; assuming invalid
+11-14 09:27:41.541  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Pyxis.ogg; assuming invalid
+11-14 09:27:41.542  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Rasalas.ogg; assuming invalid
+11-14 09:27:41.542  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Revelation.ogg; assuming invalid
+11-14 09:27:41.548  1403  1843 E MetadataRetrieverClient: failed to extract an album art
+11-14 09:27:41.549  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Rigel.ogg; assuming invalid
+11-14 09:27:41.550  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Ring_Classic_02.ogg; assuming invalid
+11-14 09:27:41.551  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Ring_Digital_02.ogg; assuming invalid
+11-14 09:27:41.551  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Ring_Synth_02.ogg; assuming invalid
+11-14 09:27:41.552  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Ring_Synth_04.ogg; assuming invalid
+11-14 09:27:41.553  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Road_Trip.ogg; assuming invalid
+11-14 09:27:41.553  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/RomancingTheTone.ogg; assuming invalid
+11-14 09:27:41.554  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Safari.ogg; assuming invalid
+11-14 09:27:41.554  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Savannah.ogg; assuming invalid
+11-14 09:27:41.555  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Scarabaeus.ogg; assuming invalid
+11-14 09:27:41.556  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Sceptrum.ogg; assuming invalid
+11-14 09:27:41.556  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Seville.ogg; assuming invalid
+11-14 09:27:41.557  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Shes_All_That.ogg; assuming invalid
+11-14 09:27:41.558  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/SilkyWay.ogg; assuming invalid
+11-14 09:27:41.558  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/SitarVsSitar.ogg; assuming invalid
+11-14 09:27:41.559  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Solarium.ogg; assuming invalid
+11-14 09:27:41.560  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/SpringyJalopy.ogg; assuming invalid
+11-14 09:27:41.560  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Steppin_Out.ogg; assuming invalid
+11-14 09:27:41.561  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Terminated.ogg; assuming invalid
+11-14 09:27:41.562  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Testudo.ogg; assuming invalid
+11-14 09:27:41.562  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Themos.ogg; assuming invalid
+11-14 09:27:41.563  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Third_Eye.ogg; assuming invalid
+11-14 09:27:41.563  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Thunderfoot.ogg; assuming invalid
+11-14 09:27:41.564  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/TwirlAway.ogg; assuming invalid
+11-14 09:27:41.564  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/URSAMINOR.ogg; assuming invalid
+11-14 09:27:41.565  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/UrsaMinor.ogg; assuming invalid
+11-14 09:27:41.565  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/VeryAlarmed.ogg; assuming invalid
+11-14 09:27:41.566  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Vespa.ogg; assuming invalid
+11-14 09:27:41.567  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/World.ogg; assuming invalid
+11-14 09:27:41.567  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/Zeta.ogg; assuming invalid
+11-14 09:27:41.568  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ringtones/hydra.ogg; assuming invalid
+11-14 09:27:41.570  1403  1843 E MetadataRetrieverClient: failed to extract an album art
+11-14 09:27:41.571  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/Dock.ogg; assuming invalid
+11-14 09:27:41.572  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/Effect_Tick.ogg; assuming invalid
+11-14 09:27:41.573  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/KeypressDelete.ogg; assuming invalid
+11-14 09:27:41.574  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/KeypressInvalid.ogg; assuming invalid
+11-14 09:27:41.575  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/KeypressReturn.ogg; assuming invalid
+11-14 09:27:41.576  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/KeypressSpacebar.ogg; assuming invalid
+11-14 09:27:41.577  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/KeypressStandard.ogg; assuming invalid
+11-14 09:27:41.578  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/Lock.ogg; assuming invalid
+11-14 09:27:41.578  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/LowBattery.ogg; assuming invalid
+11-14 09:27:41.579  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/Trusted.ogg; assuming invalid
+11-14 09:27:41.580  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/Undock.ogg; assuming invalid
+11-14 09:27:41.581  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/Unlock.ogg; assuming invalid
+11-14 09:27:41.582  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/VideoRecord.ogg; assuming invalid
+11-14 09:27:41.582  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/VideoStop.ogg; assuming invalid
+11-14 09:27:41.583  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/WirelessChargingStarted.ogg; assuming invalid
+11-14 09:27:41.584  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/camera_click.ogg; assuming invalid
+11-14 09:27:41.585  2887  3668 W MediaProvider: Missing volume for /system/media/audio/ui/camera_focus.ogg; assuming invalid
+11-14 09:27:41.598  2978  2978 D MusicLifecycle: com.google.android.music.store.MediaStoreImportService$Receiver generated event: Broadcast received with context android.app.ReceiverRestrictedContext@dd87110 and intent Intent { act=android.intent.action.MEDIA_SCANNER_FINISHED dat=file:///system/media flg=0x10 cmp=com.google.android.music/.store.MediaStoreImportService$Receiver }
+11-14 09:27:41.601  2978  2978 D MusicLifecycle: com.google.android.music.store.MediaStoreImportService$Receiver generated event: Broadcast received with context android.app.ReceiverRestrictedContext@dd87110 and intent Intent { act=android.intent.action.MEDIA_SCANNER_STARTED dat=file:///storage/emulated/0 flg=0x10 cmp=com.google.android.music/.store.MediaStoreImportService$Receiver }
+11-14 09:27:41.605  2978  2978 D MusicLifecycle: com.google.android.music.store.MediaStoreImportService generated event: Service created
+11-14 09:27:41.607  4051  4051 I dex2oat : dex2oat took 5.150s (threads: 2) arena alloc=5MB (5701064B) java alloc=3MB (3293024B) native alloc=10MB (10603800B) free=7MB (7746280B)
+11-14 09:27:41.607  2978  2978 D MusicLifecycle: com.google.android.music.store.MediaStoreImportService generated event: Service destroyed
+11-14 09:27:41.641  4187  4187 W dex2oat : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:41.641  4187  4187 I dex2oat : /system/bin/dex2oat --dex-file=/data/user_de/0/com.google.android.gms/app_chimera/m/00000000/AdsDynamite.apk --oat-fd=58 --oat-location=/data/user_de/0/com.google.android.gms/app_chimera/m/00000000/oat/x86_64/AdsDynamite.dex --compiler-filter=speed
+11-14 09:27:41.680  1403  1942 E MetadataRetrieverClient: failed to extract an album art
+11-14 09:27:41.700  1403  1403 E MetadataRetrieverClient: failed to extract an album art
+11-14 09:27:41.709  2887  3668 V MediaScanner: pruneDeadThumbnailFiles... android.content.ContentProviderClient$CursorWrapperInner@d029fb8
+11-14 09:27:41.709  2887  3668 V MediaScanner: /pruneDeadThumbnailFiles... android.content.ContentProviderClient$CursorWrapperInner@d029fb8
+11-14 09:27:41.714  2978  2978 D MusicLifecycle: com.google.android.music.store.MediaStoreImportService$Receiver generated event: Broadcast received with context android.app.ReceiverRestrictedContext@dd87110 and intent Intent { act=android.intent.action.MEDIA_SCANNER_FINISHED dat=file:///storage/emulated/0 flg=0x10 cmp=com.google.android.music/.store.MediaStoreImportService$Receiver }
+11-14 09:27:41.718  2978  2978 D MusicLifecycle: com.google.android.music.store.MediaStoreImportService generated event: Service created
+11-14 09:27:41.743  2978  4189 I MediaStoreImporter: Update: incremental Added music: 0 Updated music: 0 Deleted music: 0 Created playlists: 0 Updated playlists: 0 Deleted playlists: 0 Inserted playlist items: 0 Deleted playlist items: 0 Removed orphaned playlist items: 0
+11-14 09:27:41.744  2978  2978 D MusicLifecycle: com.google.android.music.wear.WearBroadcastReceiver generated event: Broadcast received with context android.app.ReceiverRestrictedContext@dd87110 and intent Intent { act=com.google.android.music.IMPORT_COMPLETE flg=0x10 cmp=com.google.android.music/.wear.WearBroadcastReceiver }
+11-14 09:27:41.745  2978  2978 D MusicLifecycle: com.google.android.music.store.MediaStoreImportService generated event: Service destroyed
+11-14 09:27:41.752  1760  1760 I Wear_Controller: Wear requires a companion app to be installed.
+11-14 09:27:41.752  1760  1760 I WearableService: onCreate: Wearable Services not starting. Wear is not available on this device.
+11-14 09:27:41.753  1760  1787 W WearableService: onGetService: Wear is not available on this device.
+11-14 09:27:41.754  2978  4191 E GmsUtils: Failed to connect to Google API client: ConnectionResult{statusCode=API_UNAVAILABLE, resolution=null, message=null}
+11-14 09:27:41.843  4187  4187 W dex2oat : Before Android 4.1, method double java.util.concurrent.ThreadLocalRandom.internalNextDouble(double, double) would have incorrectly overridden the package-private method in java.util.Random
+11-14 09:27:41.843  4187  4187 W dex2oat : Before Android 4.1, method int java.util.concurrent.ThreadLocalRandom.internalNextInt(int, int) would have incorrectly overridden the package-private method in java.util.Random
+11-14 09:27:41.843  4187  4187 W dex2oat : Before Android 4.1, method long java.util.concurrent.ThreadLocalRandom.internalNextLong(long, long) would have incorrectly overridden the package-private method in java.util.Random
+11-14 09:27:43.054  2375  4173 I Vision  : Requesting optional module download of ocr.
+11-14 09:27:43.054  2375  4173 I Vision  : Exceeded maximum feature download tries for ocr
+11-14 09:27:43.054  2375  4173 W Vision  : Request of optional module download of ocr failed.
+11-14 09:27:43.056  2375  4173 I Vision  : Checking for download completion for 78059 -- ocr
+11-14 09:27:43.352  1646  1751 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-14 09:27:43.952  4195  4195 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:43.953  4195  4195 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:43.954  4195  4195 I art     : RelocateImage: /system/bin/patchoat --input-image-location=/system/framework/boot.art --output-image-file=/data/local/tmp/dalvik-cache/x86_64/system@framework@boot.art --instruction-set=x86_64 --base-offset-delta=-11849728
+11-14 09:27:44.020  1646  1660 I ActivityManager: Waited long enough for: ServiceRecord{25ce40f u0 com.google.android.calendar/com.android.calendar.alerts.InitAlarmsService}
+11-14 09:27:44.145  4195  4195 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:44.147  4195  4195 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:44.160  4195  4195 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:44.160  4195  4195 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:44.161  4195  4195 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:44.164  4195  4195 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:44.574  4187  4187 I dex2oat : dex2oat took 2.932s (threads: 2) arena alloc=5MB (5861552B) java alloc=6MB (6320840B) native alloc=14MB (14702096B) free=7MB (7842288B)
+11-14 09:27:44.588  4210  4210 W dex2oat : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:44.588  4210  4210 I dex2oat : /system/bin/dex2oat --dex-file=/data/user_de/0/com.google.android.gms/app_chimera/m/00000005/GoogleCertificates.apk --oat-fd=58 --oat-location=/data/user_de/0/com.google.android.gms/app_chimera/m/00000005/oat/x86_64/GoogleCertificates.dex --compiler-filter=speed
+11-14 09:27:44.671  4210  4210 I dex2oat : dex2oat took 83.496ms (threads: 2) arena alloc=588KB (602816B) java alloc=245KB (251080B) native alloc=1140KB (1167688B) free=2MB (2502328B)
+11-14 09:27:44.684  4213  4213 W dex2oat : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:44.684  4213  4213 I dex2oat : /system/bin/dex2oat --dex-file=/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.apk --oat-fd=58 --oat-location=/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/oat/x86_64/MeasurementDynamite.dex --compiler-filter=speed
+11-14 09:27:45.000  4213  4213 I dex2oat : dex2oat took 316.352ms (threads: 2) arena alloc=4MB (4263528B) java alloc=754KB (772544B) native alloc=2MB (2219992B) free=4MB (5120040B)
+11-14 09:27:45.013  4216  4216 W dex2oat : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:45.013  4216  4216 I dex2oat : /system/bin/dex2oat --dex-file=/data/user_de/0/com.google.android.gms/app_chimera/m/00000003/DynamiteModulesA.apk --oat-fd=58 --oat-location=/data/user_de/0/com.google.android.gms/app_chimera/m/00000003/oat/x86_64/DynamiteModulesA.dex --compiler-filter=speed
+11-14 09:27:45.219  4195  4195 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80009249; boundsInParent: Rect(0, 0 - 0, 47); boundsInScreen: Rect(1038, 526 - 1038, 573); packageName: vn.quettailieu.scanner; className: android.widget.TextView; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:45.220  4195  4195 W AccessibilityNodeInfoDumper: Fetch time: 3ms
+11-14 09:27:45.227  1646  2020 W WindowManager: Attempted to remove non-existing token: android.os.Binder@2b2b1ae
+11-14 09:27:45.231  4195  4195 D AndroidRuntime: Shutting down VM
+11-14 09:27:45.379  4221  4221 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:45.380  4221  4221 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:45.425  4221  4221 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:45.429  4221  4221 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:45.461  4221  4221 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:45.461  4221  4221 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:45.461  4221  4221 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:45.465  4221  4221 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:45.602  4216  4216 I dex2oat : dex2oat took 589.356ms (threads: 2) arena alloc=5MB (5757104B) java alloc=973KB (997024B) native alloc=2MB (2867712B) free=6MB (7093760B)
+11-14 09:27:45.616  4232  4232 W dex2oat : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:45.616  4232  4232 I dex2oat : /system/bin/dex2oat --dex-file=/data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk --oat-fd=58 --oat-location=/data/user_de/0/com.google.android.gms/app_chimera/m/00000001/oat/x86_64/CronetDynamite.dex --compiler-filter=speed
+11-14 09:27:45.806  4232  4232 I dex2oat : dex2oat took 190.689ms (threads: 2) arena alloc=938KB (960984B) java alloc=381KB (390992B) native alloc=1260KB (1291040B) free=2MB (2903264B)
+11-14 09:27:46.487  4221  4221 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80009250; boundsInParent: Rect(0, 0 - 0, 47); boundsInScreen: Rect(1038, 526 - 1038, 573); packageName: vn.quettailieu.scanner; className: android.widget.TextView; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:46.488  4221  4221 W AccessibilityNodeInfoDumper: Fetch time: 3ms
+11-14 09:27:46.489  1646  2020 W WindowManager: Attempted to remove non-existing token: android.os.Binder@ca5dd6b
+11-14 09:27:46.492  4221  4221 D AndroidRuntime: Shutting down VM
+11-14 09:27:46.551  1311  1325 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:27:46.551  1311  1682 D PermissionCache: checking android.permission.READ_FRAME_BUFFER for uid=2000 => granted (259 us)
+11-14 09:27:46.552  1311  1682 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+11-14 09:27:46.554  4239  4239 D         : HostConnection::get() New Host Connection established 0x7d2fee82d4e0, tid 4239
+11-14 09:27:46.913  4254  4254 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:46.914  4254  4254 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:46.937  4254  4254 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:46.942  4254  4254 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:46.955  4254  4254 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:46.955  4254  4254 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:46.956  4254  4254 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:46.960  4254  4254 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:47.981  4254  4254 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80009257; boundsInParent: Rect(0, 0 - 0, 47); boundsInScreen: Rect(1038, 526 - 1038, 573); packageName: vn.quettailieu.scanner; className: android.widget.TextView; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:47.982  4254  4254 W AccessibilityNodeInfoDumper: Fetch time: 2ms
+11-14 09:27:47.983  1646  2237 W WindowManager: Attempted to remove non-existing token: android.os.Binder@4be8ee3
+11-14 09:27:47.987  4254  4254 D AndroidRuntime: Shutting down VM
+11-14 09:27:48.168  1760  2861 W Nearby  : Failed attempt #3 out of 3 for RestoreDeviceName [CONTEXT service_id=49 ]
+11-14 09:27:48.168  1760  2861 W Nearby  : java.lang.IllegalStateException: BluetoothAdapter not ready yet!
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at ajpy.d(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at ajpx.run(Unknown Source)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at bwuj.call(Unknown Source)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at bwuo.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at bwuo.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):9)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at ajpw.run(Unknown Source)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at sow.run(Unknown Source)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at sux.run(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:27:48.168  1760  2861 W Nearby  : 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:27:48.866  1646  1689 I InputReader: Reconfiguring input devices.  changes=0x00000010
+11-14 09:27:48.866  1646  1689 I InputReader: Reconfiguring input devices.  changes=0x00000010
+11-14 09:27:48.867  1646  1689 I InputReader: Reconfiguring input devices.  changes=0x00000010
+11-14 09:27:48.872  1906  1906 D CarrierSvcBindHelper: No carrier app for: 0
+11-14 09:27:48.880  1906  1906 D CarrierSvcBindHelper: No carrier app for: 0
+11-14 09:27:48.885  1906  1906 D CarrierSvcBindHelper: No carrier app for: 0
+11-14 09:27:49.216  4284  4284 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:49.217  4284  4284 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:49.233  4284  4284 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:49.236  4284  4284 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:49.246  4284  4284 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:49.246  4284  4284 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:49.246  4284  4284 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:49.250  4284  4284 D AndroidRuntime: Calling main entry com.android.commands.am.Am
+11-14 09:27:49.258  1646  3567 I ActivityManager: START u0 {act=vn.quettailieu.scanner.TEST_IMPORT flg=0x10000000 cmp=vn.quettailieu.scanner/.MainActivity (has extras)} from uid 2000 on display 0
+11-14 09:27:49.261  4284  4284 D AndroidRuntime: Shutting down VM
+11-14 09:27:49.307  4148  4165 I ExifInterface_JNI: Raw image not detected
+11-14 09:27:49.317  4148  4165 I ExifInterface_JNI: Raw image not detected
+11-14 09:27:49.408  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:49.547  4148  4153 I art     : Do partial code cache collection, code=29KB, data=21KB
+11-14 09:27:49.549  4148  4153 I art     : After code cache collection, code=20KB, data=18KB
+11-14 09:27:49.549  4148  4153 I art     : Increasing code cache capacity to 128KB
+11-14 09:27:49.621  4148  4153 I art     : Do partial code cache collection, code=48KB, data=47KB
+11-14 09:27:49.625  4148  4153 I art     : After code cache collection, code=45KB, data=46KB
+11-14 09:27:49.625  4148  4153 I art     : Increasing code cache capacity to 256KB
+11-14 09:27:49.641  4148  4148 W IInputConnectionWrapper: finishComposingText on inactive InputConnection
+11-14 09:27:49.689  1646  1667 I ActivityManager: Displayed vn.quettailieu.scanner/.MainActivity: +425ms
+11-14 09:27:49.732  1646  1816 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.AppWindowToken.notifyAppStopped:389 com.android.server.wm.WindowManagerService.notifyAppStopped:4463 com.android.server.am.ActivityStack.activityStoppedLocked:1252 com.android.server.am.ActivityManagerService.activityStopped:6903 
+11-14 09:27:49.806  4148  4165 I ExifInterface_JNI: Raw image not detected
+11-14 09:27:49.807  4148  4165 I ExifInterface_JNI: Raw image not detected
+11-14 09:27:49.876  1646  2211 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.EditorActivity (has extras)} from uid 10078 on display 0
+11-14 09:27:49.938  4148  4164 I ExifInterface_JNI: Raw image not detected
+11-14 09:27:49.946  4148  4163 I ExifInterface_JNI: Raw image not detected
+11-14 09:27:49.948  4148  4165 I ExifInterface_JNI: Raw image not detected
+11-14 09:27:50.254  4148  4153 I art     : Do full code cache collection, code=125KB, data=86KB
+11-14 09:27:50.254  4148  4153 I art     : After code cache collection, code=77KB, data=43KB
+11-14 09:27:50.455  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:50.482  4148  4163 I ExifInterface_JNI: Raw image not detected
+11-14 09:27:50.966  4148  4148 W IInputConnectionWrapper: finishComposingText on inactive InputConnection
+11-14 09:27:50.966  4148  4148 I Choreographer: Skipped 30 frames!  The application may be doing too much work on its main thread.
+11-14 09:27:51.037  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:51.069  1646  1667 I ActivityManager: Displayed vn.quettailieu.scanner/.EditorActivity: +1s189ms
+11-14 09:27:51.113  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:51.254  1646  1816 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+11-14 09:27:51.661  1760  2588 W Nearby  : Failed attempt #3 out of 3 for RestoreDeviceName [CONTEXT service_id=49 ]
+11-14 09:27:51.661  1760  2588 W Nearby  : java.lang.IllegalStateException: BluetoothAdapter not ready yet!
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at ajpy.d(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at ajpx.run(Unknown Source)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at bwuj.call(Unknown Source)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at bwuo.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at bwuo.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):9)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at ajpw.run(Unknown Source)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at sow.run(Unknown Source)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at sux.run(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:27:51.661  1760  2588 W Nearby  : 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:27:52.765  1646  1751 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-14 09:27:52.771  4316  4316 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:52.772  4316  4316 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:52.786  4316  4316 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:52.788  4316  4316 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:52.800  4316  4316 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:52.800  4316  4316 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:52.800  4316  4316 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:52.804  4316  4316 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:53.060  3934  4327 I MS_RegisterService: RegisterService intent:Intent { act=register_intent_action flg=0x14 cmp=com.google.android.talk/com.google.android.libraries.matchstick.net.SilentRegisterService (has extras) } isPeriodic:false
+11-14 09:27:53.066  3934  4327 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:27:53.068  3934  4327 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: Unable to load native code from existing library /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at java.lang.Runtime.load0(Runtime.java:897)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at java.lang.System.load(System.java:1505)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):42)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: Unable to load native code from existing library /data/user_de/0/com.google.android.gms/app_extracted_libs/x86_64/libconscrypt_gmscore_jni.so
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/data/user_de/0/com.google.android.gms/app_extracted_libs/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at java.lang.Runtime.load0(Runtime.java:897)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at java.lang.System.load(System.java:1505)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):56)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:53.069  3934  4327 W GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:53.069  3934  4327 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:53.069  3934  4327 E ProviderInstaller: Failed to install provider: null
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: Google play services not available
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: fux
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at hnk.a(Unknown Source)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:27:53.070  3934  4327 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:27:53.071  3934  4327 W MS_WakeLockHelper: Call to release wakelock: register_service_start_wakelock, but not held.
+11-14 09:27:53.072  1646  2210 I ActivityManager: Killing 3341:com.android.managedprovisioning/u0a21 (adj 906): empty #17
+11-14 09:27:53.074  1646  2293 D ActivityManager: cleanUpApplicationRecord -- 3341
+11-14 09:27:53.074  2375  4329 I Vision  : Requesting optional module download of ocr.
+11-14 09:27:53.077  2375  4329 I Vision  : Checking for download completion for 88080 -- ocr
+11-14 09:27:53.078  2375  2595 I Authzen : [DeviceStateSyncManager] Device state updated successfully.
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@8001a82f; boundsInParent: Rect(0, 0 - 63, 63); boundsInScreen: Rect(894, 2131 - 880, 2194); packageName: vn.quettailieu.scanner; className: android.widget.ImageView; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@800182a5; boundsInParent: Rect(0, 0 - 3, 89); boundsInScreen: Rect(1031, 2143 - 880, 2232); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80013b52; boundsInParent: Rect(0, 0 - 189, 173); boundsInScreen: Rect(1045, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80013f13; boundsInParent: Rect(0, 0 - 231, 173); boundsInScreen: Rect(1234, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@800142d4; boundsInParent: Rect(0, 0 - 189, 173); boundsInScreen: Rect(1465, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80014695; boundsInParent: Rect(0, 0 - 189, 173); boundsInScreen: Rect(1654, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80014a56; boundsInParent: Rect(0, 0 - 234, 173); boundsInScreen: Rect(1843, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80018666; boundsInParent: Rect(0, 0 - 3, 89); boundsInScreen: Rect(2088, 2143 - 880, 2232); packageName: vn.quettailieu.scanner; className: android.view.View; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: false; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@80014e17; boundsInParent: Rect(0, 0 - 189, 173); boundsInScreen: Rect(2102, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.824  4316  4316 I AccessibilityNodeInfoDumper: Skipping invisible child: android.view.accessibility.AccessibilityNodeInfo@800151d8; boundsInParent: Rect(0, 0 - 218, 173); boundsInScreen: Rect(2291, 2101 - 880, 2274); packageName: vn.quettailieu.scanner; className: android.widget.LinearLayout; text: null; error: null; maxTextLength: -1; contentDescription: null; viewIdResName: null; checkable: false; checked: false; focusable: false; focused: false; selected: false; clickable: true; longClickable: false; contextClickable: false; enabled: true; password: false; scrollable: false; actions: [AccessibilityAction: ACTION_SELECT - null, AccessibilityAction: ACTION_CLEAR_SELECTION - null, AccessibilityAction: ACTION_CLICK - null, AccessibilityAction: ACTION_ACCESSIBILITY_FOCUS - null, AccessibilityAction: ACTION_SHOW_ON_SCREEN - null]
+11-14 09:27:53.825  4316  4316 W AccessibilityNodeInfoDumper: Fetch time: 6ms
+11-14 09:27:53.825  1646  2124 W WindowManager: Attempted to remove non-existing token: android.os.Binder@accb2f4
+11-14 09:27:53.828  4316  4316 D AndroidRuntime: Shutting down VM
+11-14 09:27:53.888  1646  2236 I ActivityManager: Killing 3671:com.google.android.apps.photos:CameraShortcut/u0a62 (adj 906): empty #17
+11-14 09:27:53.891  1646  1816 D ActivityManager: cleanUpApplicationRecord -- 3671
+11-14 09:27:53.977  4332  4332 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:53.978  4332  4332 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:53.992  4332  4332 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:53.994  4332  4332 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:54.004  4332  4332 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:54.004  4332  4332 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:54.004  4332  4332 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:54.008  4332  4332 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:27:54.011  4332  4332 I Input   : injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=975.0, y[0]=2187.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=79011, downTime=79011, deviceId=0, source=0x1002 }
+11-14 09:27:54.013  4332  4332 I Input   : injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=975.0, y[0]=2187.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=79011, downTime=79011, deviceId=0, source=0x1002 }
+11-14 09:27:54.014  4332  4332 D AndroidRuntime: Shutting down VM
+11-14 09:27:54.032  1646  1658 I ActivityManager: START u0 {cmp=vn.quettailieu.scanner/.DocumentActivity (has extras)} from uid 10078 on display 0
+11-14 09:27:54.046  1395  1453 W audio_hw_generic: Not supplying enough data to HAL, expected position 54 , only wrote 0
+11-14 09:27:54.128  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:54.330  1646  1667 I ActivityManager: Displayed vn.quettailieu.scanner/.DocumentActivity: +284ms
+11-14 09:27:54.400  1646  2211 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.EditorActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+11-14 09:27:55.012  3452  3472 W Babel   : bcq TOOK TOO LONG! (15040ms > 10000ms)
+11-14 09:27:56.665  1311  1323 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:27:56.666  1311  1325 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+11-14 09:27:56.668  4354  4354 D         : HostConnection::get() New Host Connection established 0x7b258782d4e0, tid 4354
+11-14 09:27:57.078  4357  4357 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:57.079  4357  4357 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:57.093  4357  4357 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:57.095  4357  4357 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:57.109  4357  4357 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:57.109  4357  4357 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:57.109  4357  4357 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:57.113  4357  4357 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:57.271  1395  1454 W audio_hw_generic: Not supplying enough data to HAL, expected position 307586 , only wrote 154800
+11-14 09:27:57.539  1646  1751 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-14 09:27:58.131  4357  4357 W AccessibilityNodeInfoDumper: Fetch time: 2ms
+11-14 09:27:58.131  1646  4116 W WindowManager: Attempted to remove non-existing token: android.os.Binder@5cf648d
+11-14 09:27:58.134  4357  4357 D AndroidRuntime: Shutting down VM
+11-14 09:27:58.294  4374  4374 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:58.295  4374  4374 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:58.309  4374  4374 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:58.312  4374  4374 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:58.323  4374  4374 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:58.324  4374  4374 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:58.324  4374  4374 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:58.327  4374  4374 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:27:59.342  4374  4374 W AccessibilityNodeInfoDumper: Fetch time: 1ms
+11-14 09:27:59.343  1646  2237 W WindowManager: Attempted to remove non-existing token: android.os.Binder@3a32653
+11-14 09:27:59.348  4374  4374 D AndroidRuntime: Shutting down VM
+11-14 09:27:59.495  4387  4387 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:27:59.496  4387  4387 D AndroidRuntime: CheckJNI is OFF
+11-14 09:27:59.510  4387  4387 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:27:59.512  4387  4387 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:27:59.521  4387  4387 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:27:59.521  4387  4387 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:27:59.521  4387  4387 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:27:59.525  4387  4387 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:27:59.528  4387  4387 I Input   : injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=629.0, y[0]=2225.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=84528, downTime=84528, deviceId=0, source=0x1002 }
+11-14 09:27:59.529  4387  4387 I Input   : injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=629.0, y[0]=2225.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=84528, downTime=84528, deviceId=0, source=0x1002 }
+11-14 09:27:59.530  4387  4387 D AndroidRuntime: Shutting down VM
+11-14 09:27:59.559  1395  1453 W audio_hw_generic: Not supplying enough data to HAL, expected position 155124 , only wrote 154800
+11-14 09:27:59.628  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:59.784  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:27:59.813  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:01.163  1311  1323 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:01.164  1311  1682 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+11-14 09:28:01.166  4402  4402 D         : HostConnection::get() New Host Connection established 0x7850d1e2d4e0, tid 4402
+11-14 09:28:01.614  4405  4405 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:01.616  4405  4405 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:01.657  4405  4405 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:01.660  4405  4405 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:01.684  4405  4405 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:01.684  4405  4405 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:01.685  4405  4405 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:01.696  4405  4405 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:02.720  4405  4405 W AccessibilityNodeInfoDumper: Fetch time: 1ms
+11-14 09:28:02.721  1646  2218 W WindowManager: Attempted to remove non-existing token: android.os.Binder@2cc4766
+11-14 09:28:02.731  4405  4405 D AndroidRuntime: Shutting down VM
+11-14 09:28:02.769  1395  1454 W audio_hw_generic: Not supplying enough data to HAL, expected position 460917 , only wrote 308880
+11-14 09:28:02.888  4418  4418 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:02.889  4418  4418 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:02.903  4418  4418 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:02.905  4418  4418 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:02.915  4418  4418 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:02.915  4418  4418 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:02.916  4418  4418 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:02.919  4418  4418 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:02.923  4418  4418 I Input   : injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1290.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=87923, downTime=87923, deviceId=0, source=0x1002 }
+11-14 09:28:02.925  4418  4418 I Input   : injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1290.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=87923, downTime=87923, deviceId=0, source=0x1002 }
+11-14 09:28:02.926  4418  4418 D AndroidRuntime: Shutting down VM
+11-14 09:28:02.995  1395  1453 W audio_hw_generic: Not supplying enough data to HAL, expected position 309043 , only wrote 308880
+11-14 09:28:03.025  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:03.027  1311  4397 D         : HostConnection::get() New Host Connection established 0x769240ae20c0, tid 4397
+11-14 09:28:03.082  1646  1660 I ActivityManager: Killing 3728:com.google.process.gapps/u0a47 (adj 906): empty #17
+11-14 09:28:03.082  1646  1660 I ActivityManager: Killing 3705:com.google.android.onetimeinitializer/u0a17 (adj 906): empty #18
+11-14 09:28:03.089  2375  4399 I Vision  : Requesting optional module download of ocr.
+11-14 09:28:03.090  2375  4399 I Vision  : Checking for download completion for 98092 -- ocr
+11-14 09:28:03.114  1646  2237 D ActivityManager: cleanUpApplicationRecord -- 3728
+11-14 09:28:03.127  1646  3567 D ActivityManager: cleanUpApplicationRecord -- 3705
+11-14 09:28:03.130  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:03.132  4148  4434 D DecoupledTextDelegate: Start loading thick OCR module.
+11-14 09:28:03.133  4148  4434 I DynamiteModule: Considering local module com.google.mlkit.dynamite.text.latin:10000 and remote module com.google.mlkit.dynamite.text.latin:0
+11-14 09:28:03.133  4148  4434 I DynamiteModule: Selected local version of com.google.mlkit.dynamite.text.latin
+11-14 09:28:03.144  4148  4431 W GooglePlayServicesUtil: Google Play services out of date for vn.quettailieu.scanner.  Requires 203400000 but found 202414023
+11-14 09:28:03.145  4148  4431 W GoogleApiManager: The service for com.google.android.gms.common.internal.service.zap is not available: ConnectionResult{statusCode=SERVICE_VERSION_UPDATE_REQUIRED, resolution=null, message=null}
+11-14 09:28:03.181  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:03.194  4148  4434 I native  : I0000 00:00:1794648483.194304    4434 asset_manager_util.cc:61] Created global reference to asset manager.
+11-14 09:28:03.212  4148  4429 D TransportRuntime.SQLiteEventStore: Storing event with priority=DEFAULT, name=FIREBASE_ML_SDK for destination cct
+11-14 09:28:03.235  4148  4429 D TransportRuntime.JobInfoScheduler: Scheduling upload for context TransportContext(cct, DEFAULT, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) with jobId=-1176295876 in 30000ms(Backend next call timestamp 0). Attempt 1
+11-14 09:28:03.247  4148  4153 I art     : Do partial code cache collection, code=114KB, data=68KB
+11-14 09:28:03.249  4148  4436 I native  : I0000 00:00:1794648483.249433    4436 text_detector_thread_pool_context.cc:38] Compute manager max in flight region detector overwrite: 1
+11-14 09:28:03.250  4148  4436 I native  : I0000 00:00:1794648483.250029    4436 common_util.h:41] Resizing Thread Pool: ocr_det_0 to 3
+11-14 09:28:03.251  4148  4436 I tflite  : Initialized TensorFlow Lite runtime.
+11-14 09:28:03.255  4148  4435 I native  : I0000 00:00:1794648483.255065    4435 text_classifier.cc:32] Creating classifier TfliteTextClassifier
+11-14 09:28:03.255  4148  4435 I native  : I0000 00:00:1794648483.255735    4435 common_util.h:41] Resizing Thread Pool: ocr_segm to 3
+11-14 09:28:03.256  4148  4436 I tflite  : Created TensorFlow Lite XNNPACK delegate for CPU.
+11-14 09:28:03.256  4148  4436 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:03.257  4148  4436 I native  : I0000 00:00:1794648483.257692    4436 tflite_detector_client_with_shape_cache.cc:105] Caching size: 10
+11-14 09:28:03.265  4148  4153 I art     : After code cache collection, code=89KB, data=59KB
+11-14 09:28:03.265  4148  4153 I art     : Increasing code cache capacity to 512KB
+11-14 09:28:03.266  4148  4436 I native  : I0000 00:00:1794648483.266072    4436 multi_pass_line_recognition_mutator.cc:342] Preloading recognizers.
+11-14 09:28:03.270  4148  4435 I native  : I0000 00:00:1794648483.270056    4435 tflite_lstm_client_base.cc:371] Resizing interpreter pool to 4
+11-14 09:28:03.273  4148  4435 I native  : I0000 00:00:1794648483.273603    4435 tflite_model_pooled_runner.cc:625] Loading mlkit-google-ocr-models/gocr/layout/line_splitting_custom_ops/model.tflite
+11-14 09:28:03.274  4148  4435 I native  : I0000 00:00:1794648483.273994    4435 tflite_model_pooled_runner.cc:836] Resizing interpreter pool to 1
+11-14 09:28:03.274  4148  4435 I native  : I0000 00:00:1794648483.274952    4435 tflite_model_pooled_runner.cc:625] Loading mlkit-google-ocr-models/gocr/layout/line_clustering_custom_ops/model.tflite
+11-14 09:28:03.275  4148  4435 I native  : I0000 00:00:1794648483.275264    4435 tflite_model_pooled_runner.cc:836] Resizing interpreter pool to 1
+11-14 09:28:03.275  4148  4446 I native  : I0000 00:00:1794648483.275938    4446 tflite_model_pooled_runner.cc:625] Loading mlkit-google-ocr-models/gocr/gocr_models/line_recognition_legacy_mobile/Latn_ctc/optical/conv_model.fb
+11-14 09:28:03.276  4148  4446 I native  : I0000 00:00:1794648483.276713    4446 tflite_model_pooled_runner.cc:636] Loading mlkit-google-ocr-models/gocr/gocr_models/line_recognition_legacy_mobile/Latn_ctc/optical/lstm_model.fb
+11-14 09:28:03.278  4148  4446 I native  : I0000 00:00:1794648483.278877    4446 tflite_model_pooled_runner.cc:836] Resizing interpreter pool to 4
+11-14 09:28:03.281  4148  4446 I native  : I0000 00:00:1794648483.281651    4446 mobile_langid_v2.cc:58] MobileLangID V2 initialized.
+11-14 09:28:03.281  4148  4446 I native  : I0000 00:00:1794648483.281726    4446 multi_pass_line_recognition_mutator.cc:364] Finished preloading a recognizer for "Latn"
+11-14 09:28:03.281  4148  4436 I native  : I0000 00:00:1794648483.281819    4436 multi_pass_line_recognition_mutator.cc:398] Finished preloading recognizers.
+11-14 09:28:03.284  4148  4434 D PipelineManager: Start process bitmap
+11-14 09:28:03.284  4148  4434 I native  : I0000 00:00:1794648483.284839    4434 scheduler.cc:693] ImageMetadata: 1697x2400
+11-14 09:28:03.300  4148  4429 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+11-14 09:28:03.306  4148  4429 D TransportRuntime.JobInfoScheduler: Scheduling upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) with jobId=-1171315139 in 86400000ms(Backend next call timestamp 0). Attempt 1
+11-14 09:28:03.325  4148  4429 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+11-14 09:28:03.328  4148  4429 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+11-14 09:28:03.334  4148  4436 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:04.042  4450  4450 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:04.043  4450  4450 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:04.065  4450  4450 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:04.072  4148  4436 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:04.075  4450  4450 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:04.101  4450  4450 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:04.101  4450  4450 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:04.101  4450  4450 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:04.105  4450  4450 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:04.883  4148  4436 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:05.128  4450  4450 W AccessibilityNodeInfoDumper: Fetch time: 1ms
+11-14 09:28:05.128  1646  2293 W WindowManager: Attempted to remove non-existing token: android.os.Binder@b8c20ec
+11-14 09:28:05.147  4450  4450 D AndroidRuntime: Shutting down VM
+11-14 09:28:05.542  4470  4470 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:05.543  4470  4470 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:05.591  4470  4470 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:05.609  4470  4470 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:05.621  4470  4470 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:05.621  4470  4470 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:05.621  4470  4470 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:05.634  4470  4470 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:05.635  4470  4470 I Input   : injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=894.0, y[0]=1278.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=90637, downTime=90637, deviceId=0, source=0x1002 }
+11-14 09:28:05.651  4470  4470 I Input   : injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=894.0, y[0]=1278.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=90637, downTime=90637, deviceId=0, source=0x1002 }
+11-14 09:28:05.651  4470  4470 D AndroidRuntime: Shutting down VM
+11-14 09:28:05.779  4148  4436 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:05.780  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:05.809  1646  2020 W InputMethodManagerService: Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@97b8f4a attribute=null, token = android.os.BinderProxy@a076c8c
+11-14 09:28:05.830  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:06.547  4148  4436 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:07.457  4148  4436 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:07.871  2375  2997 W ChimeraConfigurator: Error syncing flags: qoq: COMMIT_TIMEOUT
+11-14 09:28:07.871  2375  2997 I ChmraDebugLogger: [79] COMMIT_TIMEOUT
+11-14 09:28:07.961  2375  2997 I ChmraDebugLogger: [52] null
+11-14 09:28:08.082  1646  4116 I ActivityManager: Killing 2927:com.google.android.gms.ui/u0a14 (adj 906): empty #17
+11-14 09:28:08.262  2375  2997 I ChimeraConfigService: Scheduling checkin for one-off execution between [3300,43200] seconds from now (1794648488262)
+11-14 09:28:08.271  2375  4399 I ChimeraConfigurator: Starting update, reason: 4 urgentFeatures: vision.ocr:-1
+11-14 09:28:08.334  1646  2211 D ActivityManager: cleanUpApplicationRecord -- 2927
+11-14 09:28:08.875  1395  1454 W audio_hw_generic: Not supplying enough data to HAL, expected position 871299 , only wrote 591120
+11-14 09:28:11.687  2375  2997 I GmscoreIpa: how are you::
+11-14 09:28:11.921  2375  2642 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.music componentName=null serviceId=36
+11-14 09:28:11.978  2375  2612 I Icing   : updateResources: need to parse acek{com.google.android.music}
+11-14 09:28:11.980  4148  4153 I art     : Compiler allocated 5MB to compile int com.google.android.gms.internal.mlkit_vision_text_bundled_common.zbvp.zbc(java.lang.Object, byte[], int, int, int, com.google.android.gms.internal.mlkit_vision_text_bundled_common.zbsq)
+11-14 09:28:12.016  4148  4434 D PipelineManager: OCR process succeeded via visionkit pipeline.
+11-14 09:28:12.058  4148  4431 W GooglePlayServicesUtil: Google Play services out of date for vn.quettailieu.scanner.  Requires 203400000 but found 202414023
+11-14 09:28:12.058  4148  4431 W GoogleApiManager: The service for com.google.android.gms.common.internal.service.zap is not available: ConnectionResult{statusCode=SERVICE_VERSION_UPDATE_REQUIRED, resolution=null, message=null}
+11-14 09:28:12.061  4148  4429 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+11-14 09:28:12.063  4148  4429 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+11-14 09:28:12.071  4148  4429 D TransportRuntime.SQLiteEventStore: Storing event with priority=VERY_LOW, name=FIREBASE_ML_SDK for destination cct
+11-14 09:28:12.073  4148  4429 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, VERY_LOW, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+11-14 09:28:12.120  2375  2612 W Icing   : No valid account for uploading user actions
+11-14 09:28:12.140  2375  2642 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.gms componentName=null serviceId=30
+11-14 09:28:12.151  2375  2612 I Icing   : Usage reports ok 1, Failed Usage reports 0, indexed 0, rejected 0
+11-14 09:28:12.151  2375  2612 I Icing   : Indexing com.google.android.music-songs from com.google.android.music
+11-14 09:28:12.193  2375  2642 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.music componentName=null serviceId=36
+11-14 09:28:12.199  2375  2642 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.music componentName=null serviceId=36
+11-14 09:28:12.205  2375  2642 I Icing   : IndexChimeraService.getServiceInterface callingPackage=com.google.android.music componentName=null serviceId=36
+11-14 09:28:12.372  4148  4153 I art     : Do full code cache collection, code=242KB, data=160KB
+11-14 09:28:12.397  4148  4153 I art     : After code cache collection, code=134KB, data=98KB
+11-14 09:28:12.544  2375  2612 I Icing   : Indexing done com.google.android.music-songs
+11-14 09:28:12.545  2375  2612 I Icing   : Indexing com.google.android.music-albums from com.google.android.music
+11-14 09:28:12.558  2375  2612 I Icing   : Indexing done com.google.android.music-albums
+11-14 09:28:12.559  2375  2612 I Icing   : Indexing com.google.android.music-artists from com.google.android.music
+11-14 09:28:12.571  2375  2612 I Icing   : Indexing done com.google.android.music-artists
+11-14 09:28:12.572  2375  2612 I Icing   : Indexing com.google.android.music-playlists from com.google.android.music
+11-14 09:28:12.585  2375  2612 I Icing   : Indexing done com.google.android.music-playlists
+11-14 09:28:12.586  4148  4153 I art     : Do partial code cache collection, code=191KB, data=137KB
+11-14 09:28:12.587  2375  2612 W Icing   : No valid account for uploading user actions
+11-14 09:28:12.590  2375  2612 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-14 09:28:12.591  2375  2612 W Icing   : No valid account for uploading user actions
+11-14 09:28:12.593  2375  2612 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-14 09:28:12.594  2375  2612 W Icing   : No valid account for uploading user actions
+11-14 09:28:12.597  2375  2612 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-14 09:28:12.598  2375  2612 W Icing   : No valid account for uploading user actions
+11-14 09:28:12.600  2375  2612 I Icing   : Usage reports ok 0, Failed Usage reports 0, indexed 0, rejected 0
+11-14 09:28:12.607  4148  4153 I art     : After code cache collection, code=157KB, data=123KB
+11-14 09:28:12.607  4148  4153 I art     : Increasing code cache capacity to 1024KB
+11-14 09:28:12.669  4148  4163 I QuetWord: trang 1: 804x1137, 157 từ, 1 bảng, 11 hình, nhận dạng 9061 ms, dàn trang 610 ms
+11-14 09:28:13.092  2375  2997 I Vision  : Requesting optional module download of ocr.
+11-14 09:28:13.092  2375  2997 I Vision  : Checking for download completion for 108095 -- ocr
+11-14 09:28:18.428  4509  4509 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:18.429  4509  4509 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:18.443  4509  4509 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:18.445  4509  4509 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:18.456  4509  4509 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:18.456  4509  4509 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:18.456  4509  4509 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:18.460  4509  4509 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:19.476  4509  4509 W AccessibilityNodeInfoDumper: Fetch time: 2ms
+11-14 09:28:19.476  1646  4116 W WindowManager: Attempted to remove non-existing token: android.os.Binder@44cc8d9
+11-14 09:28:19.480  4509  4509 D AndroidRuntime: Shutting down VM
+11-14 09:28:19.632  4522  4522 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:19.632  4522  4522 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:19.646  4522  4522 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:19.648  4522  4522 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:19.656  4522  4522 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:19.656  4522  4522 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:19.656  4522  4522 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:19.660  4522  4522 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:19.663  4522  4522 I Input   : injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=450.0, y[0]=2225.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=104663, downTime=104663, deviceId=0, source=0x1002 }
+11-14 09:28:19.664  4522  4522 I Input   : injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=450.0, y[0]=2225.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=104663, downTime=104663, deviceId=0, source=0x1002 }
+11-14 09:28:19.665  4522  4522 D AndroidRuntime: Shutting down VM
+11-14 09:28:19.680  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:19.688  1395  1453 W audio_hw_generic: Not supplying enough data to HAL, expected position 591397 , only wrote 591120
+11-14 09:28:19.773  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:19.805  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:19.830  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:21.383  4532  4532 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:21.384  4532  4532 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:21.398  4532  4532 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:21.401  4532  4532 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:21.413  4532  4532 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:21.413  4532  4532 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:21.413  4532  4532 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:21.418  4532  4532 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:22.455  4532  4532 W AccessibilityNodeInfoDumper: Fetch time: 2ms
+11-14 09:28:22.455  1646  2020 W WindowManager: Attempted to remove non-existing token: android.os.Binder@84dba11
+11-14 09:28:22.464  4532  4532 D AndroidRuntime: Shutting down VM
+11-14 09:28:22.622  4545  4545 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:22.623  4545  4545 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:22.638  4545  4545 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:22.640  4545  4545 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:22.648  4545  4545 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:22.648  4545  4545 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:22.649  4545  4545 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:22.652  4545  4545 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:22.655  4545  4545 I Input   : injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1353.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=107656, downTime=107656, deviceId=0, source=0x1002 }
+11-14 09:28:22.656  4545  4545 I Input   : injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1353.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=107656, downTime=107656, deviceId=0, source=0x1002 }
+11-14 09:28:22.657  4545  4545 D AndroidRuntime: Shutting down VM
+11-14 09:28:22.729  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:22.746  4148  4434 D DecoupledTextDelegate: Start loading thick OCR module.
+11-14 09:28:22.746  4148  4434 I DynamiteModule: Considering local module com.google.mlkit.dynamite.text.latin:10000 and remote module com.google.mlkit.dynamite.text.latin:0
+11-14 09:28:22.746  4148  4434 I DynamiteModule: Selected local version of com.google.mlkit.dynamite.text.latin
+11-14 09:28:22.749  4148  4498 I native  : I0000 00:00:1794648502.749293    4498 asset_manager_util.cc:61] Created global reference to asset manager.
+11-14 09:28:22.751  4148  4429 D TransportRuntime.SQLiteEventStore: Storing event with priority=DEFAULT, name=FIREBASE_ML_SDK for destination cct
+11-14 09:28:22.757  4148  4429 D TransportRuntime.JobInfoScheduler: Upload for context TransportContext(cct, DEFAULT, MSRodHRwczovL2ZpcmViYXNlbG9nZ2luZy5nb29nbGVhcGlzLmNvbS92MGNjL2xvZy9iYXRjaD9mb3JtYXQ9anNvbl9wcm90bzNc) is already scheduled. Returning...
+11-14 09:28:22.766  4148  4555 I native  : I0000 00:00:1794648502.766753    4555 text_detector_thread_pool_context.cc:38] Compute manager max in flight region detector overwrite: 1
+11-14 09:28:22.767  4148  4556 I native  : I0000 00:00:1794648502.767574    4556 text_classifier.cc:32] Creating classifier TfliteTextClassifier
+11-14 09:28:22.767  4148  4556 I native  : I0000 00:00:1794648502.767741    4556 common_util.h:41] Resizing Thread Pool: ocr_segm to 3
+11-14 09:28:22.771  4148  4555 I native  : I0000 00:00:1794648502.771103    4555 common_util.h:41] Resizing Thread Pool: ocr_det_0 to 3
+11-14 09:28:22.787  4148  4556 I native  : I0000 00:00:1794648502.787760    4556 tflite_lstm_client_base.cc:371] Resizing interpreter pool to 4
+11-14 09:28:22.788  4148  4555 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:22.789  4148  4555 I native  : I0000 00:00:1794648502.789252    4555 tflite_detector_client_with_shape_cache.cc:105] Caching size: 10
+11-14 09:28:22.792  4148  4555 I native  : I0000 00:00:1794648502.792230    4555 multi_pass_line_recognition_mutator.cc:342] Preloading recognizers.
+11-14 09:28:22.792  4148  4446 I native  : I0000 00:00:1794648502.792438    4446 tflite_model_pooled_runner.cc:625] Loading mlkit-google-ocr-models/gocr/gocr_models/line_recognition_legacy_mobile/Latn_ctc/optical/conv_model.fb
+11-14 09:28:22.792  4148  4446 I native  : I0000 00:00:1794648502.792854    4446 tflite_model_pooled_runner.cc:636] Loading mlkit-google-ocr-models/gocr/gocr_models/line_recognition_legacy_mobile/Latn_ctc/optical/lstm_model.fb
+11-14 09:28:22.793  4148  4556 I native  : I0000 00:00:1794648502.793055    4556 tflite_model_pooled_runner.cc:625] Loading mlkit-google-ocr-models/gocr/layout/line_splitting_custom_ops/model.tflite
+11-14 09:28:22.802  4148  4446 I native  : I0000 00:00:1794648502.802548    4446 tflite_model_pooled_runner.cc:836] Resizing interpreter pool to 4
+11-14 09:28:22.806  4148  4556 I native  : I0000 00:00:1794648502.806600    4556 tflite_model_pooled_runner.cc:836] Resizing interpreter pool to 1
+11-14 09:28:22.806  4148  4556 I native  : I0000 00:00:1794648502.806832    4556 tflite_model_pooled_runner.cc:625] Loading mlkit-google-ocr-models/gocr/layout/line_clustering_custom_ops/model.tflite
+11-14 09:28:22.807  4148  4556 I native  : I0000 00:00:1794648502.807607    4556 tflite_model_pooled_runner.cc:836] Resizing interpreter pool to 1
+11-14 09:28:22.808  4148  4446 I native  : I0000 00:00:1794648502.808440    4446 mobile_langid_v2.cc:58] MobileLangID V2 initialized.
+11-14 09:28:22.808  4148  4446 I native  : I0000 00:00:1794648502.808514    4446 multi_pass_line_recognition_mutator.cc:364] Finished preloading a recognizer for "Latn"
+11-14 09:28:22.808  4148  4555 I native  : I0000 00:00:1794648502.808571    4555 multi_pass_line_recognition_mutator.cc:398] Finished preloading recognizers.
+11-14 09:28:22.809  4148  4498 D PipelineManager: Start process bitmap
+11-14 09:28:22.844  4148  4556 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:22.849  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:22.851  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:23.106  2375  4570 I Vision  : Requesting optional module download of ocr.
+11-14 09:28:23.106  2375  4570 I Vision  : Checking for download completion for 118109 -- ocr
+11-14 09:28:23.125  3934  4569 I MS_RegisterService: RegisterService intent:Intent { act=register_intent_action flg=0x14 cmp=com.google.android.talk/com.google.android.libraries.matchstick.net.SilentRegisterService (has extras) } isPeriodic:false
+11-14 09:28:23.140  3934  4569 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:23.140  3934  4569 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: Unable to load native code from existing library /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at java.lang.Runtime.load0(Runtime.java:897)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at java.lang.System.load(System.java:1505)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):42)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:28:23.141  3934  4569 W GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: Unable to load native code from existing library /data/user_de/0/com.google.android.gms/app_extracted_libs/x86_64/libconscrypt_gmscore_jni.so
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/data/user_de/0/com.google.android.gms/app_extracted_libs/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at java.lang.Runtime.load0(Runtime.java:897)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at java.lang.System.load(System.java:1505)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):56)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:28:23.142  3934  4569 W GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: Unable to locate conscrypt_gmscore_jni in dalvik.system.PathClassLoader[DexPathList[[zip file "/system/framework/com.android.location.provider.jar", zip file "/system/framework/com.android.media.remotedisplay.jar", zip file "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk"],nativeLibraryDirectories=[/system/priv-app/PrebuiltGmsCore/lib/x86_64, /system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64, /system/lib, /vendor/lib, /system/lib, /vendor/lib]]]
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: java.lang.UnsatisfiedLinkError: dlopen failed: "/system/priv-app/PrebuiltGmsCore/PrebuiltGmsCore.apk!/lib/x86_64/libconscrypt_gmscore_jni.so" is 64-bit instead of 32-bit
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at java.lang.Runtime.loadLibrary0(Runtime.java:977)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at java.lang.System.loadLibrary(System.java:1530)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at ssl.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):63)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):8)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at com.google.android.gms.common.security.ProviderInstallerImpl.insertProvider(:com.google.android.gms@202414023@20.24.14 (040800-319035315):3)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at java.lang.reflect.Method.invoke(Native Method)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at hnk.a(Unknown Source)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:28:23.143  3934  4569 E GmsNativeLibraryLoader: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:28:23.146  3934  4569 E ProviderInstaller: Failed to install provider: null
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: Google play services not available
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: fux
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at hnk.a(Unknown Source)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at com.google.android.libraries.matchstick.net.SilentRegisterService.onHandleIntent(SourceFile:216)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:68)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at android.os.Handler.dispatchMessage(Handler.java:102)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at android.os.Looper.loop(Looper.java:154)
+11-14 09:28:23.146  3934  4569 E MS_RegisterService: 	at android.os.HandlerThread.run(HandlerThread.java:61)
+11-14 09:28:23.184  3934  4569 W MS_WakeLockHelper: Call to release wakelock: register_service_start_wakelock, but not held.
+11-14 09:28:23.707  4148  4556 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:24.550  4148  4556 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:24.863  1311  1323 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:24.864  1311  4397 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+11-14 09:28:24.866  4579  4579 D         : HostConnection::get() New Host Connection established 0x7cbe19e2d4e0, tid 4579
+11-14 09:28:25.693  4148  4556 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:25.928  1395  1454 W audio_hw_generic: Not supplying enough data to HAL, expected position 1188161 , only wrote 890640
+11-14 09:28:26.577  4148  4556 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:27.437  4148  4556 I tflite  : Replacing 44 out of 46 node(s) with delegate (TfLiteXNNPackDelegate) node, yielding 3 partitions for the whole graph.
+11-14 09:28:32.007  4148  4498 D PipelineManager: OCR process succeeded via visionkit pipeline.
+11-14 09:28:32.208  4148  4163 I QuetWord: trang 1: 804x1137, 157 từ, 1 bảng, 11 hình, nhận dạng 9299 ms, dàn trang 182 ms
+11-14 09:28:32.226  4148  4159 W art     : Suspending all threads took: 7.277ms
+11-14 09:28:32.227  4148  4434 D PipelineManager: Start process bitmap
+11-14 09:28:32.237  4148  4159 I art     : Background sticky concurrent mark sweep GC freed 156(330KB) AllocSpace objects, 4(96KB) LOS objects, 0% free, 57MB/57MB, paused 8.225ms total 24.692ms
+11-14 09:28:33.107  1646  1660 I ActivityManager: Killing 3496:com.google.android.configupdater/u0a5 (adj 906): empty #17
+11-14 09:28:33.150  2375  4603 I Vision  : Requesting optional module download of ocr.
+11-14 09:28:33.150  2375  4603 I Vision  : Checking for download completion for 128153 -- ocr
+11-14 09:28:33.187  1646  2221 D ActivityManager: cleanUpApplicationRecord -- 3496
+11-14 09:28:35.000  1646  1680 W ActivityManager: Unable to start service Intent { act=com.google.android.gms.drive.ApiService.RESET_AFTER_BOOT flg=0x4 cmp=com.google.android.gms/.drive.api.ApiService (has extras) } U=0: not found
+11-14 09:28:35.019  4148  4429 D TransportRuntime.CctTransportBackend: Making request to: https://firebaselogging.googleapis.com/v0cc/log/batch?format=json_proto3
+11-14 09:28:35.020  4148  4429 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: Background execution failure.
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: java.lang.SecurityException: Permission denied (missing INTERNET permission?)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.net.Inet6AddressImpl.lookupHostByName(Inet6AddressImpl.java:119)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.net.Inet6AddressImpl.lookupAllHostAddr(Inet6AddressImpl.java:74)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.net.InetAddress.getAllByName(InetAddress.java:752)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.Network$1.resolveInetAddresses(Network.java:29)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.RouteSelector.resetNextInetSocketAddress(RouteSelector.java:187)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.RouteSelector.nextProxy(RouteSelector.java:156)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.RouteSelector.next(RouteSelector.java:98)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.HttpEngine.createNextConnection(HttpEngine.java:345)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:328)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:246)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:457)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.connect(HttpURLConnectionImpl.java:126)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getOutputStream(HttpURLConnectionImpl.java:257)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.DelegatingHttpsURLConnection.getOutputStream(DelegatingHttpsURLConnection.java:218)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.android.okhttp.internal.huc.HttpsURLConnectionImpl.getOutputStream(HttpsURLConnectionImpl.java)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.cct.CctTransportBackend.doSend(CctTransportBackend.java:304)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.cct.CctTransportBackend.access$lambda$0(CctTransportBackend.java)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.cct.CctTransportBackend$$Lambda$1.apply(CctTransportBackend.java)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.retries.Retries.retry(Retries.java:54)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.cct.CctTransportBackend.send(CctTransportBackend.java:373)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.scheduling.jobscheduling.Uploader.logAndUpdateState(Uploader.java:121)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.scheduling.jobscheduling.Uploader.lambda$upload$1(Uploader.java:88)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.scheduling.jobscheduling.Uploader$$Lambda$1.run(Uploader.java)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at com.google.android.datatransport.runtime.SafeLoggingExecutor$SafeLoggingRunnable.run(SafeLoggingExecutor.java:47)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: Caused by: android.system.GaiException: android_getaddrinfo failed: EAI_NODATA (No address associated with hostname)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at libcore.io.Posix.android_getaddrinfo(Native Method)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at libcore.io.ForwardingOs.android_getaddrinfo(ForwardingOs.java:55)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	at java.net.Inet6AddressImpl.lookupHostByName(Inet6AddressImpl.java:106)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	... 26 more
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: Caused by: android.system.ErrnoException: android_getaddrinfo failed: EACCES (Permission denied)
+11-14 09:28:35.022  4148  4429 E TransportRuntime.Executor: 	... 29 more
+11-14 09:28:35.549  2375  4603 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:36.485  2375  4603 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:36.604  2375  4603 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:38.119  1760  2588 W GLSUser : [AppCertManager] Failed to get security token.
+11-14 09:28:38.119  1760  2588 W GLSUser : java.io.IOException: Invalid scope
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at adiw.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):23)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at adiw.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):18)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at adiw.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):11)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at hwy.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):17)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at hww.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):45)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at hwr.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at hwu.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):10)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at gbi.call(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at java.util.concurrent.FutureTask.run(FutureTask.java:237)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at soy.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):12)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at soy.run(:com.google.android.gms@202414023@20.24.14 (040800-319035315):7)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at sux.run(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:38.119  1760  2588 W GLSUser : 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:28:38.119  1760  2588 I Auth    : [ReflectiveChannelBinder] Successfully bound channel!
+11-14 09:28:38.150  1760  2588 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:38.150  1760  2588 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:38.150  1760  2588 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:38.161  1760  2588 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:38.162  1760  2588 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:38.162  1760  2588 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:38.277  1760  2588 W GLSUser : [AppCertManager] IOException while requesting key: 
+11-14 09:28:38.277  1760  2588 W GLSUser : java.io.IOException: Invalid device key response.
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at hwy.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):49)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at hww.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):45)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at hwr.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at hwu.a(:com.google.android.gms@202414023@20.24.14 (040800-319035315):10)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at gbi.call(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at java.util.concurrent.FutureTask.run(FutureTask.java:237)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at soy.b(:com.google.android.gms@202414023@20.24.14 (040800-319035315):12)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at soy.run(:com.google.android.gms@202414023@20.24.14 (040800-319035315):7)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at sux.run(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:38.277  1760  2588 W GLSUser : 	at java.lang.Thread.run(Thread.java:761)
+11-14 09:28:39.947  1760  2902 W art     : Long monitor contention with owner lowpool[0] (2606) at void atoj.b(java.lang.String)(:com.google.android.gms@202414023@20.24.14 (040800-319035315):14) waiters=0 in void atoj.c(java.lang.String, long) for 980ms
+11-14 09:28:40.537  1760  1771 W art     : Suspending all threads took: 189.196ms
+11-14 09:28:40.542  1760  1771 I art     : Background sticky concurrent mark sweep GC freed 43772(2MB) AllocSpace objects, 4(72KB) LOS objects, 16% free, 15MB/17MB, paused 190.056ms total 404.372ms
+11-14 09:28:40.542  1760  2480 W art     : Long monitor contention with owner lowpool[6] (3544) at boolean android.os.MessageQueue.enqueueMessage(android.os.Message, long)(MessageQueue.java:541) waiters=0 in android.os.Message android.os.MessageQueue.next() for 215ms
+11-14 09:28:41.190  4148  4434 D PipelineManager: OCR process succeeded via visionkit pipeline.
+11-14 09:28:41.236  1760  3544 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:41.236  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:41.236  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:41.245  1760  3544 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:41.245  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:41.245  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:41.378  4148  4163 I QuetWord: trang 2: 711x1006, 153 từ, 1 bảng, 16 hình, nhận dạng 8999 ms, dàn trang 171 ms
+11-14 09:28:41.444  4148  4163 I QuetWord: xong: 2 trang (2 trang có chữ), 310 từ, 2 bảng, 27 hình, 18717 ms, bộ nhận dạng: có
+11-14 09:28:41.448  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:41.449  1760  3544 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:41.457  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:41.457  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:41.464  1646  1657 I ActivityManager: START u0 {act=android.intent.action.CHOOSER flg=0x1 cmp=android/com.android.internal.app.ChooserActivity clip={text/uri-list U:content://vn.quettailieu.scanner.share/Scan%2014-11-2026%2009.27.docx} (has extras)} from uid 10078 on display 0
+11-14 09:28:41.473  1760  3544 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:41.473  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:41.473  1760  3544 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:41.489  1646  2020 W InputMethodManagerService: Window already focused, ignoring focus gain of: com.android.internal.view.IInputMethodClient$Stub$Proxy@d0baa4f attribute=null, token = android.os.BinderProxy@a076c8c
+11-14 09:28:41.497  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:41.504  1646  2292 I ActivityManager: Start proc 4638:android:ui/1000 for activity android/com.android.internal.app.ChooserActivity
+11-14 09:28:41.505  4638  4638 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:41.728  1646  2020 W art     : Long monitor contention with owner Binder:1646_4 (1816) at void com.android.server.am.ActivityManagerService.attachApplication(android.app.IApplicationThread)(ActivityManagerService.java:6631) waiters=2 in android.content.Intent com.android.server.am.ActivityManagerService.registerReceiver(android.app.IApplicationThread, java.lang.String, android.content.IIntentReceiver, android.content.IntentFilter, java.lang.String, int) for 210ms
+11-14 09:28:41.764  1311  4397 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:41.767  4638  4638 D         : HostConnection::get() New Host Connection established 0x7f33afe765a0, tid 4638
+11-14 09:28:41.816  4638  4653 D         : HostConnection::get() New Host Connection established 0x7f33afe76720, tid 4653
+11-14 09:28:41.854  4638  4653 I OpenGLRenderer: Initialized EGL, version 1.4
+11-14 09:28:41.854  4638  4653 D OpenGLRenderer: Swap behavior 1
+11-14 09:28:41.855  4638  4653 D EGL_emulation: eglCreateContext: 0x7f33a6fb8de0: maj 3 min 0 rcv 3
+11-14 09:28:41.856  4638  4653 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb8de0: ver 3 0 (tinfo 0x7f33a6ea9ce0)
+11-14 09:28:41.857  4638  4653 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+11-14 09:28:41.857  4638  4653 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+11-14 09:28:41.861  4638  4653 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb8de0: ver 3 0 (tinfo 0x7f33a6ea9ce0)
+11-14 09:28:42.248  1646  1667 I ActivityManager: Displayed android/com.android.internal.app.ChooserActivity: +758ms
+11-14 09:28:43.153  2375  4660 I Vision  : Requesting optional module download of ocr.
+11-14 09:28:43.153  2375  4660 I Vision  : Exceeded maximum feature download tries for ocr
+11-14 09:28:43.153  2375  4660 W Vision  : Request of optional module download of ocr failed.
+11-14 09:28:43.154  2375  4660 I Vision  : Checking for download completion for 138156 -- ocr
+11-14 09:28:44.555  1311  1323 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:44.556  1311  2106 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+11-14 09:28:44.558  4663  4663 D         : HostConnection::get() New Host Connection established 0x78f4e322d4e0, tid 4663
+11-14 09:28:44.965  4669  4669 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:44.967  4669  4669 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:44.981  4669  4669 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:44.983  4669  4669 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:44.991  4669  4669 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:44.991  4669  4669 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:44.992  4669  4669 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:44.995  4669  4669 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:44.996  4669  4669 I Input   : injectKeyEvent: KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_BACK, scanCode=0, metaState=0, flags=0x0, repeatCount=0, eventTime=129999, downTime=129999, deviceId=-1, source=0x101 }
+11-14 09:28:44.999  4669  4669 I Input   : injectKeyEvent: KeyEvent { action=ACTION_UP, keyCode=KEYCODE_BACK, scanCode=0, metaState=0, flags=0x0, repeatCount=0, eventTime=129999, downTime=129999, deviceId=-1, source=0x101 }
+11-14 09:28:45.015  4669  4669 D AndroidRuntime: Shutting down VM
+11-14 09:28:45.119  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:45.133  4638  4653 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb8de0: ver 3 0 (tinfo 0x7f33a6ea9ce0)
+11-14 09:28:45.161  1646  2124 I ActivityManager: Killing 3365:com.google.android.apps.messaging/u0a63 (adj 906): empty #17
+11-14 09:28:45.200  1646  2293 D ActivityManager: cleanUpApplicationRecord -- 3365
+11-14 09:28:45.233  1646  2236 I WindowManager: Destroying surface Surface(name=android/com.android.internal.app.ChooserActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+11-14 09:28:47.088  4685  4685 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:47.089  4685  4685 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:47.128  4685  4685 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:47.130  4685  4685 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:47.158  4685  4685 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:47.158  4685  4685 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:47.159  4685  4685 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:47.164  4685  4685 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:48.182  4685  4685 W AccessibilityNodeInfoDumper: Fetch time: 2ms
+11-14 09:28:48.183  1646  2218 W WindowManager: Attempted to remove non-existing token: android.os.Binder@c27765b
+11-14 09:28:48.186  4685  4685 D AndroidRuntime: Shutting down VM
+11-14 09:28:48.334  4698  4698 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:48.335  4698  4698 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:48.349  4698  4698 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:48.351  4698  4698 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:48.360  4698  4698 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:48.360  4698  4698 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:48.360  4698  4698 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:48.364  4698  4698 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:48.366  4698  4698 I Input   : injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=629.0, y[0]=2225.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=133367, downTime=133367, deviceId=0, source=0x1002 }
+11-14 09:28:48.367  4698  4698 I Input   : injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=629.0, y[0]=2225.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=133367, downTime=133367, deviceId=0, source=0x1002 }
+11-14 09:28:48.368  4698  4698 D AndroidRuntime: Shutting down VM
+11-14 09:28:48.387  1395  1453 W audio_hw_generic: Not supplying enough data to HAL, expected position 890895 , only wrote 890640
+11-14 09:28:48.463  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:48.486  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:48.527  2375  4399 W ChimeraConfigurator: Error syncing flags: qoq: COMMIT_TIMEOUT
+11-14 09:28:48.527  2375  4399 I ChmraDebugLogger: [79] COMMIT_TIMEOUT
+11-14 09:28:48.531  2375  4399 I ChmraDebugLogger: [52] null
+11-14 09:28:48.534  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:48.553  2375  4399 I ChimeraConfigService: Scheduling checkin for one-off execution between [3300,43200] seconds from now (1794648528553)
+11-14 09:28:48.555  2375  2797 W art     : Long monitor contention with owner [com.google.android.gms.chimera.GmsIntentOperationService$ChimeraService-Executor] processing qlx for action com.google.android.chimera.container.REQUESTED_FEATURES_CHANGED (4399) at void java.lang.Thread.sleep!(java.lang.Object, long, int)(Thread.java:-2) waiters=0 in boolean qmo.a(int, qmh, java.util.List, qmn) for 6.749s
+11-14 09:28:48.558  2375  2797 I ChimeraConfigurator: Starting update, reason: 1 urgentFeatures: 
+11-14 09:28:48.591  2375  2797 I ChmraDebugLogger: [52] null
+11-14 09:28:48.592  2375  2797 W ChimeraConfigService: Retry attempt was throttled.
+11-14 09:28:48.604  2375  2797 I ChimeraConfigService: Scheduling checkin every 43200 seconds, with flex of 1800 seconds
+11-14 09:28:48.729  2375  2612 I TelephonySpam: TelephonySpamChimeraService - Running Telephony Spam Chimera Service
+11-14 09:28:49.085  4710  4710 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:49.086  4710  4710 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:49.100  4710  4710 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:49.102  4710  4710 D ICU     : No timezone override file found: /data/local/tmp/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:49.113  4710  4710 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:49.113  4710  4710 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:49.114  4710  4710 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:49.118  4710  4710 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+11-14 09:28:50.146  4710  4710 W AccessibilityNodeInfoDumper: Fetch time: 2ms
+11-14 09:28:50.146  1646  3567 W WindowManager: Attempted to remove non-existing token: android.os.Binder@37d791a
+11-14 09:28:50.174  4710  4710 D AndroidRuntime: Shutting down VM
+11-14 09:28:50.398  4723  4723 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:50.399  4723  4723 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:50.448  4723  4723 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:50.454  4723  4723 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:50.476  4723  4723 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:50.476  4723  4723 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:50.477  4723  4723 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:50.485  4723  4723 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:50.490  4723  4723 I Input   : injectMotionEvent: MotionEvent { action=ACTION_DOWN, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1164.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=135488, downTime=135488, deviceId=0, source=0x1002 }
+11-14 09:28:50.496  4723  4723 I Input   : injectMotionEvent: MotionEvent { action=ACTION_UP, actionButton=0, id[0]=0, x[0]=540.0, y[0]=1164.0, toolType[0]=TOOL_TYPE_UNKNOWN, buttonState=0, metaState=0, flags=0x0, edgeFlags=0x0, pointerCount=1, historySize=0, eventTime=135488, downTime=135488, deviceId=0, source=0x1002 }
+11-14 09:28:50.498  4723  4723 D AndroidRuntime: Shutting down VM
+11-14 09:28:50.563  1646  2237 I ActivityManager: START u0 {act=android.intent.action.CREATE_DOCUMENT cat=[android.intent.category.OPENABLE] typ=application/vnd.openxmlformats-officedocument.wordprocessingml.document cmp=com.android.documentsui/.DocumentsActivity (has extras)} from uid 10078 on display 0
+11-14 09:28:50.586  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:50.684  1311  1682 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+11-14 09:28:50.685  4733  4733 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:50.690  1646  2210 I ActivityManager: Start proc 4733:com.android.documentsui/u0a10 for activity com.android.documentsui/.DocumentsActivity
+11-14 09:28:50.709  4733  4733 W System  : ClassLoader referenced unknown path: /system/priv-app/DocumentsUI/lib/x86_64
+11-14 09:28:50.740  1646  1667 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:50.769  1646  1658 I ActivityManager: Start proc 4748:com.android.externalstorage/u0a13 for content provider com.android.externalstorage/.ExternalStorageProvider
+11-14 09:28:50.772  4748  4748 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:50.796  4748  4748 W System  : ClassLoader referenced unknown path: /system/priv-app/ExternalStorageProvider/lib/x86_64
+11-14 09:28:50.816  4748  4748 D ExternalStorage: After updating volumes, found 2 active roots
+11-14 09:28:50.836  4764  4764 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:50.844  1646  2221 I ActivityManager: Start proc 4764:com.android.mtp/u0a11 for content provider com.android.mtp/.MtpDocumentsProvider
+11-14 09:28:50.864  1311  1325 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:50.869  4733  4733 D         : HostConnection::get() New Host Connection established 0x7f33b142df00, tid 4733
+11-14 09:28:50.962  1646  1741 D VoldConnector: SND -> {35 appfuse mount 10011 4764 MtpDocumentsProvider}
+11-14 09:28:50.970  4733  4778 D         : HostConnection::get() New Host Connection established 0x7f33a6fb4ee0, tid 4778
+11-14 09:28:50.989  4733  4778 I OpenGLRenderer: Initialized EGL, version 1.4
+11-14 09:28:50.989  4733  4778 D OpenGLRenderer: Swap behavior 1
+11-14 09:28:50.991  4733  4778 D EGL_emulation: eglCreateContext: 0x7f33a6fb9ce0: maj 3 min 0 rcv 3
+11-14 09:28:51.006  4733  4778 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9ce0: ver 3 0 (tinfo 0x7f3399893b00)
+11-14 09:28:51.007  1646  1691 D VoldConnector: RCV <- {200 35 AppFuse command succeeded}
+11-14 09:28:51.009  4733  4778 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008cdf
+11-14 09:28:51.009  4733  4778 E eglCodecCommon: glUtilsParamSize: unknow param 0x00008824
+11-14 09:28:51.015  4733  4778 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9ce0: ver 3 0 (tinfo 0x7f3399893b00)
+11-14 09:28:51.036  4785  4785 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:51.038  1646  2020 I ActivityManager: Start proc 4785:com.google.android.apps.docs/u0a41 for content provider com.google.android.apps.docs/.storagebackend.StorageBackendContentProvider
+11-14 09:28:51.049  4785  4785 W System  : ClassLoader referenced unknown path: /system/app/Drive/lib/x86_64
+11-14 09:28:51.140  1646  2210 D VoldConnector: SND -> {36 volume mkdirs /storage/emulated/0/Android/data/com.google.android.apps.docs/cache/}
+11-14 09:28:51.143  1646  1691 D VoldConnector: RCV <- {200 36 Command succeeded}
+11-14 09:28:51.183  4785  4785 E art     : The String#value field is not present on Android versions >= 6.0
+11-14 09:28:51.302  4785  4803 I GAv4    : Google Analytics 11.9.10 is starting up. To enable debug logging on a device run:
+11-14 09:28:51.302  4785  4803 I GAv4    :   adb shell setprop log.tag.GAv4 DEBUG
+11-14 09:28:51.302  4785  4803 I GAv4    :   adb logcat -s GAv4
+11-14 09:28:51.309  4785  4806 W GAv4    : CampaignTrackingReceiver is not registered, not exported or is disabled. Installation campaign tracking is not possible. See http://goo.gl/8Rd3yj for instructions.
+11-14 09:28:51.319  4785  4803 W TaskScheduler0-CoreComponentFactoryImpl: RetainedComponent will not be retained if  eec does not inherit FragmentActivity and fulfill lfi contract.
+11-14 09:28:51.321  4785  4785 W main-FieldDefinition: Ignoring isIndexed constraint as field also has uniqueness constraint (on just this field, and therefore SQLite will have to create an index on that. For field: com.google.android.apps.docs.database.common.FieldDefinition$a@d04c253
+11-14 09:28:51.380  4785  4809 W Open database in background-DatabaseHelper: Creating a new database at version 227 for /data/user/0/com.google.android.apps.docs/databases/DocList.db
+11-14 09:28:51.517  1760  2588 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:51.517  1760  2588 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:51.517  1760  2588 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:51.529  1760  2588 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:51.529  1760  2588 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:51.530  1760  2588 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:51.567  1646  1667 I ActivityManager: Displayed com.android.documentsui/.DocumentsActivity: +889ms
+11-14 09:28:51.587  4733  4733 I Choreographer: Skipped 33 frames!  The application may be doing too much work on its main thread.
+11-14 09:28:51.599  1646  1667 I WindowManager: Destroying surface Surface(name=Starting com.android.documentsui) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.AppWindowToken.destroySurfaces:363 com.android.server.wm.WindowStateAnimator.finishExit:565 com.android.server.wm.WindowStateAnimator.stepAnimationLocked:491 com.android.server.wm.WindowAnimator.updateWindowsLocked:303 com.android.server.wm.WindowAnimator.animateLocked:704 
+11-14 09:28:51.754  1646  2292 I WindowManager: Destroying surface Surface(name=vn.quettailieu.scanner/vn.quettailieu.scanner.DocumentActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+11-14 09:28:51.777  1760  1771 I art     : Background sticky concurrent mark sweep GC freed 52940(3MB) AllocSpace objects, 6(156KB) LOS objects, 19% free, 14MB/18MB, paused 8.387ms total 34.107ms
+11-14 09:28:51.833  1760  2588 I aopq    : Scheduling Phenotype for a PhenotypeSyncImmediately(13, com.google.apps.drive.android) one off with window [1, 2] in seconds [CONTEXT service_id=51 ]
+11-14 09:28:51.848  4818  4818 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:51.855  1646  2210 I ActivityManager: Start proc 4818:com.google.android.gms.ui/u0a14 for service com.google.android.gms/.chimera.UiIntentOperationService
+11-14 09:28:51.863  4818  4818 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:51.899  1760  4833 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Updating password complexity components state.
+11-14 09:28:51.899  1760  4833 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.admin.DeviceAdminReceiver
+11-14 09:28:51.900  1760  4833 I Auth    : [AuthManaged,PasswordComplexityHelperImpl] Disabling com.google.android.gms.auth.managed.ui.SetNewPasswordActivity
+11-14 09:28:51.902  2375  4399 I ChromeSync: [Sync,SyncIntentOperation] Handling the intent: Intent { act=com.google.android.gms.phenotype.COMMITTED flg=0x10 pkg=com.google.android.gms cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }.
+11-14 09:28:51.903  1646  1658 W ActivityManager: Unable to start service Intent { act=com.google.android.gms.auth.key.retrieval.service.START pkg=com.google.android.gms } U=0: not found
+11-14 09:28:51.903  1646  2293 W ActivityManager: Unbind failed: could not find connection for android.os.BinderProxy@e9395c9
+11-14 09:28:51.904  2375  2572 E GmsClient: unable to connect to service: com.google.android.gms.auth.key.retrieval.service.START on com.google.android.gms
+11-14 09:28:51.904  1760  4833 I PTCommittedOperation: Receive new configuration for com.google.android.gms.clearcut.public
+11-14 09:28:51.908  4818  4818 W DynamiteModule: Local module descriptor class for providerinstaller not found.
+11-14 09:28:51.911  2375  4709 I MdiSyncModule: flag handling is skipping irrelevant intent.
+11-14 09:28:51.916  2375  4399 W ModuleInitIntentOp: Dropping unexpected action com.google.android.gms.phenotype.COMMITTED
+11-14 09:28:51.918  4818  4818 W ProviderHelper: Unknown dynamite feature providerinstaller
+11-14 09:28:51.923  4818  4818 I DynamiteModule: Considering local module providerinstaller:0 and remote module providerinstaller:0
+11-14 09:28:51.923  4818  4818 W ProviderInstaller: Failed to load providerinstaller module: No acceptable module found. Local version is 0 and remote version is 0.
+11-14 09:28:51.924  4818  4818 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:51.924  4818  4818 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:51.925  4818  4818 V NativeCrypto: Registering com/google/android/gms/org/conscrypt/NativeCrypto's 286 native methods...
+11-14 09:28:51.935  4818  4818 D NetworkSecurityConfig: Using Network Security Config from resource network_security_config debugBuild: false
+11-14 09:28:51.941  4818  4818 I ProviderInstaller: Installed default security provider GmsCore_OpenSSL
+11-14 09:28:51.949  4818  4818 I Safeboot: Checking safeboot...
+11-14 09:28:51.950  4818  4818 I Safeboot: Not entering safeboot; wrong process.
+11-14 09:28:51.972  4818  4818 I bezb    : Primes not initialized, returning default (no-op) Primes instance which will ignore all calls. Please call Primes.initialize(...) before using any Primes API.
+11-14 09:28:53.156  2375  4864 I Vision  : Requesting optional module download of ocr.
+11-14 09:28:53.158  2375  4864 I Vision  : Checking for download completion for 148161 -- ocr
+11-14 09:28:53.159  2375  4863 I ChimeraConfigurator: Starting update, reason: 4 urgentFeatures: vision.ocr:-1
+11-14 09:28:53.567  1646  1751 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-14 09:28:53.772  1395  1454 W audio_hw_generic: Not supplying enough data to HAL, expected position 1405591 , only wrote 1149120
+11-14 09:28:54.213  2375  2604 I CastDatabase: Saving the database
+11-14 09:28:54.217  2375  2604 I SQLiteCastStore: [CastNetworkInfo] saved: 0, skipped: 0, [CastDeviceInfo]: saved 0, skipped 0, [Paired Guest Mode DeviceInfo] saved: 0, skipped: 0. [ProbedNetworks]: saved 0, skipped: 0, [ProbedSocketAddress]: saved 0, skipped: 0, [Network-Device pairs]: saved: 0
+11-14 09:28:54.385  4785  4808 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:54.392  4785  4808 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:54.392  4785  4808 W System  : ClassLoader referenced unknown path: /system/priv-app/PrebuiltGmsCore/lib/x86_64
+11-14 09:28:54.393  4785  4808 V NativeCrypto: Registering com/google/android/gms/org/conscrypt/NativeCrypto's 286 native methods...
+11-14 09:28:54.401  4785  4808 D NetworkSecurityConfig: No Network Security Config specified, using platform default
+11-14 09:28:54.402  4785  4808 I ProviderInstaller: Installed default security provider GmsCore_OpenSSL
+11-14 09:28:55.142  1311  1682 E SurfaceFlinger: ro.sf.lcd_density must be defined as a build property
+11-14 09:28:55.144  1311  4397 D gralloc_ranchu: gralloc_alloc: Creating ashmem region of size 10371072
+11-14 09:28:55.146  4882  4882 D         : HostConnection::get() New Host Connection established 0x7c7f9582d4e0, tid 4882
+11-14 09:28:55.408  4888  4888 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 09:28:55.409  4888  4888 D AndroidRuntime: CheckJNI is OFF
+11-14 09:28:55.422  4888  4888 W art     : Unexpected CPU variant for X86 using defaults: x86_64
+11-14 09:28:55.425  4888  4888 D ICU     : No timezone override file found: /data/misc/zoneinfo/current/icu/icu_tzdata.dat
+11-14 09:28:55.436  4888  4888 E memtrack: Couldn't load memtrack module (No such file or directory)
+11-14 09:28:55.436  4888  4888 E android.os.Debug: failed to load memtrack module: -2
+11-14 09:28:55.436  4888  4888 I Radio-JNI: register_android_hardware_Radio DONE
+11-14 09:28:55.440  4888  4888 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 09:28:55.442  4888  4888 I Input   : injectKeyEvent: KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_BACK, scanCode=0, metaState=0, flags=0x0, repeatCount=0, eventTime=140444, downTime=140444, deviceId=-1, source=0x101 }
+11-14 09:28:55.447  4888  4888 I Input   : injectKeyEvent: KeyEvent { action=ACTION_UP, keyCode=KEYCODE_BACK, scanCode=0, metaState=0, flags=0x0, repeatCount=0, eventTime=140444, downTime=140444, deviceId=-1, source=0x101 }
+11-14 09:28:55.451  4888  4888 D AndroidRuntime: Shutting down VM
+11-14 09:28:55.529  4148  4166 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9f60: ver 3 0 (tinfo 0x7f339901f860)
+11-14 09:28:55.611  4733  4733 W IInputConnectionWrapper: reportFullscreenMode on inexistent InputConnection
+11-14 09:28:55.611  4733  4733 W IInputConnectionWrapper: finishComposingText on inactive InputConnection
+11-14 09:28:55.671  4733  4778 D EGL_emulation: eglMakeCurrent: 0x7f33a6fb9ce0: ver 3 0 (tinfo 0x7f3399893b00)
+11-14 09:28:55.676  1646  2211 I WindowManager: Destroying surface Surface(name=com.android.documentsui/com.android.documentsui.DocumentsActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2016 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:882 com.android.server.wm.WindowState.destroyOrSaveSurface:2100 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3024 com.android.server.wm.WindowManagerService.relayoutWindow:2904 com.android.server.wm.Session.relayout:224 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:145 
+11-14 09:28:56.990  1760  2968 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:56.990  1760  2968 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:56.990  1760  2968 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:56.999  1760  2968 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+11-14 09:28:56.999  1760  2968 W Conscrypt: 	at com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):2)
+11-14 09:28:56.999  1760  2968 W Conscrypt: 	at com.google.android.gms.org.conscrypt.ConscryptFileDescriptorSocket.setSoWriteTimeout(:com.google.android.gms@202414023@20.24.14 (040800-319035315):0)
+11-14 09:28:57.304  1760  2968 I aopq    : Scheduling adaptive one off task with window [14400, 604800] in seconds [CONTEXT service_id=51 ]
