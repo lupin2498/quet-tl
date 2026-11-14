@@ -1610,1225 +1610,143 @@ func modelText(_ r: DocLayout.Result) -> String {
     return sb
 }
 
-/// Các trang DỰNG TAY để đối chiếu DocxWriter ở những nhánh mà kết quả của DocLayout không đi qua (lề ô riêng, bảng đứng
-/// cạnh nhau, hai bảng liền nhau, tab trùng, giá trị NaN / vô cực / rất lớn...). Sinh từ cùng một mô tả với
-/// DumpCore.syntheticPages nên hai bản dựng đúng cùng một mô hình.
-func syntheticPages() -> [WordDoc.Page] {
+/// Các trang DỰNG TAY (file synthetic.wordmodel do tests/tools/make_word_junk.py ghi; số thực ở dạng bit) để đối chiếu
+/// DocxWriter ở những nhánh mà kết quả của DocLayout không đi qua (lề ô riêng, bảng đứng cạnh nhau, hai bảng liền nhau, tab
+/// trùng, giá trị NaN / vô cực / rất lớn...). Cùng định dạng với DumpCore.readModel.
+func readModel(_ path: String) -> [WordDoc.Page]? {
+    guard let d = FileManager.default.contents(atPath: path) else { return nil }
+    func bits(_ s: String) -> Double { return Double(bitPattern: UInt64(s, radix: 16) ?? 0) }
+    func int(_ s: String) -> Int { return Int(s) ?? 0 }
+    func cpText(_ s: String) -> String {
+        var u = String.UnicodeScalarView()
+        if s != "-" {
+            for c in s.split(separator: ",") {
+                if let v = UInt32(c, radix: 16), let sc = Unicode.Scalar(v) { u.append(sc) }
+            }
+        }
+        return String(u)
+    }
     var pages = [WordDoc.Page]()
-    let g1 = WordDoc.Page()
-    g1.width = 595.276
-    g1.height = 841.89
-    let b2 = WordDoc.Block()
-    let p3 = WordDoc.Para()
-    p3.top = 40.0
-    p3.height = 15.0
-    p3.x = 50.0
-    p3.x1 = 300.0
-    p3.base = 52.0
-    p3.size = 13.0
-    p3.bold = true
-    p3.italic = false
-    p3.hasTab = true
-    p3.color = 16711680
-    p3.align = 0
-    let k4 = WordDoc.Tok()
-    k4.t = 0
-    k4.text = "Xin <ch\u{E0}o> & \"b\u{1EA1}n\" 'x'"
-    k4.n = 1
-    k4.spacing = 0.26
-    k4.pos = 0.0
-    k4.size = 13.0
-    k4.bold = true
-    k4.italic = false
-    k4.underline = false
-    k4.color = 0
-    p3.toks.append(k4)
-    let k5 = WordDoc.Tok()
-    k5.t = 1
-    k5.text = ""
-    k5.n = 3
-    k5.spacing = 0.3
-    k5.pos = 0.0
-    k5.size = 13.0
-    k5.bold = true
-    k5.italic = false
-    k5.underline = false
-    k5.color = 0
-    p3.toks.append(k5)
-    let k6 = WordDoc.Tok()
-    k6.t = 0
-    k6.text = "a\u{1}b\u{9}c\u{FFFE}\u{1F600}e\u{301}"
-    k6.n = 1
-    k6.spacing = -0.2
-    k6.pos = 0.0
-    k6.size = 11.5
-    k6.bold = false
-    k6.italic = true
-    k6.underline = true
-    k6.color = 1193046
-    p3.toks.append(k6)
-    let k7 = WordDoc.Tok()
-    k7.t = 2
-    k7.text = ""
-    k7.n = 1
-    k7.spacing = 0.0
-    k7.pos = 400.0
-    k7.size = 13.0
-    k7.bold = false
-    k7.italic = false
-    k7.underline = false
-    k7.color = 0
-    p3.toks.append(k7)
-    let k8 = WordDoc.Tok()
-    k8.t = 2
-    k8.text = ""
-    k8.n = 1
-    k8.spacing = 0.0
-    k8.pos = 400.0
-    k8.size = 13.0
-    k8.bold = false
-    k8.italic = false
-    k8.underline = false
-    k8.color = 0
-    p3.toks.append(k8)
-    let k9 = WordDoc.Tok()
-    k9.t = 2
-    k9.text = ""
-    k9.n = 1
-    k9.spacing = 0.0
-    k9.pos = 20.0
-    k9.size = 13.0
-    k9.bold = false
-    k9.italic = false
-    k9.underline = false
-    k9.color = 0
-    p3.toks.append(k9)
-    let k10 = WordDoc.Tok()
-    k10.t = 2
-    k10.text = ""
-    k10.n = 1
-    k10.spacing = 0.0
-    k10.pos = 250.5
-    k10.size = 13.0
-    k10.bold = false
-    k10.italic = false
-    k10.underline = false
-    k10.color = 0
-    p3.toks.append(k10)
-    let k11 = WordDoc.Tok()
-    k11.t = 0
-    k11.text = "sau tab"
-    k11.n = 1
-    k11.spacing = 0.0
-    k11.pos = 0.0
-    k11.size = 13.0
-    k11.bold = false
-    k11.italic = false
-    k11.underline = false
-    k11.color = 0
-    p3.toks.append(k11)
-    let k12 = WordDoc.Tok()
-    k12.t = 1
-    k12.text = ""
-    k12.n = 0
-    k12.spacing = 0.0
-    k12.pos = 0.0
-    k12.size = 13.0
-    k12.bold = false
-    k12.italic = false
-    k12.underline = false
-    k12.color = 0
-    p3.toks.append(k12)
-    let k13 = WordDoc.Tok()
-    k13.t = 1
-    k13.text = ""
-    k13.n = 1
-    k13.spacing = 0.0
-    k13.pos = 0.0
-    k13.size = 13.0
-    k13.bold = false
-    k13.italic = false
-    k13.underline = false
-    k13.color = 0
-    p3.toks.append(k13)
-    let k14 = WordDoc.Tok()
-    k14.t = 0
-    k14.text = ""
-    k14.n = 1
-    k14.spacing = 0.0
-    k14.pos = 0.0
-    k14.size = 13.0
-    k14.bold = false
-    k14.italic = false
-    k14.underline = false
-    k14.color = 0
-    p3.toks.append(k14)
-    b2.para = p3
-    b2.top = 40.0
-    b2.bottom = p3.top + p3.height
-    b2.x0 = 50.0
-    b2.x1 = 300.0
-    g1.blocks.append(b2)
-    let b15 = WordDoc.Block()
-    let p16 = WordDoc.Para()
-    p16.top = 60.0
-    p16.height = 14.625
-    p16.x = 50.0
-    p16.x1 = 540.0
-    p16.base = 71.7
-    p16.size = 13.0
-    p16.bold = false
-    p16.italic = false
-    p16.hasTab = false
-    p16.color = 0
-    p16.align = 0
-    let k17 = WordDoc.Tok()
-    k17.t = 0
-    k17.text = "D\u{F2}ng th\u{1EE9} 0 c\u{1EE7}a trang d\u{1EF1}ng tay"
-    k17.n = 1
-    k17.spacing = 0.0
-    k17.pos = 0.0
-    k17.size = 13.0
-    k17.bold = false
-    k17.italic = false
-    k17.underline = false
-    k17.color = 0
-    p16.toks.append(k17)
-    b15.para = p16
-    b15.top = 60.0
-    b15.bottom = p16.top + p16.height
-    b15.x0 = 50.0
-    b15.x1 = 540.0
-    g1.blocks.append(b15)
-    let b18 = WordDoc.Block()
-    let p19 = WordDoc.Para()
-    p19.top = 76.0
-    p19.height = 14.625
-    p19.x = 50.0
-    p19.x1 = 537.0
-    p19.base = 87.7
-    p19.size = 13.0
-    p19.bold = false
-    p19.italic = false
-    p19.hasTab = false
-    p19.color = 0
-    p19.align = 0
-    let k20 = WordDoc.Tok()
-    k20.t = 0
-    k20.text = "D\u{F2}ng th\u{1EE9} 1 c\u{1EE7}a trang d\u{1EF1}ng tay"
-    k20.n = 1
-    k20.spacing = 0.05
-    k20.pos = 0.0
-    k20.size = 13.0
-    k20.bold = false
-    k20.italic = false
-    k20.underline = false
-    k20.color = 0
-    p19.toks.append(k20)
-    b18.para = p19
-    b18.top = 76.0
-    b18.bottom = p19.top + p19.height
-    b18.x0 = 50.0
-    b18.x1 = 537.0
-    g1.blocks.append(b18)
-    let b21 = WordDoc.Block()
-    let p22 = WordDoc.Para()
-    p22.top = 92.0
-    p22.height = 14.625
-    p22.x = 50.0
-    p22.x1 = 540.0
-    p22.base = 103.7
-    p22.size = 13.0
-    p22.bold = false
-    p22.italic = false
-    p22.hasTab = false
-    p22.color = 0
-    p22.align = 0
-    let k23 = WordDoc.Tok()
-    k23.t = 0
-    k23.text = "D\u{F2}ng th\u{1EE9} 2 c\u{1EE7}a trang d\u{1EF1}ng tay"
-    k23.n = 1
-    k23.spacing = 0.1
-    k23.pos = 0.0
-    k23.size = 13.0
-    k23.bold = false
-    k23.italic = false
-    k23.underline = false
-    k23.color = 0
-    p22.toks.append(k23)
-    b21.para = p22
-    b21.top = 92.0
-    b21.bottom = p22.top + p22.height
-    b21.x0 = 50.0
-    b21.x1 = 540.0
-    g1.blocks.append(b21)
-    let b24 = WordDoc.Block()
-    let p25 = WordDoc.Para()
-    p25.top = 108.0
-    p25.height = 14.625
-    p25.x = 50.0
-    p25.x1 = 537.0
-    p25.base = 119.7
-    p25.size = 13.0
-    p25.bold = false
-    p25.italic = false
-    p25.hasTab = false
-    p25.color = 0
-    p25.align = 0
-    let k26 = WordDoc.Tok()
-    k26.t = 0
-    k26.text = "D\u{F2}ng th\u{1EE9} 3 c\u{1EE7}a trang d\u{1EF1}ng tay"
-    k26.n = 1
-    k26.spacing = 0.15000000000000002
-    k26.pos = 0.0
-    k26.size = 13.0
-    k26.bold = false
-    k26.italic = false
-    k26.underline = false
-    k26.color = 0
-    p25.toks.append(k26)
-    b24.para = p25
-    b24.top = 108.0
-    b24.bottom = p25.top + p25.height
-    b24.x0 = 50.0
-    b24.x1 = 537.0
-    g1.blocks.append(b24)
-    let b27 = WordDoc.Block()
-    let p28 = WordDoc.Para()
-    p28.top = 130.0
-    p28.height = 16.0
-    p28.x = 200.0
-    p28.x1 = 395.276
-    p28.base = 143.0
-    p28.size = 14.0
-    p28.bold = true
-    p28.italic = false
-    p28.hasTab = false
-    p28.color = 0
-    p28.align = 0
-    let k29 = WordDoc.Tok()
-    k29.t = 0
-    k29.text = "\u{1EDE} GI\u{1EEE}A"
-    k29.n = 1
-    k29.spacing = 0.0
-    k29.pos = 0.0
-    k29.size = 14.0
-    k29.bold = true
-    k29.italic = false
-    k29.underline = false
-    k29.color = 0
-    p28.toks.append(k29)
-    b27.para = p28
-    b27.top = 130.0
-    b27.bottom = p28.top + p28.height
-    b27.x0 = 200.0
-    b27.x1 = 395.276
-    g1.blocks.append(b27)
-    let b30 = WordDoc.Block()
-    let p31 = WordDoc.Para()
-    p31.top = 150.0
-    p31.height = 14.0
-    p31.x = 430.0
-    p31.x1 = 541.2
-    p31.base = 161.0
-    p31.size = 12.0
-    p31.bold = false
-    p31.italic = true
-    p31.hasTab = false
-    p31.color = 0
-    p31.align = 0
-    let k32 = WordDoc.Tok()
-    k32.t = 0
-    k32.text = "b\u{EA}n ph\u{1EA3}i"
-    k32.n = 1
-    k32.spacing = 0.0
-    k32.pos = 0.0
-    k32.size = 12.0
-    k32.bold = false
-    k32.italic = true
-    k32.underline = false
-    k32.color = 0
-    p31.toks.append(k32)
-    b30.para = p31
-    b30.top = 150.0
-    b30.bottom = p31.top + p31.height
-    b30.x0 = 430.0
-    b30.x1 = 541.2
-    g1.blocks.append(b30)
-    let b33 = WordDoc.Block()
-    let t34 = WordDoc.Table()
-    t34.cols = 3
-    t34.rows = 2
-    t34.xs = [50.0, 150.0, 300.0, 540.0]
-    t34.ys = [200.0, 230.0, 270.0]
-    t34.hT = [1.0, 0.5, 1.0]
-    t34.vT = [1.0, 1.0, 1.0, 1.0]
-    t34.owner = [0, 1, 1, 0, 2, 3]
-    t34.marL = 3.0
-    t34.marR = 3.0
-    let c35 = WordDoc.Cell()
-    c35.c0 = 0
-    c35.c1 = 0
-    c35.r0 = 0
-    c35.r1 = 1
-    c35.x0 = 50.0
-    c35.y0 = 200.0
-    c35.x1 = 150.0
-    c35.y1 = 270.0
-    c35.bTop = 1.0
-    c35.bLeft = 1.0
-    c35.bBottom = 1.0
-    c35.bRight = 1.0
-    c35.marL = 3.0
-    c35.marR = 3.0
-    let p36 = WordDoc.Para()
-    p36.top = 203.0
-    p36.height = 13.0
-    p36.x = 53.0
-    p36.x1 = 120.0
-    p36.base = 213.4
-    p36.size = 11.0
-    p36.bold = false
-    p36.italic = false
-    p36.hasTab = false
-    p36.color = 0
-    p36.align = 0
-    let k37 = WordDoc.Tok()
-    k37.t = 0
-    k37.text = "g\u{1ED9}p d\u{1ECD}c"
-    k37.n = 1
-    k37.spacing = 0.0
-    k37.pos = 0.0
-    k37.size = 11.0
-    k37.bold = false
-    k37.italic = false
-    k37.underline = false
-    k37.color = 0
-    p36.toks.append(k37)
-    c35.paras.append(p36)
-    t34.cells.append(c35)
-    let c38 = WordDoc.Cell()
-    c38.c0 = 1
-    c38.c1 = 2
-    c38.r0 = 0
-    c38.r1 = 0
-    c38.x0 = 150.0
-    c38.y0 = 200.0
-    c38.x1 = 540.0
-    c38.y1 = 230.0
-    c38.bTop = 0.1
-    c38.bLeft = 20.0
-    c38.bBottom = 0.0
-    c38.bRight = 1.0
-    c38.marL = 3.0
-    c38.marR = 3.0
-    let p39 = WordDoc.Para()
-    p39.top = 204.0
-    p39.height = 13.0
-    p39.x = 300.0
-    p39.x1 = 390.0
-    p39.base = 214.4
-    p39.size = 11.0
-    p39.bold = false
-    p39.italic = false
-    p39.hasTab = false
-    p39.color = 0
-    p39.align = 1
-    let k40 = WordDoc.Tok()
-    k40.t = 0
-    k40.text = "g\u{1ED9}p ngang"
-    k40.n = 1
-    k40.spacing = 0.0
-    k40.pos = 0.0
-    k40.size = 11.0
-    k40.bold = false
-    k40.italic = false
-    k40.underline = false
-    k40.color = 0
-    p39.toks.append(k40)
-    c38.paras.append(p39)
-    let p41 = WordDoc.Para()
-    p41.top = 217.0
-    p41.height = 12.0
-    p41.x = 153.0
-    p41.x1 = 200.0
-    p41.base = 226.6
-    p41.size = 10.0
-    p41.bold = false
-    p41.italic = false
-    p41.hasTab = false
-    p41.color = 0
-    p41.align = 2
-    let k42 = WordDoc.Tok()
-    k42.t = 0
-    k42.text = "d\u{F2}ng 2"
-    k42.n = 1
-    k42.spacing = 0.0
-    k42.pos = 0.0
-    k42.size = 10.0
-    k42.bold = false
-    k42.italic = false
-    k42.underline = false
-    k42.color = 0
-    p41.toks.append(k42)
-    c38.paras.append(p41)
-    t34.cells.append(c38)
-    let c43 = WordDoc.Cell()
-    c43.c0 = 1
-    c43.c1 = 1
-    c43.r0 = 1
-    c43.r1 = 1
-    c43.x0 = 150.0
-    c43.y0 = 230.0
-    c43.x1 = 300.0
-    c43.y1 = 270.0
-    c43.bTop = 0.5
-    c43.bLeft = 1.0
-    c43.bBottom = 1.0
-    c43.bRight = 0.0
-    c43.marL = 1.0
-    c43.marR = 4.0
-    let p44 = WordDoc.Para()
-    p44.top = 233.0
-    p44.height = 13.0
-    p44.x = 151.0
-    p44.x1 = 250.0
-    p44.base = 243.4
-    p44.size = 11.0
-    p44.bold = false
-    p44.italic = false
-    p44.hasTab = false
-    p44.color = 0
-    p44.align = 0
-    let k45 = WordDoc.Tok()
-    k45.t = 0
-    k45.text = "l\u{1EC1} ri\u{EA}ng"
-    k45.n = 1
-    k45.spacing = 0.0
-    k45.pos = 0.0
-    k45.size = 11.0
-    k45.bold = false
-    k45.italic = false
-    k45.underline = false
-    k45.color = 0
-    p44.toks.append(k45)
-    c43.paras.append(p44)
-    t34.cells.append(c43)
-    let c46 = WordDoc.Cell()
-    c46.c0 = 2
-    c46.c1 = 2
-    c46.r0 = 1
-    c46.r1 = 1
-    c46.x0 = 300.0
-    c46.y0 = 230.0
-    c46.x1 = 540.0
-    c46.y1 = 270.0
-    c46.bTop = 0.0
-    c46.bLeft = 0.0
-    c46.bBottom = 0.0
-    c46.bRight = 0.0
-    c46.marL = 3.0
-    c46.marR = 3.0
-    t34.cells.append(c46)
-    b33.table = t34
-    b33.top = 200.0
-    b33.bottom = 270.0
-    b33.x0 = 50.0
-    b33.x1 = 540.0
-    b33.overlaps = false
-    g1.blocks.append(b33)
-    let b47 = WordDoc.Block()
-    let t48 = WordDoc.Table()
-    t48.cols = 1
-    t48.rows = 1
-    t48.xs = [50.0, 290.0]
-    t48.ys = [270.5, 300.0]
-    t48.hT = [1.0, 1.0]
-    t48.vT = [1.0, 1.0]
-    t48.owner = [0]
-    t48.marL = 2.0
-    t48.marR = 2.0
-    let c49 = WordDoc.Cell()
-    c49.c0 = 0
-    c49.c1 = 0
-    c49.r0 = 0
-    c49.r1 = 0
-    c49.x0 = 50.0
-    c49.y0 = 270.5
-    c49.x1 = 290.0
-    c49.y1 = 300.0
-    c49.bTop = 1.0
-    c49.bLeft = 1.0
-    c49.bBottom = 1.0
-    c49.bRight = 1.0
-    c49.marL = 2.0
-    c49.marR = 2.0
-    t48.cells.append(c49)
-    b47.table = t48
-    b47.top = 270.5
-    b47.bottom = 300.0
-    b47.x0 = 50.0
-    b47.x1 = 290.0
-    b47.overlaps = false
-    g1.blocks.append(b47)
-    let b50 = WordDoc.Block()
-    let t51 = WordDoc.Table()
-    t51.cols = 2
-    t51.rows = 1
-    t51.xs = [320.0, 430.0, 540.0]
-    t51.ys = [280.0, 310.0]
-    t51.hT = [0.75, 0.75]
-    t51.vT = [0.75, 0.75, 0.75]
-    t51.owner = [0, 1]
-    t51.marL = 1.5
-    t51.marR = 1.5
-    let c52 = WordDoc.Cell()
-    c52.c0 = 0
-    c52.c1 = 0
-    c52.r0 = 0
-    c52.r1 = 0
-    c52.x0 = 320.0
-    c52.y0 = 280.0
-    c52.x1 = 430.0
-    c52.y1 = 310.0
-    c52.bTop = 0.75
-    c52.bLeft = 0.75
-    c52.bBottom = 0.75
-    c52.bRight = 0.75
-    c52.marL = 1.5
-    c52.marR = 1.5
-    let p53 = WordDoc.Para()
-    p53.top = 283.0
-    p53.height = 12.0
-    p53.x = 322.0
-    p53.x1 = 380.0
-    p53.base = 292.6
-    p53.size = 10.0
-    p53.bold = false
-    p53.italic = false
-    p53.hasTab = false
-    p53.color = 0
-    p53.align = 0
-    let k54 = WordDoc.Tok()
-    k54.t = 0
-    k54.text = "c\u{1EA1}nh b\u{1EA3}ng"
-    k54.n = 1
-    k54.spacing = 0.0
-    k54.pos = 0.0
-    k54.size = 10.0
-    k54.bold = false
-    k54.italic = false
-    k54.underline = false
-    k54.color = 0
-    p53.toks.append(k54)
-    c52.paras.append(p53)
-    t51.cells.append(c52)
-    let c55 = WordDoc.Cell()
-    c55.c0 = 1
-    c55.c1 = 1
-    c55.r0 = 0
-    c55.r1 = 0
-    c55.x0 = 430.0
-    c55.y0 = 280.0
-    c55.x1 = 540.0
-    c55.y1 = 310.0
-    c55.bTop = 0.75
-    c55.bLeft = 0.75
-    c55.bBottom = 0.75
-    c55.bRight = 0.75
-    c55.marL = 1.5
-    c55.marR = 1.5
-    t51.cells.append(c55)
-    b50.table = t51
-    b50.top = 280.0
-    b50.bottom = 310.0
-    b50.x0 = 320.0
-    b50.x1 = 540.0
-    b50.overlaps = true
-    g1.blocks.append(b50)
-    let b56 = WordDoc.Block()
-    let p57 = WordDoc.Para()
-    p57.top = 320.0
-    p57.height = 14.625
-    p57.x = 50.0
-    p57.x1 = 300.0
-    p57.base = 331.7
-    p57.size = 13.0
-    p57.bold = false
-    p57.italic = false
-    p57.hasTab = false
-    p57.color = 0
-    p57.align = 0
-    let k58 = WordDoc.Tok()
-    k58.t = 0
-    k58.text = "Sau hai b\u{1EA3}ng li\u{1EC1}n nhau"
-    k58.n = 1
-    k58.spacing = 0.0
-    k58.pos = 0.0
-    k58.size = 13.0
-    k58.bold = false
-    k58.italic = false
-    k58.underline = false
-    k58.color = 0
-    p57.toks.append(k58)
-    b56.para = p57
-    b56.top = 320.0
-    b56.bottom = p57.top + p57.height
-    b56.x0 = 50.0
-    b56.x1 = 300.0
-    g1.blocks.append(b56)
-    let f59 = WordDoc.Pic()
-    f59.x = 100.0
-    f59.y = 60.0
-    f59.w = 80.0
-    f59.h = 40.0
-    f59.data = [1, 2, 3]
-    f59.ext = "png"
-    f59.px0 = 0
-    f59.py0 = 0
-    f59.px1 = 10
-    f59.py1 = 5
-    g1.pics.append(f59)
-    let f60 = WordDoc.Pic()
-    f60.x = 10.0
-    f60.y = 500.0
-    f60.w = 50.0
-    f60.h = 50.0
-    f60.ext = "jpeg"
-    f60.px0 = 0
-    f60.py0 = 0
-    f60.px1 = 1
-    f60.py1 = 1
-    g1.pics.append(f60)
-    let f61 = WordDoc.Pic()
-    f61.x = 300.0
-    f61.y = 700.0
-    f61.w = 120.5
-    f61.h = 60.25
-    f61.data = [9]
-    f61.ext = "jpeg"
-    f61.px0 = 5
-    f61.py0 = 6
-    f61.px1 = 7
-    f61.py1 = 8
-    g1.pics.append(f61)
-    let r62 = WordDoc.Rule()
-    r62.horiz = true
-    r62.pos = 345.5
-    r62.a = 50.0
-    r62.b = 540.0
-    r62.t = 0.01
-    g1.rules.append(r62)
-    let r63 = WordDoc.Rule()
-    r63.horiz = false
-    r63.pos = 560.25
-    r63.a = 100.0
-    r63.b = 400.0
-    r63.t = 3.0
-    g1.rules.append(r63)
-    let x64 = WordDoc.Box()
-    x64.x = 60.0
-    x64.y = 400.0
-    x64.w = 180.0
-    x64.h = 14.0
-    let p65 = WordDoc.Para()
-    p65.top = 400.0
-    p65.height = 14.0
-    p65.x = 60.0
-    p65.x1 = 240.0
-    p65.base = 411.2
-    p65.size = 13.0
-    p65.bold = false
-    p65.italic = false
-    p65.hasTab = false
-    p65.color = 0
-    p65.align = 1
-    let k66 = WordDoc.Tok()
-    k66.t = 0
-    k66.text = "h\u{1ED9}p ch\u{1EEF}"
-    k66.n = 1
-    k66.spacing = 0.0
-    k66.pos = 0.0
-    k66.size = 13.0
-    k66.bold = false
-    k66.italic = false
-    k66.underline = false
-    k66.color = 0
-    p65.toks.append(k66)
-    let k67 = WordDoc.Tok()
-    k67.t = 1
-    k67.text = ""
-    k67.n = 1
-    k67.spacing = 0.0
-    k67.pos = 0.0
-    k67.size = 13.0
-    k67.bold = false
-    k67.italic = false
-    k67.underline = false
-    k67.color = 0
-    p65.toks.append(k67)
-    let k68 = WordDoc.Tok()
-    k68.t = 0
-    k68.text = "neo"
-    k68.n = 1
-    k68.spacing = 0.0
-    k68.pos = 0.0
-    k68.size = 13.0
-    k68.bold = true
-    k68.italic = false
-    k68.underline = false
-    k68.color = 0
-    p65.toks.append(k68)
-    x64.para = p65
-    g1.boxes.append(x64)
-    pages.append(g1)
-    let g69 = WordDoc.Page()
-    g69.width = 842.0
-    g69.height = 595.0
-    let b70 = WordDoc.Block()
-    let p71 = WordDoc.Para()
-    p71.top = 1e+300
-    p71.height = Double.nan
-    p71.x = -Double.infinity
-    p71.x1 = Double.infinity
-    p71.base = 0.0
-    p71.size = Double.nan
-    p71.bold = false
-    p71.italic = false
-    p71.hasTab = true
-    p71.color = 0
-    p71.align = 0
-    let k72 = WordDoc.Tok()
-    k72.t = 0
-    k72.text = "v\u{F4} c\u{1EF1}c"
-    k72.n = 1
-    k72.spacing = Double.infinity
-    k72.pos = 0.0
-    k72.size = 1e+308
-    k72.bold = false
-    k72.italic = false
-    k72.underline = false
-    k72.color = 0
-    p71.toks.append(k72)
-    let k73 = WordDoc.Tok()
-    k73.t = 2
-    k73.text = ""
-    k73.n = 1
-    k73.spacing = 0.0
-    k73.pos = Double.nan
-    k73.size = 13.0
-    k73.bold = false
-    k73.italic = false
-    k73.underline = false
-    k73.color = 0
-    p71.toks.append(k73)
-    let k74 = WordDoc.Tok()
-    k74.t = 1
-    k74.text = ""
-    k74.n = 1
-    k74.spacing = Double.nan
-    k74.pos = 0.0
-    k74.size = Double.nan
-    k74.bold = false
-    k74.italic = false
-    k74.underline = false
-    k74.color = 0
-    p71.toks.append(k74)
-    let k75 = WordDoc.Tok()
-    k75.t = 2
-    k75.text = ""
-    k75.n = 1
-    k75.spacing = 0.0
-    k75.pos = 1e+300
-    k75.size = 13.0
-    k75.bold = false
-    k75.italic = false
-    k75.underline = false
-    k75.color = 0
-    p71.toks.append(k75)
-    b70.para = p71
-    b70.top = 1e+300
-    b70.bottom = p71.top + p71.height
-    b70.x0 = -Double.infinity
-    b70.x1 = Double.infinity
-    g69.blocks.append(b70)
-    let b76 = WordDoc.Block()
-    let p77 = WordDoc.Para()
-    p77.top = -1e+300
-    p77.height = 1e+300
-    p77.x = Double.nan
-    p77.x1 = Double.nan
-    p77.base = Double.nan
-    p77.size = 0.0
-    p77.bold = false
-    p77.italic = false
-    p77.hasTab = false
-    p77.color = 0
-    p77.align = 0
-    let k78 = WordDoc.Tok()
-    k78.t = 0
-    k78.text = "\u{E2}m"
-    k78.n = 1
-    k78.spacing = 0.0
-    k78.pos = 0.0
-    k78.size = -5.0
-    k78.bold = false
-    k78.italic = false
-    k78.underline = false
-    k78.color = -1
-    p77.toks.append(k78)
-    b76.para = p77
-    b76.top = -1e+300
-    b76.bottom = p77.top + p77.height
-    b76.x0 = Double.nan
-    b76.x1 = Double.nan
-    g69.blocks.append(b76)
-    let b79 = WordDoc.Block()
-    let p80 = WordDoc.Para()
-    p80.top = 5e+17
-    p80.height = 4e+17
-    p80.x = 1e+19
-    p80.x1 = -1e+19
-    p80.base = 0.0
-    p80.size = 4.6e+18
-    p80.bold = false
-    p80.italic = false
-    p80.hasTab = false
-    p80.color = 0
-    p80.align = 0
-    let k81 = WordDoc.Tok()
-    k81.t = 0
-    k81.text = "tr\u{E0}n"
-    k81.n = 1
-    k81.spacing = 0.0
-    k81.pos = 0.0
-    k81.size = 4.6e+18
-    k81.bold = false
-    k81.italic = false
-    k81.underline = false
-    k81.color = 0
-    p80.toks.append(k81)
-    b79.para = p80
-    b79.top = 5e+17
-    b79.bottom = p80.top + p80.height
-    b79.x0 = 1e+19
-    b79.x1 = -1e+19
-    g69.blocks.append(b79)
-    let b82 = WordDoc.Block()
-    let t83 = WordDoc.Table()
-    t83.cols = 2
-    t83.rows = 2
-    t83.xs = [Double.nan, 10.0, Double.infinity]
-    t83.ys = [-1e+300, 1e+300, Double.nan]
-    t83.hT = [Double.infinity, Double.nan, -1.0]
-    t83.vT = [Double.nan, Double.infinity, 0.0]
-    t83.owner = [0, 1, 0, 1]
-    t83.marL = Double.infinity
-    t83.marR = Double.nan
-    let c84 = WordDoc.Cell()
-    c84.c0 = 0
-    c84.c1 = 0
-    c84.r0 = 0
-    c84.r1 = 1
-    c84.x0 = Double.nan
-    c84.y0 = -1e+300
-    c84.x1 = 10.0
-    c84.y1 = Double.nan
-    c84.bTop = Double.infinity
-    c84.bLeft = Double.nan
-    c84.bBottom = -1.0
-    c84.bRight = 1e+300
-    c84.marL = Double.nan
-    c84.marR = -Double.infinity
-    let p85 = WordDoc.Para()
-    p85.top = Double.nan
-    p85.height = Double.infinity
-    p85.x = Double.nan
-    p85.x1 = 1e+300
-    p85.base = 0.0
-    p85.size = 13.0
-    p85.bold = false
-    p85.italic = false
-    p85.hasTab = false
-    p85.color = 0
-    p85.align = 0
-    let k86 = WordDoc.Tok()
-    k86.t = 0
-    k86.text = "\u{F4}"
-    k86.n = 1
-    k86.spacing = 0.0
-    k86.pos = 0.0
-    k86.size = 13.0
-    k86.bold = false
-    k86.italic = false
-    k86.underline = false
-    k86.color = 0
-    p85.toks.append(k86)
-    c84.paras.append(p85)
-    t83.cells.append(c84)
-    let c87 = WordDoc.Cell()
-    c87.c0 = 1
-    c87.c1 = 1
-    c87.r0 = 0
-    c87.r1 = 1
-    c87.x0 = 10.0
-    c87.y0 = -1e+300
-    c87.x1 = Double.infinity
-    c87.y1 = Double.nan
-    c87.bTop = 0.0001
-    c87.bLeft = 12.0
-    c87.bBottom = 13.0
-    c87.bRight = 1e-300
-    c87.marL = Double.infinity
-    c87.marR = 2.0
-    t83.cells.append(c87)
-    b82.table = t83
-    b82.top = -1e+300
-    b82.bottom = Double.nan
-    b82.x0 = Double.nan
-    b82.x1 = Double.infinity
-    b82.overlaps = false
-    g69.blocks.append(b82)
-    let b88 = WordDoc.Block()
-    let p89 = WordDoc.Para()
-    p89.top = 4.6e+17
-    p89.height = 4.6e+17
-    p89.x = 0.0
-    p89.x1 = 1.0
-    p89.base = 0.0
-    p89.size = 13.0
-    p89.bold = false
-    p89.italic = false
-    p89.hasTab = false
-    p89.color = 0
-    p89.align = 0
-    let k90 = WordDoc.Tok()
-    k90.t = 0
-    k90.text = "x"
-    k90.n = 1
-    k90.spacing = 0.0
-    k90.pos = 0.0
-    k90.size = 13.0
-    k90.bold = false
-    k90.italic = false
-    k90.underline = false
-    k90.color = 0
-    p89.toks.append(k90)
-    b88.para = p89
-    b88.top = 4.6e+17
-    b88.bottom = p89.top + p89.height
-    b88.x0 = 0.0
-    b88.x1 = 1.0
-    g69.blocks.append(b88)
-    let f91 = WordDoc.Pic()
-    f91.x = Double.nan
-    f91.y = Double.infinity
-    f91.w = Double.infinity
-    f91.h = Double.nan
-    f91.data = [0]
-    f91.ext = "png"
-    f91.px0 = 0
-    f91.py0 = 0
-    f91.px1 = 0
-    f91.py1 = 0
-    g69.pics.append(f91)
-    let f92 = WordDoc.Pic()
-    f92.x = -1e+300
-    f92.y = 1e+300
-    f92.w = -5.0
-    f92.h = 0.0
-    f92.data = [1]
-    f92.ext = "gif"
-    f92.px0 = 0
-    f92.py0 = 0
-    f92.px1 = 0
-    f92.py1 = 0
-    g69.pics.append(f92)
-    let r93 = WordDoc.Rule()
-    r93.horiz = true
-    r93.pos = Double.nan
-    r93.a = -1e+300
-    r93.b = 1e+300
-    r93.t = Double.infinity
-    g69.rules.append(r93)
-    let r94 = WordDoc.Rule()
-    r94.horiz = false
-    r94.pos = Double.infinity
-    r94.a = Double.nan
-    r94.b = 5.0
-    r94.t = -1.0
-    g69.rules.append(r94)
-    let x95 = WordDoc.Box()
-    x95.x = Double.nan
-    x95.y = -5.0
-    x95.w = Double.nan
-    x95.h = -5.0
-    let p96 = WordDoc.Para()
-    p96.top = 0.0
-    p96.height = 0.0
-    p96.x = 0.0
-    p96.x1 = 0.0
-    p96.base = 0.0
-    p96.size = 13.0
-    p96.bold = false
-    p96.italic = false
-    p96.hasTab = false
-    p96.color = 0
-    p96.align = 2
-    x95.para = p96
-    g69.boxes.append(x95)
-    let x97 = WordDoc.Box()
-    x97.x = 1e+300
-    x97.y = 1e+300
-    x97.w = 1e+300
-    x97.h = Double.infinity
-    let p98 = WordDoc.Para()
-    p98.top = Double.infinity
-    p98.height = Double.infinity
-    p98.x = Double.infinity
-    p98.x1 = Double.infinity
-    p98.base = 0.0
-    p98.size = 13.0
-    p98.bold = false
-    p98.italic = false
-    p98.hasTab = false
-    p98.color = 0
-    p98.align = 1
-    let k99 = WordDoc.Tok()
-    k99.t = 0
-    k99.text = "xa"
-    k99.n = 1
-    k99.spacing = 0.0
-    k99.pos = 0.0
-    k99.size = 13.0
-    k99.bold = false
-    k99.italic = false
-    k99.underline = false
-    k99.color = 0
-    p98.toks.append(k99)
-    x97.para = p98
-    g69.boxes.append(x97)
-    pages.append(g69)
-    let g100 = WordDoc.Page()
-    g100.width = 100.0
-    g100.height = 100.0
-    let f101 = WordDoc.Pic()
-    f101.x = 0.0
-    f101.y = 0.0
-    f101.w = 100.0
-    f101.h = 100.0
-    f101.ext = "png"
-    f101.px0 = 0
-    f101.py0 = 0
-    f101.px1 = 1
-    f101.py1 = 1
-    g100.pics.append(f101)
-    pages.append(g100)
-    let g102 = WordDoc.Page()
-    g102.width = 595.276
-    g102.height = 841.89
-    let b103 = WordDoc.Block()
-    let p104 = WordDoc.Para()
-    p104.top = 700.0
-    p104.height = 14.625
-    p104.x = 250.0
-    p104.x1 = 320.0
-    p104.base = 711.7
-    p104.size = 13.0
-    p104.bold = false
-    p104.italic = false
-    p104.hasTab = false
-    p104.color = 0
-    p104.align = 0
-    let k105 = WordDoc.Tok()
-    k105.t = 0
-    k105.text = "ng\u{1EAF}n"
-    k105.n = 1
-    k105.spacing = 0.0
-    k105.pos = 0.0
-    k105.size = 13.0
-    k105.bold = false
-    k105.italic = false
-    k105.underline = false
-    k105.color = 0
-    p104.toks.append(k105)
-    b103.para = p104
-    b103.top = 700.0
-    b103.bottom = p104.top + p104.height
-    b103.x0 = 250.0
-    b103.x1 = 320.0
-    g102.blocks.append(b103)
-    pages.append(g102)
-    let g106 = WordDoc.Page()
-    g106.width = 595.276
-    g106.height = 841.89
-    let x107 = WordDoc.Box()
-    x107.x = 72.0
-    x107.y = 72.0
-    x107.w = 100.0
-    x107.h = 14.0
-    let p108 = WordDoc.Para()
-    p108.top = 72.0
-    p108.height = 14.0
-    p108.x = 72.0
-    p108.x1 = 172.0
-    p108.base = 83.2
-    p108.size = 13.0
-    p108.bold = false
-    p108.italic = false
-    p108.hasTab = false
-    p108.color = 0
-    p108.align = 0
-    let k109 = WordDoc.Tok()
-    k109.t = 0
-    k109.text = "ch\u{1EC9} c\u{F3} h\u{1ED9}p ch\u{1EEF}"
-    k109.n = 1
-    k109.spacing = 0.0
-    k109.pos = 0.0
-    k109.size = 13.0
-    k109.bold = false
-    k109.italic = false
-    k109.underline = false
-    k109.color = 0
-    p108.toks.append(k109)
-    x107.para = p108
-    g106.boxes.append(x107)
-    pages.append(g106)
-    let g110 = WordDoc.Page()
-    g110.width = Double.nan
-    g110.height = Double.infinity
-    let b111 = WordDoc.Block()
-    let p112 = WordDoc.Para()
-    p112.top = 10.0
-    p112.height = 10.0
-    p112.x = 10.0
-    p112.x1 = 20.0
-    p112.base = 18.0
-    p112.size = 13.0
-    p112.bold = false
-    p112.italic = false
-    p112.hasTab = false
-    p112.color = 0
-    p112.align = 0
-    let k113 = WordDoc.Tok()
-    k113.t = 0
-    k113.text = "kh\u{1ED5} l\u{1EA1}"
-    k113.n = 1
-    k113.spacing = 0.0
-    k113.pos = 0.0
-    k113.size = 13.0
-    k113.bold = false
-    k113.italic = false
-    k113.underline = false
-    k113.color = 0
-    p112.toks.append(k113)
-    b111.para = p112
-    b111.top = 10.0
-    b111.bottom = p112.top + p112.height
-    b111.x0 = 10.0
-    b111.x1 = 20.0
-    g110.blocks.append(b111)
-    pages.append(g110)
+    var page = WordDoc.Page()
+    var para = WordDoc.Para()
+    var table = WordDoc.Table()
+    var cell = WordDoc.Cell()
+    var box = WordDoc.Box()
+    for raw in [UInt8](d).split(separator: 0x0A) {
+        let t = String(decoding: raw, as: UTF8.self).split(separator: " ").map(String.init)
+        guard let k = t.first else { continue }
+        switch k {
+        case "page":
+            page = WordDoc.Page()
+            page.width = bits(t[1])
+            page.height = bits(t[2])
+            pages.append(page)
+        case "bpara", "cpara", "xpara":
+            para = WordDoc.Para()
+            para.top = bits(t[1])
+            para.height = bits(t[2])
+            para.x = bits(t[3])
+            para.x1 = bits(t[4])
+            para.base = bits(t[5])
+            para.size = bits(t[6])
+            para.bold = t[7] == "1"
+            para.italic = t[8] == "1"
+            para.hasTab = t[9] == "1"
+            para.color = int(t[10])
+            para.align = int(t[11])
+            if k == "cpara" {
+                cell.paras.append(para)
+            } else if k == "xpara" {
+                box.para = para
+            } else {
+                let b = WordDoc.Block()
+                b.para = para
+                b.top = para.top
+                b.bottom = para.top + para.height
+                b.x0 = para.x
+                b.x1 = para.x1
+                page.blocks.append(b)
+            }
+        case "tok":
+            let tk = WordDoc.Tok()
+            tk.t = int(t[1])
+            tk.n = int(t[2])
+            tk.spacing = bits(t[3])
+            tk.pos = bits(t[4])
+            tk.size = bits(t[5])
+            tk.bold = t[6] == "1"
+            tk.italic = t[7] == "1"
+            tk.underline = t[8] == "1"
+            tk.color = int(t[9])
+            tk.text = cpText(t[10])
+            para.toks.append(tk)
+        case "table":
+            table = WordDoc.Table()
+            table.cols = int(t[1])
+            table.rows = int(t[2])
+            table.marL = bits(t[3])
+            table.marR = bits(t[4])
+            let b = WordDoc.Block()
+            b.table = table
+            b.overlaps = t[5] == "1"
+            b.top = bits(t[6])
+            b.bottom = bits(t[7])
+            b.x0 = bits(t[8])
+            b.x1 = bits(t[9])
+            page.blocks.append(b)
+        case "xs": table.xs = t.dropFirst().map(bits)
+        case "ys": table.ys = t.dropFirst().map(bits)
+        case "hT": table.hT = t.dropFirst().map(bits)
+        case "vT": table.vT = t.dropFirst().map(bits)
+        case "owner": table.owner = t.dropFirst().map(int)
+        case "cell":
+            cell = WordDoc.Cell()
+            cell.c0 = int(t[1])
+            cell.c1 = int(t[2])
+            cell.r0 = int(t[3])
+            cell.r1 = int(t[4])
+            cell.x0 = bits(t[5])
+            cell.y0 = bits(t[6])
+            cell.x1 = bits(t[7])
+            cell.y1 = bits(t[8])
+            cell.bTop = bits(t[9])
+            cell.bLeft = bits(t[10])
+            cell.bBottom = bits(t[11])
+            cell.bRight = bits(t[12])
+            cell.marL = bits(t[13])
+            cell.marR = bits(t[14])
+            table.cells.append(cell)
+        case "pic":
+            let pc = WordDoc.Pic()
+            pc.x = bits(t[1])
+            pc.y = bits(t[2])
+            pc.w = bits(t[3])
+            pc.h = bits(t[4])
+            pc.px0 = int(t[5])
+            pc.py0 = int(t[6])
+            pc.px1 = int(t[7])
+            pc.py1 = int(t[8])
+            pc.ext = t[9]
+            if t[10] != "-" { pc.data = t[10].split(separator: ",").map { UInt8(truncatingIfNeeded: Int($0) ?? 0) } }
+            page.pics.append(pc)
+        case "rule":
+            let r = WordDoc.Rule()
+            r.horiz = t[1] == "1"
+            r.pos = bits(t[2])
+            r.a = bits(t[3])
+            r.b = bits(t[4])
+            r.t = bits(t[5])
+            page.rules.append(r)
+        case "box":
+            box = WordDoc.Box()
+            box.x = bits(t[1])
+            box.y = bits(t[2])
+            box.w = bits(t[3])
+            box.h = bits(t[4])
+            page.boxes.append(box)
+        default: break
+        }
+    }
     return pages
 }
 
@@ -2912,15 +1830,15 @@ func runDumpWord(_ inDir: String, _ outDir: String) -> Int32 {
         writeFile("\(outDir)/docx_\(wordModes[m])/tat_ca.docx", [UInt8](docx))
     }
     // các trang dựng tay (không qua DocLayout): từng phần của DOCX + file .docx
-    do {
+    if let model = readModel(inDir + "/synthetic.wordmodel"), let again = readModel(inDir + "/synthetic.wordmodel") {
         try? fm.createDirectory(atPath: "\(outDir)/all.synthetic", withIntermediateDirectories: true)
         try? fm.createDirectory(atPath: "\(outDir)/docx_synthetic", withIntermediateDirectories: true)
         let title = "Trang dựng tay \u{1}<&>"
-        for p in DocxWriter.parts(syntheticPages(), title, wordTime) {
+        for p in DocxWriter.parts(model, title, wordTime) {
             writeFile("\(outDir)/all.synthetic/" + p.name.replacingOccurrences(of: "/", with: "~"), p.data)
             lines.append("part synthetic \(p.name) \(p.data.count) \(hex16(fnv(p.data))) \(p.deflate ? 1 : 0)")
         }
-        let docx = DocxWriter.write(pages: syntheticPages(), title: title, isoTime: wordTime, deflate: tinyDeflate)
+        let docx = DocxWriter.write(pages: again, title: title, isoTime: wordTime, deflate: tinyDeflate)
         writeFile("\(outDir)/docx_synthetic/tat_ca.docx", [UInt8](docx))
     }
     let text = lines.joined(separator: "\n") + "\n"

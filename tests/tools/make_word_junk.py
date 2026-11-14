@@ -11,6 +11,9 @@ Mỗi trang <tên>.ppm kèm <tên>.words.tsv (x0 y0 x1 y1 dòng chữ [độ-tin
   wj_noise, wj_white, wj_black, wj_grid   trang nhiễu / trắng / đen / chỉ có lưới kẻ với các từ ngẫu nhiên
   wj_dups     hàng nghìn từ trùng nhau
   wj_small_*, wj_flat_*   ảnh rất nhỏ / rất dẹt
+Kèm file synthetic.wordmodel: vài trang WordDoc DỰNG TAY (không qua DocLayout) để so DocxWriter ở các nhánh mà kết quả của
+DocLayout không đi qua — lề ô khác lề bảng, bảng đứng cạnh bảng khác, hai bảng liền nhau, tab trùng, dấu cách lặp, hình
+không có dữ liệu, trang trống — và với giá trị NaN / vô cực / rất lớn (ép kiểu bão hoà, cộng trừ số nguyên quay vòng).
 Không có đáp án: chỉ dùng để so hai bản (DumpCore --word, algotest --dump-word, compare_core.py --word) và kiểm tra file
 .docx ghi ra (check_docx_zip.py). Kết quả sinh ra cố định theo hạt giống.
 
@@ -19,6 +22,7 @@ Cách chạy: python3 tests/tools/make_word_junk.py <thư-mục> [cạnh-dài=76
 import math
 import os
 import random
+import struct
 import sys
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
@@ -244,7 +248,110 @@ def dups(name, w, h, seed, n):
     p.save()
 
 
+# ---------------------------------------------------------------------- trang WordDoc dựng tay (synthetic.wordmodel)
+
+NAN, INF = float("nan"), float("inf")
+
+
+def hx(v):
+    """Số thực dưới dạng 16 chữ số hex của bit IEEE 754 (hai bản đọc lại đúng từng bit)."""
+    return struct.pack(">d", float(v)).hex()
+
+
+def m_tok(t, text="", n=1, spacing=0, pos=0, size=13, bold=False, italic=False, underline=False, color=0):
+    cps = ",".join("%X" % ord(c) for c in text) or "-"
+    return "tok %d %d %s %s %s %d %d %d %d %s" % (t, n, hx(spacing), hx(pos), hx(size), bold, italic, underline, color, cps)
+
+
+def m_para(kind, top, height, x, x1, base, toks, size=13, bold=False, italic=False, has_tab=False, color=0, align=0):
+    return ["%s %s %s %s %s %s %s %d %d %d %d %d" % (kind, hx(top), hx(height), hx(x), hx(x1), hx(base), hx(size), bold, italic,
+                                                   has_tab, color, align)] + toks
+
+
+def m_cell(c0, c1, r0, r1, x0, y0, x1, y1, borders, mar, paras=()):
+    out = ["cell %d %d %d %d " % (c0, c1, r0, r1) + " ".join(hx(v) for v in (x0, y0, x1, y1) + tuple(borders) + tuple(mar))]
+    for p in paras:
+        out += p
+    return out
+
+
+def m_table(xs, ys, h_t, v_t, owner, mar, cells, overlaps=False):
+    out = ["table %d %d %s %s %d %s %s %s %s" % (len(xs) - 1, len(ys) - 1, hx(mar[0]), hx(mar[1]), overlaps, hx(ys[0]), hx(ys[-1]),
+                                               hx(xs[0]), hx(xs[-1]))]
+    for tag, v in (("xs", xs), ("ys", ys), ("hT", h_t), ("vT", v_t)):
+        out.append(tag + " " + " ".join(hx(x) for x in v))
+    out.append("owner " + " ".join(str(o) for o in owner))
+    for c in cells:
+        out += c
+    return out
+
+
+def m_pic(x, y, w, h, box, ext, data):
+    return ["pic %s %s %s %s %d %d %d %d %s %s" % (hx(x), hx(y), hx(w), hx(h), box[0], box[1], box[2], box[3], ext,
+                                                   "-" if data is None else ",".join(str(d) for d in data))]
+
+
+def model():
+    T, S, TAB = 0, 1, 2
+    txt = lambda s, **k: m_tok(T, s, **k)
+    out = []
+    # ---- trang 1: mọi loại phần tử với giá trị bình thường
+    out.append("page %s %s" % (hx(595.276), hx(841.89)))
+    out += m_para("bpara", 40, 15, 50, 300, 52, [
+        txt('Xin <chào> & "bạn" \'x\'', spacing=0.26, bold=True), m_tok(S, n=3, spacing=0.3, bold=True),
+        txt("a\u0001b\tc\ufffe😀e\u0301", spacing=-0.2, italic=True, underline=True, color=0x123456, size=11.5),
+        m_tok(TAB, pos=400), m_tok(TAB, pos=400), m_tok(TAB, pos=20), m_tok(TAB, pos=250.5), txt("sau tab"), m_tok(S, n=0), m_tok(S),
+        txt("")], bold=True, color=0xFF0000, has_tab=True)
+    for i in range(4):
+        out += m_para("bpara", 60 + 16 * i, 14.625, 50, 540 - 3 * (i % 2), 71.7 + 16 * i, [txt("Dòng thứ %d của trang dựng tay" % i, spacing=0.05 * i)])
+    out += m_para("bpara", 130, 16, 200, 395.276, 143, [txt("Ở GIỮA", bold=True, size=14)], size=14, bold=True)
+    out += m_para("bpara", 150, 14, 430, 541.2, 161, [txt("bên phải", italic=True, size=12)], size=12, italic=True)
+    out += m_table([50, 150, 300, 540], [200, 230, 270], [1, 0.5, 1], [1, 1, 1, 1], [0, 1, 1, 0, 2, 3], (3, 3), [
+        m_cell(0, 0, 0, 1, 50, 200, 150, 270, (1, 1, 1, 1), (3, 3), [m_para("cpara", 203, 13, 53, 120, 213.4, [txt("gộp dọc", size=11)], size=11)]),
+        m_cell(1, 2, 0, 0, 150, 200, 540, 230, (0.1, 20, 0, 1), (3, 3), [
+            m_para("cpara", 204, 13, 300, 390, 214.4, [txt("gộp ngang", size=11)], size=11, align=1),
+            m_para("cpara", 217, 12, 153, 200, 226.6, [txt("dòng 2", size=10)], size=10, align=2)]),
+        m_cell(1, 1, 1, 1, 150, 230, 300, 270, (0.5, 1, 1, 0), (1, 4), [m_para("cpara", 233, 13, 151, 250, 243.4, [txt("lề riêng", size=11)], size=11)]),
+        m_cell(2, 2, 1, 1, 300, 230, 540, 270, (0, 0, 0, 0), (3, 3))])
+    out += m_table([50, 290], [270.5, 300], [1, 1], [1, 1], [0], (2, 2), [m_cell(0, 0, 0, 0, 50, 270.5, 290, 300, (1, 1, 1, 1), (2, 2))])
+    out += m_table([320, 430, 540], [280, 310], [0.75, 0.75], [0.75, 0.75, 0.75], [0, 1], (1.5, 1.5), [
+        m_cell(0, 0, 0, 0, 320, 280, 430, 310, (0.75,) * 4, (1.5, 1.5), [m_para("cpara", 283, 12, 322, 380, 292.6, [txt("cạnh bảng", size=10)], size=10)]),
+        m_cell(1, 1, 0, 0, 430, 280, 540, 310, (0.75,) * 4, (1.5, 1.5))], overlaps=True)
+    out += m_para("bpara", 320, 14.625, 50, 300, 331.7, [txt("Sau hai bảng liền nhau")])
+    out += m_pic(100, 60, 80, 40, (0, 0, 10, 5), "png", [1, 2, 3]) + m_pic(10, 500, 50, 50, (0, 0, 1, 1), "jpeg", None)
+    out += m_pic(300, 700, 120.5, 60.25, (5, 6, 7, 8), "jpeg", [9])
+    out += ["rule 1 %s %s %s %s" % (hx(345.5), hx(50), hx(540), hx(0.01)), "rule 0 %s %s %s %s" % (hx(560.25), hx(100), hx(400), hx(3))]
+    out += ["box %s %s %s %s" % (hx(60), hx(400), hx(180), hx(14))]
+    out += m_para("xpara", 400, 14, 60, 240, 411.2, [txt("hộp chữ"), m_tok(S), txt("neo", bold=True)], align=1)
+    # ---- trang 2 (ngang): giá trị bất thường — ép kiểu bão hoà, cộng trừ số nguyên dài quay vòng
+    out.append("page %s %s" % (hx(842), hx(595)))
+    out += m_para("bpara", 1e300, NAN, -INF, INF, 0, [txt("vô cực", spacing=INF, size=1e308), m_tok(TAB, pos=NAN), m_tok(S, spacing=NAN, size=NAN),
+                                                     m_tok(TAB, pos=1e300)], size=NAN, has_tab=True)
+    out += m_para("bpara", -1e300, 1e300, NAN, NAN, NAN, [txt("âm", size=-5, color=-1)], size=0)
+    out += m_para("bpara", 5e17, 4e17, 1e19, -1e19, 0, [txt("tràn", size=4.6e18)], size=4.6e18)
+    out += m_table([NAN, 10, INF], [-1e300, 1e300, NAN], [INF, NAN, -1], [NAN, INF, 0], [0, 1, 0, 1], (INF, NAN), [
+        m_cell(0, 0, 0, 1, NAN, -1e300, 10, NAN, (INF, NAN, -1, 1e300), (NAN, -INF), [m_para("cpara", NAN, INF, NAN, 1e300, 0, [txt("ô")])]),
+        m_cell(1, 1, 0, 1, 10, -1e300, INF, NAN, (0.0001, 12, 13, 1e-300), (INF, 2))])
+    out += m_para("bpara", 4.6e17, 4.6e17, 0, 1, 0, [txt("x")])
+    out += m_pic(NAN, INF, INF, NAN, (0, 0, 0, 0), "png", [0]) + m_pic(-1e300, 1e300, -5, 0, (0, 0, 0, 0), "gif", [1])
+    out += ["rule 1 %s %s %s %s" % (hx(NAN), hx(-1e300), hx(1e300), hx(INF)), "rule 0 %s %s %s %s" % (hx(INF), hx(NAN), hx(5), hx(-1))]
+    out += ["box %s %s %s %s" % (hx(NAN), hx(-5), hx(NAN), hx(-5))] + m_para("xpara", 0, 0, 0, 0, 0, [], align=2)
+    out += ["box %s %s %s %s" % (hx(1e300), hx(1e300), hx(1e300), hx(INF))] + m_para("xpara", INF, INF, INF, INF, 0, [txt("xa")], align=1)
+    # ---- trang trống có hình không dữ liệu; trang chỉ có một dòng ngắn; trang chỉ có hộp chữ; trang khổ NaN x vô cực
+    out.append("page %s %s" % (hx(100), hx(100)))
+    out += m_pic(0, 0, 100, 100, (0, 0, 1, 1), "png", None)
+    out.append("page %s %s" % (hx(595.276), hx(841.89)))
+    out += m_para("bpara", 700, 14.625, 250, 320, 711.7, [txt("ngắn")])
+    out.append("page %s %s" % (hx(595.276), hx(841.89)))
+    out += ["box %s %s %s %s" % (hx(72), hx(72), hx(100), hx(14))] + m_para("xpara", 72, 14, 72, 172, 83.2, [txt("chỉ có hộp chữ")])
+    out.append("page %s %s" % (hx(NAN), hx(INF)))
+    out += m_para("bpara", 10, 10, 10, 20, 18, [txt("khổ lạ")])
+    with open(os.path.join(OUT, "synthetic.wordmodel"), "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(out) + "\n")
+
+
 def main():
+    model()
     L = LONG
     W = int(round(L * 595.276 / 841.89))
     document("wj_page_a", W, L, 11)
