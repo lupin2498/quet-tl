@@ -12,8 +12,12 @@ import vn.quettailieu.scanner.core.Retouch;
  * Các chỉnh sửa trên trang, lưu dạng JSON chuẩn tắc (chỉ số nguyên + chuỗi, khoá theo thứ tự cố định)
  * để cùng một nội dung luôn cho cùng một chuỗi — chuỗi này tham gia vào tên file ảnh kết quả.
  *
- * - Xoá thông minh (Retouch.Op): áp lên ảnh đã nắn phẳng TRƯỚC khi lọc.
- * - Đánh dấu (Mark): chữ ký, văn bản, nét vẽ, khảm, hình mờ — vẽ SAU khi lọc, trước khi xoay.
+ * - Xoá thông minh (Retouch.Op): toạ độ theo ảnh đã nắn phẳng TRƯỚC khi lọc, áp trước bộ lọc. Bước nắn thẳng dòng chữ của
+ *   bộ lọc "Làm phẳng" (dời điểm ảnh) chạy SAU bước xoá và kéo nét xoá theo nội dung, nên màn hình Xóa thông minh xem
+ *   trước bộ lọc với geometric = false (chỉ làm sạch, không nắn) để nét vẽ trên màn hình trùng chỗ trên ảnh trước khi lọc.
+ * - Đánh dấu (Mark): chữ ký, văn bản, nét vẽ, khảm, hình mờ — vẽ SAU khi lọc (với "Làm phẳng": trên ảnh đã nắn thẳng),
+ *   trước khi xoay. Đổi sang / bỏ bộ lọc "Làm phẳng" sau khi đã đánh dấu thì đánh dấu giữ toạ độ, có thể lệch nhẹ so với
+ *   nội dung (theo độ nắn).
  * Toạ độ chuẩn hoá theo ảnh đã nắn phẳng (chưa xoay), nhân 100000 khi lưu; độ dài tính theo bề ngang ảnh.
  */
 final class Edits {
@@ -206,7 +210,10 @@ final class Edits {
 
     // ------------------------------------------------------------------ cắt lại
 
-    /** Sau khi cắt lại trang: dời các chỉnh sửa theo vùng cắt mới để chúng vẫn nằm đúng chỗ trên giấy. */
+    /**
+     * Sau khi cắt lại trang: dời các chỉnh sửa theo vùng cắt mới để chúng vẫn nằm đúng chỗ trên giấy (với "Làm phẳng",
+     * vị trí đánh dấu chỉ gần đúng vì trường nắn thẳng được ước lượng lại trên ảnh cắt mới).
+     */
     static void remap(DocStore.Page p, float[] oldQuad, float[] newQuad) {
         if (oldQuad == null || newQuad == null || (p.erase == null && p.marks == null)) return;
         boolean same = true;

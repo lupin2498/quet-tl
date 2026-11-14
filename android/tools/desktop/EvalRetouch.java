@@ -1,14 +1,19 @@
 import vn.quettailieu.scanner.core.Enhancer;
+import vn.quettailieu.scanner.core.Flatten;
 import vn.quettailieu.scanner.core.Retouch;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Kiểm thử phần làm đẹp / chỉnh sửa trang (Retouch + bộ lọc mới) trên ảnh tổng hợp của
- * tests/tools/make_retouch_images.py.
+ * tests/tools/make_retouch_images.py. Các trang này đã phẳng nên còn là phép đối chứng cho bộ lọc Làm phẳng
+ * (gỡ ngón tay, khử bóng, dọn mép, giữ chữ / con dấu / chữ ký, không nắn méo); trang mấp mô thật do EvalFlatten kiểm tra.
  *
  * Cách chạy: java -cp out EvalRetouch <thư-mục-ảnh-ppm> [thư-mục-ghi-ảnh-kết-quả]
  * Mã thoát khác 0 nếu có kiểm tra không đạt.
@@ -43,6 +48,29 @@ public class EvalRetouch {
 
     static void dump(Img i, String name) throws Exception {
         if (outDir != null) DumpCore.writePPM(new File(outDir, name + ".ppm"), i.px, i.w, i.h);
+    }
+
+    /** Kết quả bộ lọc Làm phẳng (Flatten.apply có nắn = Enhancer.apply(..., FLATTEN)) + trường nắn của từng trang, tính một lần. */
+    static final Map<String, Img> FLAT = new HashMap<>();
+    static final Map<String, Flatten.Field> FLAT_FIELD = new HashMap<>();
+
+    static Img flattened(File dir, String name) throws Exception {
+        Img c = FLAT.get(name);
+        if (c == null) {
+            c = load(dir, name);
+            FLAT_FIELD.put(name, Flatten.apply(c.px, c.w, c.h));
+            FLAT.put(name, c);
+            dump(c, name + "_flatten");
+        }
+        return c;
+    }
+
+    /** Ảnh sau bộ lọc mode (bản sao của src = trang name); Làm phẳng lấy từ kết quả đã tính. Không sửa ảnh trả về. */
+    static Img filtered(File dir, Img src, String name, int mode) throws Exception {
+        if (mode == Enhancer.FLATTEN) return flattened(dir, name);
+        Img c = src.copy();
+        Enhancer.apply(c.px, c.w, c.h, mode);
+        return c;
     }
 
     static int lum(int c) {
@@ -134,6 +162,8 @@ public class EvalRetouch {
             dump(m, n + "_pro");
             int left = count(m, SKIN);
             check(left * 200 <= before, String.format(Locale.US, "%s: Thần kỳ không còn ngón tay (%d -> %d)", n, before, left));
+            int leftF = count(flattened(in, n), SKIN);
+            check(leftF * 200 <= before, String.format(Locale.US, "%s: Làm phẳng không còn ngón tay (%d -> %d)", n, before, leftF));
         }
         for (String n : no) {
             Img im = load(in, n);
@@ -142,14 +172,14 @@ public class EvalRetouch {
 
         // ---- bộ lọc mới trên trang sạch: nền trắng / chữ còn đậm
         Img plain = load(in, "rt_plain");
-        for (int mode : new int[]{Enhancer.MAGIC_PRO, Enhancer.NO_SHADOW, Enhancer.NO_HAND, Enhancer.DENOISE}) {
-            Img c = plain.copy();
-            Enhancer.apply(c.px, c.w, c.h, mode);
+        for (int mode : new int[]{Enhancer.MAGIC_PRO, Enhancer.NO_SHADOW, Enhancer.NO_HAND, Enhancer.DENOISE, Enhancer.FLATTEN}) {
+            Img c = filtered(in, plain, "rt_plain", mode);
             dump(c, "rt_plain_f" + mode);
             double paper = meanLum(c, 0.30, 0.02, 0.70, 0.05);
             int ink = count(c, 0.17, 0.25, 0.53, 0.60, DARK);
             int ink0 = count(plain, 0.17, 0.25, 0.53, 0.60, DARK);
-            boolean white = mode == Enhancer.DENOISE ? paper > 150 : paper >= (mode == Enhancer.MAGIC_PRO ? 250 : 236);
+            boolean white = mode == Enhancer.DENOISE ? paper > 150
+                    : paper >= (mode == Enhancer.MAGIC_PRO || mode == Enhancer.FLATTEN ? 250 : 236);
             check(white, String.format(Locale.US, "%s: nền giấy %.1f", Enhancer.name(mode), paper));
             check(ink * 10 >= ink0 * 7, String.format(Locale.US, "%s: chữ còn đậm (%d / %d điểm tối)", Enhancer.name(mode), ink, ink0));
         }
@@ -161,14 +191,15 @@ public class EvalRetouch {
             Enhancer.apply(m.px, m.w, m.h, Enhancer.MAGIC);
             int a1 = count(c, DARK), a2 = count(m, DARK);
             check(a1 * 100 >= a2 * 80 && a1 * 100 <= a2 * 135, "Thần kỳ giữ nguyên nội dung trang sạch (" + a1 + " so với Tăng cường " + a2 + ")");
+            int a3 = count(flattened(in, "rt_plain"), DARK);
+            check(a3 * 100 >= a2 * 80 && a3 * 100 <= a2 * 135, "Làm phẳng giữ nguyên nội dung trang sạch (" + a3 + " so với Tăng cường " + a2 + ")");
         }
 
         // ---- bóng đổ
         Img shadow = load(in, "rt_shadow");
         double d0 = Math.abs(meanLum(shadow, 0.05, 0.02, 0.25, 0.05) - meanLum(shadow, 0.72, 0.955, 0.95, 0.985));
-        for (int mode : new int[]{Enhancer.NO_SHADOW, Enhancer.MAGIC_PRO}) {
-            Img c = shadow.copy();
-            Enhancer.apply(c.px, c.w, c.h, mode);
+        for (int mode : new int[]{Enhancer.NO_SHADOW, Enhancer.MAGIC_PRO, Enhancer.FLATTEN}) {
+            Img c = filtered(in, shadow, "rt_shadow", mode);
             dump(c, "rt_shadow_f" + mode);
             double lit = meanLum(c, 0.05, 0.02, 0.25, 0.05), dim = meanLum(c, 0.72, 0.955, 0.95, 0.985);
             check(Math.abs(lit - dim) <= 10 && dim >= 228, String.format(Locale.US, "%s: hết bóng (chênh %.1f -> %.1f, vùng bóng %.1f)", Enhancer.name(mode), d0, Math.abs(lit - dim), dim));
@@ -191,6 +222,11 @@ public class EvalRetouch {
             check(top + right + bottom <= 40, "Thần kỳ dọn vệt tối sát mép (còn " + (top + right + bottom) + " điểm)");
             int ink = count(c, 0.17, 0.25, 0.53, 0.60, DARK), ink0 = count(e, 0.17, 0.25, 0.53, 0.60, DARK);
             check(ink * 10 >= ink0 * 7, "Dọn mép không làm mất chữ (" + ink + " / " + ink0 + ")");
+            Img f = flattened(in, "rt_edge");
+            int edge = count(f, 0, 0, 1, 0.012, DARK) + count(f, 0.985, 0.2, 1, 1, DARK) + count(f, 0, 0.992, 0.45, 1, DARK);
+            check(edge <= 40, "Làm phẳng dọn vệt tối sát mép (còn " + edge + " điểm)");
+            int inkF = count(f, 0.17, 0.25, 0.53, 0.60, DARK);
+            check(inkF * 10 >= ink0 * 7, "Làm phẳng: dọn mép không làm mất chữ (" + inkF + " / " + ink0 + ")");
         }
 
         // ---- chữ viết tay
@@ -221,6 +257,12 @@ public class EvalRetouch {
             int s1 = count(mg, 0.13, 0.86, 0.43, 0.95, BLUE);
             check(s0 > 300 && s1 * 100 <= s0 * 6, "Thần kỳ xoá cả nét bút dính liền (" + s0 + " -> " + s1 + ")");
             check(count(mg, 0.60, 0.82, 0.86, 0.985, RED) * 100 >= r0 * 97, "Thần kỳ không đụng tới con dấu ở xa");
+            // Làm phẳng chỉ giữ nét mực nhưng chữ ký, con dấu là nội dung: phải còn (cùng ngưỡng với EvalFlatten)
+            Img fl = flattened(in, "rt_hand");
+            int bF = count(fl, BLUE), rF = count(fl, 0.60, 0.82, 0.86, 0.985, RED), kF = count(fl, 0.10, 0.25, 0.92, 0.75, DARK);
+            check(bF * 100 >= b0 * 80, "Làm phẳng giữ chữ ký / chữ viết bút xanh (" + b0 + " -> " + bF + ")");
+            check(rF * 100 >= r0 * 85, "Làm phẳng giữ con dấu đỏ (" + r0 + " -> " + rF + ")");
+            check(kF * 10 >= k0 * 7, "Làm phẳng giữ chữ in đen (" + k0 + " -> " + kF + ")");
         }
 
         // ---- bút / hình chữ nhật / xoá văn bản trên trang sạch
@@ -277,6 +319,40 @@ public class EvalRetouch {
             check(Math.abs(mv[0] - 0.5f) < 1e-4 && Math.abs(mv[1] - 0.5f) < 1e-4, "Đổi vùng cắt: điểm theo đúng vị trí trên giấy");
             check(Math.abs(Retouch.remapScale(full, half) - 2f) < 1e-4, "Đổi vùng cắt: bề rộng nét đổi theo tỷ lệ");
             check(Retouch.remap(pts, new float[]{0, 0, 0, 0, 0, 0, 0, 0}, q) == pts, "Đổi vùng cắt: vùng suy biến -> giữ nguyên");
+        }
+
+        // ---- Làm phẳng trên trang đã phẳng (đối chứng)
+        {
+            // bộ lọc trong bảng lọc (Enhancer) = Flatten.apply có nắn
+            Img e = plain.copy();
+            Enhancer.apply(e.px, e.w, e.h, Enhancer.FLATTEN);
+            check(Arrays.equals(e.px, flattened(in, "rt_plain").px), "Enhancer.apply(Làm phẳng) trùng Flatten.apply (có nắn)");
+            // trang phẳng: không được nắn méo (không có trường nắn, hoặc dịch tối đa <= 2 điểm ảnh như wv_plain của EvalFlatten)
+            String still = null, moved = null;
+            for (String n : new String[]{"rt_plain", "rt_finger_l", "rt_finger_b", "rt_finger_c", "rt_stamp", "rt_strip", "rt_photo",
+                    "rt_hand", "rt_shadow", "rt_edge"}) {
+                flattened(in, n);
+                Flatten.Field f = FLAT_FIELD.get(n);
+                check(f == null || f.maxShift <= 2.0f, String.format(Locale.US, "%s: Làm phẳng không nắn méo trang phẳng (%s)", n,
+                        f == null ? "không nắn" : String.format(Locale.US, "dịch tối đa %.2f", f.maxShift)));
+                if (f == null && still == null) still = n;
+                if (f != null && moved == null) moved = n;
+            }
+            // ảnh xem trước của Xóa thông minh (geometric = false: chỉ làm sạch, không dời điểm ảnh): trang không cần nắn thì
+            // trùng kết quả lọc; trang có nắn thì chỉ khác ở bước nắn — nắn theo trường của kết quả lọc rồi làm nét
+            // (Retouch.sharpen 48, như Flatten.apply) phải ra đúng kết quả lọc (nét xoá trên ảnh xem trước = trên ảnh trước nắn)
+            for (String n : new String[]{still, moved}) {
+                if (n == null) continue;
+                Img g = load(in, n);
+                Enhancer.apply(g.px, g.w, g.h, Enhancer.FLATTEN, false);
+                Flatten.Field f = FLAT_FIELD.get(n);
+                if (f != null) {
+                    Flatten.remap(g.px, g.w, g.h, f);
+                    Retouch.sharpen(g.px, g.w, g.h, 48);
+                }
+                check(Arrays.equals(g.px, flattened(in, n).px), n + ": Làm phẳng không nắn (xem trước Xóa thông minh) "
+                        + (f == null ? "trùng kết quả lọc" : "+ nắn theo trường của kết quả lọc trùng kết quả lọc"));
+            }
         }
 
         System.out.printf(Locale.US, "Retouch: %d kiểm tra, %d lỗi, %.1f giây%n", checks, fails, (System.nanoTime() - t0) / 1e9);

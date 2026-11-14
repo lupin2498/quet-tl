@@ -28,6 +28,8 @@ import vn.quettailieu.scanner.core.Retouch;
  * "Xóa thông minh": Bút (tô nền theo nét), Hình chữ nhật, Thần kỳ (xoá cả vật thể dính liền nét tô),
  * Viết tay (xoá nét bút màu trên cả trang), Xóa văn bản (xoá chữ, giữ đường kẻ bảng). Có hoàn tác / làm lại / so sánh.
  * Kết quả trả về là danh sách thao tác (JSON); ảnh độ phân giải đầy đủ do Processor dựng lại sau.
+ * Nét xoá áp lên ảnh TRƯỚC khi lọc nên ảnh xem trước ở đây qua bộ lọc với geometric = false: "Làm phẳng" chỉ làm sạch,
+ * bước nắn thẳng chạy khi dựng ảnh kết quả (sau nét xoá).
  */
 public class EraseActivity extends BaseActivity {
     static final String EXTRA_DOC = "doc";
@@ -318,7 +320,8 @@ public class EraseActivity extends BaseActivity {
                         bh = warp.getHeight();
                         base = ImageUtil.pixels(warp);
                         warp.recycle();
-                        orig = Processor.process(base, bw, bh, null, filter);
+                        // nét xoá áp lên ảnh TRƯỚC khi lọc: xem trước bộ lọc không dời điểm ảnh (Làm phẳng chỉ làm sạch)
+                        orig = Processor.process(base, bw, bh, null, filter, false);
                         erased = base.clone();
                         if (all.isEmpty()) {
                             out = orig;
@@ -353,10 +356,13 @@ public class EraseActivity extends BaseActivity {
         });
     }
 
-    /** Chạy trên worker: áp bộ lọc của trang lên bản sao của ảnh đã xoá. */
+    /**
+     * Chạy trên worker: áp bộ lọc của trang lên bản sao của ảnh đã xoá — không dời điểm ảnh (bước nắn thẳng của
+     * "Làm phẳng" bỏ qua), để nét xoá vẽ trên màn hình trùng vị trí trên ảnh trước khi lọc.
+     */
     private Bitmap filtered(int[] src) {
         int[] px = src.clone();
-        Enhancer.apply(px, bw, bh, filter);
+        Enhancer.apply(px, bw, bh, filter, false);
         return Bitmap.createBitmap(px, bw, bh, Bitmap.Config.ARGB_8888);
     }
 

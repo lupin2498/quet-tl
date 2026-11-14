@@ -12,9 +12,10 @@ enum Enhancer {
     static let denoise = 6    // Khử nhiễu: làm mịn hạt/vân, giữ nguyên tông ảnh
     static let noShadow = 7   // Không bóng: khử bóng đổ, giữ màu tự nhiên
     static let noHand = 8     // Ko viết tay: xoá nét bút màu
+    static let flatten = 9    // Làm phẳng: giấy mấp mô / gấp nếp — chỉ giữ chữ + bảng, nắn thẳng (Flatten)
 
     /// Thứ tự hiển thị trong bảng lọc.
-    static let modes = [original, lighten, magic, magicPro, denoise, noShadow, noHand, bw, gray]
+    static let modes = [original, lighten, magic, magicPro, flatten, denoise, noShadow, noHand, bw, gray]
     static func name(_ mode: Int) -> String {
         switch mode {
         case original: return "Nguyên gốc"
@@ -25,8 +26,20 @@ enum Enhancer {
         case denoise: return "Khử nhiễu"
         case noShadow: return "Không bóng"
         case noHand: return "Ko viết tay"
+        case flatten: return "Làm phẳng"
         default: return "Tăng cường"
         }
+    }
+
+    /// Bộ lọc có gỡ ngón tay giữ giấy (khi đã chọn thì không cần lời nhắc ngón tay).
+    static func removesFingers(_ mode: Int) -> Bool {
+        return mode == magicPro || mode == flatten
+    }
+
+    /// Bộ lọc dời điểm ảnh ("Làm phẳng" nắn thẳng nội dung). Trường nắn phụ thuộc độ phân giải: ảnh nền dùng để đặt nét
+    /// đánh dấu phải được lọc ở đúng kích thước ảnh kết quả rồi mới thu nhỏ.
+    static func movesPixels(_ mode: Int) -> Bool {
+        return mode == flatten
     }
 
     /// Lưới nền theo từng kênh màu, nội suy song tuyến tính.
@@ -69,9 +82,15 @@ enum Enhancer {
         }
     }
 
-    static func apply(_ px: UnsafeMutablePointer<UInt8>, width w: Int, height h: Int, bytesPerRow bpr: Int, mode: Int) {
+    /// Áp bộ lọc tại chỗ. geometric = false: bộ lọc dời điểm ảnh (Làm phẳng) bỏ bước nắn thẳng, chỉ làm sạch — dùng cho
+    /// ảnh xem trước của "Xóa thông minh" (nét xoá được áp lên ảnh trước khi lọc nên phải vẽ trên ảnh chưa nắn).
+    static func apply(_ px: UnsafeMutablePointer<UInt8>, width w: Int, height h: Int, bytesPerRow bpr: Int, mode: Int,
+                      geometric: Bool = true) {
         if mode == original || w < 4 || h < 4 { return }
         switch mode {
+        case flatten:
+            _ = Flatten.apply(px, w, h, bpr, dewarp: geometric)
+            return
         case magicPro:
             _ = Retouch.removeFingers(px, w, h, bpr)
             tonePro(px, w, h, bpr, backgroundFine(px, w, h, bpr, nil), 0.24, 0.86, 1.45)

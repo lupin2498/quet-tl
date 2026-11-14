@@ -246,6 +246,7 @@ enum ImageOps {
         }
         guard let base = warped else { throw OpError(message: "Không xử lý được ảnh") }
         // chuỗi xử lý: nắn phẳng -> (dò ngón tay, một lần cho mỗi ảnh nắn phẳng) -> xoá thông minh -> lọc -> đánh dấu -> xoay -> tiêu đề
+        // (bộ lọc "Làm phẳng" còn nắn thẳng nội dung: nét xoá theo toạ độ ảnh trước khi lọc, đánh dấu theo ảnh sau khi lọc)
         let erase = (p.erase ?? []).map { $0.op }
         let marks = p.marks ?? []
         let needFinger = p.fingerKey != wn
@@ -289,6 +290,20 @@ enum ImageOps {
         return rgbaPixels(cg, maxDim: maxDim)
     }
 
+    /// Nền cho màn hình Đánh dấu: ảnh nắn phẳng qua xoá thông minh + bộ lọc đầy đủ (đánh dấu vẽ SAU bộ lọc, như render),
+    /// cạnh dài ~previewMax. Bộ lọc dời điểm ảnh ("Làm phẳng"): trường nắn phụ thuộc độ phân giải nên lọc trên ảnh nắn
+    /// phẳng đầy đủ — giống hệt ảnh kết quả — rồi mới thu nhỏ, để nét đánh dấu đặt trên ảnh xem trước nằm đúng chỗ trên
+    /// ảnh kết quả. Chạy trên luồng nền.
+    static func markupBase(dir: URL, page p: Page) -> CGImage? {
+        let erase = (p.erase ?? []).map { $0.op }
+        if Enhancer.movesPixels(p.filter), let px = loadWarp(dir: dir, page: p, maxDim: CGFloat(maxOut)),
+           let full = process(px.data, px.w, px.h, erase: erase, filter: p.filter, geometric: true) {
+            return scaledCG(full, maxDim: previewMax)
+        }
+        guard let px = loadWarp(dir: dir, page: p, maxDim: previewMax) else { return nil }
+        return process(px.data, px.w, px.h, erase: erase, filter: p.filter, geometric: true)
+    }
+
     /// Ảnh từ mảng điểm ảnh RGBX (byte thứ tư bị bỏ qua).
     static func cgImage(rgba: [UInt8], w: Int, h: Int) -> CGImage? {
         guard w > 0, h > 0, rgba.count >= w * h * 4, let provider = CGDataProvider(data: Data(rgba) as CFData) else { return nil }
@@ -299,12 +314,14 @@ enum ImageOps {
     }
 
     /// Áp chuỗi xử lý điểm ảnh (xoá thông minh + bộ lọc) lên bản sao của ảnh xem trước; trả về ảnh mới.
-    static func process(_ base: [UInt8], _ w: Int, _ h: Int, erase: [Retouch.Op], filter: Int) -> CGImage? {
+    /// geometric = false: bộ lọc dời điểm ảnh (Làm phẳng) chỉ làm sạch, không nắn (xem trước của Xóa thông minh).
+    static func process(_ base: [UInt8], _ w: Int, _ h: Int, erase: [Retouch.Op], filter: Int,
+                        geometric: Bool = true) -> CGImage? {
         var px = base
         px.withUnsafeMutableBufferPointer { buf in
             guard let p = buf.baseAddress else { return }
             if !erase.isEmpty { Retouch.applyErase(p, w, h, w * 4, erase) }
-            Enhancer.apply(p, width: w, height: h, bytesPerRow: w * 4, mode: filter)
+            Enhancer.apply(p, width: w, height: h, bytesPerRow: w * 4, mode: filter, geometric: geometric)
         }
         return cgImage(rgba: px, w: w, h: h)
     }
@@ -367,7 +384,7 @@ enum ImageOps {
         return ExportJob(title: doc.title, files: files, pdfSize: DocStore.shared.pdfSize)
     }
 
-    private static func shareDir() -> URL {
+    static func shareDir() -> URL {
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent("share", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir

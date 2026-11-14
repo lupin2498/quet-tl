@@ -10,8 +10,19 @@ android {
         applicationId = "vn.quettailieu.scanner"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.3"
+        versionCode = 6
+        versionName = "1.5"
+        // Thư viện nhận dạng chữ (ML Kit) có mã máy: chỉ đóng gói cho máy thật (arm) và máy ảo kiểm thử (x86_64)
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
+        }
+    }
+
+    // Lớp nối với ML Kit để riêng: build_apk.sh (không Gradle, không thư viện ngoài) chỉ biên dịch src/main/java
+    sourceSets {
+        getByName("main") {
+            java.srcDir("src/mlkit/java")
+        }
     }
 
     // Khoá ký riêng (không đưa lên GitHub). Có file keystore thì bản release được ký,
@@ -45,4 +56,17 @@ android {
         abortOnError = false
         checkReleaseBuilds = false
     }
+
+    // nén mã máy trong APK (file cài nhỏ hơn nhiều; hệ thống giải nén khi cài)
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+}
+
+dependencies {
+    // Nhận dạng chữ ngay trên máy cho tính năng chuyển sang Word: mô hình chữ La-tinh (đọc được tiếng Việt) đóng kèm
+    // trong ứng dụng, không tải thêm, không cần mạng
+    implementation("com.google.mlkit:text-recognition:16.0.1")
 }

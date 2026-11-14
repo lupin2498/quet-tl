@@ -37,7 +37,12 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     private let prevBtn = Theme.iconButton("chevron.left", size: 16, label: "Trang trước")
     private let nextBtn = Theme.iconButton("chevron.right", size: 16, label: "Trang sau")
     private let compareBtn = UIButton(type: .custom)
-    private let compareView = UIImageView()
+    /// Nhãn mức phóng của trang đang xem (vd. "2,5×"); ẩn khi vừa khung.
+    private let zoomBadge = PaddedLabel()
+    /// Ảnh độ phân giải đầy đủ của trang đang phóng to (chỉ giữ MỘT ảnh, ngoài bộ đệm chung).
+    private var hiImage: UIImage?
+    private var hiKey: String?
+    private var hiLoading: String?
     private let titleBtn = UIButton(type: .system)
     private let filterPanel = UIView()
     private var filterButtons = [UIButton]()
@@ -160,11 +165,16 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         collection.accessibilityIdentifier = "pager"
         view.addSubview(collection)
 
-        compareView.contentMode = .scaleAspectFit
-        compareView.isHidden = true
-        compareView.backgroundColor = Theme.bg
-        compareView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(compareView)
+        zoomBadge.font = UIFont.systemFont(ofSize: 13, weight: .medium)
+        zoomBadge.textColor = .white
+        zoomBadge.backgroundColor = UIColor(white: 0, alpha: 0.6)
+        zoomBadge.layer.cornerRadius = 12
+        zoomBadge.layer.masksToBounds = true
+        zoomBadge.isHidden = true
+        zoomBadge.isUserInteractionEnabled = false
+        zoomBadge.accessibilityIdentifier = "zoomBadge"
+        zoomBadge.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(zoomBadge)
 
         var ccfg = UIButton.Configuration.filled()
         ccfg.title = "So sánh"
@@ -283,10 +293,9 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             collection.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collection.bottomAnchor.constraint(equalTo: nav.topAnchor, constant: -4),
 
-            compareView.topAnchor.constraint(equalTo: collection.topAnchor),
-            compareView.leadingAnchor.constraint(equalTo: collection.leadingAnchor),
-            compareView.trailingAnchor.constraint(equalTo: collection.trailingAnchor),
-            compareView.bottomAnchor.constraint(equalTo: collection.bottomAnchor),
+            zoomBadge.centerXAnchor.constraint(equalTo: collection.centerXAnchor),
+            zoomBadge.bottomAnchor.constraint(equalTo: collection.bottomAnchor, constant: -10),
+            zoomBadge.heightAnchor.constraint(equalToConstant: 24),
 
             compareBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -14),
             compareBtn.bottomAnchor.constraint(equalTo: collection.bottomAnchor, constant: -10),
@@ -461,15 +470,17 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     private func updateBanner() {
         var show = false
         if let p = current {
-            show = p.finger == 1 && p.fingerOff != true && p.filter != Enhancer.magicPro && !filterPanelVisible
+            // bộ lọc đã gỡ ngón tay (Thần kỳ, Làm phẳng): không cần nhắc
+            show = p.finger == 1 && p.fingerOff != true && !Enhancer.removesFingers(p.filter) && !filterPanelVisible
         }
         banner.isHidden = !show
     }
 
-    /// "Gỡ bỏ": chuyển trang sang bộ lọc Thần kỳ (gỡ ngón tay giữ giấy).
+    /// "Gỡ bỏ": chuyển trang sang bộ lọc Thần kỳ (gỡ ngón tay giữ giấy); trang đang dùng bộ lọc đã gỡ ngón tay
+    /// (Thần kỳ, Làm phẳng) thì giữ nguyên bộ lọc.
     @objc func removeFinger() {
         guard current != nil, !finished else { return }
-        if doc.pages[index].filter != Enhancer.magicPro {
+        if !Enhancer.removesFingers(doc.pages[index].filter) {
             doc.pages[index].filter = Enhancer.magicPro
             dirty = true
             DocStore.shared.save(doc)
@@ -692,6 +703,10 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "page", for: indexPath) as! PageCell
         // danh sách trang có thể vừa đổi (xoá trang) trước khi bảng kịp tải lại -> không đọc quá số trang
+        cell.onZoom = { [weak self, weak cell] z in
+            guard let self = self, let cell = cell else { return }
+            self.zoomChanged(cell, z)
+        }
         guard indexPath.item < doc.pages.count else {
             cell.pageId = nil
             cell.shownSrc = nil
@@ -710,13 +725,21 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     private func configure(_ cell: PageCell, _ p: Page) {
         let working = processing.contains(p.id) || (!upToDate(p) && !failed.contains(ImageOps.outName(p)))
         let samePage = cell.pageId == p.id && cell.shownSrc == p.src && cell.imageView.image != nil
+        // ô chuyển sang trang khác: về vừa khung (cùng trang thì giữ mức phóng — vd. đang phóng to rồi đổi bộ lọc)
+        if cell.pageId != p.id { cell.resetZoom() }
         cell.pageId = p.id
         cell.setScanning(working)
         let dir = DocStore.shared.dir(doc)
         if !working, let o = p.out {
             let key = "out_\(p.id)_\(o)" as NSString
+            // đang phóng to và đã có ảnh đầy đủ của đúng ảnh kết quả này: dùng luôn
+            if hiKey == key as String, let hi = hiImage, cell.zoomScale > 1.2 {
+                cell.show(hi, src: p.src)
+                return
+            }
             if let img = cache.object(forKey: key) {
                 cell.show(img, src: p.src)
+                if cell.zoomScale > 1.2 { loadHiRes(cell, p) }
                 return
             }
             let url = dir.appendingPathComponent(o)
@@ -725,7 +748,10 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
                 DispatchQueue.main.async {
                     guard let self = self, let img = img else { return }
                     self.cacheSet(img, key)
-                    if cell.pageId == p.id { cell.show(img, src: p.src) }
+                    if cell.pageId == p.id {
+                        cell.show(img, src: p.src)
+                        if cell.zoomScale > 1.2 { self.loadHiRes(cell, p) }
+                    }
                 }
             }
             return
@@ -765,6 +791,96 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
             updateBanner()
             if filterPanelVisible { refreshFilterPanel() }
         }
+        resetOtherZooms()
+    }
+
+    // MARK: phóng to
+
+    private var currentCell: PageCell? {
+        guard collection != nil, index >= 0, index < doc.pages.count else { return nil }
+        return collection.cellForItem(at: IndexPath(item: index, section: 0)) as? PageCell
+    }
+
+    /// Mức phóng của trang đang xem (1 = vừa khung).
+    var zoomScale: CGFloat { currentCell?.zoomScale ?? 1 }
+
+    /// Các ô không phải trang đang xem trở về vừa khung; bỏ ảnh đầy đủ của trang cũ.
+    private func resetOtherZooms() {
+        guard collection != nil else { return }
+        let cur = current?.id
+        for case let c as PageCell in collection.visibleCells where c.pageId != cur { c.resetZoom() }
+        if let k = hiKey, let p = current, let o = p.out, k == "out_\(p.id)_\(o)" {
+            // vẫn là trang đang xem
+        } else {
+            hiImage = nil
+            hiKey = nil
+            hiLoading = nil
+        }
+        updateZoomBadge()
+    }
+
+    private func updateZoomBadge() {
+        let z = zoomScale
+        if z > 1.001 {
+            zoomBadge.text = String(format: "%.1f", Double(z)).replacingOccurrences(of: ".", with: ",") + "×"
+            zoomBadge.isHidden = false
+            collection.accessibilityValue = "phóng " + (zoomBadge.text ?? "")
+        } else {
+            zoomBadge.isHidden = true
+            collection.accessibilityValue = nil
+        }
+    }
+
+    private func zoomChanged(_ cell: PageCell, _ z: CGFloat) {
+        guard let p = current, cell.pageId == p.id else { return }
+        updateZoomBadge()
+        if z > 1.2 { loadHiRes(cell, p) }
+    }
+
+    /// Nạp ảnh kết quả ở độ phân giải đầy đủ cho trang đang phóng to (ảnh xem thường chỉ dài 1800 điểm ảnh).
+    private func loadHiRes(_ cell: PageCell, _ p: Page) {
+        guard let o = p.out, upToDate(p), !processing.contains(p.id) else { return }
+        let key = "out_\(p.id)_\(o)"
+        if hiKey == key {
+            if let hi = hiImage, cell.pageId == p.id, cell.imageView.image !== hi { cell.show(hi, src: p.src) }
+            return
+        }
+        if hiLoading == key { return }
+        hiLoading = key
+        let url = DocStore.shared.url(doc, o)
+        let pid = p.id
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let img = ImageOps.thumbnail(url, maxPixel: CGFloat(ImageOps.maxOut))
+            DispatchQueue.main.async {
+                guard let self = self, self.hiLoading == key else { return }
+                self.hiLoading = nil
+                guard let c = self.current, c.id == pid, c.out == o, let img = img else { return }
+                self.hiImage = img
+                self.hiKey = key
+                if let cell = self.currentCell, cell.pageId == pid, cell.zoomScale > 1.2, !self.processing.contains(pid) {
+                    cell.show(img, src: c.src)
+                }
+            }
+        }
+    }
+
+    /// Móc kiểm thử (SelfTest): phóng trang đang xem tới mức `scale` quanh tâm ô (1 = về vừa khung).
+    func testZoom(_ scale: CGFloat) {
+        guard let cell = currentCell else { return }
+        cell.zoom(to: scale, at: CGPoint(x: cell.bounds.midX, y: cell.bounds.midY), animated: false)
+        zoomChanged(cell, cell.zoomScale)
+    }
+
+    /// Móc kiểm thử: trang đang xem có đang hiển thị ảnh độ phân giải đầy đủ không.
+    var testShowsHiRes: Bool {
+        guard let cell = currentCell, let hi = hiImage else { return false }
+        return cell.imageView.image === hi
+    }
+
+    /// Móc kiểm thử: khung ảnh trang đang xem trong toạ độ của bảng trang (đã tính phóng to / cuộn).
+    var testImageFrame: CGRect {
+        guard let cell = currentCell else { return .zero }
+        return cell.imageView.convert(cell.imageView.bounds, to: cell)
     }
 
     func goTo(_ i: Int, animated: Bool) {
@@ -774,6 +890,7 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         updateIndicator()
         updateBanner()
         if filterPanelVisible { refreshFilterPanel() }
+        resetOtherZooms()
     }
 
     @objc private func prevPage() { goTo(index - 1, animated: true) }
@@ -797,13 +914,13 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
         case 270: o = .left
         default: o = .up
         }
-        compareView.image = UIImage(cgImage: cg, scale: 1, orientation: o)
-        compareView.isHidden = false
+        // ảnh so sánh đặt ngay trong ô trang nên giữ nguyên mức phóng / vị trí đang xem
+        currentCell?.showCompare(UIImage(cgImage: cg, scale: 1, orientation: o))
     }
 
     @objc private func compareUp() {
-        compareView.isHidden = true
-        compareView.image = nil
+        guard collection != nil else { return }
+        for case let c as PageCell in collection.visibleCells { c.showCompare(nil) }
     }
 
     // MARK: bộ lọc
@@ -904,6 +1021,8 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
 
     @objc func rotateLeft() {
         guard current != nil, !finished else { return }
+        // trang xoay thì vùng đang xem không còn ý nghĩa -> về vừa khung
+        currentCell?.resetZoom()
         doc.pages[index].rot = (doc.pages[index].rot + 270) % 360
         dirty = true
         DocStore.shared.save(doc)
@@ -1224,41 +1343,113 @@ final class EditorViewController: UIViewController, UICollectionViewDataSource, 
     }
 }
 
+/// Nhãn có lề trong hai bên (nhãn tròn nhỏ).
+final class PaddedLabel: UILabel {
+    var insets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+
+    override func drawText(in rect: CGRect) {
+        super.drawText(in: rect.inset(by: insets))
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let s = super.intrinsicContentSize
+        return CGSize(width: s.width + insets.left + insets.right, height: s.height + insets.top + insets.bottom)
+    }
+}
+
 /// Ô hiển thị một trang, có hiệu ứng quét khi đang xử lý.
-final class PageCell: UICollectionViewCell {
+/// Chụm / dang hai ngón để phóng to trang (tới 6 lần) và kéo ảnh; chạm đúp để phóng 2,5 lần tại chỗ chạm / về vừa khung.
+/// Ảnh, vạch quét và ảnh so sánh cùng nằm trong `zoomContent` nên phóng to / cuộn cùng nhau.
+final class PageCell: UICollectionViewCell, UIScrollViewDelegate {
+    static let maxZoom: CGFloat = 6
+    static let tapZoom: CGFloat = 2.5
+
     let imageView = UIImageView()
     var pageId: String?
     var shownSrc: String?
+    /// Báo mức phóng vừa đổi.
+    var onZoom: ((CGFloat) -> Void)?
+    private let zoomView = UIScrollView()
+    private let zoomContent = UIView()
+    private let compareBack = UIView()
+    private let compareImage = UIImageView()
     private let scanLine = UIView()
     private let gradient = CAGradientLayer()
     private var scanning = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        zoomView.delegate = self
+        zoomView.minimumZoomScale = 1
+        zoomView.maximumZoomScale = PageCell.maxZoom
+        zoomView.showsHorizontalScrollIndicator = false
+        zoomView.showsVerticalScrollIndicator = false
+        zoomView.contentInsetAdjustmentBehavior = .never
+        zoomView.bouncesZoom = true
+        zoomView.scrollsToTop = false
+        zoomView.accessibilityIdentifier = "pageZoom"
+        contentView.addSubview(zoomView)
+        zoomView.addSubview(zoomContent)
         imageView.contentMode = .scaleAspectFit
         imageView.layer.shadowColor = UIColor.black.cgColor
         imageView.layer.shadowOpacity = 0.4
         imageView.layer.shadowRadius = 6
-        contentView.addSubview(imageView)
+        zoomContent.addSubview(imageView)
         gradient.colors = [Theme.accent.withAlphaComponent(0).cgColor, Theme.accent.withAlphaComponent(0.55).cgColor, Theme.accent.withAlphaComponent(0).cgColor]
         gradient.startPoint = CGPoint(x: 0.5, y: 0)
         gradient.endPoint = CGPoint(x: 0.5, y: 1)
         scanLine.layer.addSublayer(gradient)
         scanLine.isHidden = true
         scanLine.isUserInteractionEnabled = false
-        contentView.addSubview(scanLine)
+        zoomContent.addSubview(scanLine)
+        compareBack.backgroundColor = Theme.bg
+        compareBack.isHidden = true
+        compareBack.isUserInteractionEnabled = false
+        compareImage.contentMode = .scaleAspectFit
+        compareBack.addSubview(compareImage)
+        zoomContent.addSubview(compareBack)
+        let dbl = UITapGestureRecognizer(target: self, action: #selector(doubleTapped(_:)))
+        dbl.numberOfTapsRequired = 2
+        zoomView.addGestureRecognizer(dbl)
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        imageView.frame = contentView.bounds.insetBy(dx: 16, dy: 8)
+        let b = contentView.bounds
+        if zoomView.frame.size != b.size || zoomView.frame.origin != b.origin {
+            // khung đổi kích thước (mở / đóng bảng lọc): dàn lại ở mức vừa khung rồi trả lại mức phóng và chỗ đang xem
+            let z = zoomView.zoomScale
+            var fx: CGFloat = 0.5, fy: CGFloat = 0.5
+            let cs = zoomView.contentSize
+            if z > 1.001 && cs.width > 0 && cs.height > 0 {
+                fx = (zoomView.contentOffset.x + zoomView.bounds.width / 2) / cs.width
+                fy = (zoomView.contentOffset.y + zoomView.bounds.height / 2) / cs.height
+            }
+            if z != 1 { zoomView.zoomScale = 1 }
+            zoomView.frame = b
+            zoomContent.frame = CGRect(origin: .zero, size: b.size)
+            zoomView.contentSize = b.size
+            zoomView.contentOffset = .zero
+            imageView.frame = zoomContent.bounds.insetBy(dx: 16, dy: 8)
+            compareBack.frame = zoomContent.bounds
+            compareImage.frame = imageView.frame
+            if z > 1.001 && b.width > 0 && b.height > 0 {
+                zoomView.zoomScale = z
+                let ns = zoomView.contentSize
+                let ox = min(max(0, fx * ns.width - b.width / 2), max(0, ns.width - b.width))
+                let oy = min(max(0, fy * ns.height - b.height / 2), max(0, ns.height - b.height))
+                zoomView.contentOffset = CGPoint(x: ox, y: oy)
+            }
+        }
         if scanning { restartScan() }
     }
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        resetZoom()
+        showCompare(nil)
         imageView.image = nil
         shownSrc = nil
         pageId = nil
@@ -1270,6 +1461,55 @@ final class PageCell: UICollectionViewCell {
         shownSrc = src
         if scanning { restartScan() }
     }
+
+    /// Ảnh so sánh (ảnh trước khi lọc) phủ lên trang, cùng mức phóng; nil để gỡ.
+    func showCompare(_ img: UIImage?) {
+        compareImage.image = img
+        compareBack.isHidden = img == nil
+    }
+
+    // MARK: phóng to
+
+    var zoomScale: CGFloat { zoomView.zoomScale }
+
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return zoomContent
+    }
+
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        onZoom?(scrollView.zoomScale)
+    }
+
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        onZoom?(scale)
+    }
+
+    /// Về vừa khung.
+    func resetZoom(animated: Bool = false) {
+        if zoomView.zoomScale != 1 { zoomView.setZoomScale(1, animated: animated) }
+    }
+
+    /// Phóng tới mức `scale` quanh điểm `p` (toạ độ của ô); scale <= 1: về vừa khung.
+    func zoom(to scale: CGFloat, at p: CGPoint, animated: Bool) {
+        let s = max(1, min(PageCell.maxZoom, scale))
+        if s <= 1.001 {
+            resetZoom(animated: animated)
+            return
+        }
+        let c = convert(p, to: zoomContent)
+        let w = zoomView.bounds.width / s, h = zoomView.bounds.height / s
+        zoomView.zoom(to: CGRect(x: c.x - w / 2, y: c.y - h / 2, width: w, height: h), animated: animated)
+    }
+
+    @objc private func doubleTapped(_ g: UITapGestureRecognizer) {
+        if zoomView.zoomScale > 1.001 {
+            resetZoom(animated: true)
+        } else {
+            zoom(to: PageCell.tapZoom, at: g.location(in: self), animated: true)
+        }
+    }
+
+    // MARK: hiệu ứng quét
 
     private func imageRect() -> CGRect {
         guard let img = imageView.image, img.size.width > 0, img.size.height > 0 else { return imageView.frame }

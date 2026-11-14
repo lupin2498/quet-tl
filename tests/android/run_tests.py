@@ -4,7 +4,7 @@
 Cách chạy:  python3 tests/android/run_tests.py <apk> <thư-mục-kết-quả>
 Kết quả: screens/*.png, summary.md, summary.json, logcat.txt, crash.txt, monkey.txt
 """
-import json, os, re, subprocess, sys, time, traceback
+import io, json, os, re, subprocess, sys, time, traceback
 import xml.etree.ElementTree as ET
 
 PKG = "vn.quettailieu.scanner"
@@ -20,6 +20,8 @@ notes = []
 shot_no = [0]
 # Chỉ chạy các bước có tên khớp biểu thức này (để lặp nhanh khi sửa một tính năng); "Cài đặt" và "Mở ứng dụng" luôn chạy.
 ONLY = os.environ.get("TEST_ONLY", "").strip()
+# các bước có tên khớp TEST_ONLY (không bước nào khớp -> báo lỗi, không để kết quả "đạt" mà chẳng kiểm thử gì)
+only_hits = []
 
 
 def log(*a):
@@ -56,8 +58,30 @@ def shot(name):
     return path
 
 
+def other_app_anr(root):
+    """Hộp thoại hệ thống "<ứng dụng khác> isn't responding" (máy ảo CI chậm lúc mới khởi động: Pixel Launcher, System UI...)
+    che mất ứng dụng đang thử: trả về toạ độ nút Wait để bấm cho qua. ANR của chính ứng dụng đang thử thì KHÔNG bỏ qua."""
+    msg = None
+    wait = None
+    for n in root.iter("node"):
+        t = n.get("text", "")
+        if "isn't responding" in t or "không phản hồi" in t:
+            msg = t
+        elif t.casefold() in ("wait", "đợi", "chờ"):
+            wait = n
+    if msg is None or wait is None or "Quét Tài Liệu" in msg:
+        return None
+    m = re.findall(r"\d+", wait.get("bounds", ""))
+    if len(m) != 4:
+        return None
+    x0, y0, x1, y1 = [int(v) for v in m]
+    log("hộp thoại hệ thống: %s -> bấm Wait" % msg)
+    return (x0 + x1) // 2, (y0 + y1) // 2
+
+
 def dump(save_as=None):
-    for _ in range(4):
+    anr_taps = 0
+    for _ in range(6):
         out = sh("uiautomator dump /sdcard/ui.xml", timeout=45)
         if "dumped" in out.lower():
             xml = sh("cat /sdcard/ui.xml", timeout=20)
@@ -71,6 +95,12 @@ def dump(save_as=None):
                     xml = xml[: end + len("</hierarchy>")]
                 try:
                     root = ET.fromstring(xml)
+                    pt = other_app_anr(root) if anr_taps < 2 else None
+                    if pt is not None:
+                        anr_taps += 1
+                        sh("input tap %d %d" % pt)
+                        time.sleep(1.5)
+                        continue
                     if save_as:
                         open(os.path.join(OUT, "ui", save_as + ".xml"), "w").write(xml)
                     return root
@@ -302,6 +332,174 @@ def validate_pdf(data, pages):
         pass
 
 
+WORD_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+
+def strip_accents(s):
+    """Bỏ dấu tiếng Việt + chữ thường (so nội dung nhận dạng được mà không phụ thuộc dấu thanh đọc sai)."""
+    import unicodedata
+    s = unicodedata.normalize("NFD", s.replace("đ", "d").replace("Đ", "D"))
+    return "".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+
+
+def validate_docx(data, pages):
+    """Kiểm tra file Word xuất ra: zip nguyên vẹn, đủ các phần, mọi phần XML đọc được, mỗi trang quét là một phần (sectPr),
+    hình nhúng mở được. Trả về (văn bản từng đoạn, số bảng, số hàng của bảng lớn nhất, số cột của bảng lớn nhất, số hình)."""
+    import zipfile
+    import xml.etree.ElementTree as ET
+    if not data.startswith(b"PK"):
+        raise AssertionError("file Word không phải zip (%d byte)" % len(data))
+    z = zipfile.ZipFile(io.BytesIO(data))
+    bad = z.testzip()
+    if bad is not None:
+        raise AssertionError("file Word hỏng ở phần %s" % bad)
+    names = set(z.namelist())
+    for need in ("[Content_Types].xml", "_rels/.rels", "word/document.xml", "word/styles.xml", "word/_rels/document.xml.rels"):
+        if need not in names:
+            raise AssertionError("file Word thiếu phần %s" % need)
+    for n in names:
+        if n.endswith(".xml") or n.endswith(".rels"):
+            ET.fromstring(z.read(n))
+    root = ET.fromstring(z.read("word/document.xml"))
+    sects = list(root.iter(WORD_NS + "sectPr"))
+    if len(sects) != pages:
+        raise AssertionError("file Word có %d trang (phần), cần %d" % (len(sects), pages))
+    for sp in sects:
+        sz = sp.find(WORD_NS + "pgSz")
+        if sz is None or int(sz.get(WORD_NS + "w")) < 1440 or int(sz.get(WORD_NS + "h")) < 1440:
+            raise AssertionError("file Word: khổ trang không hợp lệ")
+    lines = []
+    for para in root.iter(WORD_NS + "p"):
+        t = "".join(x.text or "" for x in para.iter(WORD_NS + "t")).strip()
+        if t:
+            lines.append(t)
+    tables = list(root.iter(WORD_NS + "tbl"))
+    rows = cols = 0
+    for t in tables:
+        trs = t.findall(WORD_NS + "tr")
+        if len(trs) > rows:
+            rows = len(trs)
+            grid = t.find(WORD_NS + "tblGrid")
+            cols = len(grid.findall(WORD_NS + "gridCol")) if grid is not None else 0
+    media = sorted(n for n in names if n.startswith("word/media/"))
+    try:
+        from PIL import Image
+        for m in media:
+            im = Image.open(io.BytesIO(z.read(m)))
+            im.load()
+    except ImportError:
+        pass
+    return lines, len(tables), rows, cols, len(media)
+
+
+def wait_share_file(ext, timeout=240):
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        time.sleep(1.5)
+        name = newest_share_file(ext)
+        if name:
+            time.sleep(2.0)
+            return name
+    return None
+
+
+def close_chooser():
+    back()
+    time.sleep(1)
+    if top_activity() != "DocumentActivity":
+        back()
+    wait_activity("DocumentActivity", 8)
+
+
+def t_word_export():
+    """Chuyển sang Word: tài liệu 2 trang (biên bản có bảng 13 hàng x 5 cột chụp trên bàn gỗ / nền be) -> nhận dạng chữ trên
+    máy, file .docx hợp lệ, mỗi trang một phần đúng khổ giấy, chữ đọc đúng, bảng thành bảng Word; nút Huỷ; bộ chọn nơi lưu."""
+    doc_id = import_to_editor(["doc_1_wood.jpg", "doc_4_beige.jpg"])
+    wait_doc(doc_id, lambda d: len(d["pages"]) == 2 and all(p.get("out") for p in d["pages"]), 120, "xử lý 2 trang")
+    time.sleep(1.5)
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 25)
+    time.sleep(2.0)
+    shot("word_document")
+    if not exists(text="Word", timeout=5):
+        raise AssertionError("Không thấy nút Word trên thanh công cụ")
+    # 1. huỷ giữa chừng: không để lại file, ứng dụng vẫn dùng được
+    run_as("rm -f cache/share/*.docx cache/share/*.part")
+    tap(text="Word")
+    time.sleep(1.0)
+    shot("word_menu")
+    tap(text="Chia sẻ file Word")
+    cancelled = False
+    try:
+        tap(text="Huỷ", timeout=6)
+        cancelled = True
+    except Exception:
+        log("không kịp bấm Huỷ (chuyển đổi xong quá nhanh)")
+    if cancelled:
+        time.sleep(12)
+        left = run_as("ls cache/share").split()
+        if any(n.endswith(".docx") or n.endswith(".part") for n in left):
+            raise AssertionError("Huỷ chuyển sang Word vẫn để lại file: %s" % left)
+        if top_activity() != "DocumentActivity":
+            raise AssertionError("Sau khi huỷ không còn ở màn hình tài liệu: %s" % top_activity())
+    else:
+        wait_share_file(".docx", 240)
+        close_chooser()
+    # 2. chia sẻ file Word từ bảng Chia sẻ
+    run_as("rm -f cache/share/*.docx cache/share/*.part")
+    tap(text="Chia sẻ")
+    time.sleep(1.0)
+    tap(text="Chia sẻ Word", contains=True)
+    time.sleep(1.5)
+    shot("word_progress")
+    name = wait_share_file(".docx", 300)
+    if not name:
+        raise AssertionError("Không thấy file Word được tạo")
+    shot("word_share_sheet")
+    data = pull_file("cache/share/" + name)
+    open(os.path.join(OUT, "export_word.docx"), "wb").write(data)
+    lines, tables, rows, cols, media = validate_docx(data, 2)
+    text = strip_accents(" | ".join(lines))
+    want = ["bien ban", "thiet bi", "may in laser", "man hinh", "ban phim", "chuot khong day", "mh-003", "mh-052", "mh-080",
+            "ben giao", "ben nhan", "cong ty"]
+    hit = [w for w in want if w in text]
+    # cụm từ đúng cả dấu tiếng Việt (mỗi cụm có ở cả hai trang): chỉ ghi lại để theo dõi chất lượng nhận dạng
+    exact = ["BIÊN BẢN BÀN GIAO THIẾT BỊ", "CÔNG TY TNHH MẪU", "Độc lập - Tự do - Hạnh phúc", "Tên thiết bị", "Mã hiệu", "Số lượng",
+             "Máy in laser", "Màn hình 24 inch", "Bàn phím", "Chuột không dây", "Ổ cứng 1TB", "Bộ phát Wi-Fi", "Máy chiếu",
+             "Loa hội nghị", "Bộ lưu điện", "Cáp mạng", "Máy quét", "Đèn bàn", "BÊN GIAO", "BÊN NHẬN"]
+    joined = " | ".join(lines)
+    exact_hits = sum(min(2, joined.count(w)) for w in exact)
+    log("Word: %s, %d byte, %d dòng chữ, %d bảng (lớn nhất %d hàng x %d cột), %d hình; khớp %d/%d cụm từ (bỏ dấu), %d/%d lần đúng cả dấu" % (
+        name, len(data), len(lines), tables, rows, cols, media, len(hit), len(want), exact_hits, 2 * len(exact)))
+    notes.append("Word: %d dòng chữ, %d bảng (lớn nhất %d x %d), %d hình, khớp %d/%d cụm từ mẫu (bỏ dấu), %d/%d lần đúng cả dấu" % (
+        len(lines), tables, rows, cols, media, len(hit), len(want), exact_hits, 2 * len(exact)))
+    close_chooser()
+    # dữ liệu gỡ lỗi của bản debug (ảnh trang + các từ nhận dạng được): giữ lại để tái hiện việc dàn trang trên máy tính
+    os.makedirs(os.path.join(OUT, "word_debug"), exist_ok=True)
+    for i in range(2):
+        for ext in (".jpg", ".words.tsv"):
+            blob = pull_file("cache/word_debug/p%d%s" % (i, ext))
+            if blob:
+                open(os.path.join(OUT, "word_debug", "p%d%s" % (i, ext)), "wb").write(blob)
+    if len(hit) < 8:
+        raise AssertionError("Word: chỉ đọc đúng %d/%d cụm từ mẫu (%s)" % (len(hit), len(want), ", ".join(hit)))
+    if tables < 2 or rows < 12 or cols < 5:
+        raise AssertionError("Word: bảng không được dựng lại đúng (%d bảng, lớn nhất %d hàng x %d cột; cần 2 bảng 13 x 5)" % (tables, rows, cols))
+    # 3. lưu vào máy: mở bộ chọn nơi lưu với tên file .docx
+    tap(text="Word")
+    tap(text="Lưu file Word vào máy")
+    time.sleep(4)
+    shot("word_save_picker")
+    picker = top_activity()
+    back()
+    time.sleep(1.5)
+    if top_activity() != "DocumentActivity":
+        back()
+    wait_activity("DocumentActivity", 8)
+    if picker == "DocumentActivity":
+        raise AssertionError("Lưu file Word vào máy: không mở bộ chọn nơi lưu")
+
+
 def newest_share_file(ext):
     out = run_as("ls -t cache/share")
     for line in out.splitlines():
@@ -404,9 +602,24 @@ def check_no_crash(where):
         raise AssertionError("ANR tại %s" % where)
 
 
+def only_selects(name):
+    """TEST_ONLY có chọn bước này không: tên khớp biểu thức chính quy, hoặc chứa nguyên văn một phần của TEST_ONLY (các
+    phần ngăn bởi |). Tên bước có ngoặc đơn, như "Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)", chép nguyên văn từ summary.md
+    không khớp dưới dạng biểu thức chính quy (ngoặc là nhóm) nên so thêm theo nguyên văn."""
+    try:
+        if re.search(ONLY, name):
+            return True
+    except re.error:
+        pass
+    return any(p.strip() and p.strip() in name for p in ONLY.split("|"))
+
+
 def step(name, fn):
-    if ONLY and name not in ("Cài đặt", "Mở ứng dụng") and not re.search(ONLY, name):
-        return
+    if ONLY:
+        if only_selects(name):
+            only_hits.append(name)
+        elif name not in ("Cài đặt", "Mở ứng dụng"):
+            return
     log("=== %s" % name)
     t0 = time.time()
     try:
@@ -1699,8 +1912,9 @@ def t_monkey():
 
 # ----------------------------------------------------------------------------- làm đẹp / chỉnh sửa trang
 
-FILTER_ORDER = ["Nguyên gốc", "Làm sáng", "Tăng cường", "Thần kỳ", "Khử nhiễu", "Không bóng", "Ko viết tay", "Đen trắng", "Thang xám"]
-F_MAGIC, F_GRAY, F_BW, F_PRO, F_DENOISE, F_NOSHADOW, F_NOHAND = 1, 3, 4, 5, 6, 7, 8
+# thứ tự trong bảng lọc = Enhancer.MODES (ORIGINAL, LIGHTEN, MAGIC, MAGIC_PRO, FLATTEN, DENOISE, NO_SHADOW, NO_HAND, BW, GRAY)
+FILTER_ORDER = ["Nguyên gốc", "Làm sáng", "Tăng cường", "Thần kỳ", "Làm phẳng", "Khử nhiễu", "Không bóng", "Ko viết tay", "Đen trắng", "Thang xám"]
+F_MAGIC, F_GRAY, F_BW, F_PRO, F_DENOISE, F_NOSHADOW, F_NOHAND, F_FLATTEN = 1, 3, 4, 5, 6, 7, 8, 9
 # Ảnh thử tests/images/edit_page.jpg (sinh bằng tests/tools/make_retouch_images.py): vị trí các chi tiết trên trang
 # ĐÃ NẮN PHẲNG, chuẩn hoá theo bề ngang / bề cao trang: (u1, v1, u2, v2)
 R_FINGER = (0.005, 0.42, 0.05, 0.485)        # đầu ngón tay giữ giấy ở mép trái
@@ -1711,6 +1925,15 @@ R_SCRIBBLE_TOP = (0.565, 0.237, 0.868, 0.273)  # nét bút xanh vắt qua đầu
 R_ROW9 = (0.18, 0.546, 0.31, 0.562)          # chữ "Bộ lưu điện" trong bảng
 R_ROW9_LINE = (0.19, 0.533, 0.30, 0.544)     # đường kẻ ngang phía trên dòng đó
 PAGE_RATIO = 970.0 / 1373.0
+# Ảnh thử tests/images/wavy_page.jpg (tests/tools/make_wavy_images.py, trang wv_mixed "chụp" nghiêng trên mặt bàn): biểu mẫu
+# giấy nhàu — bảng 10 dòng + hàng tiêu đề (12 đường kẻ ngang, 6 đường kẻ dọc) bị uốn lượn, nếp gấp ngang cắt qua giữa bảng,
+# nếp gấp dọc giữa trang, chữ ký bút xanh, con dấu đỏ, hai vết vân tay. Vị trí trên trang ĐÃ NẮN PHẲNG theo 4 góc, chuẩn hoá
+# (u1, v1, u2, v2):
+R_WV_TABLE = (0.12, 0.235, 0.89, 0.625)      # bề ngang bảng (trong hai đường kẻ dọc ngoài cùng) x dải chứa các đường kẻ ngang
+R_WV_CLEAN = (0.42, 0.70, 0.58, 0.95)        # giấy trắng giữa chữ ký và con dấu, nếp gấp dọc chạy qua
+R_WV_STAMP = (0.62, 0.77, 0.80, 0.90)        # con dấu đỏ
+R_WV_SIGN = (0.14, 0.81, 0.40, 0.88)         # chữ ký bút xanh
+R_WV_TEXT = (0.185, 0.29, 0.50, 0.59)        # chữ trong cột "Tên thiết bị" (hàng 1–10)
 
 
 def density():
@@ -1852,11 +2075,18 @@ def page_image(doc_id, index=0):
     return im
 
 
+def rgb_pixels(im):
+    """Các điểm ảnh (r, g, b) của ảnh RGB, lần lượt từng hàng từ trên xuống. Pillow 12.1+ có get_flattened_data
+    (getdata bị đánh dấu bỏ, gỡ hẳn ở Pillow 14 — CI cài Pillow mới nhất); bản cũ hơn dùng getdata."""
+    flat = getattr(im, "get_flattened_data", None)
+    return list(flat() if flat is not None else im.getdata())
+
+
 def frac(im, box, kind):
-    """Tỷ lệ điểm ảnh thuộc một loại (dark / red / blue / skin) trong vùng chuẩn hoá box của ảnh trang."""
+    """Tỷ lệ điểm ảnh thuộc một loại (dark / red / blue / skin / nonwhite) trong vùng chuẩn hoá box của ảnh trang."""
     W, H = im.size
     crop = im.crop((int(box[0] * W), int(box[1] * H), max(int(box[0] * W) + 1, int(box[2] * W)), max(int(box[1] * H) + 1, int(box[3] * H))))
-    px = list(crop.getdata())
+    px = rgb_pixels(crop)
     if kind == "dark":
         c = sum(1 for r, g, b in px if r * 299 + g * 587 + b * 114 < 128000)
     elif kind == "red":
@@ -1865,9 +2095,43 @@ def frac(im, box, kind):
         c = sum(1 for r, g, b in px if b > r + 40 and b > 90)
     elif kind == "skin":
         c = sum(1 for r, g, b in px if r > 120 and r - b > 45)
+    elif kind == "nonwhite":
+        # không còn trắng hẳn (độ sáng < 200): vệt nếp gấp, bóng mờ, vết bẩn còn sót trên giấy trắng
+        c = sum(1 for r, g, b in px if r * 299 + g * 587 + b * 114 < 200000)
     else:
         raise ValueError(kind)
     return c / float(max(1, len(px)))
+
+
+def dark_rows(im, box):
+    """Tỷ lệ điểm tối (như frac 'dark') của từng hàng điểm ảnh trong vùng chuẩn hoá box, từ trên xuống."""
+    W, H = im.size
+    x0, y0 = int(box[0] * W), int(box[1] * H)
+    x1, y1 = max(x0 + 1, int(box[2] * W)), max(y0 + 1, int(box[3] * H))
+    w = x1 - x0
+    px = rgb_pixels(im.crop((x0, y0, x1, y1)))
+    return [sum(1 for r, g, b in px[i:i + w] if r * 299 + g * 587 + b * 114 < 128000) / float(w) for i in range(0, len(px), w)]
+
+
+def straight_rows(im, box, cover=0.6):
+    """Số hàng điểm ảnh tối trên >= cover bề ngang vùng: đường kẻ ngang thẳng cho vài hàng như vậy, đường kẻ uốn lượn
+    thì không (mỗi hàng chỉ cắt qua một đoạn ngắn của nó)."""
+    return sum(1 for c in dark_rows(im, box) if c >= cover)
+
+
+def text_dark(im, box, rule=0.5):
+    """Tỷ lệ điểm tối của chữ trong vùng, bỏ các hàng là đường kẻ ngang (tối trên >= rule bề ngang vùng)."""
+    rows = [c for c in dark_rows(im, box) if c < rule]
+    return sum(rows) / float(max(1, len(rows)))
+
+
+def save_page(im, name):
+    """Lưu ảnh kết quả của trang (đã kéo về) cạnh ảnh chụp màn hình để xem lại."""
+    shot_no[0] += 1
+    try:
+        im.save(os.path.join(OUT, "screens", "%02d_%s.jpg" % (shot_no[0], name)), quality=85)
+    except Exception as e:
+        log("không lưu được ảnh trang", e)
 
 
 def page_mapper(view_desc):
@@ -1984,6 +2248,222 @@ def t_filters_new():
     d = read_doc(doc_id)
     if d is None or d.get("draft") or d["pages"][0].get("filter") != F_NOHAND:
         raise AssertionError("Tài liệu lưu sai bộ lọc: %s" % (d and d["pages"][0].get("filter")))
+
+
+def t_flatten():
+    """Bộ lọc "Làm phẳng" trên ảnh chụp biểu mẫu giấy nhàu: so với bộ lọc mặc định (Tăng cường), đường kẻ bảng được nắn
+    thẳng, nếp gấp trên giấy trắng bị xoá, chữ trong bảng + con dấu đỏ + chữ ký xanh vẫn còn; tài liệu lưu đúng bộ lọc."""
+    doc_id = import_to_editor(["wavy_page.jpg"])
+    pg = wait_page(doc_id, lambda p: p.get("out") and p.get("finger"), 90, "xử lý trang (bộ lọc mặc định)")
+    time.sleep(1.5)
+    shot("flatten_default")
+    editor_tool("Bộ lọc")
+    time.sleep(2.5)
+    shot("flatten_panel")
+    if pg.get("filter") != F_MAGIC:
+        # ảnh đối chứng luôn là bộ lọc Tăng cường (mặc định hiện nay của trang mới)
+        log("bộ lọc mặc định của trang mới: %s -> chọn Tăng cường làm ảnh đối chứng" % pg.get("filter"))
+        prev = pg["out"]
+        filter_pick("Tăng cường")
+        pg = wait_page(doc_id, lambda p: p.get("filter") == F_MAGIC and p.get("out") not in (None, prev), 90, "bộ lọc Tăng cường")
+    im1 = page_image(doc_id)
+    prev = pg["out"]
+    filter_pick("Làm phẳng")
+    pg = wait_page(doc_id, lambda p: p.get("filter") == F_FLATTEN and p.get("out") not in (None, prev), 120, "bộ lọc Làm phẳng")
+    time.sleep(2.0)
+    shot("filter_flatten")
+    im9 = page_image(doc_id)
+    if im1 is not None and im9 is not None:
+        save_page(im1, "flatten_out_default")
+        save_page(im9, "flatten_out_flatten")
+        rows1, rows9 = straight_rows(im1, R_WV_TABLE), straight_rows(im9, R_WV_TABLE)
+        fold1, fold9 = frac(im1, R_WV_CLEAN, "nonwhite"), frac(im9, R_WV_CLEAN, "nonwhite")
+        red1, red9 = frac(im1, R_WV_STAMP, "red"), frac(im9, R_WV_STAMP, "red")
+        blue1, blue9 = frac(im1, R_WV_SIGN, "blue"), frac(im9, R_WV_SIGN, "blue")
+        text1, text9 = text_dark(im1, R_WV_TEXT), text_dark(im9, R_WV_TEXT)
+        log("Tăng cường -> Làm phẳng: hàng kẻ thẳng %d -> %d, nếp gấp trên giấy trắng %.4f -> %.4f, con dấu đỏ %.3f -> %.3f, "
+            "chữ ký xanh %.4f -> %.4f, chữ trong bảng %.4f -> %.4f" % (rows1, rows9, fold1, fold9, red1, red9, blue1, blue9, text1, text9))
+        # ảnh thử phải đúng như mong đợi: bảng uốn lượn, có vệt nếp gấp, con dấu, chữ ký, chữ ở các vùng đo
+        if rows1 > 3 or fold1 < 0.006 or red1 < 0.08 or blue1 < 0.02 or text1 < 0.03:
+            raise AssertionError("Ảnh thử không có bảng uốn lượn / nếp gấp / con dấu / chữ ký / chữ ở vị trí mong đợi "
+                                 "(Tăng cường: %d hàng kẻ thẳng, nếp gấp %.4f, đỏ %.3f, xanh %.4f, chữ %.4f)" % (rows1, fold1, red1, blue1, text1))
+        # (a) thẳng: đường kẻ ngang của bảng nằm trên một hàng điểm ảnh (Tăng cường: 0 hàng; Làm phẳng trên máy tính: ~25)
+        if rows9 < 7 or rows9 <= rows1:
+            raise AssertionError("Làm phẳng chưa nắn thẳng đường kẻ bảng (%d hàng kẻ thẳng, Tăng cường %d)" % (rows9, rows1))
+        # (b) sạch: vệt nếp gấp dọc trên giấy trắng bị xoá (Tăng cường ~0,019; Làm phẳng ~0)
+        if fold9 > 0.003:
+            raise AssertionError("Làm phẳng chưa xoá vệt nếp gấp trên giấy trắng (%.4f, Tăng cường %.4f)" % (fold9, fold1))
+        # (c) giữ nội dung: con dấu đỏ, chữ ký xanh, chữ trong bảng (bỏ các hàng là đường kẻ; chữ bị xoá hết thì còn ~0,004)
+        if red9 < red1 * 0.5:
+            raise AssertionError("Làm phẳng làm mất con dấu đỏ (%.3f -> %.3f)" % (red1, red9))
+        if blue9 < blue1 * 0.4:
+            raise AssertionError("Làm phẳng làm mất chữ ký bút xanh (%.4f -> %.4f)" % (blue1, blue9))
+        if text9 < 0.02:
+            raise AssertionError("Làm phẳng làm mất chữ trong bảng (%.4f -> %.4f)" % (text1, text9))
+    tap(desc="Đóng bộ lọc")
+    time.sleep(1.0)
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(2.0)
+    shot("flatten_document")
+    d = read_doc(doc_id)
+    if d is None or d.get("draft") or d["pages"][0].get("filter") != F_FLATTEN:
+        raise AssertionError("Tài liệu lưu sai bộ lọc: %s" % (d and d["pages"][0].get("filter")))
+
+
+def screen_image():
+    """Ảnh chụp màn hình hiện tại (PIL) hoặc None nếu máy chạy kiểm thử thiếu Pillow."""
+    try:
+        import io
+        from PIL import Image
+    except ImportError:
+        return None
+    data = subprocess.run(["adb", "exec-out", "screencap", "-p"], stdout=subprocess.PIPE, timeout=30).stdout
+    im = Image.open(io.BytesIO(data)).convert("RGB")
+    im.load()
+    return im
+
+
+def screen_page(view_desc, timeout=60):
+    """Vùng trang trên ảnh chụp màn hình Xóa thông minh / Đánh dấu (trang chưa xoay, chưa phóng to): chờ tới khi ảnh trang
+    đã hiện (giấy sáng có nét tối — lúc đang tải vùng này chỉ có nền tối của màn hình + vòng xoay, tối gần hết) và ổn định
+    qua hai lần chụp. None nếu thiếu Pillow."""
+    P = page_mapper(view_desc)
+    (x1, y1), (x2, y2) = P(0.0, 0.0), P(1.0, 1.0)
+    deadline = time.time() + timeout
+    last = None
+    while time.time() < deadline:
+        im = screen_image()
+        if im is None:
+            return None
+        crop = im.crop((x1, y1, x2, y2))
+        dark = frac(crop, (0.1, 0.2, 0.9, 0.7), "dark")
+        ok = 0.01 < dark < 0.5
+        if ok and last is not None and abs(dark - last) < 0.002:
+            return crop
+        last = dark if ok else None
+        time.sleep(2.0)
+    raise AssertionError("Ảnh trang không hiện (hoặc không ổn định) ở '%s'" % view_desc)
+
+
+def rule_rows(im, box, cover=0.6):
+    """Toạ độ dọc chuẩn hoá (theo chiều cao ảnh) của tâm từng đường kẻ ngang thẳng trong vùng: nhóm các hàng điểm ảnh liền
+    nhau tối trên >= cover bề ngang vùng."""
+    H = im.size[1]
+    y0 = int(box[1] * H)
+    groups = []
+    for i, c in enumerate(dark_rows(im, box)):
+        if c < cover:
+            continue
+        if groups and i - groups[-1][-1] <= 1:
+            groups[-1].append(i)
+        else:
+            groups.append([i])
+    return [(y0 + (g[0] + g[-1]) / 2.0 + 0.5) / H for g in groups]
+
+
+def red_center(im, box):
+    """(toạ độ dọc chuẩn hoá trung bình, số điểm) của các điểm đỏ trong vùng; (None, 0) nếu không có."""
+    W, H = im.size
+    x0, y0 = int(box[0] * W), int(box[1] * H)
+    x1, y1 = max(x0 + 1, int(box[2] * W)), max(y0 + 1, int(box[3] * H))
+    w = x1 - x0
+    n, s = 0, 0.0
+    for i, (r, g, b) in enumerate(rgb_pixels(im.crop((x0, y0, x1, y1)))):
+        if r > 140 and g < 115 and b < 115:
+            n += 1
+            s += i // w
+    return ((y0 + s / n + 0.5) / H, n) if n else (None, 0)
+
+
+def t_flatten_edit():
+    """Xóa thông minh + Đánh dấu trên trang dùng bộ lọc "Làm phẳng". Nét xoá áp lên ảnh TRƯỚC khi lọc nên ảnh xem trước ở
+    Xóa thông minh đã làm sạch nhưng CHƯA nắn; đánh dấu vẽ SAU bộ lọc nên ảnh xem trước ở Đánh dấu đã nắn thẳng giống hệt
+    ảnh kết quả. Xoá con dấu bằng Hình chữ nhật; nét brush vẽ dọc một đường kẻ bảng (thẳng) nằm đúng trên đường kẻ đó ở
+    ảnh kết quả."""
+    doc_id = import_to_editor(["wavy_page.jpg"])
+    pg = wait_page(doc_id, lambda p: p.get("out") and p.get("finger"), 90, "xử lý trang")
+    editor_tool("Bộ lọc")
+    time.sleep(2.5)
+    prev = pg["out"]
+    filter_pick("Làm phẳng")
+    pg = wait_page(doc_id, lambda p: p.get("filter") == F_FLATTEN and p.get("out") not in (None, prev), 120, "bộ lọc Làm phẳng")
+    time.sleep(1.0)
+    tap(desc="Đóng bộ lọc")
+    time.sleep(1.0)
+    # --- Xóa thông minh: xem trước đã hết nếp gấp, đường kẻ bảng vẫn uốn lượn (chưa nắn)
+    editor_tool("Xóa thông minh")
+    wait_activity("EraseActivity", 15)
+    sc = screen_page("Trang đang xóa")
+    shot("flatten_erase_open")
+    if sc is not None:
+        rows, fold = straight_rows(sc, R_WV_TABLE), frac(sc, R_WV_CLEAN, "nonwhite")
+        log("xem trước Xóa thông minh (Làm phẳng): hàng kẻ thẳng %d, nếp gấp trên giấy trắng %.4f" % (rows, fold))
+        if rows > 3:
+            raise AssertionError("Ảnh xem trước Xóa thông minh của trang Làm phẳng đã bị nắn (%d hàng kẻ thẳng): nét xoá áp lên "
+                                 "ảnh TRƯỚC khi lọc nên ảnh xem trước phải chưa nắn" % rows)
+        if fold > 0.004:
+            raise AssertionError("Ảnh xem trước Xóa thông minh chưa qua bước làm sạch của Làm phẳng (nếp gấp %.4f)" % fold)
+    P = page_mapper("Trang đang xóa")
+    tap(text="Hình chữ nhật")
+    swipe(P(0.60, 0.75), P(0.83, 0.93))
+    time.sleep(3.0)
+    apply_edit_screen("EraseActivity")
+    pg = wait_page(doc_id, lambda p: p.get("erase") and p.get("out") not in (None, pg["out"]), 120, "dựng lại trang sau Xóa thông minh")
+    time.sleep(1.5)
+    im = page_image(doc_id)
+    y_rule = None
+    if im is not None:
+        save_page(im, "flatten_erased")
+        red, blue, rows = frac(im, R_WV_STAMP, "red"), frac(im, R_WV_SIGN, "blue"), straight_rows(im, R_WV_TABLE)
+        log("sau xoá con dấu (Làm phẳng): đỏ %.4f, chữ ký xanh %.4f, hàng kẻ thẳng %d" % (red, blue, rows))
+        if red > 0.003:
+            raise AssertionError("Chưa xoá được con dấu trên trang Làm phẳng (%.4f)" % red)
+        if blue < 0.02 or rows < 7:
+            raise AssertionError("Xoá con dấu làm mất chữ ký / trang không còn được nắn (xanh %.4f, %d hàng kẻ thẳng)" % (blue, rows))
+        rules = rule_rows(im, R_WV_TABLE)
+        if not rules:
+            raise AssertionError("Không thấy đường kẻ ngang thẳng nào trên ảnh kết quả Làm phẳng")
+        mid = (R_WV_TABLE[1] + R_WV_TABLE[3]) / 2.0
+        y_rule = min(rules, key=lambda y: abs(y - mid))
+    # --- Đánh dấu: xem trước đã nắn thẳng như ảnh kết quả; nét brush dọc đường kẻ nằm trên đường kẻ ở ảnh kết quả
+    editor_tool("Brush")
+    wait_activity("MarkupActivity", 15)
+    sc = screen_page("Trang đang đánh dấu", 90)
+    shot("flatten_markup_open")
+    if sc is not None and y_rule is not None:
+        rows = straight_rows(sc, R_WV_TABLE)
+        rs = rule_rows(sc, R_WV_TABLE)
+        y_sc = min(rs, key=lambda y: abs(y - y_rule)) if rs else -1.0
+        log("xem trước Đánh dấu (Làm phẳng): hàng kẻ thẳng %d, đường kẻ giữa bảng %.4f (ảnh kết quả %.4f)" % (rows, y_sc, y_rule))
+        if rows < 7:
+            raise AssertionError("Ảnh xem trước Đánh dấu của trang Làm phẳng chưa nắn thẳng (%d hàng kẻ thẳng)" % rows)
+        if abs(y_sc - y_rule) > 0.004:
+            raise AssertionError("Đường kẻ bảng ở ảnh xem trước Đánh dấu lệch so với ảnh kết quả (%.4f / %.4f): nét đánh dấu "
+                                 "sẽ không nằm đúng chỗ" % (y_sc, y_rule))
+    P = page_mapper("Trang đang đánh dấu")
+    tap(desc="Màu đỏ")
+    v = y_rule if y_rule is not None else 0.43
+    swipe(P(0.25, v), P(0.75, v), 600)
+    time.sleep(1.0)
+    shot("flatten_markup_brush")
+    apply_edit_screen("MarkupActivity")
+    pg = wait_page(doc_id, lambda p: p.get("marks") and p.get("out") not in (None, pg["out"]), 120, "dựng lại trang sau Đánh dấu")
+    time.sleep(1.5)
+    im = page_image(doc_id)
+    if im is not None and y_rule is not None:
+        save_page(im, "flatten_marked")
+        yc, n = red_center(im, (0.30, y_rule - 0.03, 0.70, y_rule + 0.03))
+        log("nét brush đỏ trên ảnh kết quả: tâm %s (%d điểm), đường kẻ %.4f" % (yc, n, y_rule))
+        if yc is None or abs(yc - y_rule) > 0.004:
+            raise AssertionError("Nét brush vẽ dọc đường kẻ bảng không nằm trên đường kẻ ở ảnh kết quả (%s / %.4f)" % (yc, y_rule))
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(1.5)
+    d = read_doc(doc_id)
+    p0 = d and d["pages"][0]
+    if not p0 or p0.get("filter") != F_FLATTEN or len(p0.get("erase", [])) != 1 or len(p0.get("marks", [])) != 1:
+        raise AssertionError("Tài liệu lưu sai: %s" % (p0 and {k: v for k, v in p0.items() if k not in ("quad",)}))
 
 
 def t_smart_erase():
@@ -2311,6 +2791,155 @@ def t_header_collage():
 
 
 
+# ----------------------------------------------------------------------------- phóng to bằng hai ngón
+
+def monkey_script(cmds, wait_ms=400):
+    """Chạy một kịch bản monkey: thao tác chạm chính xác mà `input` không làm được (PinchZoom hai ngón, chạm đúp...)."""
+    lines = ["type= user", "count= 1", "speed= 1.0", "start data >>"] + list(cmds) + ["UserWait(%d)" % wait_ms]
+    adb("shell", "cat > /sdcard/qt_script.txt", inp=("\n".join(lines) + "\n").encode(), timeout=20)
+    out = sh("monkey -f /sdcard/qt_script.txt 1", timeout=90)
+    if "Events injected" not in out:
+        log("monkey script:", out.strip()[-300:])
+    time.sleep(0.8)
+
+
+def pinch(cx, cy, d0, d1, steps=20):
+    """Hai ngón đặt hai bên điểm (cx, cy), mỗi ngón cách nó d0 điểm ảnh theo phương ngang, rồi dang ra / chụm lại tới d1."""
+    monkey_script(["PinchZoom(%d,%d,%d,%d,%d,%d,%d,%d,%d)" % (cx - d0, cy, cx - d1, cy, cx + d0, cy, cx + d1, cy, steps)])
+
+
+def strip_state():
+    """Dải trang của trình chỉnh sửa: (khung, trang đang xem, số trang, mức phóng) đọc từ mô tả của nó
+    ("Trang 1/2" hoặc "Trang 1/2, phóng 2,5×")."""
+    for _ in range(4):
+        root = dump()
+        for n in nodes(root):
+            m = re.match(r"Trang (\d+)/(\d+)(?:, phóng ([\d,]+)×)?$", n.get("content-desc", ""))
+            if m:
+                z = float(m.group(3).replace(",", ".")) if m.group(3) else 1.0
+                return rect(n), int(m.group(1)), int(m.group(2)), z
+        time.sleep(1.0)
+    raise AssertionError("Không thấy dải trang của trình chỉnh sửa")
+
+
+def edge_dark(box):
+    """Tỷ lệ điểm không trắng ở dải sát mép trái của dải trang (giữa chiều cao): vừa khung thì đó là nền tối của màn hình,
+    phóng to thì trang giấy tràn tới mép. None nếu thiếu Pillow."""
+    im = screen_image()
+    if im is None:
+        return None
+    x1, y1, x2, y2 = box
+    w, h = x2 - x1, y2 - y1
+    return frac(im.crop((x1, y1 + int(h * 0.35), x1 + max(2, int(w * 0.04)), y1 + int(h * 0.65))), (0, 0, 1, 1), "nonwhite")
+
+
+def t_pinch_zoom():
+    """Phóng to bằng hai ngón ở trình chỉnh sửa: dang hai ngón để phóng, một ngón kéo ảnh mà không lật trang, mức phóng giữ
+    nguyên khi mở bảng lọc và đổi bộ lọc, chạm đúp về vừa khung / phóng lại, sang trang khác thì về vừa khung, chụm hai ngón
+    để thu nhỏ, vừa khung thì vuốt lật trang như cũ."""
+    doc_id = import_to_editor(["doc_1_wood.jpg", "doc_4_beige.jpg"])
+    d = wait_doc(doc_id, lambda d: len(d["pages"]) == 2 and all(p.get("out") for p in d["pages"]), 150, "xử lý 2 trang")
+    time.sleep(2.0)
+    box, page, total, z = strip_state()
+    if (page, total) != (1, 2) or z != 1.0:
+        raise AssertionError("Trình chỉnh sửa không mở ở trang 1/2 vừa khung: trang %d/%d, phóng %.1f" % (page, total, z))
+    x1, y1, x2, y2 = box
+    cx, cy, w = (x1 + x2) // 2, (y1 + y2) // 2, x2 - x1
+    e0 = edge_dark(box)
+    shot("zoom_fit")
+    # dang hai ngón (khoảng cách x4) -> phóng to quanh giữa trang
+    pinch(cx, cy, int(w * 0.07), int(w * 0.28))
+    box, page, total, z1 = strip_state()
+    e1 = edge_dark(box)
+    shot("zoom_in")
+    log("phóng to: %.1f× (mép trái không trắng %s -> %s)" % (z1, e0, e1))
+    if z1 < 2.0:
+        raise AssertionError("Dang hai ngón không phóng to trang (mức phóng %.1f)" % z1)
+    if e0 is not None and e1 is not None and not (e0 > 0.9 and e1 < 0.75):
+        raise AssertionError("Ảnh trang không tràn khung khi phóng to (mép trái không trắng %.2f -> %.2f)" % (e0, e1))
+    # một ngón kéo ngang khi đang phóng: kéo ảnh, KHÔNG lật trang, không đổi mức phóng
+    before = screen_image()
+    swipe((int(cx + w * 0.25), cy), (int(cx - w * 0.25), cy), 500)
+    box, page, total, z2 = strip_state()
+    after = screen_image()
+    if page != 1 or abs(z2 - z1) > 0.05:
+        raise AssertionError("Kéo một ngón khi đang phóng to: trang %d, phóng %.1f (trước đó %.1f)" % (page, z2, z1))
+    if before is not None and after is not None:
+        a = before.crop((x1, y1, x2, y2)).convert("L").resize((64, 64))
+        b = after.crop((x1, y1, x2, y2)).convert("L").resize((64, 64))
+        diff = sum(abs(p - q) for p, q in zip(rgb_pixels(a), rgb_pixels(b))) / (64.0 * 64.0)
+        log("kéo ảnh khi đang phóng: khác biệt trung bình %.1f" % diff)
+        if diff < 2.0:
+            raise AssertionError("Kéo một ngón khi đang phóng to không dời ảnh (khác biệt %.1f)" % diff)
+    # mở bảng lọc + đổi bộ lọc: vẫn giữ mức phóng (xem chi tiết từng bộ lọc)
+    editor_tool("Bộ lọc")
+    time.sleep(2.5)
+    _, page, total, z3 = strip_state()
+    if abs(z3 - z1) > 0.05:
+        raise AssertionError("Mở bảng lọc làm mất mức phóng (%.1f -> %.1f)" % (z1, z3))
+    prev = d["pages"][0]["out"]
+    filter_pick("Đen trắng")
+    wait_page(doc_id, lambda p: p.get("filter") == F_BW and p.get("out") not in (None, prev), 90, "bộ lọc Đen trắng khi đang phóng")
+    time.sleep(2.5)
+    box3, page, total, z4 = strip_state()
+    shot("zoom_filter_bw")
+    if page != 1 or abs(z4 - z1) > 0.05:
+        raise AssertionError("Đổi bộ lọc khi đang phóng to: trang %d, phóng %.1f (trước đó %.1f)" % (page, z4, z1))
+    # giữ So sánh khi đang phóng: không được làm mất mức phóng
+    hold(text="So sánh", ms=1200)
+    time.sleep(0.8)
+    _, _, _, z5 = strip_state()
+    if abs(z5 - z1) > 0.05:
+        raise AssertionError("Giữ So sánh làm mất mức phóng (%.1f -> %.1f)" % (z1, z5))
+    tap(desc="Đóng bộ lọc")
+    time.sleep(1.2)
+    box, page, total, z = strip_state()
+    x1, y1, x2, y2 = box
+    cx, cy, w = (x1 + x2) // 2, (y1 + y2) // 2, x2 - x1
+    # chạm đúp: về vừa khung; chạm đúp lần nữa: phóng 2,5 lần
+    fast_taps([(cx, cy), (cx, cy)], gap_ms=90)
+    time.sleep(1.0)
+    _, _, _, z = strip_state()
+    if z != 1.0:
+        raise AssertionError("Chạm đúp khi đang phóng to không về vừa khung (%.1f)" % z)
+    time.sleep(0.6)
+    fast_taps([(cx, cy), (cx, cy)], gap_ms=90)
+    time.sleep(1.0)
+    _, _, _, z = strip_state()
+    shot("zoom_double_tap")
+    if abs(z - 2.5) > 0.05:
+        raise AssertionError("Chạm đúp ở mức vừa khung không phóng 2,5 lần (%.1f)" % z)
+    # sang trang sau: trang mới ở mức vừa khung
+    tap(desc="Trang sau")
+    time.sleep(1.5)
+    box, page, total, z = strip_state()
+    if page != 2 or z != 1.0:
+        raise AssertionError("Sang trang sau khi đang phóng to: trang %d, phóng %.1f" % (page, z))
+    # phóng to trang 2 rồi chụm hai ngón để thu về vừa khung
+    pinch(cx, cy, int(w * 0.07), int(w * 0.28))
+    _, _, _, z = strip_state()
+    if z < 2.0:
+        raise AssertionError("Dang hai ngón ở trang 2 không phóng to (%.1f)" % z)
+    pinch(cx, cy, int(w * 0.30), int(w * 0.03))
+    _, page, _, z = strip_state()
+    if page != 2 or z != 1.0:
+        raise AssertionError("Chụm hai ngón không thu về vừa khung: trang %d, phóng %.1f" % (page, z))
+    # vừa khung: vuốt ngang lật trang như cũ
+    swipe((int(cx - w * 0.3), cy), (int(cx + w * 0.3), cy), 300)
+    time.sleep(1.2)
+    _, page, _, z = strip_state()
+    shot("zoom_back_to_page1")
+    if page != 1 or z != 1.0:
+        raise AssertionError("Vuốt lật trang sau khi thu nhỏ: trang %d, phóng %.1f" % (page, z))
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 40)
+    time.sleep(1.5)
+    d = read_doc(doc_id)
+    if d is None or d.get("draft") or len(d["pages"]) != 2 or d["pages"][0].get("filter") != F_BW:
+        raise AssertionError("Tài liệu lưu sai sau khi phóng to + đổi bộ lọc")
+
+
+
 def screen_size():
     out = sh("wm size")
     m = re.findall(r"(\d+)x(\d+)", out)
@@ -2337,7 +2966,11 @@ def main():
     for n in ["doc_1_wood.jpg", "doc_4_beige.jpg", "doc_5_blue.jpg"]:
         step("Nhập ảnh %s" % n, t_import(n))
     step("Nhập nhiều ảnh", t_import_multi)
+    step("Chuyển sang Word (nhận dạng chữ, bảng, huỷ, chia sẻ / lưu)", t_word_export)
+    step("Phóng to bằng hai ngón (trình chỉnh sửa, bộ lọc)", t_pinch_zoom)
     step("Bộ lọc mới + lời nhắc ngón tay", t_filters_new)
+    step("Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)", t_flatten)
+    step("Làm phẳng + Xóa thông minh + Đánh dấu", t_flatten_edit)
     step("Xóa thông minh", t_smart_erase)
     step("Đánh dấu (ký tên, chữ, brush, khảm, hình mờ)", t_markup)
     step("Tiêu đề trang + Cắt dán", t_header_collage)
@@ -2357,6 +2990,10 @@ def main():
     step("Máy ảnh bị chặn giữa chừng + Thử lại", t_camera_blocked_retry)
     step("Dừng ứng dụng giữa chừng", t_rotation_and_recreate)
     step("Monkey 2500 thao tác ngẫu nhiên", t_monkey)
+    if ONLY and not only_hits:
+        # TEST_ONLY gõ sai: chỉ "Cài đặt" + "Mở ứng dụng" chạy — báo lỗi thay vì "đạt" mà không kiểm thử bước nào
+        log("FAIL TEST_ONLY không khớp bước nào:", ONLY)
+        results.append({"step": "TEST_ONLY", "ok": False, "sec": 0, "error": "TEST_ONLY=%r không khớp bước nào" % ONLY})
 
     adb_log = adb("logcat", "-d", "-v", "threadtime", timeout=120)
     open(os.path.join(OUT, "logcat.txt"), "w").write(adb_log)

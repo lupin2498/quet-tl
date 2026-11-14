@@ -108,6 +108,8 @@ final class EraseCanvas: PageCanvasView {
 /// "Xóa thông minh": Bút (tô nền theo nét), Hình chữ nhật, Thần kỳ (xoá cả vật thể dính liền nét tô),
 /// Viết tay (xoá nét bút màu trên cả trang), Xóa văn bản (xoá chữ, giữ đường kẻ bảng). Có hoàn tác / làm lại / so sánh.
 /// Kết quả trả về là danh sách thao tác; ảnh độ phân giải đầy đủ do ImageOps.render dựng lại sau.
+/// Ảnh xem trước (kể cả ảnh "So sánh") dùng bộ lọc của trang nhưng KHÔNG dời điểm ảnh (geometric: false — "Làm phẳng"
+/// chỉ làm sạch, không nắn): nét xoá được chuẩn hoá theo ảnh đang hiển thị và áp lên ảnh TRƯỚC khi lọc.
 final class EraseViewController: EditScreenController {
     /// Danh sách thao tác sau khi bấm ✓.
     var onDone: (([EraseOp]) -> Void)?
@@ -262,12 +264,13 @@ final class EraseViewController: EditScreenController {
                 self.erased = px.data
                 self.bw = px.w
                 self.bh = px.h
-                orig = ImageOps.process(px.data, px.w, px.h, erase: [], filter: snap.filter)
+                // nét xoá áp lên ảnh TRƯỚC khi lọc: xem trước bộ lọc không dời điểm ảnh (Làm phẳng chỉ làm sạch)
+                orig = ImageOps.process(px.data, px.w, px.h, erase: [], filter: snap.filter, geometric: false)
                 if all.isEmpty {
                     out = orig
                 } else {
                     self.applyAllOnWorker(all)
-                    out = ImageOps.process(self.erased, px.w, px.h, erase: [], filter: snap.filter)
+                    out = ImageOps.process(self.erased, px.w, px.h, erase: [], filter: snap.filter, geometric: false)
                 }
             }
             DispatchQueue.main.async {
@@ -328,7 +331,7 @@ final class EraseViewController: EditScreenController {
         worker.async { [weak self] in
             guard let self = self else { return }
             let changed = self.applyOneOnWorker(rop)
-            let out = changed ? ImageOps.process(self.erased, self.bw, self.bh, erase: [], filter: filter) : nil
+            let out = changed ? ImageOps.process(self.erased, self.bw, self.bh, erase: [], filter: filter, geometric: false) : nil
             DispatchQueue.main.async {
                 self.setBusy(-1)
                 guard !self.finished else { return }
@@ -359,7 +362,7 @@ final class EraseViewController: EditScreenController {
             guard let self = self else { return }
             self.erased = self.base
             self.applyAllOnWorker(all)
-            let out = ImageOps.process(self.erased, self.bw, self.bh, erase: [], filter: filter)
+            let out = ImageOps.process(self.erased, self.bw, self.bh, erase: [], filter: filter, geometric: false)
             DispatchQueue.main.async {
                 self.setBusy(-1)
                 guard !self.finished, let img = self.image(out) else { return }
@@ -418,6 +421,9 @@ final class EraseViewController: EditScreenController {
     // MARK: tự kiểm thử
 
     var testReady: Bool { loaded && busy == 0 }
+
+    /// Ảnh đang hiển thị (ảnh xem trước đã qua bộ lọc của trang, geometric: false).
+    var testImage: UIImage? { canvas.image }
 
     func testSelect(_ kind: Int) { selectTool(kind) }
 

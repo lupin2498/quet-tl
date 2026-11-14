@@ -23,8 +23,9 @@ concurrency:
 jobs:
   algo-linux:
     # kiểm tra nhanh phần thuật toán Swift: so với toạ độ thật, kiểm thử độ bền (fuzz), đối chiếu từng kết quả với bản Java
+    # (kể cả lõi chuyển trang quét sang Word)
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - name: Swift
@@ -44,17 +45,19 @@ jobs:
           cp tests/images/doc_1_wood.jpg out/algo/sample.jpg
       - name: Biên dịch + chạy
         run: |
-          swiftc -O -o out/algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/Retouch.swift ios/Sources/Geom.swift ios/Sources/PdfWriter.swift ios/Tests/linux/main.swift
+          swiftc -O -o out/algotest ios/Sources/DocDetector.swift ios/Sources/Enhancer.swift ios/Sources/Retouch.swift ios/Sources/Flatten.swift ios/Sources/Geom.swift ios/Sources/PdfWriter.swift ios/Sources/WordFont.swift ios/Sources/WordDoc.swift ios/Sources/DocxWriter.swift ios/Sources/DocLayout.swift ios/Tests/linux/main.swift
           set -o pipefail
           ./out/algotest tests/images/gt.txt out/algo 2>&1 | tee out/algo/result.txt
 
-      - name: Kiểm thử độ bền (fuzz) + kiểm tra PDF bằng trình phân tích thật
+      - name: Kiểm thử độ bền (fuzz) + kiểm tra PDF / DOCX bằng trình phân tích thật
         run: |
           set -o pipefail
           mkdir -p out/fuzz
           cp tests/images/doc_1_wood.jpg out/fuzz/sample.jpg
           ./out/algotest --fuzz 60 out/fuzz 2>&1 | tee out/algo/fuzz.txt
           python3 tests/tools/check_pdfs.py out/fuzz out/algo/test.pdf 2>&1 | tee out/algo/fuzz-pdf.txt
+          # lõi Word với danh sách từ rác: mọi file .docx ghi ra phải mở được bằng zipfile, XML hợp lệ, đúng cấu trúc OOXML
+          python3 tests/tools/check_docx_zip.py out/fuzz 2>&1 | tee out/algo/fuzz-docx.txt
           rm -rf out/fuzz
 
       - name: Đối chiếu bản Swift với bản Java (cùng dữ liệu tổng hợp)
@@ -64,12 +67,67 @@ jobs:
           # trang đã nắn phẳng có ngón tay / chữ viết tay / con dấu / bóng đổ: đối chiếu bộ lọc mới + Xóa thông minh
           sudo apt-get install -y -q fonts-dejavu-core > /dev/null 2>&1 || true
           python3 tests/tools/make_retouch_images.py out/core-in 700
+          # trang mấp mô / gấp nếp (wv_*.ppm; đáp án ở out/core-in/gt — hai bản bỏ qua vì chỉ đọc *.ppm ngay trong thư mục):
+          # đối chiếu bộ lọc Làm phẳng (làm sạch + nắn thẳng) từng điểm ảnh và thông số trường nắn
+          python3 tests/tools/make_wavy_images.py out/core-in 700
+          # các nhánh của Làm phẳng mà trang 700 điểm ảnh không đi qua (trang đầy đủ trong ứng dụng dài tới 3508 điểm ảnh):
+          # trang lớn (khối phân tích k = 3, ô làm sạch d = 2), trang chụp xoay ngang (dòng chữ chạy dọc: trường nắn chuyển
+          # vị, nhân k), ảnh nhỏ < 600 điểm ảnh (ảnh mẫu của bảng lọc) — thêm vào out/core-in với tên wv_* khác
+          python3 tests/tools/make_wavy_images.py out/wv-big 2700
+          python3 tests/tools/make_wavy_images.py out/wv-small 520
+          # cỡ chữ 10-15 điểm ảnh (ngưỡng "chữ nhỏ" nâng dần: trang 1000) và ảnh chụp tài liệu phẳng độ phân giải thấp
+          # (dấu thanh, chấm, đường kẻ bảng mảnh, chữ ký bút xanh mảnh — tests/images/doc_*, cắt theo khung trang, thu nhỏ)
+          python3 tests/tools/make_wavy_images.py out/wv-mid 1000
+          python3 - <<'PY'
+          from PIL import Image
+          for src, names, prefix, rot in (("out/wv-big", ("wv_mixed",), "wv_big_", False),
+                                          ("out/wv-big", ("wv_curl",), "wv_big_rot_", True),
+                                          ("out/core-in", ("wv_waves",), "wv_rot_", True),
+                                          ("out/wv-small", ("wv_mixed", "wv_waves"), "wv_small_", False),
+                                          ("out/wv-small", ("wv_curl",), "wv_small_rot_", True),
+                                          ("out/wv-mid", ("wv_folds", "wv_mixed", "wv_crumple"), "wv_mid_", False)):
+              for n in names:
+                  im = Image.open("%s/%s.ppm" % (src, n))
+                  if rot:
+                      im = im.transpose(Image.Transpose.ROTATE_270)  # xoay 90 độ theo chiều kim đồng hồ
+                  im.save("out/core-in/%s%s.ppm" % (prefix, n[3:]))
+          for doc, box, s in (("doc_1_wood", (214, 277, 1017, 1425), 1.0), ("doc_4_beige", (271, 333, 1016, 1380), 0.7),
+                              ("doc_5_blue", (98, 226, 1000, 1383), 0.6)):
+              im = Image.open("tests/images/%s.jpg" % doc).convert("RGB").crop(box)
+              if s != 1.0:
+                  im = im.resize((round(im.width * s), round(im.height * s)), Image.BOX)
+              im.save("out/core-in/wv_doc_%s.ppm" % doc.split("_")[1])
+          PY
+          rm -rf out/wv-big out/wv-small out/wv-mid
+          # ca hồi quy của Làm phẳng (con dấu đè lên bảng, chữ viết bút xanh, bảng gấp nếp sâu, giấy vở kẻ dòng): cỡ 1000
+          python3 tests/tools/make_flatten_cases.py out/core-in 1000
           mkdir -p out/jcls
           javac -encoding UTF-8 -d out/jcls android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/DumpCore.java
           java -Dfile.encoding=UTF-8 -cp out/jcls DumpCore out/core-in out/core-java 2>&1 | tee out/algo/compare.txt
           ./out/algotest --dump out/core-in out/core-swift 2>&1 | tee -a out/algo/compare.txt
           python3 tests/tools/compare_core.py out/core-in out/core-java out/core-swift 2>&1 | tee -a out/algo/compare.txt
           python3 tests/tools/check_pdfs.py out/core-java out/core-swift | tail -1 | tee -a out/algo/compare.txt
+
+      - name: Đối chiếu lõi chuyển sang Word (DocLayout + DocxWriter) giữa bản Swift và bản Java
+        run: |
+          set -o pipefail
+          # trang tổng hợp có đáp án (công văn / biểu mẫu / văn bản + bản mờ + bản nghiêng) ở hai cỡ ảnh, và trang có kết quả
+          # nhận dạng đầy rác (khung NaN / ngoài ảnh / trùng nhau, ký tự đường kẻ, dấu tổ hợp, emoji, ảnh nhỏ / dẹt)
+          sudo apt-get install -y -q fonts-liberation > /dev/null 2>&1 || true
+          python3 tests/tools/make_word_pages.py out/word-in 2200
+          python3 tests/tools/make_word_pages.py out/word-mid 1300
+          python3 tests/tools/make_word_junk.py out/word-junk
+          # mỗi trang ở cả ba khổ giấy (a4 / letter / fit): mô hình trang, document.xml, khung cắt + mã băm điểm ảnh từng hình,
+          # từng phần của tài liệu nhiều trang phải trùng TUYỆT ĐỐI; file .docx hai bản mở bằng zipfile và so nội dung từng mục
+          for d in word-in word-mid word-junk; do
+            java -Dfile.encoding=UTF-8 -cp out/jcls DumpCore --word out/$d out/$d-java 2>&1 | tee -a out/algo/compare-word.txt
+            ./out/algotest --dump-word out/$d out/$d-swift 2>&1 | tee -a out/algo/compare-word.txt
+            python3 tests/tools/compare_core.py --word out/$d-java out/$d-swift 2>&1 | tee -a out/algo/compare-word.txt
+          done
+          # file Word do bản Swift ghi (khổ A4): cấu trúc OOXML + bảng / chữ / kiểu chữ so với đáp án; trang rác: gói OOXML hợp lệ
+          python3 tests/tools/check_docx.py out/word-in out/word-in-swift/docx_a4 2>&1 | grep -v "^PASS" | tee -a out/algo/compare-word.txt
+          python3 tests/tools/check_docx_zip.py out/word-junk-swift out/word-junk-java 2>&1 | tee -a out/algo/compare-word.txt
+          rm -rf out/word-in* out/word-mid* out/word-junk*
 
       - name: Đẩy kết quả lên nhánh ci/ios-algo
         if: always()

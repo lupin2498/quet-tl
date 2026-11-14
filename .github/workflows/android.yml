@@ -49,23 +49,64 @@ jobs:
           javac -encoding UTF-8 -d out/core-classes android/app/src/main/java/vn/quettailieu/scanner/core/*.java android/tools/desktop/*.java
           java -Dfile.encoding=UTF-8 -DminOk=6 -cp out/core-classes EvalSynth tests/images/gt.txt out/core | tee out/core/core-tests.txt
 
+      # Ảnh vào / file trung gian của các bước kiểm thử JVM để ở $RUNNER_TEMP, không ở out/: bước đẩy kết quả chạy cả khi
+      # job lỗi và đẩy toàn bộ out/ (git add -A) — để trong out/ thì bước kiểm thử lỗi sẽ đẩy hàng chục MB ảnh PPM / PDF
+      # lên ci/android-build (gói quá nặng, đẩy dễ hỏng).
       - name: Kiểm thử làm đẹp trang / xóa thông minh (JVM, ảnh tổng hợp sinh tại chỗ)
         run: |
           set -o pipefail
           sudo apt-get install -y -q fonts-dejavu-core > /dev/null 2>&1 || true
           pip3 install --break-system-packages -q numpy pillow || pip3 install -q numpy pillow
-          python3 tests/tools/make_retouch_images.py out/retouch-in 1400
-          java -Dfile.encoding=UTF-8 -cp out/core-classes EvalRetouch out/retouch-in | tee out/core/retouch-tests.txt
-          rm -rf out/retouch-in
+          python3 tests/tools/make_retouch_images.py "$RUNNER_TEMP/retouch-in" 1400
+          java -Dfile.encoding=UTF-8 -cp out/core-classes EvalRetouch "$RUNNER_TEMP/retouch-in" | tee out/core/retouch-tests.txt
+
+      - name: Kiểm thử bộ lọc Làm phẳng (JVM, trang giấy mấp mô / gấp nếp tổng hợp sinh tại chỗ)
+        # dùng phông DejaVu + numpy/pillow cài ở bước trên
+        run: |
+          set -o pipefail
+          python3 tests/tools/make_wavy_images.py "$RUNNER_TEMP/wavy-in" 1400
+          java -Dfile.encoding=UTF-8 -cp out/core-classes EvalFlatten "$RUNNER_TEMP/wavy-in" | tee out/core/flatten-tests.txt
+          # ca hồi quy (con dấu đè lên bảng, chữ viết bút xanh, bảng gấp nếp sâu, giấy vở kẻ dòng) ở cỡ 1000 và 2000
+          for L in 1000 2000; do
+            python3 tests/tools/make_flatten_cases.py "$RUNNER_TEMP/cases-$L" $L
+            java -Dfile.encoding=UTF-8 -cp out/core-classes EvalFlatten "$RUNNER_TEMP/cases-$L" | tee -a out/core/flatten-cases.txt
+          done
+
+      - name: Kiểm thử Làm phẳng giữ nội dung ở ảnh độ phân giải thấp + không nắn méo trang phẳng (JVM)
+        # ảnh chụp tài liệu phẳng tests/images ở cạnh dài 500-1754 điểm ảnh (dấu thanh, chấm, đường kẻ mảnh, chữ ký mảnh phải
+        # còn); trang phẳng tổng hợp cỡ 1500 và 3000 (con dấu cạnh dòng chữ không được làm cong trang)
+        run: |
+          set -o pipefail
+          python3 tests/tools/make_retouch_images.py "$RUNNER_TEMP/flat-1500" 1500
+          python3 tests/tools/make_retouch_images.py "$RUNNER_TEMP/flat-3000" 3000
+          java -Djava.awt.headless=true -Dfile.encoding=UTF-8 -cp out/core-classes EvalKeep tests/images \
+            "$RUNNER_TEMP/flat-1500" "$RUNNER_TEMP/flat-3000" | tee out/core/keep-tests.txt
+
+      - name: Kiểm thử chuyển trang quét sang Word (JVM, trang tổng hợp có đáp án; dựng lại bằng LibreOffice)
+        # make_word_pages.py vẽ công văn / biểu mẫu / văn bản bằng phông Liberation Serif kèm "kết quả nhận dạng chữ" giả lập;
+        # check_docx.py kiểm cấu trúc OOXML, bảng / chữ / kiểu chữ so với đáp án rồi dựng file Word bằng LibreOffice để đo
+        # độ lệch vị trí từng dòng so với trang gốc
+        run: |
+          set -o pipefail
+          sudo apt-get install -y -q fonts-liberation poppler-utils libreoffice-writer > /dev/null 2>&1 || true
+          python3 tests/tools/make_word_pages.py "$RUNNER_TEMP/word-in" 2200
+          java -Djava.awt.headless=true -Dfile.encoding=UTF-8 -cp out/core-classes EvalWord "$RUNNER_TEMP/word-in" "$RUNNER_TEMP/word-out" | tee out/core/word-tests.txt
+          { soffice --version; fc-match "Times New Roman"; python3 -c "import PIL; print('Pillow', PIL.__version__)"; } 2>&1 | tee -a out/core/word-tests.txt || true
+          rc=0
+          python3 tests/tools/check_docx.py "$RUNNER_TEMP/word-in" "$RUNNER_TEMP/word-out" --render --keep "$RUNNER_TEMP/word-rend" | tee -a out/core/word-tests.txt || rc=$?
+          # file Word + bản dựng lại (vài chục KB mỗi file) đẩy kèm kết quả để mở xem / đối chiếu khi cần
+          mkdir -p out/core/word
+          cp "$RUNNER_TEMP"/word-out/*.docx out/core/word/ || true
+          cp "$RUNNER_TEMP"/word-rend/*.pdf out/core/word/ 2>/dev/null || true
+          exit $rc
 
       - name: Kiểm thử độ bền thuật toán (fuzz) + kiểm tra PDF bằng trình phân tích thật
         run: |
           set -o pipefail
-          mkdir -p out/fuzz
-          java -Dfile.encoding=UTF-8 -cp out/core-classes FuzzCore out/fuzz 60 | tee out/core/fuzz.txt
+          mkdir -p "$RUNNER_TEMP/fuzz"
+          java -Dfile.encoding=UTF-8 -cp out/core-classes FuzzCore "$RUNNER_TEMP/fuzz" 60 | tee out/core/fuzz.txt
           pip3 install --break-system-packages -q pypdf pillow || pip3 install -q pypdf pillow
-          python3 tests/tools/check_pdfs.py out/fuzz | tee out/core/fuzz-pdf.txt
-          rm -rf out/fuzz
+          python3 tests/tools/check_pdfs.py "$RUNNER_TEMP/fuzz" | tee out/core/fuzz-pdf.txt
 
       - name: Gom kết quả
         if: always()
