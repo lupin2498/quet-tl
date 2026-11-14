@@ -82,6 +82,17 @@ jobs:
           java -Djava.awt.headless=true -Dfile.encoding=UTF-8 -cp out/core-classes EvalKeep tests/images \
             "$RUNNER_TEMP/flat-1500" "$RUNNER_TEMP/flat-3000" | tee out/core/keep-tests.txt
 
+      - name: Kiểm thử chuyển trang quét sang Word (JVM, trang tổng hợp có đáp án; dựng lại bằng LibreOffice)
+        # make_word_pages.py vẽ công văn / biểu mẫu / văn bản bằng phông Liberation Serif kèm "kết quả nhận dạng chữ" giả lập;
+        # check_docx.py kiểm cấu trúc OOXML, bảng / chữ / kiểu chữ so với đáp án rồi dựng file Word bằng LibreOffice để đo
+        # độ lệch vị trí từng dòng so với trang gốc
+        run: |
+          set -o pipefail
+          sudo apt-get install -y -q fonts-liberation poppler-utils libreoffice-writer > /dev/null 2>&1 || true
+          python3 tests/tools/make_word_pages.py "$RUNNER_TEMP/word-in" 2200
+          java -Djava.awt.headless=true -Dfile.encoding=UTF-8 -cp out/core-classes EvalWord "$RUNNER_TEMP/word-in" "$RUNNER_TEMP/word-out" | tee out/core/word-tests.txt
+          python3 tests/tools/check_docx.py "$RUNNER_TEMP/word-in" "$RUNNER_TEMP/word-out" --render | tee -a out/core/word-tests.txt
+
       - name: Kiểm thử độ bền thuật toán (fuzz) + kiểm tra PDF bằng trình phân tích thật
         run: |
           set -o pipefail
