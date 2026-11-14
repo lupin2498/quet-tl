@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -18,6 +19,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -147,8 +150,38 @@ final class WordExport {
         }
     }
 
+    /**
+     * Thư mục ghi dữ liệu gỡ lỗi (chỉ bản debug; null ở bản phát hành): ảnh trang đem phân tích + các từ nhận dạng được,
+     * đúng định dạng của android/tools/desktop/EvalWord để tái hiện việc dàn trang trên máy tính.
+     */
+    static File debugDir(Context c) {
+        if ((c.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) return null;
+        File d = new File(c.getCacheDir(), "word_debug");
+        if (!d.exists()) d.mkdirs();
+        return d;
+    }
+
+    private static void dumpDebug(File dir, int index, Bitmap bmp, List<DocLayout.Word> words) {
+        try {
+            ImageUtil.saveJpeg(bmp, new File(dir, "p" + index + ".jpg"), 95);
+            Writer wr = new OutputStreamWriter(new FileOutputStream(new File(dir, "p" + index + ".words.tsv")), "UTF-8");
+            try {
+                if (words != null) {
+                    for (DocLayout.Word wd : words) {
+                        wr.write(wd.x0 + "\t" + wd.y0 + "\t" + wd.x1 + "\t" + wd.y1 + "\t" + wd.line + "\t"
+                                + wd.text.replace('\t', ' ').replace('\n', ' ') + "\t" + wd.conf + "\n");
+                    }
+                }
+            } finally {
+                wr.close();
+            }
+        } catch (Throwable t) {
+            Log.w(TAG, "không ghi được dữ liệu gỡ lỗi", t);
+        }
+    }
+
     /** Một trang: nhận dạng chữ -> dàn trang; lỗi ở bước nào thì trang đó vào Word dưới dạng ảnh. */
-    static WordDoc.Page convertPage(File f, int sizeMode, Ocr.Engine eng, Stats st, int index) throws IOException {
+    static WordDoc.Page convertPage(File f, int sizeMode, Ocr.Engine eng, Stats st, int index, File debugDir) throws IOException {
         long t0 = System.currentTimeMillis();
         Bitmap bmp;
         try {
@@ -166,6 +199,7 @@ final class WordExport {
                     Log.w(TAG, "trang " + (index + 1) + ": nhận dạng chữ lỗi", t);
                 }
             }
+            if (debugDir != null) dumpDebug(debugDir, index, bmp, words);
             long t1 = System.currentTimeMillis();
             WordDoc.Page page = null;
             int tables = 0;
@@ -210,7 +244,7 @@ final class WordExport {
     }
 
     /** Chuyển các trang rồi ghi DOCX vào os (không đóng os). Gọi trên luồng nền. */
-    static Stats write(List<File> pageFiles, int sizeMode, String title, OutputStream os, Progress pr) throws IOException {
+    static Stats write(List<File> pageFiles, int sizeMode, String title, OutputStream os, Progress pr, File debugDir) throws IOException {
         long t0 = System.currentTimeMillis();
         Stats st = new Stats();
         Ocr.Engine eng = Ocr.create();
@@ -219,7 +253,7 @@ final class WordExport {
         try {
             for (int i = 0; i < pageFiles.size(); i++) {
                 if (pr != null && !pr.page(i, pageFiles.size())) throw new Cancelled();
-                pages.add(convertPage(pageFiles.get(i), sizeMode, eng, st, i));
+                pages.add(convertPage(pageFiles.get(i), sizeMode, eng, st, i, debugDir));
             }
         } finally {
             if (eng != null) eng.close();
@@ -238,7 +272,7 @@ final class WordExport {
         boolean ok = false;
         OutputStream os = new BufferedOutputStream(new FileOutputStream(tmp), 256 * 1024);
         try {
-            out[0] = write(pageFiles, sizeMode, title, os, pr);
+            out[0] = write(pageFiles, sizeMode, title, os, pr, debugDir(c));
             ok = true;
         } finally {
             try {
@@ -390,6 +424,7 @@ final class WordExport {
         final String title = d.title;
         final int sizeMode = Exporter.pdfSize(a);
         final Stats[] stats = new Stats[1];
+        final File dbg = debugDir(a);
         runWithProgress(a, new Job() {
             @Override
             public void run(Progress pr) throws Exception {
@@ -397,7 +432,7 @@ final class WordExport {
                 try {
                     // chuyển xong mới mở file đích: huỷ / lỗi giữa chừng không để lại file dở
                     ByteArrayOutputStream bo = new ByteArrayOutputStream(256 * 1024);
-                    stats[0] = write(pages, sizeMode, title, bo, pr);
+                    stats[0] = write(pages, sizeMode, title, bo, pr, dbg);
                     OutputStream os = cr.openOutputStream(target, "w");
                     if (os == null) throw new IOException("Không ghi được file");
                     try {

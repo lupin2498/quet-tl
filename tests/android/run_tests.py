@@ -58,8 +58,30 @@ def shot(name):
     return path
 
 
+def other_app_anr(root):
+    """Hộp thoại hệ thống "<ứng dụng khác> isn't responding" (máy ảo CI chậm lúc mới khởi động: Pixel Launcher, System UI...)
+    che mất ứng dụng đang thử: trả về toạ độ nút Wait để bấm cho qua. ANR của chính ứng dụng đang thử thì KHÔNG bỏ qua."""
+    msg = None
+    wait = None
+    for n in root.iter("node"):
+        t = n.get("text", "")
+        if "isn't responding" in t or "không phản hồi" in t:
+            msg = t
+        elif t.casefold() in ("wait", "đợi", "chờ"):
+            wait = n
+    if msg is None or wait is None or "Quét Tài Liệu" in msg:
+        return None
+    m = re.findall(r"\d+", wait.get("bounds", ""))
+    if len(m) != 4:
+        return None
+    x0, y0, x1, y1 = [int(v) for v in m]
+    log("hộp thoại hệ thống: %s -> bấm Wait" % msg)
+    return (x0 + x1) // 2, (y0 + y1) // 2
+
+
 def dump(save_as=None):
-    for _ in range(4):
+    anr_taps = 0
+    for _ in range(6):
         out = sh("uiautomator dump /sdcard/ui.xml", timeout=45)
         if "dumped" in out.lower():
             xml = sh("cat /sdcard/ui.xml", timeout=20)
@@ -73,6 +95,12 @@ def dump(save_as=None):
                     xml = xml[: end + len("</hierarchy>")]
                 try:
                     root = ET.fromstring(xml)
+                    pt = other_app_anr(root) if anr_taps < 2 else None
+                    if pt is not None:
+                        anr_taps += 1
+                        sh("input tap %d %d" % pt)
+                        time.sleep(1.5)
+                        continue
                     if save_as:
                         open(os.path.join(OUT, "ui", save_as + ".xml"), "w").write(xml)
                     return root
@@ -446,6 +474,13 @@ def t_word_export():
     notes.append("Word: %d dòng chữ, %d bảng (lớn nhất %d x %d), %d hình, khớp %d/%d cụm từ mẫu (bỏ dấu), %d/%d lần đúng cả dấu" % (
         len(lines), tables, rows, cols, media, len(hit), len(want), exact_hits, 2 * len(exact)))
     close_chooser()
+    # dữ liệu gỡ lỗi của bản debug (ảnh trang + các từ nhận dạng được): giữ lại để tái hiện việc dàn trang trên máy tính
+    os.makedirs(os.path.join(OUT, "word_debug"), exist_ok=True)
+    for i in range(2):
+        for ext in (".jpg", ".words.tsv"):
+            blob = pull_file("cache/word_debug/p%d%s" % (i, ext))
+            if blob:
+                open(os.path.join(OUT, "word_debug", "p%d%s" % (i, ext)), "wb").write(blob)
     if len(hit) < 8:
         raise AssertionError("Word: chỉ đọc đúng %d/%d cụm từ mẫu (%s)" % (len(hit), len(want), ", ".join(hit)))
     if tables < 2 or rows < 12 or cols < 5:

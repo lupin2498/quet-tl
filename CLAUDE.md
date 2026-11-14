@@ -2,7 +2,8 @@
 
 Ứng dụng quét giấy tờ kiểu CamScanner: chụp → tự tìm mép trang → kéo tay cầm chỉnh vùng cắt →
 nắn phẳng theo khổ giấy (A4/Letter) → bộ lọc làm rõ chữ (có "Làm phẳng" cho giấy mấp mô / gấp nếp: nắn thẳng dòng chữ,
-bảng biểu và chỉ giữ nội dung) → chỉnh sửa (xoá thông minh, đánh dấu, tiêu đề trang, cắt dán) → lưu/chia sẻ PDF, JPG.
+bảng biểu và chỉ giữ nội dung) → chỉnh sửa (xoá thông minh, đánh dấu, tiêu đề trang, cắt dán; phóng to bằng hai ngón) →
+lưu/chia sẻ PDF, JPG, hoặc chuyển sang Word (.docx) giữ nguyên bố cục (nhận dạng chữ trên máy, bảng kẻ thành bảng Word).
 Giao diện tiếng Việt.
 
 ## Cấu trúc
@@ -11,12 +12,23 @@ Giao diện tiếng Việt.
     (`DocDetector` tìm mép, `Geom` hình học + tỷ lệ khổ giấy, `Enhancer` bộ lọc, `Retouch` gỡ ngón tay / xoá thông minh /
     khử nhiễu / làm nét / dọn mép, `Flatten` bộ lọc "Làm phẳng": làm sạch (chỉ giữ nét mực, giữ + làm rõ lưới bảng) rồi dò
     dòng chữ / đường kẻ bảng bị uốn lượn, khớp trường dịch chuyển trơn (bình phương tối thiểu trên lưới, gradient liên hợp)
-    và nắn lại ảnh — kích thước ảnh giữ nguyên, `PdfWriter`).
+    và nắn lại ảnh — kích thước ảnh giữ nguyên, `PdfWriter`; chuyển sang Word: `DocLayout` phân tích ảnh trang + các từ do
+    bộ nhận dạng chữ trả về -> đường kẻ bảng (gộp, lưới, ô gộp), đo từng từ theo số đo phông Times New Roman của `WordFont`
+    (cỡ, đậm, nghiêng, gạch chân, màu), khử nghiêng, lọc rác của bộ nhận dạng, xếp dòng / hộp chữ, phần mực không đọc được
+    thành hình; `WordDoc` là mô hình trang; `DocxWriter` ghi DOCX — mỗi dòng một đoạn chiều cao chính xác, bảng Word thật,
+    hình / đường kẻ neo theo trang, tự ghi zip).
   - Các Activity (đều kế thừa `BaseActivity`: chặn mở trùng màn hình khi chạm đúp, `runWhenResumed`): `MainActivity`
     (trang chủ), `CameraActivity` (Camera2, Đơn/Hàng loạt), `CropActivity` + `CropView` (chỉnh 4 góc, kính lúp),
     `EditorActivity` + `PageStripView` (thanh công cụ ba nhóm Ảnh / Đánh dấu / Trang; lọc, xoay, cắt lại, so sánh,
-    lời nhắc ngón tay, tiêu đề trang, cắt dán), `EraseActivity` + `EraseView` (Xóa thông minh), `MarkupActivity` +
-    `MarkView` (Đánh dấu; `MarkRender` vẽ chung cho màn hình chỉnh sửa và ảnh kết quả), `DocumentActivity`.
+    lời nhắc ngón tay, tiêu đề trang, cắt dán; chụm / dang hai ngón phóng trang tới 6 lần, giữ mức phóng khi đổi bộ lọc),
+    `EraseActivity` + `EraseView` (Xóa thông minh), `MarkupActivity` + `MarkView` (Đánh dấu; `MarkRender` vẽ chung cho
+    màn hình chỉnh sửa và ảnh kết quả), `DocumentActivity` (Thêm / Sửa / Chia sẻ / Word / Lưu PDF / Lưu ảnh).
+  - Chuyển sang Word: `WordExport` (từng trang: ảnh kết quả cạnh dài tối đa 2400 -> nhận dạng chữ, trang dưới 1600 điểm
+    ảnh được phóng lên trước -> `DocLayout` -> `DocxWriter`; trang không đọc được chữ vào Word dạng ảnh; hộp thoại chờ có
+    nút Huỷ). Bộ nhận dạng chữ là ML Kit Text Recognition (mô hình La-tinh đóng kèm, chạy trên máy) — thư viện ngoài DUY
+    NHẤT; lớp nối `MlKitOcr` nằm ở `app/src/mlkit/java` và được `Ocr` nạp theo tên lớp, nên `build_apk.sh` (không Gradle,
+    không ML Kit) vẫn dựng được (bản đó đưa trang vào Word dạng ảnh). Manifest gỡ quyền INTERNET mà ML Kit khai báo: ứng
+    dụng không dùng mạng.
   - Chỉnh sửa trang KHÔNG phá huỷ: `Page.erase` / `Page.marks` (JSON chuẩn tắc trong `Edits`) + `Doc.header`; `Processor.render`
     dựng lại theo thứ tự nắn phẳng → dò ngón tay → xoá → lọc → đánh dấu → xoay → tiêu đề. Toạ độ chuẩn hoá theo ảnh đã nắn
     phẳng (chưa xoay); cắt lại thì `Edits.remap` dời theo vùng cắt mới. Tên ảnh kết quả = băm của mọi tham số.
@@ -30,7 +42,8 @@ Giao diện tiếng Việt.
     xoá thông minh, bộ lọc mới trên trang tổng hợp), `EvalFlatten` (Làm phẳng: độ thẳng / độ sạch / giữ nội dung trên trang
     nhàu tổng hợp có đáp án hình học), `EvalKeep` (Làm phẳng giữ dấu thanh / chấm / đường kẻ mảnh trên ảnh chụp tài liệu
     phẳng cạnh dài 500-1754 điểm ảnh, không nắn méo trang phẳng tổng hợp nhiều cỡ), `FuzzCore` (kiểm thử độ bền), `DumpCore`
-    (xuất kết quả để đối chiếu với bản Swift).
+    (xuất kết quả để đối chiếu với bản Swift), `EvalWord` (chuyển các trang `<tên>.ppm` + `<tên>.words.tsv` — kết quả
+    "nhận dạng chữ" cho sẵn — sang .docx; kiểm bằng `tests/tools/check_docx.py`).
 - `ios/` — bản iOS (Swift/UIKit, CoreImage), dự án sinh bằng XcodeGen (`ios/project.yml`).
   - `ios/Sources/DocDetector.swift`, `Enhancer.swift`, `Retouch.swift`, `Flatten.swift` port 1-1 từ bản Java (sửa thuật toán
     thì sửa cả hai; CI so từng điểm ảnh giữa hai bản); Vision chỉ là dự phòng khi tìm mép.
