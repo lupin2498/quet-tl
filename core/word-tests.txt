@@ -1,0 +1,132 @@
+wd_bieumau 1556x2200: 175 từ -> 70 dòng, 2 bảng (66 ô), 4 hộp chữ, 4 hình, 0 đường kẻ rời, nghiêng 0.00 độ, 428 ms
+wd_bieumau_blur 1556x2200: 175 từ -> 70 dòng, 2 bảng (66 ô), 4 hộp chữ, 4 hình, 0 đường kẻ rời, nghiêng 0.00 độ, 397 ms
+wd_bieumau_skew 1556x2200: 175 từ -> 70 dòng, 2 bảng (66 ô), 4 hộp chữ, 4 hình, 0 đường kẻ rời, nghiêng -0.50 độ, 227 ms
+wd_congvan 1556x2200: 279 từ -> 50 dòng, 1 bảng (32 ô), 0 hộp chữ, 1 hình, 1 đường kẻ rời, nghiêng 0.00 độ, 188 ms
+wd_congvan_blur 1556x2200: 279 từ -> 50 dòng, 1 bảng (32 ô), 0 hộp chữ, 1 hình, 1 đường kẻ rời, nghiêng 0.00 độ, 229 ms
+wd_congvan_skew 1556x2200: 279 từ -> 50 dòng, 1 bảng (32 ô), 0 hộp chữ, 1 hình, 1 đường kẻ rời, nghiêng -0.50 độ, 165 ms
+wd_vanban 1556x2200: 217 từ -> 19 dòng, 0 bảng (0 ô), 0 hộp chữ, 0 hình, 0 đường kẻ rời, nghiêng 0.00 độ, 142 ms
+wd_vanban_blur 1556x2200: 217 từ -> 19 dòng, 0 bảng (0 ô), 0 hộp chữ, 0 hình, 0 đường kẻ rời, nghiêng 0.00 độ, 197 ms
+wd_vanban_skew 1556x2200: 217 từ -> 19 dòng, 0 bảng (0 ô), 0 hộp chữ, 0 hình, 0 đường kẻ rời, nghiêng -0.46 độ, 156 ms
+EvalWord: 9 trang, phân tích trung bình 236 ms/trang
+LibreOffice 26.2.6.3 620(Build:3)
+
+LiberationSerif-Regular.ttf: "Liberation Serif" "Regular"
+Pillow 13.0.0
+PASS wd_bieumau: gói OOXML hợp lệ
+PASS wd_bieumau: bảng 1 có 7 cột x 10 hàng (các bảng trong file: [(1, 1), (7, 10)])
+PASS wd_bieumau: bảng 1 — ô gộp / viền đúng (65 ô)
+PASS wd_bieumau: bảng 1 — chữ trong từng ô đúng
+PASS wd_bieumau: bảng 1 — kiểu chữ trong ô đúng
+PASS wd_bieumau: mọi dòng chữ ngoài bảng có mặt (11 dòng)
+PASS wd_bieumau: kiểu chữ (đậm / nghiêng / cỡ) của 20 khúc chữ đúng
+PASS wd_bieumau: hình (con dấu / chữ ký) được nhúng: 4 (đáp án có 1)
+PASS wd_bieumau: một section khổ A4 ([(11906, 16838)])
+Trình dựng tính chiều cao hàng atLeast: như Word (cộng bề dày viền)
+PASS wd_bieumau: LibreOffice dựng được file Word
+PASS wd_bieumau: dựng lại đúng 1 trang (được 1)
+    wd_bieumau: lệch đầu dòng — ngang trung vị 0.40 pt, P95 0.61 pt; chân chữ trung vị 0.15 pt, P95 0.53 pt (80 dòng, 0 không dò được)
+PASS wd_bieumau: dò được vị trí của >= 90% số dòng sau khi dựng lại (80 / 80)
+PASS wd_bieumau: đầu dòng lệch ngang ít (trung vị 0.40 <= 1 pt, P95 0.61 <= 3 pt)
+PASS wd_bieumau: đường chân chữ lệch ít (trung vị 0.15 <= 1 pt, P95 0.53 <= 2,5 pt)
+PASS wd_bieumau_blur: gói OOXML hợp lệ
+PASS wd_bieumau_blur: bảng 1 có 7 cột x 10 hàng (các bảng trong file: [(1, 1), (7, 10)])
+PASS wd_bieumau_blur: bảng 1 — ô gộp / viền đúng (65 ô)
+PASS wd_bieumau_blur: bảng 1 — chữ trong từng ô đúng
+PASS wd_bieumau_blur: bảng 1 — kiểu chữ trong ô đúng (1 lệch): (4, 3) '29': đậm=False cỡ=7.0, cần đậm=False cỡ=11
+PASS wd_bieumau_blur: mọi dòng chữ ngoài bảng có mặt (11 dòng)
+PASS wd_bieumau_blur: kiểu chữ (đậm / nghiêng / cỡ) của 20 khúc chữ đúng
+PASS wd_bieumau_blur: hình (con dấu / chữ ký) được nhúng: 4 (đáp án có 1)
+PASS wd_bieumau_blur: một section khổ A4 ([(11906, 16838)])
+PASS wd_bieumau_blur: LibreOffice dựng được file Word
+PASS wd_bieumau_blur: dựng lại đúng 1 trang (được 1)
+    wd_bieumau_blur: lệch đầu dòng — ngang trung vị 0.50 pt, P95 0.86 pt; chân chữ trung vị 0.10 pt, P95 0.33 pt (80 dòng, 0 không dò được)
+PASS wd_bieumau_blur: dò được vị trí của >= 90% số dòng sau khi dựng lại (80 / 80)
+PASS wd_bieumau_blur: đầu dòng lệch ngang ít (trung vị 0.50 <= 1 pt, P95 0.86 <= 3 pt)
+PASS wd_bieumau_blur: đường chân chữ lệch ít (trung vị 0.10 <= 1 pt, P95 0.33 <= 2,5 pt)
+PASS wd_bieumau_skew: gói OOXML hợp lệ
+PASS wd_bieumau_skew: bảng 1 có 7 cột x 10 hàng (các bảng trong file: [(1, 1), (7, 10)])
+PASS wd_bieumau_skew: bảng 1 — ô gộp / viền đúng (65 ô)
+PASS wd_bieumau_skew: bảng 1 — chữ trong từng ô đúng
+PASS wd_bieumau_skew: bảng 1 — kiểu chữ trong ô đúng
+PASS wd_bieumau_skew: mọi dòng chữ ngoài bảng có mặt (11 dòng)
+PASS wd_bieumau_skew: kiểu chữ (đậm / nghiêng / cỡ) của 20 khúc chữ đúng
+PASS wd_bieumau_skew: hình (con dấu / chữ ký) được nhúng: 4 (đáp án có 1)
+PASS wd_bieumau_skew: một section khổ A4 ([(11906, 16838)])
+PASS wd_bieumau_skew: LibreOffice dựng được file Word
+PASS wd_bieumau_skew: dựng lại đúng 1 trang (được 1)
+PASS wd_congvan: gói OOXML hợp lệ
+PASS wd_congvan: bảng 1 có 5 cột x 7 hàng (các bảng trong file: [(5, 7)])
+PASS wd_congvan: bảng 1 — ô gộp / viền đúng (32 ô)
+PASS wd_congvan: bảng 1 — chữ trong từng ô đúng
+PASS wd_congvan: bảng 1 — kiểu chữ trong ô đúng
+PASS wd_congvan: mọi dòng chữ ngoài bảng có mặt (18 dòng)
+PASS wd_congvan: kiểu chữ (đậm / nghiêng / cỡ) của 23 khúc chữ đúng
+PASS wd_congvan: hình (con dấu / chữ ký) được nhúng: 1 (đáp án có 2)
+PASS wd_congvan: một section khổ A4 ([(11906, 16838)])
+PASS wd_congvan: LibreOffice dựng được file Word
+PASS wd_congvan: dựng lại đúng 1 trang (được 1)
+    wd_congvan: lệch đầu dòng — ngang trung vị 0.26 pt, P95 0.80 pt; chân chữ trung vị 0.13 pt, P95 0.45 pt (55 dòng, 0 không dò được)
+PASS wd_congvan: dò được vị trí của >= 90% số dòng sau khi dựng lại (55 / 55)
+PASS wd_congvan: đầu dòng lệch ngang ít (trung vị 0.26 <= 1 pt, P95 0.80 <= 3 pt)
+PASS wd_congvan: đường chân chữ lệch ít (trung vị 0.13 <= 1 pt, P95 0.45 <= 2,5 pt)
+PASS wd_congvan_blur: gói OOXML hợp lệ
+PASS wd_congvan_blur: bảng 1 có 5 cột x 7 hàng (các bảng trong file: [(5, 7)])
+PASS wd_congvan_blur: bảng 1 — ô gộp / viền đúng (32 ô)
+PASS wd_congvan_blur: bảng 1 — chữ trong từng ô đúng
+PASS wd_congvan_blur: bảng 1 — kiểu chữ trong ô đúng
+PASS wd_congvan_blur: mọi dòng chữ ngoài bảng có mặt (18 dòng)
+PASS wd_congvan_blur: kiểu chữ (đậm / nghiêng / cỡ) của 23 khúc chữ đúng
+PASS wd_congvan_blur: hình (con dấu / chữ ký) được nhúng: 1 (đáp án có 2)
+PASS wd_congvan_blur: một section khổ A4 ([(11906, 16838)])
+PASS wd_congvan_blur: LibreOffice dựng được file Word
+PASS wd_congvan_blur: dựng lại đúng 1 trang (được 1)
+    wd_congvan_blur: lệch đầu dòng — ngang trung vị 0.26 pt, P95 0.85 pt; chân chữ trung vị 0.08 pt, P95 0.30 pt (55 dòng, 0 không dò được)
+PASS wd_congvan_blur: dò được vị trí của >= 90% số dòng sau khi dựng lại (55 / 55)
+PASS wd_congvan_blur: đầu dòng lệch ngang ít (trung vị 0.26 <= 1 pt, P95 0.85 <= 3 pt)
+PASS wd_congvan_blur: đường chân chữ lệch ít (trung vị 0.08 <= 1 pt, P95 0.30 <= 2,5 pt)
+PASS wd_congvan_skew: gói OOXML hợp lệ
+PASS wd_congvan_skew: bảng 1 có 5 cột x 7 hàng (các bảng trong file: [(5, 7)])
+PASS wd_congvan_skew: bảng 1 — ô gộp / viền đúng (32 ô)
+PASS wd_congvan_skew: bảng 1 — chữ trong từng ô đúng
+PASS wd_congvan_skew: bảng 1 — kiểu chữ trong ô đúng
+PASS wd_congvan_skew: mọi dòng chữ ngoài bảng có mặt (18 dòng)
+PASS wd_congvan_skew: kiểu chữ (đậm / nghiêng / cỡ) của 23 khúc chữ đúng
+PASS wd_congvan_skew: hình (con dấu / chữ ký) được nhúng: 1 (đáp án có 2)
+PASS wd_congvan_skew: một section khổ A4 ([(11906, 16838)])
+PASS wd_congvan_skew: LibreOffice dựng được file Word
+PASS wd_congvan_skew: dựng lại đúng 1 trang (được 1)
+PASS wd_vanban: gói OOXML hợp lệ
+PASS wd_vanban: mọi dòng chữ ngoài bảng có mặt (19 dòng)
+PASS wd_vanban: kiểu chữ (đậm / nghiêng / cỡ) của 19 khúc chữ đúng
+PASS wd_vanban: hình (con dấu / chữ ký) được nhúng: 0 (đáp án có 0)
+PASS wd_vanban: một section khổ A4 ([(11906, 16838)])
+PASS wd_vanban: LibreOffice dựng được file Word
+PASS wd_vanban: dựng lại đúng 1 trang (được 1)
+    wd_vanban: lệch đầu dòng — ngang trung vị 0.20 pt, P95 0.40 pt; chân chữ trung vị 0.20 pt, P95 0.30 pt (19 dòng, 0 không dò được)
+PASS wd_vanban: dò được vị trí của >= 90% số dòng sau khi dựng lại (19 / 19)
+PASS wd_vanban: đầu dòng lệch ngang ít (trung vị 0.20 <= 1 pt, P95 0.40 <= 3 pt)
+PASS wd_vanban: đường chân chữ lệch ít (trung vị 0.20 <= 1 pt, P95 0.30 <= 2,5 pt)
+PASS wd_vanban_blur: gói OOXML hợp lệ
+PASS wd_vanban_blur: mọi dòng chữ ngoài bảng có mặt (19 dòng)
+PASS wd_vanban_blur: kiểu chữ (đậm / nghiêng / cỡ) của 19 khúc chữ đúng
+PASS wd_vanban_blur: hình (con dấu / chữ ký) được nhúng: 0 (đáp án có 0)
+PASS wd_vanban_blur: một section khổ A4 ([(11906, 16838)])
+PASS wd_vanban_blur: LibreOffice dựng được file Word
+PASS wd_vanban_blur: dựng lại đúng 1 trang (được 1)
+    wd_vanban_blur: lệch đầu dòng — ngang trung vị 0.20 pt, P95 0.40 pt; chân chữ trung vị 0.20 pt, P95 0.30 pt (19 dòng, 0 không dò được)
+PASS wd_vanban_blur: dò được vị trí của >= 90% số dòng sau khi dựng lại (19 / 19)
+PASS wd_vanban_blur: đầu dòng lệch ngang ít (trung vị 0.20 <= 1 pt, P95 0.40 <= 3 pt)
+PASS wd_vanban_blur: đường chân chữ lệch ít (trung vị 0.20 <= 1 pt, P95 0.30 <= 2,5 pt)
+PASS wd_vanban_skew: gói OOXML hợp lệ
+PASS wd_vanban_skew: mọi dòng chữ ngoài bảng có mặt (19 dòng)
+PASS wd_vanban_skew: kiểu chữ (đậm / nghiêng / cỡ) của 19 khúc chữ đúng
+PASS wd_vanban_skew: hình (con dấu / chữ ký) được nhúng: 0 (đáp án có 0)
+PASS wd_vanban_skew: một section khổ A4 ([(11906, 16838)])
+PASS wd_vanban_skew: LibreOffice dựng được file Word
+PASS wd_vanban_skew: dựng lại đúng 1 trang (được 1)
+PASS tat_ca: gói OOXML hợp lệ
+PASS tat_ca: 9 trang quét -> 9 section
+PASS tat_ca: LibreOffice dựng được
+PASS tat_ca: dựng lại đúng 9 trang (được 9)
+PASS có trang để kiểm tra (9)
+KẾT QUẢ KIỂM TRA WORD: 110 kiểm tra, 0 lỗi

@@ -1,0 +1,77 @@
+PASS rt_finger_l: phát hiện ngón tay
+PASS rt_finger_l: gỡ ngón tay (điểm màu da 15906 -> 0)
+PASS rt_finger_l: Thần kỳ không còn ngón tay (15906 -> 0)
+PASS rt_finger_l: Làm phẳng không còn ngón tay (15906 -> 0)
+PASS rt_finger_b: phát hiện ngón tay
+PASS rt_finger_b: gỡ ngón tay (điểm màu da 9059 -> 0)
+PASS rt_finger_b: Thần kỳ không còn ngón tay (9059 -> 0)
+PASS rt_finger_b: Làm phẳng không còn ngón tay (9059 -> 0)
+PASS rt_finger_c: phát hiện ngón tay
+PASS rt_finger_c: gỡ ngón tay (điểm màu da 10970 -> 0)
+PASS rt_finger_c: Thần kỳ không còn ngón tay (10970 -> 0)
+PASS rt_finger_c: Làm phẳng không còn ngón tay (10970 -> 0)
+PASS rt_plain: không báo nhầm ngón tay
+PASS rt_stamp: không báo nhầm ngón tay
+PASS rt_strip: không báo nhầm ngón tay
+PASS rt_photo: không báo nhầm ngón tay
+PASS rt_hand: không báo nhầm ngón tay
+PASS rt_shadow: không báo nhầm ngón tay
+PASS rt_edge: không báo nhầm ngón tay
+PASS Thần kỳ: nền giấy 255.0
+PASS Thần kỳ: chữ còn đậm (16409 / 15909 điểm tối)
+PASS Không bóng: nền giấy 255.0
+PASS Không bóng: chữ còn đậm (14942 / 15909 điểm tối)
+PASS Ko viết tay: nền giấy 255.0
+PASS Ko viết tay: chữ còn đậm (15590 / 15909 điểm tối)
+PASS Khử nhiễu: nền giấy 207.3
+PASS Khử nhiễu: chữ còn đậm (15911 / 15909 điểm tối)
+PASS Làm phẳng: nền giấy 255.0
+PASS Làm phẳng: chữ còn đậm (16287 / 15909 điểm tối)
+PASS Thần kỳ giữ nguyên nội dung trang sạch (64567 so với Tăng cường 64816)
+PASS Làm phẳng giữ nguyên nội dung trang sạch (63892 so với Tăng cường 64816)
+PASS Không bóng: hết bóng (chênh 85.7 -> 0.0, vùng bóng 255.0)
+PASS Không bóng: mép bóng không còn vệt (tối nhất 255.0)
+PASS Thần kỳ: hết bóng (chênh 85.7 -> 0.0, vùng bóng 255.0)
+PASS Thần kỳ: mép bóng không còn vệt (tối nhất 255.0)
+PASS Làm phẳng: hết bóng (chênh 85.7 -> 0.0, vùng bóng 255.0)
+PASS Làm phẳng: mép bóng không còn vệt (tối nhất 255.0)
+PASS Thần kỳ dọn vệt tối sát mép (còn 0 điểm)
+PASS Dọn mép không làm mất chữ (16403 / 15916)
+PASS Làm phẳng dọn vệt tối sát mép (còn 0 điểm)
+PASS Làm phẳng: dọn mép không làm mất chữ (16258 / 15916)
+PASS Xoá bút xanh/tím (3481 -> 0)
+PASS Giữ con dấu đỏ (5965 -> 5886)
+PASS Xoá dấu tích đỏ nhỏ (325 -> 0)
+PASS Giữ chữ in đen (50129 -> 49062)
+PASS Bộ lọc Ko viết tay xoá bút xanh
+PASS Trang không có bút màu: không đổi
+PASS Thần kỳ xoá cả nét bút dính liền (1323 -> 0)
+PASS Thần kỳ không đụng tới con dấu ở xa
+PASS Làm phẳng giữ chữ ký / chữ viết bút xanh (3481 -> 3560)
+PASS Làm phẳng giữ con dấu đỏ (5965 -> 5965)
+PASS Làm phẳng giữ chữ in đen (50129 -> 52532)
+PASS Bút xoá chữ dưới nét tô (440 -> 0)
+PASS Bút tô đúng màu giấy (204.5 so với 204.4)
+PASS Hình chữ nhật xoá sạch vùng chọn
+PASS Hình chữ nhật không đụng ngoài vùng chọn
+PASS Xoá văn bản: mất chữ trong ô (440 -> 0)
+PASS Xoá văn bản: giữ đường kẻ bảng (44 -> 44)
+PASS Chuỗi thao tác bất thường: không lỗi, ảnh còn nguyên alpha
+PASS Đổi vùng cắt: vùng cũ = vùng mới -> toạ độ giữ nguyên
+PASS Đổi vùng cắt: điểm theo đúng vị trí trên giấy
+PASS Đổi vùng cắt: bề rộng nét đổi theo tỷ lệ
+PASS Đổi vùng cắt: vùng suy biến -> giữ nguyên
+PASS Enhancer.apply(Làm phẳng) trùng Flatten.apply (có nắn)
+PASS rt_plain: Làm phẳng không nắn méo trang phẳng (dịch tối đa 1.05)
+PASS rt_finger_l: Làm phẳng không nắn méo trang phẳng (dịch tối đa 1.02)
+PASS rt_finger_b: Làm phẳng không nắn méo trang phẳng (không nắn)
+PASS rt_finger_c: Làm phẳng không nắn méo trang phẳng (không nắn)
+PASS rt_stamp: Làm phẳng không nắn méo trang phẳng (không nắn)
+PASS rt_strip: Làm phẳng không nắn méo trang phẳng (không nắn)
+PASS rt_photo: Làm phẳng không nắn méo trang phẳng (không nắn)
+PASS rt_hand: Làm phẳng không nắn méo trang phẳng (dịch tối đa 1.21)
+PASS rt_shadow: Làm phẳng không nắn méo trang phẳng (không nắn)
+PASS rt_edge: Làm phẳng không nắn méo trang phẳng (không nắn)
+PASS rt_finger_b: Làm phẳng không nắn (xem trước Xóa thông minh) trùng kết quả lọc
+PASS rt_plain: Làm phẳng không nắn (xem trước Xóa thông minh) + nắn theo trường của kết quả lọc trùng kết quả lọc
+Retouch: 76 kiểm tra, 0 lỗi, 8.3 giây

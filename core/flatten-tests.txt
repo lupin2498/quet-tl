@@ -1,0 +1,109 @@
+wv_blank     378 ms  không nắn  | lệch hàng 0.00/0.00 -> 0.00/0.00
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 37802 điểm), giữ lõi nét 100.0%
+PASS wv_blank: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_blank: hết vệt nếp gấp / vân tay (0.00%)
+wv_crumple   905 ms  37 dòng, 16 kẻ ngang, 6 kẻ dọc, dịch tối đa 10.1  | lệch hàng 8.34/16.06 -> 1.01/6.21
+PASS wv_crumple: không nhận nhầm là trang xoay ngang
+PASS wv_crumple: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_crumple: xoay 90 độ — dịch chuyển tương đương (10.4 so với 10.1)
+PASS wv_crumple: phát hiện trang cong vênh
+PASS wv_crumple: dòng chữ / kẻ ngang thẳng lại (lệch TB 8.34 -> 1.01)
+PASS wv_crumple: không còn đoạn cong lớn (lệch max 16.06 -> 6.21)
+            lệch cột (vùng bảng) 7.44/14.51 -> 1.77/5.98
+PASS wv_crumple: đường kẻ dọc thẳng lại (lệch TB 7.44 -> 1.77)
+            nền bẩn 0.16% (vùng nếp/vân tay 0.90% / 24225 điểm), giữ lõi nét 100.0%
+PASS wv_crumple: nền giấy sạch (0.16% điểm bẩn)
+PASS wv_crumple: hết vệt nếp gấp / vân tay (0.90%)
+PASS wv_crumple: giữ nét chữ / đường kẻ (100.0%)
+wv_curl      488 ms  33 dòng, 14 kẻ ngang, 6 kẻ dọc, dịch tối đa 12.5  | lệch hàng 4.05/15.61 -> 0.57/3.15
+PASS wv_curl: không nhận nhầm là trang xoay ngang
+PASS wv_curl: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_curl: xoay 90 độ — dịch chuyển tương đương (13.0 so với 12.5)
+PASS wv_curl: phát hiện trang cong vênh
+PASS wv_curl: dòng chữ / kẻ ngang thẳng lại (lệch TB 4.05 -> 0.57)
+PASS wv_curl: không còn đoạn cong lớn (lệch max 15.61 -> 3.15)
+            lệch cột (vùng bảng) 0.00/0.00 -> 0.00/0.00
+PASS wv_curl: đường kẻ dọc thẳng lại (lệch TB 0.00 -> 0.00)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%
+PASS wv_curl: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_curl: giữ nét chữ / đường kẻ (100.0%)
+wv_folds     435 ms  26 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 8.0  | lệch hàng 7.71/12.16 -> 0.66/2.08
+PASS wv_folds: không nhận nhầm là trang xoay ngang
+PASS wv_folds: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_folds: xoay 90 độ — dịch chuyển tương đương (8.3 so với 8.0)
+PASS wv_folds: phát hiện trang cong vênh
+PASS wv_folds: dòng chữ / kẻ ngang thẳng lại (lệch TB 7.71 -> 0.66)
+PASS wv_folds: không còn đoạn cong lớn (lệch max 12.16 -> 2.08)
+            nền bẩn 0.02% (vùng nếp/vân tay 0.08% / 15324 điểm), giữ lõi nét 100.0%
+PASS wv_folds: nền giấy sạch (0.02% điểm bẩn)
+PASS wv_folds: hết vệt nếp gấp / vân tay (0.08%)
+PASS wv_folds: giữ nét chữ / đường kẻ (100.0%)
+wv_gray      293 ms  26 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 14.8  | lệch hàng 10.03/21.86 -> 0.78/3.05
+PASS wv_gray: không nhận nhầm là trang xoay ngang
+PASS wv_gray: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_gray: xoay 90 độ — dịch chuyển tương đương (14.8 so với 14.8)
+PASS wv_gray: phát hiện trang cong vênh
+PASS wv_gray: dòng chữ / kẻ ngang thẳng lại (lệch TB 10.03 -> 0.78)
+PASS wv_gray: không còn đoạn cong lớn (lệch max 21.86 -> 3.05)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 99.9%
+PASS wv_gray: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_gray: giữ nét chữ / đường kẻ (99.9%)
+wv_mixed     460 ms  28 dòng, 12 kẻ ngang, 6 kẻ dọc, dịch tối đa 6.8  | lệch hàng 7.40/13.33 -> 0.67/5.42
+PASS wv_mixed: không nhận nhầm là trang xoay ngang
+PASS wv_mixed: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_mixed: xoay 90 độ — dịch chuyển tương đương (7.3 so với 6.8)
+PASS wv_mixed: phát hiện trang cong vênh
+PASS wv_mixed: dòng chữ / kẻ ngang thẳng lại (lệch TB 7.40 -> 0.67)
+PASS wv_mixed: không còn đoạn cong lớn (lệch max 13.33 -> 5.42)
+            lệch cột (vùng bảng) 4.05/5.33 -> 0.62/1.68
+PASS wv_mixed: đường kẻ dọc thẳng lại (lệch TB 4.05 -> 0.62)
+            nền bẩn 0.01% (vùng nếp/vân tay 0.03% / 23506 điểm), giữ lõi nét 100.0%, đỏ 5368->5364, xanh 1026->1026
+PASS wv_mixed: nền giấy sạch (0.01% điểm bẩn)
+PASS wv_mixed: hết vệt nếp gấp / vân tay (0.03%)
+PASS wv_mixed: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_mixed: giữ con dấu đỏ (5368 -> 5364)
+PASS wv_mixed: giữ chữ ký bút xanh (1026 -> 1026)
+wv_plain     300 ms  38 dòng, 16 kẻ ngang, 6 kẻ dọc, dịch tối đa 1.0  | lệch hàng 0.00/0.00 -> 0.36/0.93
+PASS wv_plain: không nhận nhầm là trang xoay ngang
+PASS wv_plain: xoay 90 độ trang phẳng không bị nắn méo (1.2644613)
+PASS wv_plain: trang phẳng không bị nắn méo (dịch tối đa 1.0044016)
+PASS wv_plain: hàng vẫn thẳng (0.36)
+            lệch cột (vùng bảng) 0.00/0.00 -> 0.00/0.00
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%
+PASS wv_plain: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_plain: giữ nét chữ / đường kẻ (100.0%)
+wv_smudge    333 ms  27 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 6.6  | lệch hàng 5.60/12.75 -> 0.49/1.29
+PASS wv_smudge: không nhận nhầm là trang xoay ngang
+PASS wv_smudge: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_smudge: xoay 90 độ — dịch chuyển tương đương (7.3 so với 6.6)
+PASS wv_smudge: phát hiện trang cong vênh
+PASS wv_smudge: dòng chữ / kẻ ngang thẳng lại (lệch TB 5.60 -> 0.49)
+PASS wv_smudge: không còn đoạn cong lớn (lệch max 12.75 -> 1.29)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 12560 điểm), giữ lõi nét 100.0%
+PASS wv_smudge: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_smudge: hết vệt nếp gấp / vân tay (0.00%)
+PASS wv_smudge: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_smudge: không còn ngón tay (0 điểm màu da)
+wv_tilt      284 ms  26 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 10.0  | lệch hàng 11.84/19.36 -> 0.56/1.15
+PASS wv_tilt: không nhận nhầm là trang xoay ngang
+PASS wv_tilt: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_tilt: xoay 90 độ — dịch chuyển tương đương (10.2 so với 10.0)
+PASS wv_tilt: phát hiện trang cong vênh
+PASS wv_tilt: dòng chữ / kẻ ngang thẳng lại (lệch TB 11.84 -> 0.56)
+PASS wv_tilt: không còn đoạn cong lớn (lệch max 19.36 -> 1.15)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%
+PASS wv_tilt: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_tilt: giữ nét chữ / đường kẻ (100.0%)
+wv_waves     306 ms  37 dòng, 17 kẻ ngang, 6 kẻ dọc, dịch tối đa 19.1  | lệch hàng 15.59/30.34 -> 1.31/9.03
+PASS wv_waves: không nhận nhầm là trang xoay ngang
+PASS wv_waves: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_waves: xoay 90 độ — dịch chuyển tương đương (19.4 so với 19.1)
+PASS wv_waves: phát hiện trang cong vênh
+PASS wv_waves: dòng chữ / kẻ ngang thẳng lại (lệch TB 15.59 -> 1.31)
+PASS wv_waves: không còn đoạn cong lớn (lệch max 30.34 -> 9.03)
+            lệch cột (vùng bảng) 10.30/10.61 -> 0.88/2.80
+PASS wv_waves: đường kẻ dọc thẳng lại (lệch TB 10.30 -> 0.88)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%
+PASS wv_waves: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_waves: giữ nét chữ / đường kẻ (100.0%)
+Tổng thời gian 4182 ms. 83/83 kiểm tra đạt

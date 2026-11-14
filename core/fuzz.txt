@@ -1,0 +1,12 @@
+DocDetector: xong (2203 ms)
+   tứ giác tổng hợp: 60/60 đúng (sai số <1.2% đường chéo), tệ nhất 0.0010
+DocDetector trên tứ giác tổng hợp: xong (1040 ms)
+Geom: xong
+Enhancer: xong
+Retouch: xong
+   trang mấp mô tổng hợp: 10/10 có nắn (6 trang so với dewarp = false), dịch tối đa 40.3; nhận ra xoay ngang 5 trang (dòng chữ dọc: 5/5)
+Flatten (Làm phẳng): xong (7313 ms)
+   Word: trang chữ giả: 513 dòng, 14 bảng, 488 hình, 5 trang khử nghiêng
+DocLayout + DocxWriter (Word): xong (5106 ms)
+PdfWriter: xong
+KẾT QUẢ FUZZ: 149655 kiểm tra, 0 lỗi

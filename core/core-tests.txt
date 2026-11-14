@@ -1,0 +1,7 @@
+doc_1_wood.jpg                           err=0.0006 (1.2px) 173ms score=0.665 borders=0 refined
+doc_2_dark.jpg                           err=0.0006 (1.1px) 32ms score=0.848 borders=0 refined
+doc_3_gray.jpg                           err=0.0006 (1.2px) 24ms score=0.803 borders=0 refined
+doc_4_beige.jpg                          err=0.0006 (1.1px) 22ms score=0.798 borders=0 refined
+doc_5_blue.jpg                           err=0.0006 (1.1px) 19ms score=0.813 borders=0 refined
+doc_6_clutter.jpg                        err=0.0006 (1.2px) 40ms score=0.843 borders=0 refined
+OK(<1% diag): 6/6  meanErr=0.0006

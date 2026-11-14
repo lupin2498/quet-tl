@@ -1,0 +1,166 @@
+wv_bluebody  556 ms  18 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 11.0  | lệch hàng 8.32/19.69 -> 0.71/1.83
+PASS wv_bluebody: không nhận nhầm là trang xoay ngang
+PASS wv_bluebody: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_bluebody: xoay 90 độ — dịch chuyển tương đương (11.3 so với 11.0)
+PASS wv_bluebody: phát hiện trang cong vênh
+PASS wv_bluebody: dòng chữ / kẻ ngang thẳng lại (lệch TB 8.32 -> 0.71)
+PASS wv_bluebody: không còn đoạn cong lớn (lệch max 19.69 -> 1.83)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 0->0, xanh 23905->23662
+PASS wv_bluebody: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_bluebody: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_bluebody: giữ chữ ký bút xanh (23905 -> 23662)
+wv_flat_fold  242 ms  không nắn  | lệch hàng 0.00/0.00 -> 0.00/0.00
+PASS wv_flat_fold: không nhận nhầm là trang xoay ngang
+PASS wv_flat_fold: xoay 90 độ trang phẳng không bị nắn méo (0.0)
+PASS wv_flat_fold: trang phẳng không bị nắn méo (dịch tối đa 0.0)
+PASS wv_flat_fold: hàng vẫn thẳng (0.00)
+            lệch cột (vùng bảng) 0.00/0.00 -> 0.00/0.00
+            nền bẩn 0.02% (vùng nếp/vân tay 0.00% / 9089 điểm), giữ lõi nét 100.0%
+PASS wv_flat_fold: nền giấy sạch (0.02% điểm bẩn)
+PASS wv_flat_fold: hết vệt nếp gấp / vân tay (0.00%)
+PASS wv_flat_fold: giữ nét chữ / đường kẻ (100.0%)
+wv_flat_stamp  245 ms  không nắn  | lệch hàng 0.00/0.00 -> 0.00/0.00
+PASS wv_flat_stamp: không nhận nhầm là trang xoay ngang
+PASS wv_flat_stamp: xoay 90 độ trang phẳng không bị nắn méo (1.1840984)
+PASS wv_flat_stamp: trang phẳng không bị nắn méo (dịch tối đa 0.0)
+PASS wv_flat_stamp: hàng vẫn thẳng (0.00)
+            lệch cột (vùng bảng) 0.00/0.00 -> 0.00/0.00
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 2877->2877, xanh 0->0
+PASS wv_flat_stamp: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_flat_stamp: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_flat_stamp: giữ con dấu đỏ (2877 -> 2877)
+wv_foldtable  201 ms  36 dòng, 16 kẻ ngang, 6 kẻ dọc, dịch tối đa 8.8  | lệch hàng 6.82/13.74 -> 0.57/2.59
+PASS wv_foldtable: không nhận nhầm là trang xoay ngang
+PASS wv_foldtable: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_foldtable: xoay 90 độ — dịch chuyển tương đương (8.9 so với 8.8)
+PASS wv_foldtable: phát hiện trang cong vênh
+PASS wv_foldtable: dòng chữ / kẻ ngang thẳng lại (lệch TB 6.82 -> 0.57)
+PASS wv_foldtable: không còn đoạn cong lớn (lệch max 13.74 -> 2.59)
+            lệch cột (vùng bảng) 4.11/4.44 -> 0.41/1.21
+PASS wv_foldtable: đường kẻ dọc thẳng lại (lệch TB 4.11 -> 0.41)
+            nền bẩn 0.02% (vùng nếp/vân tay 0.00% / 9046 điểm), giữ lõi nét 100.0%
+PASS wv_foldtable: nền giấy sạch (0.02% điểm bẩn)
+PASS wv_foldtable: hết vệt nếp gấp / vân tay (0.00%)
+PASS wv_foldtable: giữ nét chữ / đường kẻ (100.0%)
+wv_formblue  176 ms  18 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 11.3  | lệch hàng 7.27/19.31 -> 0.95/2.59
+PASS wv_formblue: không nhận nhầm là trang xoay ngang
+PASS wv_formblue: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_formblue: xoay 90 độ — dịch chuyển tương đương (12.5 so với 11.3)
+PASS wv_formblue: phát hiện trang cong vênh
+PASS wv_formblue: dòng chữ / kẻ ngang thẳng lại (lệch TB 7.27 -> 0.95)
+PASS wv_formblue: không còn đoạn cong lớn (lệch max 19.31 -> 2.59)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 0->0, xanh 15569->15451
+PASS wv_formblue: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_formblue: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_formblue: giữ chữ ký bút xanh (15569 -> 15451)
+wv_notebook  276 ms  24 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 8.4  | lệch hàng 7.27/13.60 -> 0.64/2.48
+PASS wv_notebook: không nhận nhầm là trang xoay ngang
+PASS wv_notebook: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_notebook: xoay 90 độ — dịch chuyển tương đương (8.4 so với 8.4)
+PASS wv_notebook: phát hiện trang cong vênh
+PASS wv_notebook: dòng chữ / kẻ ngang thẳng lại (lệch TB 7.27 -> 0.64)
+PASS wv_notebook: không còn đoạn cong lớn (lệch max 13.60 -> 2.48)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 992->975, xanh 28914->28681
+PASS wv_notebook: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_notebook: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_notebook: giữ con dấu đỏ (992 -> 975)
+PASS wv_notebook: giữ chữ ký bút xanh (28914 -> 28681)
+            dòng kẻ in sẵn của giấy vở còn lại (vùng không có chữ): 0/32
+PASS wv_notebook: không giữ lại dòng kẻ in sẵn của giấy vở (0/32 dòng)
+wv_stampover  197 ms  32 dòng, 12 kẻ ngang, 6 kẻ dọc, dịch tối đa 7.3  | lệch hàng 6.25/11.54 -> 0.43/2.13
+PASS wv_stampover: không nhận nhầm là trang xoay ngang
+PASS wv_stampover: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_stampover: xoay 90 độ — dịch chuyển tương đương (7.2 so với 7.3)
+PASS wv_stampover: phát hiện trang cong vênh
+PASS wv_stampover: dòng chữ / kẻ ngang thẳng lại (lệch TB 6.25 -> 0.43)
+PASS wv_stampover: không còn đoạn cong lớn (lệch max 11.54 -> 2.13)
+            lệch cột (vùng bảng) 2.56/3.20 -> 0.45/0.99
+PASS wv_stampover: đường kẻ dọc thẳng lại (lệch TB 2.56 -> 0.45)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 2899->2897, xanh 0->0
+PASS wv_stampover: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_stampover: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_stampover: giữ con dấu đỏ (2899 -> 2897)
+Tổng thời gian 1893 ms. 63/63 kiểm tra đạt
+wv_bluebody 1077 ms  18 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 22.2  | lệch hàng 13.39/39.83 -> 1.40/4.49
+PASS wv_bluebody: không nhận nhầm là trang xoay ngang
+PASS wv_bluebody: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_bluebody: xoay 90 độ — dịch chuyển tương đương (21.4 so với 22.2)
+PASS wv_bluebody: phát hiện trang cong vênh
+PASS wv_bluebody: dòng chữ / kẻ ngang thẳng lại (lệch TB 13.39 -> 1.40)
+PASS wv_bluebody: không còn đoạn cong lớn (lệch max 39.83 -> 4.49)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 0->0, xanh 108299->108125
+PASS wv_bluebody: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_bluebody: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_bluebody: giữ chữ ký bút xanh (108299 -> 108125)
+wv_flat_fold  636 ms  không nắn  | lệch hàng 0.00/0.00 -> 0.00/0.00
+PASS wv_flat_fold: không nhận nhầm là trang xoay ngang
+PASS wv_flat_fold: xoay 90 độ trang phẳng không bị nắn méo (0.0)
+PASS wv_flat_fold: trang phẳng không bị nắn méo (dịch tối đa 0.0)
+PASS wv_flat_fold: hàng vẫn thẳng (0.00)
+            lệch cột (vùng bảng) 0.00/0.00 -> 0.00/0.00
+            nền bẩn 0.07% (vùng nếp/vân tay 1.27% / 22995 điểm), giữ lõi nét 100.0%
+PASS wv_flat_fold: nền giấy sạch (0.07% điểm bẩn)
+PASS wv_flat_fold: hết vệt nếp gấp / vân tay (1.27%)
+PASS wv_flat_fold: giữ nét chữ / đường kẻ (100.0%)
+wv_flat_stamp  568 ms  không nắn  | lệch hàng 0.00/0.00 -> 0.00/0.00
+PASS wv_flat_stamp: không nhận nhầm là trang xoay ngang
+PASS wv_flat_stamp: xoay 90 độ trang phẳng không bị nắn méo (0.0)
+PASS wv_flat_stamp: trang phẳng không bị nắn méo (dịch tối đa 0.0)
+PASS wv_flat_stamp: hàng vẫn thẳng (0.00)
+            lệch cột (vùng bảng) 0.00/0.00 -> 0.00/0.00
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 10747->10747, xanh 0->0
+PASS wv_flat_stamp: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_flat_stamp: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_flat_stamp: giữ con dấu đỏ (10747 -> 10747)
+wv_foldtable  428 ms  36 dòng, 16 kẻ ngang, 6 kẻ dọc, dịch tối đa 17.6  | lệch hàng 11.51/27.89 -> 1.11/4.22
+PASS wv_foldtable: không nhận nhầm là trang xoay ngang
+PASS wv_foldtable: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_foldtable: xoay 90 độ — dịch chuyển tương đương (18.0 so với 17.6)
+PASS wv_foldtable: phát hiện trang cong vênh
+PASS wv_foldtable: dòng chữ / kẻ ngang thẳng lại (lệch TB 11.51 -> 1.11)
+PASS wv_foldtable: không còn đoạn cong lớn (lệch max 27.89 -> 4.22)
+            lệch cột (vùng bảng) 8.27/8.97 -> 0.99/2.70
+PASS wv_foldtable: đường kẻ dọc thẳng lại (lệch TB 8.27 -> 0.99)
+            nền bẩn 0.05% (vùng nếp/vân tay 0.30% / 22918 điểm), giữ lõi nét 100.0%
+PASS wv_foldtable: nền giấy sạch (0.05% điểm bẩn)
+PASS wv_foldtable: hết vệt nếp gấp / vân tay (0.30%)
+PASS wv_foldtable: giữ nét chữ / đường kẻ (100.0%)
+wv_formblue  389 ms  18 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 21.9  | lệch hàng 12.34/30.46 -> 1.64/5.04
+PASS wv_formblue: không nhận nhầm là trang xoay ngang
+PASS wv_formblue: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_formblue: xoay 90 độ — dịch chuyển tương đương (22.9 so với 21.9)
+PASS wv_formblue: phát hiện trang cong vênh
+PASS wv_formblue: dòng chữ / kẻ ngang thẳng lại (lệch TB 12.34 -> 1.64)
+PASS wv_formblue: không còn đoạn cong lớn (lệch max 30.46 -> 5.04)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 0->0, xanh 56497->56398
+PASS wv_formblue: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_formblue: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_formblue: giữ chữ ký bút xanh (56497 -> 56398)
+wv_notebook  460 ms  24 dòng, 0 kẻ ngang, 0 kẻ dọc, dịch tối đa 17.3  | lệch hàng 11.65/27.34 -> 1.42/4.20
+PASS wv_notebook: không nhận nhầm là trang xoay ngang
+PASS wv_notebook: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_notebook: xoay 90 độ — dịch chuyển tương đương (16.6 so với 17.3)
+PASS wv_notebook: phát hiện trang cong vênh
+PASS wv_notebook: dòng chữ / kẻ ngang thẳng lại (lệch TB 11.65 -> 1.42)
+PASS wv_notebook: không còn đoạn cong lớn (lệch max 27.34 -> 4.20)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 5974->5956, xanh 131111->130907
+PASS wv_notebook: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_notebook: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_notebook: giữ con dấu đỏ (5974 -> 5956)
+PASS wv_notebook: giữ chữ ký bút xanh (131111 -> 130907)
+            dòng kẻ in sẵn của giấy vở còn lại (vùng không có chữ): 0/32
+PASS wv_notebook: không giữ lại dòng kẻ in sẵn của giấy vở (0/32 dòng)
+wv_stampover  396 ms  31 dòng, 12 kẻ ngang, 6 kẻ dọc, dịch tối đa 14.2  | lệch hàng 11.07/23.38 -> 0.78/2.92
+PASS wv_stampover: không nhận nhầm là trang xoay ngang
+PASS wv_stampover: xoay 90 độ vẫn nhận đúng hướng dòng chữ
+PASS wv_stampover: xoay 90 độ — dịch chuyển tương đương (14.0 so với 14.2)
+PASS wv_stampover: phát hiện trang cong vênh
+PASS wv_stampover: dòng chữ / kẻ ngang thẳng lại (lệch TB 11.07 -> 0.78)
+PASS wv_stampover: không còn đoạn cong lớn (lệch max 23.38 -> 2.92)
+            lệch cột (vùng bảng) 5.31/6.65 -> 0.76/2.00
+PASS wv_stampover: đường kẻ dọc thẳng lại (lệch TB 5.31 -> 0.76)
+            nền bẩn 0.00% (vùng nếp/vân tay 0.00% / 0 điểm), giữ lõi nét 100.0%, đỏ 10679->10677, xanh 0->0
+PASS wv_stampover: nền giấy sạch (0.00% điểm bẩn)
+PASS wv_stampover: giữ nét chữ / đường kẻ (100.0%)
+PASS wv_stampover: giữ con dấu đỏ (10679 -> 10677)
+Tổng thời gian 3954 ms. 63/63 kiểm tra đạt
