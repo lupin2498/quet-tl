@@ -22,6 +22,8 @@ import vn.quettailieu.scanner.core.DocLayout;
  * không cần mạng). Chỉ có trong bản dựng bằng Gradle; lớp Ocr nạp lớp này theo tên.
  */
 public final class MlKitOcr implements Ocr.Engine {
+    static final float CONF_SCALE = 2f;
+
     private TextRecognizer rec;
 
     public MlKitOcr() {}
@@ -43,7 +45,9 @@ public final class MlKitOcr implements Ocr.Engine {
                     s = Normalizer.normalize(s, Normalizer.Form.NFC).trim();
                     if (s.length() == 0) continue;
                     DocLayout.Word w = new DocLayout.Word(s, r.left, r.top, r.right, r.bottom, line);
-                    w.conf = el.getConfidence();
+                    // Thang độ tin cậy của ML Kit thấp hơn thang của lõi (lõi coi dưới 0,5 là không đọc được): chữ đọc đúng
+                    // trên ảnh nhỏ thường chỉ được 0,3-0,6, còn rác (đọc nền giấy, nét con dấu) dưới 0,25 -> nhân đôi.
+                    w.conf = Math.min(1f, el.getConfidence() * CONF_SCALE);
                     out.add(w);
                 }
             }
