@@ -54,6 +54,7 @@ public class ShareProvider extends ContentProvider {
         if (n == null) return "application/octet-stream";
         n = n.toLowerCase();
         if (n.endsWith(".pdf")) return "application/pdf";
+        if (n.endsWith(".docx")) return WordExport.MIME;
         if (n.endsWith(".jpg") || n.endsWith(".jpeg")) return "image/jpeg";
         if (n.endsWith(".png")) return "image/png";
         return "application/octet-stream";

@@ -304,6 +304,160 @@ def validate_pdf(data, pages):
         pass
 
 
+WORD_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+
+def strip_accents(s):
+    """Bỏ dấu tiếng Việt + chữ thường (so nội dung nhận dạng được mà không phụ thuộc dấu thanh đọc sai)."""
+    import unicodedata
+    s = unicodedata.normalize("NFD", s.replace("đ", "d").replace("Đ", "D"))
+    return "".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+
+
+def validate_docx(data, pages):
+    """Kiểm tra file Word xuất ra: zip nguyên vẹn, đủ các phần, mọi phần XML đọc được, mỗi trang quét là một phần (sectPr),
+    hình nhúng mở được. Trả về (văn bản từng đoạn, số bảng, số hàng của bảng lớn nhất, số cột của bảng lớn nhất, số hình)."""
+    import zipfile
+    import xml.etree.ElementTree as ET
+    if not data.startswith(b"PK"):
+        raise AssertionError("file Word không phải zip (%d byte)" % len(data))
+    z = zipfile.ZipFile(io.BytesIO(data))
+    bad = z.testzip()
+    if bad is not None:
+        raise AssertionError("file Word hỏng ở phần %s" % bad)
+    names = set(z.namelist())
+    for need in ("[Content_Types].xml", "_rels/.rels", "word/document.xml", "word/styles.xml", "word/_rels/document.xml.rels"):
+        if need not in names:
+            raise AssertionError("file Word thiếu phần %s" % need)
+    for n in names:
+        if n.endswith(".xml") or n.endswith(".rels"):
+            ET.fromstring(z.read(n))
+    root = ET.fromstring(z.read("word/document.xml"))
+    sects = list(root.iter(WORD_NS + "sectPr"))
+    if len(sects) != pages:
+        raise AssertionError("file Word có %d trang (phần), cần %d" % (len(sects), pages))
+    for sp in sects:
+        sz = sp.find(WORD_NS + "pgSz")
+        if sz is None or int(sz.get(WORD_NS + "w")) < 1440 or int(sz.get(WORD_NS + "h")) < 1440:
+            raise AssertionError("file Word: khổ trang không hợp lệ")
+    lines = []
+    for para in root.iter(WORD_NS + "p"):
+        t = "".join(x.text or "" for x in para.iter(WORD_NS + "t")).strip()
+        if t:
+            lines.append(t)
+    tables = list(root.iter(WORD_NS + "tbl"))
+    rows = cols = 0
+    for t in tables:
+        trs = t.findall(WORD_NS + "tr")
+        if len(trs) > rows:
+            rows = len(trs)
+            grid = t.find(WORD_NS + "tblGrid")
+            cols = len(grid.findall(WORD_NS + "gridCol")) if grid is not None else 0
+    media = sorted(n for n in names if n.startswith("word/media/"))
+    try:
+        from PIL import Image
+        for m in media:
+            im = Image.open(io.BytesIO(z.read(m)))
+            im.load()
+    except ImportError:
+        pass
+    return lines, len(tables), rows, cols, len(media)
+
+
+def wait_share_file(ext, timeout=240):
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        time.sleep(1.5)
+        name = newest_share_file(ext)
+        if name:
+            time.sleep(2.0)
+            return name
+    return None
+
+
+def close_chooser():
+    back()
+    time.sleep(1)
+    if top_activity() != "DocumentActivity":
+        back()
+    wait_activity("DocumentActivity", 8)
+
+
+def t_word_export():
+    """Chuyển sang Word: tài liệu 2 trang (biên bản có bảng 13 hàng x 5 cột chụp trên bàn gỗ / nền be) -> nhận dạng chữ trên
+    máy, file .docx hợp lệ, mỗi trang một phần đúng khổ giấy, chữ đọc đúng, bảng thành bảng Word; nút Huỷ; bộ chọn nơi lưu."""
+    doc_id = import_to_editor(["doc_1_wood.jpg", "doc_4_beige.jpg"])
+    wait_doc(doc_id, lambda d: len(d["pages"]) == 2 and all(p.get("out") for p in d["pages"]), 120, "xử lý 2 trang")
+    time.sleep(1.5)
+    tap(desc="Xong")
+    wait_activity("DocumentActivity", 25)
+    time.sleep(2.0)
+    shot("word_document")
+    if not exists(text="Word", timeout=5):
+        raise AssertionError("Không thấy nút Word trên thanh công cụ")
+    # 1. huỷ giữa chừng: không để lại file, ứng dụng vẫn dùng được
+    run_as("rm -f cache/share/*.docx cache/share/*.part")
+    tap(text="Word")
+    time.sleep(1.0)
+    shot("word_menu")
+    tap(text="Chia sẻ file Word")
+    cancelled = False
+    try:
+        tap(text="Huỷ", timeout=6)
+        cancelled = True
+    except Exception:
+        log("không kịp bấm Huỷ (chuyển đổi xong quá nhanh)")
+    if cancelled:
+        time.sleep(12)
+        left = run_as("ls cache/share").split()
+        if any(n.endswith(".docx") or n.endswith(".part") for n in left):
+            raise AssertionError("Huỷ chuyển sang Word vẫn để lại file: %s" % left)
+        if top_activity() != "DocumentActivity":
+            raise AssertionError("Sau khi huỷ không còn ở màn hình tài liệu: %s" % top_activity())
+    else:
+        wait_share_file(".docx", 240)
+        close_chooser()
+    # 2. chia sẻ file Word từ bảng Chia sẻ
+    run_as("rm -f cache/share/*.docx cache/share/*.part")
+    tap(text="Chia sẻ")
+    time.sleep(1.0)
+    tap(text="Chia sẻ Word", contains=True)
+    time.sleep(1.5)
+    shot("word_progress")
+    name = wait_share_file(".docx", 300)
+    if not name:
+        raise AssertionError("Không thấy file Word được tạo")
+    shot("word_share_sheet")
+    data = pull_file("cache/share/" + name)
+    open(os.path.join(OUT, "export_word.docx"), "wb").write(data)
+    lines, tables, rows, cols, media = validate_docx(data, 2)
+    text = strip_accents(" | ".join(lines))
+    want = ["bien ban", "thiet bi", "may in laser", "man hinh", "ban phim", "chuot khong day", "mh-003", "mh-052", "mh-080",
+            "ben giao", "ben nhan", "cong ty"]
+    hit = [w for w in want if w in text]
+    log("Word: %s, %d byte, %d dòng chữ, %d bảng (lớn nhất %d hàng x %d cột), %d hình; khớp %d/%d cụm từ" % (
+        name, len(data), len(lines), tables, rows, cols, media, len(hit), len(want)))
+    notes.append("Word: %d dòng chữ, %d bảng (lớn nhất %d x %d), %d hình, khớp %d/%d cụm từ mẫu" % (len(lines), tables, rows, cols, media, len(hit), len(want)))
+    close_chooser()
+    if len(hit) < 8:
+        raise AssertionError("Word: chỉ đọc đúng %d/%d cụm từ mẫu (%s)" % (len(hit), len(want), ", ".join(hit)))
+    if tables < 2 or rows < 12 or cols < 5:
+        raise AssertionError("Word: bảng không được dựng lại đúng (%d bảng, lớn nhất %d hàng x %d cột; cần 2 bảng 13 x 5)" % (tables, rows, cols))
+    # 3. lưu vào máy: mở bộ chọn nơi lưu với tên file .docx
+    tap(text="Word")
+    tap(text="Lưu file Word vào máy")
+    time.sleep(4)
+    shot("word_save_picker")
+    picker = top_activity()
+    back()
+    time.sleep(1.5)
+    if top_activity() != "DocumentActivity":
+        back()
+    wait_activity("DocumentActivity", 8)
+    if picker == "DocumentActivity":
+        raise AssertionError("Lưu file Word vào máy: không mở bộ chọn nơi lưu")
+
+
 def newest_share_file(ext):
     out = run_as("ls -t cache/share")
     for line in out.splitlines():
@@ -2770,6 +2924,7 @@ def main():
     for n in ["doc_1_wood.jpg", "doc_4_beige.jpg", "doc_5_blue.jpg"]:
         step("Nhập ảnh %s" % n, t_import(n))
     step("Nhập nhiều ảnh", t_import_multi)
+    step("Chuyển sang Word (nhận dạng chữ, bảng, huỷ, chia sẻ / lưu)", t_word_export)
     step("Phóng to bằng hai ngón (trình chỉnh sửa, bộ lọc)", t_pinch_zoom)
     step("Bộ lọc mới + lời nhắc ngón tay", t_filters_new)
     step("Bộ lọc Làm phẳng (giấy nhàu, gấp nếp)", t_flatten)

@@ -7,8 +7,8 @@ ROOT=$(pwd)
 SDK=${ANDROID_SDK:-/usr/lib/android-sdk}
 AJ=${ANDROID_JAR:-$SDK/platforms/android-23/android.jar}
 PKG=vn.quettailieu.scanner
-VERSION_CODE=${VERSION_CODE:-5}
-VERSION_NAME=${VERSION_NAME:-1.4}
+VERSION_CODE=${VERSION_CODE:-6}
+VERSION_NAME=${VERSION_NAME:-1.5}
 OUT=$ROOT/build/manual
 KS=$ROOT/keystore/quettailieu.jks
 KS_PASS=quettailieu
@@ -17,8 +17,10 @@ ALIAS=quettailieu
 rm -rf "$OUT"
 mkdir -p "$OUT/flat" "$OUT/gen" "$OUT/classes"
 
-# Manifest: chèn package (Gradle dùng namespace trong build.gradle)
-sed "s#<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">#<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" package=\"$PKG\">#" \
+# Manifest: chèn package (Gradle dùng namespace trong build.gradle); bỏ các dòng chỉ dành cho trình gộp manifest của Gradle
+# (tools:node="remove" — không có trình gộp thì aapt2 sẽ hiểu ngược thành khai báo thêm quyền)
+sed -e "s#<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"#& package=\"$PKG\"#" \
+    -e '/tools:node="remove"/d' \
     app/src/main/AndroidManifest.xml > "$OUT/AndroidManifest.xml"
 
 echo "== aapt2 compile/link"

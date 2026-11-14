@@ -27,7 +27,7 @@ import java.util.HashSet;
 
 import vn.quettailieu.scanner.core.PdfWriter;
 
-/** Xem tài liệu đã lưu: danh sách trang, Thêm, Sửa, Chia sẻ, Lưu PDF, Lưu ảnh. */
+/** Xem tài liệu đã lưu: danh sách trang, Thêm, Sửa, Chia sẻ, chuyển sang Word, Lưu PDF, Lưu ảnh. */
 public class DocumentActivity extends BaseActivity {
     static final String EXTRA_DOC = "doc";
 
@@ -35,6 +35,7 @@ public class DocumentActivity extends BaseActivity {
     private static final int REQ_ADD = 32;
     private static final int REQ_SAVE_PDF = 33;
     private static final int REQ_STORAGE = 34;
+    private static final int REQ_SAVE_WORD = 35;
 
     private DocStore.Doc doc;
     private TextView titleView;
@@ -165,42 +166,47 @@ public class DocumentActivity extends BaseActivity {
         });
         root.addView(list, Ui.lin(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
 
-        LinearLayout bar = new LinearLayout(this);
-        bar.setOrientation(LinearLayout.HORIZONTAL);
-        bar.setBackgroundColor(Ui.CARD);
-        bar.addView(Ui.toolButton(this, R.drawable.ic_add_photo, "Thêm", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(DocumentActivity.this, CameraActivity.class);
-                i.putExtra(CameraActivity.EXTRA_DOC, doc.id);
-                startActivityForResult(i, REQ_ADD);
-            }
-        }));
-        bar.addView(Ui.toolButton(this, R.drawable.ic_edit, "Sửa", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openEditor(Math.max(0, list.getFirstVisiblePosition()));
-            }
-        }));
-        bar.addView(Ui.toolButton(this, R.drawable.ic_share, "Chia sẻ", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                share();
-            }
-        }));
-        bar.addView(Ui.toolButton(this, R.drawable.ic_pdf, "Lưu PDF", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                savePdf();
-            }
-        }));
-        bar.addView(Ui.toolButton(this, R.drawable.ic_download, "Lưu ảnh", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveImages();
-            }
-        }));
-        root.addView(bar, Ui.lin(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(64), 0));
+        // sáu nút: màn hình hẹp / cỡ chữ lớn không đủ chỗ thì cả hàng cuộn ngang (Ui.toolRow), không cắt nhãn
+        LinearLayout[] buttons = {
+                Ui.toolButton(this, R.drawable.ic_add_photo, "Thêm", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(DocumentActivity.this, CameraActivity.class);
+                        i.putExtra(CameraActivity.EXTRA_DOC, doc.id);
+                        startActivityForResult(i, REQ_ADD);
+                    }
+                }),
+                Ui.toolButton(this, R.drawable.ic_edit, "Sửa", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openEditor(Math.max(0, list.getFirstVisiblePosition()));
+                    }
+                }),
+                Ui.toolButton(this, R.drawable.ic_share, "Chia sẻ", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        share();
+                    }
+                }),
+                Ui.toolButton(this, R.drawable.ic_word, "Word", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        word();
+                    }
+                }),
+                Ui.toolButton(this, R.drawable.ic_pdf, "Lưu PDF", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        savePdf();
+                    }
+                }),
+                Ui.toolButton(this, R.drawable.ic_download, "Lưu ảnh", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        saveImages();
+                    }
+                })};
+        root.addView(Ui.toolRow(this, buttons, Ui.CARD), Ui.lin(ViewGroup.LayoutParams.MATCH_PARENT, Ui.dp(64), 0));
         setContentView(root);
     }
 
@@ -238,14 +244,41 @@ public class DocumentActivity extends BaseActivity {
 
     private void share() {
         if (!ready()) return;
-        String[] items = {"Chia sẻ PDF (" + Exporter.pdfSizeName(Exporter.pdfSize(this)) + ")", "Chia sẻ ảnh JPG"};
+        String[] items = {"Chia sẻ PDF (" + Exporter.pdfSizeName(Exporter.pdfSize(this)) + ")", "Chia sẻ ảnh JPG", "Chia sẻ Word (.docx)"};
         Ui.showDialog(this, Ui.dialog(this).setTitle("Chia sẻ").setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface d, int which) {
                 if (which == 0) Exporter.sharePdf(DocumentActivity.this, doc);
-                else Exporter.shareImages(DocumentActivity.this, doc);
+                else if (which == 1) Exporter.shareImages(DocumentActivity.this, doc);
+                else WordExport.share(DocumentActivity.this, doc);
             }
         }));
+    }
+
+    /** Chuyển sang Word: nhận dạng chữ rồi dàn lại đúng bố cục (chữ, bảng, con dấu / chữ ký dạng hình). */
+    private void word() {
+        if (!ready()) return;
+        String[] items = {"Lưu file Word vào máy", "Chia sẻ file Word"};
+        Ui.showDialog(this, Ui.dialog(this).setTitle("Chuyển sang Word (.docx)").setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface d, int which) {
+                if (which == 0) saveWord();
+                else WordExport.share(DocumentActivity.this, doc);
+            }
+        }));
+    }
+
+    private void saveWord() {
+        if (!ready()) return;
+        Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType(WordExport.MIME);
+        i.putExtra(Intent.EXTRA_TITLE, Ui.safeName(doc.title) + ".docx");
+        try {
+            startActivityForResult(i, REQ_SAVE_WORD);
+        } catch (Throwable t) {
+            WordExport.share(this, doc);
+        }
     }
 
     private void savePdf() {
@@ -292,7 +325,8 @@ public class DocumentActivity extends BaseActivity {
     }
 
     private void showMore(View anchor) {
-        String[] items = {"Đổi tên", "Khổ giấy PDF: " + Exporter.pdfSizeName(Exporter.pdfSize(this)), "Lưu PDF vào máy", "Lưu ảnh vào Thư viện", "Xoá tài liệu"};
+        String[] items = {"Đổi tên", "Khổ giấy PDF / Word: " + Exporter.pdfSizeName(Exporter.pdfSize(this)), "Lưu PDF vào máy", "Lưu Word vào máy",
+                "Lưu ảnh vào Thư viện", "Xoá tài liệu"};
         Ui.menu(this, null, items, new Ui.Cb<Integer>() {
             @Override
             public void done(Integer which) {
@@ -300,8 +334,9 @@ public class DocumentActivity extends BaseActivity {
                     case 0: rename(); break;
                     case 1: choosePdfSize(); break;
                     case 2: savePdf(); break;
-                    case 3: saveImages(); break;
-                    case 4: confirmDelete(); break;
+                    case 3: saveWord(); break;
+                    case 4: saveImages(); break;
+                    case 5: confirmDelete(); break;
                 }
             }
         });
@@ -313,7 +348,7 @@ public class DocumentActivity extends BaseActivity {
         int cur = Exporter.pdfSize(this);
         int sel = 0;
         for (int i = 0; i < vals.length; i++) if (vals[i] == cur) sel = i;
-        Ui.showDialog(this, Ui.dialog(this).setTitle("Khổ giấy PDF").setSingleChoiceItems(names, sel, new DialogInterface.OnClickListener() {
+        Ui.showDialog(this, Ui.dialog(this).setTitle("Khổ giấy PDF / Word").setSingleChoiceItems(names, sel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface d, int which) {
                 Exporter.setPdfSize(DocumentActivity.this, vals[which]);
@@ -339,6 +374,9 @@ public class DocumentActivity extends BaseActivity {
         if (req == REQ_SAVE_PDF && res == RESULT_OK && data != null && data.getData() != null) {
             Uri u = data.getData();
             Exporter.savePdfTo(this, doc, u);
+        }
+        if (req == REQ_SAVE_WORD && res == RESULT_OK && data != null && data.getData() != null) {
+            WordExport.saveTo(this, doc, data.getData());
         }
         // REQ_EDIT / REQ_ADD: onResume sẽ nạp lại tài liệu
     }

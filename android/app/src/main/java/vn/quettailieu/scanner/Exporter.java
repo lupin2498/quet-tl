@@ -25,7 +25,7 @@ import java.util.List;
 
 import vn.quettailieu.scanner.core.PdfWriter;
 
-/** Xuất PDF / ảnh, chia sẻ, lưu vào máy. */
+/** Xuất PDF / ảnh, chia sẻ, lưu vào máy (xuất Word: WordExport). */
 final class Exporter {
     private Exporter() {}
 
@@ -149,7 +149,7 @@ final class Exporter {
     }
 
     /** Mở bảng chia sẻ; nếu ứng dụng đang ở nền thì đợi người dùng quay lại (Android chặn mở màn hình từ nền). */
-    private static void startChooser(final Activity a, final Intent send, final String title) {
+    static void startChooser(final Activity a, final Intent send, final String title) {
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -281,7 +281,7 @@ final class Exporter {
         });
     }
 
-    private static void deleteTarget(ContentResolver cr, Uri target) {
+    static void deleteTarget(ContentResolver cr, Uri target) {
         try {
             android.provider.DocumentsContract.deleteDocument(cr, target);
         } catch (Throwable ignored) {
