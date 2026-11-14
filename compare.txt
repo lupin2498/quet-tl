@@ -1,0 +1,9 @@
+Java: 169 ảnh, tìm mép 3152 ms, lọc 53589 ms
+Swift: 169 ảnh, tìm mép 3625 ms, lọc 43960 ms
+Tìm mép: 169 ảnh, 129 có tứ giác, 129 trùng tới 0.001 px, lệch lớn nhất 0.0010 px
+Trang giấy tổng hợp có toạ độ thật: Java đúng 46/48, Swift đúng 46/48 (sai số <1.5% đường chéo)
+Bộ lọc: 1521 lượt, 1521 trùng tuyệt đối; 206 ảnh so từng điểm (0/156161584 giá trị lệch, lớn nhất 0)
+Hình học: 403 tứ giác; PDF: 9 file trùng từng byte; Retouch: 99 dòng
+Làm phẳng: 169 lượt lọc (169 trùng tuyệt đối), 52 ảnh so từng điểm (0/83333898 giá trị lệch, lớn nhất 0); 29 dòng trường nắn (25 có nắn, 29 trùng tuyệt đối)
+KẾT QUẢ ĐỐI CHIẾU JAVA/SWIFT: TRÙNG (0 điểm lệch)
+PDF: 18 file, 0 lỗi

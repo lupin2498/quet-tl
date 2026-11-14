@@ -1,0 +1,11 @@
+DocDetector: xong (2714 ms)
+Geom: xong
+Enhancer: xong (12693 ms)
+Retouch: xong (2113 ms)
+Làm phẳng: trang chữ cong 5: lưới 28x37, 18 dòng, dịch tối đa 6.65, xoay ngang 0
+Làm phẳng: trang chữ cong 6: lưới 28x37, 18 dòng, dịch tối đa 6.76, xoay ngang 0
+Flatten: xong (1304 ms)
+   Word: trang chữ giả: 638 dòng, 24 bảng, 533 hình, 4 trang khử nghiêng
+DocLayout + DocxWriter (Word): xong (5250 ms)
+PdfWriter: xong
+KẾT QUẢ FUZZ (Swift): 128387 kiểm tra, 0 lỗi

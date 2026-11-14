@@ -1,0 +1,20 @@
+Java (Word): 9 trang x 3 khổ giấy, phân tích 6363 ms, cắt hình 209 ms, document.xml 92 ms
+Swift (Word): 9 trang x 3 khổ giấy, phân tích 4670 ms, cắt hình 127 ms, document.xml 17 ms
+Word: 9 trang x 3 khổ giấy (a4 / fit / letter): 142 dòng tóm tắt trùng (27 lượt phân tích, 45 hình có mã băm điểm ảnh, 69 phần DOCX)
+Word: 123 / 123 file trùng từng byte (document.xml 27/27, mô hình trang 27/27, phần DOCX 69/69; 5877979 byte); 30 file .docx mở được, 330 mục trùng nội dung (bản Swift nén 240 mục)
+Word: lượt phân tích có bảng 18, có khử nghiêng 9, có hộp chữ 9, có đường kẻ rời 9
+KẾT QUẢ ĐỐI CHIẾU WORD JAVA/SWIFT: TRÙNG (0 điểm lệch)
+Java (Word): 9 trang x 3 khổ giấy, phân tích 4011 ms, cắt hình 95 ms, document.xml 103 ms
+Swift (Word): 9 trang x 3 khổ giấy, phân tích 3292 ms, cắt hình 58 ms, document.xml 19 ms
+Word: 9 trang x 3 khổ giấy (a4 / fit / letter): 142 dòng tóm tắt trùng (27 lượt phân tích, 45 hình có mã băm điểm ảnh, 69 phần DOCX)
+Word: 123 / 123 file trùng từng byte (document.xml 27/27, mô hình trang 27/27, phần DOCX 69/69; 4682412 byte); 30 file .docx mở được, 330 mục trùng nội dung (bản Swift nén 240 mục)
+Word: lượt phân tích có bảng 18, có khử nghiêng 9, có hộp chữ 9, có đường kẻ rời 9
+KẾT QUẢ ĐỐI CHIẾU WORD JAVA/SWIFT: TRÙNG (0 điểm lệch)
+Java (Word): 22 trang x 3 khổ giấy, phân tích 4981 ms, cắt hình 328 ms, document.xml 553 ms
+Swift (Word): 22 trang x 3 khổ giấy, phân tích 4890 ms, cắt hình 249 ms, document.xml 215 ms
+Word: 22 trang x 3 khổ giấy (a4 / fit / letter): 643 dòng tóm tắt trùng (66 lượt phân tích, 270 hình có mã băm điểm ảnh, 306 phần DOCX)
+Word: 438 / 438 file trùng từng byte (document.xml 66/66, mô hình trang 66/66, phần DOCX 306/306; 86439204 byte); 70 file .docx mở được, 1104 mục trùng nội dung (bản Swift nén 560 mục)
+Word: lượt phân tích có bảng 21, có khử nghiêng 9, có hộp chữ 30, có đường kẻ rời 18
+KẾT QUẢ ĐỐI CHIẾU WORD JAVA/SWIFT: TRÙNG (0 điểm lệch)
+KẾT QUẢ KIỂM TRA WORD: 72 kiểm tra, 0 lỗi
+KẾT QUẢ KIỂM TRA DOCX: 140 file (2208 mục, 1120 mục nén, 26914007 byte), 0 file lỗi
