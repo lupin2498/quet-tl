@@ -1,0 +1,443 @@
+Command line invocation:
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild -project QuetTaiLieu.xcodeproj -scheme QuetTaiLieu -sdk iphoneos -configuration Release -derivedDataPath build-device CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY= build
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = 
+    CODE_SIGNING_ALLOWED = NO
+    CODE_SIGNING_REQUIRED = NO
+    SDKROOT = iphoneos18.5
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device }
+{ platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:83b628126f1769877b7ad9da5eab034c3da9b397, name:My Mac }
+{ platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device }
+{ platform:visionOS Simulator, arch:arm64, variant:Designed for [iPad,iPhone], id:D0F14F8F-92E2-4F22-A865-D3C15827F37B, OS:2.3, name:Apple Vision Pro }
+{ platform:visionOS Simulator, arch:arm64, variant:Designed for [iPad,iPhone], id:4C6D3708-4F33-4B94-8133-1FE8939E1175, OS:2.4, name:Apple Vision Pro }
+{ platform:visionOS Simulator, arch:arm64, variant:Designed for [iPad,iPhone], id:402E966D-7AB6-4E10-B300-697686E3727A, OS:2.5, name:Apple Vision Pro }
+{ platform:visionOS Simulator, arch:arm64, variant:Designed for [iPad,iPhone], id:A3A5FF05-9D8C-4AB3-AEE3-FD2FF49EF0FD, OS:26.1, name:Apple Vision Pro }
+{ platform:visionOS Simulator, arch:arm64, variant:Designed for [iPad,iPhone], id:644B81BA-B8E0-472D-A49B-84FF1C95498B, OS:26.2, name:Apple Vision Pro }
+{ platform:iOS Simulator, arch:arm64, id:7329C2BF-DE37-4FEE-868A-478B416CB957, OS:18.5, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:7329C2BF-DE37-4FEE-868A-478B416CB957, OS:18.5, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:881E8995-0461-4E8E-B017-F42A75B9D1CE, OS:18.6, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:881E8995-0461-4E8E-B017-F42A75B9D1CE, OS:18.6, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:EB040E2D-06C7-4ED6-8DAF-3806BA80E34D, OS:26.0.1, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:EB040E2D-06C7-4ED6-8DAF-3806BA80E34D, OS:26.0.1, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:53209C6D-F710-47D6-A1FE-BCFDF2AF0F23, OS:26.1, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:53209C6D-F710-47D6-A1FE-BCFDF2AF0F23, OS:26.1, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:06716521-45A3-4B83-9675-8E50641017F6, OS:26.2, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:06716521-45A3-4B83-9675-8E50641017F6, OS:26.2, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:560CD563-3A24-434E-9AA6-6D016EF02D15, OS:18.5, name:iPad (A16) }
+{ platform:iOS Simulator, arch:x86_64, id:560CD563-3A24-434E-9AA6-6D016EF02D15, OS:18.5, name:iPad (A16) }
+{ platform:iOS Simulator, arch:arm64, id:9BB0D925-7787-4106-B71A-AD484A9288D4, OS:18.6, name:iPad (A16) }
+{ platform:iOS Simulator, arch:x86_64, id:9BB0D925-7787-4106-B71A-AD484A9288D4, OS:18.6, name:iPad (A16) }
+{ platform:iOS Simulator, arch:arm64, id:648126EC-3BAA-4497-8DEC-2C26C0FC062C, OS:26.0.1, name:iPad (A16) }
+{ platform:iOS Simulator, arch:x86_64, id:648126EC-3BAA-4497-8DEC-2C26C0FC062C, OS:26.0.1, name:iPad (A16) }
+{ platform:iOS Simulator, arch:arm64, id:89969594-357A-405D-9A9B-1B6F799D50F1, OS:26.1, name:iPad (A16) }
+{ platform:iOS Simulator, arch:x86_64, id:89969594-357A-405D-9A9B-1B6F799D50F1, OS:26.1, name:iPad (A16) }
+{ platform:iOS Simulator, arch:arm64, id:99B14484-E343-4170-AA2E-F738DF7FB3F2, OS:26.2, name:iPad (A16) }
+{ platform:iOS Simulator, arch:x86_64, id:99B14484-E343-4170-AA2E-F738DF7FB3F2, OS:26.2, name:iPad (A16) }
+{ platform:iOS Simulator, arch:arm64, id:8AC197DA-8AFB-4008-B892-BE4C21D57251, OS:18.5, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:8AC197DA-8AFB-4008-B892-BE4C21D57251, OS:18.5, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:AC158E0E-E1A0-4A5A-8F2E-2D315823858F, OS:18.6, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:AC158E0E-E1A0-4A5A-8F2E-2D315823858F, OS:18.6, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:7EEA2B4C-E33A-489F-8CE9-54A95A012A7B, OS:26.0.1, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:7EEA2B4C-E33A-489F-8CE9-54A95A012A7B, OS:26.0.1, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:B6B452C5-2B28-4772-A72D-3CF8F80C40F8, OS:26.1, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:B6B452C5-2B28-4772-A72D-3CF8F80C40F8, OS:26.1, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:600769A2-106D-47FC-BC82-226EB3CB9A19, OS:26.2, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:600769A2-106D-47FC-BC82-226EB3CB9A19, OS:26.2, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:65AAFA9D-5BED-41AA-B95E-A76F19286A8B, OS:18.5, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:65AAFA9D-5BED-41AA-B95E-A76F19286A8B, OS:18.5, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:4EC2E2B3-E3CF-4711-9A17-801DD5C3CA76, OS:18.6, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:4EC2E2B3-E3CF-4711-9A17-801DD5C3CA76, OS:18.6, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:A84145FE-B5F8-4F9A-83B8-8C10CD9179A8, OS:26.0.1, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:A84145FE-B5F8-4F9A-83B8-8C10CD9179A8, OS:26.0.1, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:3ACD0CEF-A8E0-4A94-8854-1D15E72A2B2F, OS:26.1, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:3ACD0CEF-A8E0-4A94-8854-1D15E72A2B2F, OS:26.1, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:46B2C201-34BD-490F-B6CA-09A9D44428F6, OS:26.2, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:46B2C201-34BD-490F-B6CA-09A9D44428F6, OS:26.2, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:FE2DECE8-63B8-4A77-B8E5-1C4D1940D796, OS:18.5, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:FE2DECE8-63B8-4A77-B8E5-1C4D1940D796, OS:18.5, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:A5E07AD7-C10C-4A8D-AFCC-4AABB5FDDDAD, OS:18.6, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:A5E07AD7-C10C-4A8D-AFCC-4AABB5FDDDAD, OS:18.6, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:77346208-A853-44D8-A5FD-B500FCCAF077, OS:26.0.1, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:77346208-A853-44D8-A5FD-B500FCCAF077, OS:26.0.1, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:8C6B52C9-C68F-48F7-B131-4A7DBF40E981, OS:26.1, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:8C6B52C9-C68F-48F7-B131-4A7DBF40E981, OS:26.1, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:EC963428-282D-4710-92F4-AF92774819A7, OS:26.2, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:EC963428-282D-4710-92F4-AF92774819A7, OS:26.2, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:3C683F57-5CD8-44B2-880C-BFFEFBC7C35A, OS:18.5, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:3C683F57-5CD8-44B2-880C-BFFEFBC7C35A, OS:18.5, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:16E9686E-FFA3-4CBE-A7AF-FE0CFFB54D5D, OS:18.6, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:16E9686E-FFA3-4CBE-A7AF-FE0CFFB54D5D, OS:18.6, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:5D3D906D-D248-41EA-8D97-0F801AFB3841, OS:26.0.1, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:5D3D906D-D248-41EA-8D97-0F801AFB3841, OS:26.0.1, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:001D073F-3837-401D-A154-B2B22F077B36, OS:26.1, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:001D073F-3837-401D-A154-B2B22F077B36, OS:26.1, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:697390A7-516F-4E42-BC81-BAE7B3D9899F, OS:26.2, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:697390A7-516F-4E42-BC81-BAE7B3D9899F, OS:26.2, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:4958D4DC-061A-4B2E-8FCB-F5711F024581, OS:18.5, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:4958D4DC-061A-4B2E-8FCB-F5711F024581, OS:18.5, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:77F1E59E-130D-4B93-895A-55BBCE876BBC, OS:18.6, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:77F1E59E-130D-4B93-895A-55BBCE876BBC, OS:18.6, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:0C66C372-6626-40B4-9AE9-ED256711BA37, OS:26.0.1, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:0C66C372-6626-40B4-9AE9-ED256711BA37, OS:26.0.1, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:9726AC26-E6F0-48DD-ADFD-04B73D808008, OS:26.1, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:9726AC26-E6F0-48DD-ADFD-04B73D808008, OS:26.1, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:02E8A1AA-FFE7-472E-82B1-99CEDB718216, OS:26.2, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:02E8A1AA-FFE7-472E-82B1-99CEDB718216, OS:26.2, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:3E81FA92-6C7B-471E-ACE8-DEB1BC933801, OS:26.0.1, name:iPad Pro 11-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:3E81FA92-6C7B-471E-ACE8-DEB1BC933801, OS:26.0.1, name:iPad Pro 11-inch (M5) }
+{ platform:iOS Simulator, arch:arm64, id:E57CC80A-38E2-4A3D-928C-86E7092A16AF, OS:26.1, name:iPad Pro 11-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:E57CC80A-38E2-4A3D-928C-86E7092A16AF, OS:26.1, name:iPad Pro 11-inch (M5) }
+{ platform:iOS Simulator, arch:arm64, id:F67B0B21-7494-4851-8FEA-F5FECE154B6D, OS:26.2, name:iPad Pro 11-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:F67B0B21-7494-4851-8FEA-F5FECE154B6D, OS:26.2, name:iPad Pro 11-inch (M5) }
+{ platform:iOS Simulator, arch:arm64, id:052118CF-7C93-4A8B-82B7-DFA9962FDAB2, OS:18.5, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:052118CF-7C93-4A8B-82B7-DFA9962FDAB2, OS:18.5, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:DE5BA191-0219-48E4-B01B-47385071328C, OS:18.6, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:DE5BA191-0219-48E4-B01B-47385071328C, OS:18.6, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:2C460862-96F5-4F13-B4D1-44430DB8CE67, OS:26.0.1, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:2C460862-96F5-4F13-B4D1-44430DB8CE67, OS:26.0.1, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:B23C6DAE-1AD2-446F-A3E4-72FAA287D289, OS:26.1, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:B23C6DAE-1AD2-446F-A3E4-72FAA287D289, OS:26.1, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:04A9C222-F4D9-4FD4-98BE-4054EEE6F66B, OS:26.2, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:04A9C222-F4D9-4FD4-98BE-4054EEE6F66B, OS:26.2, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:326BE850-69D0-468D-BE9F-82ACA2315CCF, OS:26.0.1, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:326BE850-69D0-468D-BE9F-82ACA2315CCF, OS:26.0.1, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:arm64, id:F68EDA96-8019-48A5-9380-06BB81115A6D, OS:26.1, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:F68EDA96-8019-48A5-9380-06BB81115A6D, OS:26.1, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:arm64, id:73C19119-B10E-4309-872E-C53EF3F0EF27, OS:26.2, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:x86_64, id:73C19119-B10E-4309-872E-C53EF3F0EF27, OS:26.2, name:iPad Pro 13-inch (M5) }
+{ platform:iOS Simulator, arch:arm64, id:A1691E65-52BF-41DF-B182-2B17CEFC96B7, OS:18.5, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:x86_64, id:A1691E65-52BF-41DF-B182-2B17CEFC96B7, OS:18.5, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:2A250684-88E3-4EDB-A21E-B7726B4C69F6, OS:18.6, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:x86_64, id:2A250684-88E3-4EDB-A21E-B7726B4C69F6, OS:18.6, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:94AF59C4-E64A-47E2-B5FC-FAD1A99BBD6A, OS:26.0.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:x86_64, id:94AF59C4-E64A-47E2-B5FC-FAD1A99BBD6A, OS:26.0.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:1F1A982F-A6AB-4622-A71C-08FC8732B949, OS:26.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:x86_64, id:1F1A982F-A6AB-4622-A71C-08FC8732B949, OS:26.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:B8FDD452-636F-4559-AF6E-83AC73F482CF, OS:26.2, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:x86_64, id:B8FDD452-636F-4559-AF6E-83AC73F482CF, OS:26.2, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:341D689A-78F6-4171-9723-8609B5394AD8, OS:18.5, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:341D689A-78F6-4171-9723-8609B5394AD8, OS:18.5, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:8FC8BB1D-7A0A-48F8-B639-7B74A77F4610, OS:18.6, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:8FC8BB1D-7A0A-48F8-B639-7B74A77F4610, OS:18.6, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:1AFB8BF6-A8B2-4D78-95F9-3A0455425CBA, OS:26.0.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:1AFB8BF6-A8B2-4D78-95F9-3A0455425CBA, OS:26.0.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:C5E1B940-5C22-47EC-917E-BF8ABE51F416, OS:26.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:C5E1B940-5C22-47EC-917E-BF8ABE51F416, OS:26.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:309F4F0C-F632-4F5C-BB25-BD783E57455C, OS:26.2, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:309F4F0C-F632-4F5C-BB25-BD783E57455C, OS:26.2, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:F853CBCE-C2DF-4188-AAF4-B3F3E24815B9, OS:18.5, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:F853CBCE-C2DF-4188-AAF4-B3F3E24815B9, OS:18.5, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:arm64, id:35C76145-757E-4FBA-9609-EFC435E61AFD, OS:18.6, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:35C76145-757E-4FBA-9609-EFC435E61AFD, OS:18.6, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:arm64, id:54E17A43-0D26-4F2A-A8A3-1F1F13CE79A9, OS:26.0.1, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:54E17A43-0D26-4F2A-A8A3-1F1F13CE79A9, OS:26.0.1, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:arm64, id:D0C50032-034B-4493-A9E9-9459E4F481B9, OS:26.1, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:D0C50032-034B-4493-A9E9-9459E4F481B9, OS:26.1, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:arm64, id:C20E3165-9F7B-4F04-88BB-CACE712B88AB, OS:26.2, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:C20E3165-9F7B-4F04-88BB-CACE712B88AB, OS:26.2, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:arm64, id:4A57FB15-6E7C-49CC-BE93-450B18BD286E, OS:18.5, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:4A57FB15-6E7C-49CC-BE93-450B18BD286E, OS:18.5, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:arm64, id:C67F9F5E-2E67-4ACC-BB60-44A8DB0130E6, OS:18.6, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:C67F9F5E-2E67-4ACC-BB60-44A8DB0130E6, OS:18.6, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:arm64, id:FC50CACD-1298-4935-ACD6-1F604E0217CA, OS:26.0.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:FC50CACD-1298-4935-ACD6-1F604E0217CA, OS:26.0.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:arm64, id:B14C5257-D09F-498F-977A-C7FEF383B1FC, OS:26.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:B14C5257-D09F-498F-977A-C7FEF383B1FC, OS:26.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:arm64, id:8F571767-87A3-448E-AF82-29C992EC2D5E, OS:26.2, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:8F571767-87A3-448E-AF82-29C992EC2D5E, OS:26.2, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:arm64, id:41E4762F-B20D-41AC-BFA5-AE0DB661BB84, OS:18.5, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:41E4762F-B20D-41AC-BFA5-AE0DB661BB84, OS:18.5, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:0F7CBE14-42EE-46F3-A4D0-F370B4A3D3D5, OS:18.6, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:0F7CBE14-42EE-46F3-A4D0-F370B4A3D3D5, OS:18.6, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:CE8530BB-2FEC-4D03-B9D1-6DC2E6B0C3DF, OS:26.0.1, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:CE8530BB-2FEC-4D03-B9D1-6DC2E6B0C3DF, OS:26.0.1, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:4FD6FC0F-54E2-4861-B95B-51103D587ABA, OS:26.1, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:4FD6FC0F-54E2-4861-B95B-51103D587ABA, OS:26.1, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:FA1105A3-CFB2-45AC-B4DB-EBAC55DD946D, OS:26.2, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:FA1105A3-CFB2-45AC-B4DB-EBAC55DD946D, OS:26.2, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:328DB690-3288-4E7C-9BFA-9A095901884B, OS:18.5, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:328DB690-3288-4E7C-9BFA-9A095901884B, OS:18.5, name:iPhone 16e }
+{ platform:iOS Simulator, arch:arm64, id:08AF5DF9-7769-4A03-B452-270A53FD3EBC, OS:18.6, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:08AF5DF9-7769-4A03-B452-270A53FD3EBC, OS:18.6, name:iPhone 16e }
+{ platform:iOS Simulator, arch:arm64, id:1D1796B0-028E-4FED-AD5C-7FEBA6D941AE, OS:26.0.1, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:1D1796B0-028E-4FED-AD5C-7FEBA6D941AE, OS:26.0.1, name:iPhone 16e }
+{ platform:iOS Simulator, arch:arm64, id:61AC349B-469C-4CFD-BAF5-3E6A7EAF5593, OS:26.1, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:61AC349B-469C-4CFD-BAF5-3E6A7EAF5593, OS:26.1, name:iPhone 16e }
+{ platform:iOS Simulator, arch:arm64, id:F2D2FAF0-3DC7-43F6-8E67-CFF6C774105B, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:F2D2FAF0-3DC7-43F6-8E67-CFF6C774105B, OS:26.2, name:iPhone 16e }
+{ platform:iOS Simulator, arch:arm64, id:1F9C81D1-869F-438D-9616-2472BE5F5A77, OS:26.0.1, name:iPhone 17 }
+{ platform:iOS Simulator, arch:x86_64, id:1F9C81D1-869F-438D-9616-2472BE5F5A77, OS:26.0.1, name:iPhone 17 }
+{ platform:iOS Simulator, arch:arm64, id:DD2C5966-4861-4552-9C50-EC1C74BD88FC, OS:26.1, name:iPhone 17 }
+{ platform:iOS Simulator, arch:x86_64, id:DD2C5966-4861-4552-9C50-EC1C74BD88FC, OS:26.1, name:iPhone 17 }
+{ platform:iOS Simulator, arch:arm64, id:BC7CEBFB-6B90-4D7E-B85E-BB0102C99F06, OS:26.2, name:iPhone 17 }
+{ platform:iOS Simulator, arch:x86_64, id:BC7CEBFB-6B90-4D7E-B85E-BB0102C99F06, OS:26.2, name:iPhone 17 }
+{ platform:iOS Simulator, arch:arm64, id:25C22EBC-57CC-4272-8C91-050D3D572B32, OS:26.0.1, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:25C22EBC-57CC-4272-8C91-050D3D572B32, OS:26.0.1, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:arm64, id:324AEBE7-7D9B-4053-B4DD-9F8134A82707, OS:26.1, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:324AEBE7-7D9B-4053-B4DD-9F8134A82707, OS:26.1, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:arm64, id:2FEACF5E-886C-4FB8-A137-C571FBA5CF5C, OS:26.2, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:2FEACF5E-886C-4FB8-A137-C571FBA5CF5C, OS:26.2, name:iPhone 17 Pro }
+{ platform:iOS Simulator, arch:arm64, id:95803967-AE3E-452F-A127-131AAC00A3FE, OS:26.0.1, name:iPhone 17 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:95803967-AE3E-452F-A127-131AAC00A3FE, OS:26.0.1, name:iPhone 17 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:BCB27533-D210-43AE-B001-BE3F033158BC, OS:26.1, name:iPhone 17 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:BCB27533-D210-43AE-B001-BE3F033158BC, OS:26.1, name:iPhone 17 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:17F0E734-D183-4810-AB97-F27FD9968039, OS:26.2, name:iPhone 17 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:17F0E734-D183-4810-AB97-F27FD9968039, OS:26.2, name:iPhone 17 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:99D68128-611B-44D4-A06F-5157B11BF0BC, OS:26.0.1, name:iPhone Air }
+{ platform:iOS Simulator, arch:x86_64, id:99D68128-611B-44D4-A06F-5157B11BF0BC, OS:26.0.1, name:iPhone Air }
+{ platform:iOS Simulator, arch:arm64, id:846ED2AD-EB87-4B0F-9A65-00E6A822CB9E, OS:26.1, name:iPhone Air }
+{ platform:iOS Simulator, arch:x86_64, id:846ED2AD-EB87-4B0F-9A65-00E6A822CB9E, OS:26.1, name:iPhone Air }
+{ platform:iOS Simulator, arch:arm64, id:00447DBE-32CF-4171-A4DB-0C2EAE058F02, OS:26.2, name:iPhone Air }
+{ platform:iOS Simulator, arch:x86_64, id:00447DBE-32CF-4171-A4DB-0C2EAE058F02, OS:26.2, name:iPhone Air }
+{ platform:iOS Simulator, arch:arm64, id:66571EB4-A450-4628-ABB9-3D215AFEDD58, OS:18.5, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:66571EB4-A450-4628-ABB9-3D215AFEDD58, OS:18.5, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:arm64, id:C3630581-519B-49DA-9400-67A78DCD42C8, OS:18.6, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:C3630581-519B-49DA-9400-67A78DCD42C8, OS:18.6, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:arm64, id:ADCAA360-5B3E-46D1-B604-46ADD143FBD9, OS:26.0.1, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:ADCAA360-5B3E-46D1-B604-46ADD143FBD9, OS:26.0.1, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:arm64, id:649B8FBD-A8D5-4CA8-B862-4322DD5DCD78, OS:26.1, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:649B8FBD-A8D5-4CA8-B862-4322DD5DCD78, OS:26.1, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:arm64, id:A1285399-F2F4-46E9-8CF2-4AA227FF7EF3, OS:26.2, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:A1285399-F2F4-46E9-8CF2-4AA227FF7EF3, OS:26.2, name:iPhone SE (3rd generation) }
+note: Using codesigning identity override: 
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'QuetTaiLieu' in project 'QuetTaiLieu' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/runner/work/quet-tl/quet-tl/ios/Resources/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: 0738e7d397198b9ad6f00879680302eb
+Build description path: /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/XCBuildData/0738e7d397198b9ad6f00879680302eb.xcbuilddata
+CreateBuildDirectory /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products
+    cd /Users/runner/work/quet-tl/quet-tl/ios/QuetTaiLieu.xcodeproj
+    builtin-create-build-directory /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products
+
+ClangStatCache /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk /Users/runner/work/quet-tl/quet-tl/ios/build-device/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
+    cd /Users/runner/work/quet-tl/quet-tl/ios/QuetTaiLieu.xcodeproj
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -o /Users/runner/work/quet-tl/quet-tl/ios/build-device/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
+
+CreateBuildDirectory /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex
+    cd /Users/runner/work/quet-tl/quet-tl/ios/QuetTaiLieu.xcodeproj
+    builtin-create-build-directory /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex
+
+CreateBuildDirectory /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos
+    cd /Users/runner/work/quet-tl/quet-tl/ios/QuetTaiLieu.xcodeproj
+    builtin-create-build-directory /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu-186e9842055039046e04fd0219689ae7-VFS-iphoneos/all-product-headers.yaml
+    cd /Users/runner/work/quet-tl/quet-tl/ios/QuetTaiLieu.xcodeproj
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu-186e9842055039046e04fd0219689ae7-VFS-iphoneos/all-product-headers.yaml
+
+CreateBuildDirectory /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+    cd /Users/runner/work/quet-tl/quet-tl/ios/QuetTaiLieu.xcodeproj
+    builtin-create-build-directory /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.hmap (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.hmap
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.DependencyStaticMetadataFileList (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.DependencyMetadataFileList (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-project-headers.hmap (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-own-target-headers.hmap (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-generated-files.hmap (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-all-target-headers.hmap (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-all-non-framework-target-headers.hmap (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu_const_extract_protocols.json (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftFileList (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftFileList
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftConstValuesFileList (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.LinkFileList (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-OutputFileMap.json (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    write-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-OutputFileMap.json
+
+MkDir /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /bin/mkdir -p /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app
+
+MkDir /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/unthinned (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /bin/mkdir -p /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/unthinned
+
+MkDir /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/thinned (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /bin/mkdir -p /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/thinned
+
+GenerateAssetSymbols /Users/runner/work/quet-tl/quet-tl/ios/Resources/Assets.xcassets (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/quet-tl/quet-tl/ios/Resources/Assets.xcassets --compile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_generated_info.plist --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --minimum-deployment-target 15.0 --platform iphoneos --bundle-identifier vn.quettailieu.scanner --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+CpResource /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/TestImages /Users/runner/work/quet-tl/quet-tl/ios/Resources/TestImages (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/runner/work/quet-tl/quet-tl/ios/Resources/TestImages /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app
+
+CompileAssetCatalogVariant thinned /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app /Users/runner/work/quet-tl/quet-tl/ios/Resources/Assets.xcassets (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/quet-tl/quet-tl/ios/Resources/Assets.xcassets --compile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --minimum-deployment-target 15.0 --platform iphoneos
+/* com.apple.actool.compilation-results */
+/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_generated_info.plist_thinned
+/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/thinned/AppIcon60x60@2x.png
+/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/thinned/AppIcon76x76@2x~ipad.png
+/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/thinned/Assets.car
+
+
+SwiftDriver QuetTaiLieu normal arm64 com.apple.xcode.tools.swift.compiler (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-SwiftDriver -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name QuetTaiLieu -O -whole-module-optimization -enforce-exclusivity\=checked @/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -target arm64-apple-ios15.0 -g -module-cache-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos -F /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos -c -num-threads 3 -Xcc -ivfsstatcache -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache -output-file-map /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-generated-files.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-own-target-headers.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-project-headers.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-Swift.h -working-directory /Users/runner/work/quet-tl/quet-tl/ios -no-emit-module-separately-wmo
+
+SwiftCompile normal arm64 Compiling\ AppDelegate.swift,\ CameraViewController.swift,\ Collage.swift,\ CropViewController.swift,\ DocDetector.swift,\ DocLayout.swift,\ DocumentViewController.swift,\ DocxWriter.swift,\ EditScreen.swift,\ EditorViewController.swift,\ Edits.swift,\ Enhancer.swift,\ EraseViewController.swift,\ Flatten.swift,\ Geom.swift,\ HomeViewController.swift,\ ImageOps.swift,\ MarkRender.swift,\ MarkupViewController.swift,\ Models.swift,\ PageCanvasView.swift,\ PdfWriter.swift,\ Retouch.swift,\ SelfTest.swift,\ Theme.swift,\ WordDoc.swift,\ WordExport.swift,\ WordFont.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/AppDelegate.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/CameraViewController.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/Collage.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/CropViewController.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/DocDetector.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/DocLayout.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/DocumentViewController.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/DocxWriter.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/EditScreen.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/EditorViewController.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/Edits.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/Enhancer.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/EraseViewController.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/Flatten.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/Geom.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/HomeViewController.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/ImageOps.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/MarkRender.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/MarkupViewController.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/Models.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/PageCanvasView.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/PdfWriter.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/Retouch.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/SelfTest.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/Theme.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/WordDoc.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/WordExport.swift /Users/runner/work/quet-tl/quet-tl/ios/Sources/WordFont.swift /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+CompileSwift normal arm64 (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    
+/Users/runner/work/quet-tl/quet-tl/ios/Sources/MarkupViewController.swift:519:19: warning: 'contentEdgeInsets' was deprecated in iOS 15.0: This property is ignored when using UIButtonConfiguration
+                b.contentEdgeInsets = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
+                  ^
+/Users/runner/work/quet-tl/quet-tl/ios/Sources/Theme.swift:234:15: warning: 'contentEdgeInsets' was deprecated in iOS 15.0: This property is ignored when using UIButtonConfiguration
+            b.contentEdgeInsets = UIEdgeInsets(top: 8, left: 22, bottom: 8, right: 22)
+              ^
+
+SwiftDriver\ Compilation QuetTaiLieu normal arm64 com.apple.xcode.tools.swift.compiler (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-Swift-Compilation -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name QuetTaiLieu -O -whole-module-optimization -enforce-exclusivity\=checked @/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -target arm64-apple-ios15.0 -g -module-cache-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos -F /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos -c -num-threads 3 -Xcc -ivfsstatcache -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache -output-file-map /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-generated-files.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-own-target-headers.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-project-headers.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-Swift.h -working-directory /Users/runner/work/quet-tl/quet-tl/ios -no-emit-module-separately-wmo
+
+LinkAssetCatalog /Users/runner/work/quet-tl/quet-tl/ios/Resources/Assets.xcassets (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-linkAssetCatalog --thinned /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/thinned --thinned-dependencies /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_generated_info.plist_unthinned --output /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app --plist-output /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_generated_info.plist
+note: Emplaced /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/AppIcon76x76@2x~ipad.png (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+note: Emplaced /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/Assets.car (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+note: Emplaced /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/AppIcon60x60@2x.png (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+
+ProcessInfoPlistFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/Info.plist /Users/runner/work/quet-tl/quet-tl/ios/Info.plist (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-infoPlistUtility /Users/runner/work/quet-tl/quet-tl/ios/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/PkgInfo -expandbuildsettings -format binary -platform iphoneos -additionalcontentfile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/assetcatalog_generated_info.plist -requiredArchitecture arm64 -o /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/Info.plist
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppDelegate.swift, CameraViewController.swift, Collage.swift, CropViewController.swift, DocDetector.swift, DocLayout.swift, DocumentViewController.swift, DocxWriter.swift, EditScreen.swift, EditorViewController.swift, Edits.swift, Enhancer.swift, EraseViewController.swift, Flatten.swift, Geom.swift, HomeViewController.swift, ImageOps.swift, MarkRender.swift, MarkupViewController.swift, Models.swift, PageCanvasView.swift, PdfWriter.swift, Retouch.swift, SelfTest.swift, Theme.swift, WordDoc.swift, WordExport.swift, WordFont.swift, GeneratedAssetSymbols.swift (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+
+SwiftDriver\ Compilation\ Requirements QuetTaiLieu normal arm64 com.apple.xcode.tools.swift.compiler (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name QuetTaiLieu -O -whole-module-optimization -enforce-exclusivity\=checked @/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -target arm64-apple-ios15.0 -g -module-cache-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos -F /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos -c -num-threads 3 -Xcc -ivfsstatcache -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache -output-file-map /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-generated-files.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-own-target-headers.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu-project-headers.hmap -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/include -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-Swift.h -working-directory /Users/runner/work/quet-tl/quet-tl/ios -no-emit-module-separately-wmo
+
+SwiftMergeGeneratedHeaders /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/QuetTaiLieu-Swift.h /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-Swift.h (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-swiftHeaderTool -arch arm64 /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu-Swift.h -o /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/DerivedSources/QuetTaiLieu-Swift.h
+
+Copy /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.swiftmodule/arm64-apple-ios.swiftdoc /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftdoc (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftdoc /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.swiftmodule/arm64-apple-ios.swiftdoc
+
+Copy /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.swiftmodule/arm64-apple-ios.swiftmodule /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftmodule (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftmodule /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.swiftmodule/arm64-apple-ios.swiftmodule
+
+Copy /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.swiftmodule/arm64-apple-ios.abi.json /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.abi.json (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.abi.json /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.swiftmodule/arm64-apple-ios.abi.json
+
+Copy /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftsourceinfo (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftsourceinfo /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.swiftmodule/Project/arm64-apple-ios.swiftsourceinfo
+
+Ld /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/QuetTaiLieu normal (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios15.0 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -Os -L/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos -L/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos -F/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos -F/Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos -filelist /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.LinkFileList -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu_lto.o -Xlinker -dependency_info -Xlinker /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphoneos -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.swiftmodule -o /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/QuetTaiLieu
+
+CopySwiftLibs /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/QuetTaiLieu --scan-folder /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/Frameworks --scan-folder /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/PlugIns --scan-folder /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/SystemExtensions --scan-folder /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/Extensions --platform iphoneos --toolchain /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
+
+ExtractAppIntentsMetadata (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name QuetTaiLieu --sdk-root /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk --xcode-version 16F6 --platform-family iOS --deployment-target 15.0 --bundle-identifier vn.quettailieu.scanner --output /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app --target-triple arm64-apple-ios15.0 --binary-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/QuetTaiLieu --dependency-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu_dependency_info.dat --stringsdata-file /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftFileList --metadata-file-list /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/Objects-normal/arm64/QuetTaiLieu.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-11-14 13:53:35.230 appintentsmetadataprocessor[3555:14560] Starting appintentsmetadataprocessor export
+2026-11-14 13:53:35.246 appintentsmetadataprocessor[3555:14560] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+GenerateDSYMFile /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app.dSYM /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/QuetTaiLieu (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/QuetTaiLieu -o /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app.dSYM
+
+AppIntentsSSUTraining (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/Info.plist --temp-dir-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/ssu --bundle-id vn.quettailieu.scanner --product-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app --extracted-metadata-path /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app/Metadata.appintents --metadata-file-list /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Intermediates.noindex/QuetTaiLieu.build/Release-iphoneos/QuetTaiLieu.build/QuetTaiLieu.DependencyMetadataFileList --archive-ssu-assets
+2026-11-14 13:53:35.295 appintentsnltrainingprocessor[3557:14568] Parsing options for appintentsnltrainingprocessor
+2026-11-14 13:53:35.297 appintentsnltrainingprocessor[3557:14568] No AppShortcuts found - Skipping.
+
+RegisterExecutionPolicyException /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-RegisterExecutionPolicyException /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app
+
+Validate /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    builtin-validationUtility /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app -infoplist-subpath Info.plist
+
+Touch /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+    cd /Users/runner/work/quet-tl/quet-tl/ios
+    /usr/bin/touch -c /Users/runner/work/quet-tl/quet-tl/ios/build-device/Build/Products/Release-iphoneos/QuetTaiLieu.app
+
+note: Disabling previews because SWIFT_VERSION is set and SWIFT_OPTIMIZATION_LEVEL=-O, expected -Onone (in target 'QuetTaiLieu' from project 'QuetTaiLieu')
+** BUILD SUCCEEDED **
+

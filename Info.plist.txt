@@ -1,0 +1,74 @@
+Dict {
+    UIRequiredDeviceCapabilities = Array {
+        arm64
+    }
+    UIRequiresFullScreen = true
+    CFBundleInfoDictionaryVersion = 6.0
+    DTPlatformVersion = 18.5
+    UIUserInterfaceStyle = Dark
+    CFBundleName = QuetTaiLieu
+    DTSDKName = iphoneos18.5
+    NSPhotoLibraryUsageDescription = Chọn ảnh trong Thư viện để quét.
+    UIViewControllerBasedStatusBarAppearance = false
+    CFBundleIcons = Dict {
+        CFBundlePrimaryIcon = Dict {
+            CFBundleIconFiles = Array {
+                AppIcon60x60
+            }
+            CFBundleIconName = AppIcon
+        }
+    }
+    UILaunchScreen = Dict {
+        UIColorName = LaunchBG
+    }
+    UIStatusBarStyle = UIStatusBarStyleLightContent
+    CFBundleDisplayName = Quét Tài Liệu
+    LSRequiresIPhoneOS = true
+    CFBundleDocumentTypes = Array {
+        Dict {
+            LSHandlerRank = Alternate
+            LSItemContentTypes = Array {
+                public.image
+            }
+            CFBundleTypeName = Ảnh
+        }
+    }
+    DTSDKBuild = 22F76
+    NSCameraUsageDescription = Ứng dụng dùng máy ảnh để quét giấy tờ.
+    CFBundleShortVersionString = 1.5
+    CFBundleSupportedPlatforms = Array {
+        iPhoneOS
+    }
+    UISupportedInterfaceOrientations = Array {
+        UIInterfaceOrientationPortrait
+    }
+    BuildMachineOSBuild = 24H232
+    DTPlatformBuild = 22F76
+    CFBundlePackageType = APPL
+    DTXcodeBuild = 16F6
+    CFBundleDevelopmentRegion = vi
+    MinimumOSVersion = 15.0
+    CFBundleVersion = 6
+    NSPhotoLibraryAddUsageDescription = Lưu ảnh trang đã quét vào Thư viện ảnh.
+    UIFileSharingEnabled = false
+    LSSupportsOpeningDocumentsInPlace = false
+    UIDeviceFamily = Array {
+        1
+    }
+    CFBundleLocalizations = Array {
+        vi
+    }
+    CFBundleIdentifier = vn.quettailieu.scanner
+    DTXcode = 1640
+    CFBundleExecutable = QuetTaiLieu
+    CFBundleIcons~ipad = Dict {
+        CFBundlePrimaryIcon = Dict {
+            CFBundleIconFiles = Array {
+                AppIcon60x60
+                AppIcon76x76
+            }
+        }
+    }
+    DTPlatformName = iphoneos
+    DTCompiler = com.apple.compilers.llvm.clang.1_0
+}

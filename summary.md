@@ -1,0 +1,424 @@
+# iOS CI — run 28 (533deca)
+
+- Xcode: Xcode 16.4
+- Simulator: iPhone Air (00447DBE-32CF-4171-A4DB-0C2EAE058F02) (Shutdown) 
+- IPA: 842146 bytes
+- Crash logs: 0
+
+```
+Quét Tài Liệu 1.5 (6) — iOS 26.2, iPhone
+ảnh màn hình: 01_home_empty.png (HomeViewController)
+-- thuật toán tìm mép trên ảnh tổng hợp
+   PASS doc_1_wood err=0.0005 (1.0px) 72ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.661 biên=0 47ms | Vision err=0.1779 tin cậy=0.00
+   PASS doc_2_dark err=0.0005 (1.0px) 52ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.848 biên=0 35ms | Vision err=0.5119 tin cậy=0.97
+   PASS doc_3_gray err=0.0005 (1.0px) 40ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.803 biên=0 40ms | Vision err=0.5164 tin cậy=0.83
+   PASS doc_4_beige err=0.0005 (1.0px) 46ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.797 biên=0 40ms | Vision err=0.4628 tin cậy=0.99
+   PASS doc_5_blue err=0.0005 (0.9px) 64ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.813 biên=0 47ms | Vision err=0.5275 tin cậy=0.95
+   PASS doc_6_clutter err=0.0005 (1.0px) 78ms nguồn=docdetector | DocDetector err=0.0005 điểm=0.834 biên=0 64ms | Vision err=0.5463 tin cậy=0.99
+PASS DocDetector (Swift) trùng bản Java: 6/6 ảnh sai số <1% đường chéo
+PASS tìm mép (DocDetector + Vision) 6/6 ảnh sai số <1% đường chéo
+-- dựng tài liệu + PDF
+PASS nắn phẳng với góc thật: 804x1137, tỷ lệ 0.707
+PASS nội dung sau nắn phẳng: góc sáng 215, 137 điểm chữ
+   doc_1_wood: 1200x1600 góc=(225,287) (971,276) (1016,1412) (213,1424)
+   doc_2_dark: 1200x1600 góc=(218,191) (968,232) (945,1412) (113,1367)
+   doc_6_clutter: 1200x1600 góc=(125,280) (902,141) (1123,1283) (313,1428)
+PASS dựng 3 trang
+PASS trang 1: 804x1137, tỷ lệ 0.707 (bản Java: 0.707)
+PASS trang 2: 834x1252, tỷ lệ 0.666 (bản Java: 0.666)
+PASS trang 3: 822x1163, tỷ lệ 0.707 (bản Java: 0.707)
+PASS PDF 3 trang: 562 KB, 3 trang, ghi theo luồng trùng bản trong bộ nhớ
+PASS Word 3 trang: 31 KB, 14 phần (XML hợp lệ), 3 trang, 3 bảng, 6 hình, 11540 ms
+   Word 3 trang: 477 từ, 217 dòng trên 3/3 trang; khớp 10/10 cụm từ mẫu; tiếng Việt: true
+PASS Word 3 trang: chữ đọc đúng (10/10 cụm từ mẫu), 3/3 trang có chữ, bảng thành bảng Word (3)
+-- tải lại danh sách
+ảnh màn hình: 02_home_list.png (HomeViewController)
+-- mở tài liệu
+ảnh màn hình: 03_document.png (DocumentViewController)
+-- mở trình chỉnh sửa
+ảnh màn hình: 04_editor.png (EditorViewController)
+-- phóng to trang 2,5 lần
+PASS trình chỉnh sửa mở ở mức vừa khung
+ảnh màn hình: 04b_editor_zoom.png (EditorViewController)
+-- kiểm tra phóng to
+PASS phóng to trang: mức 2,5× (2.5)
+PASS phóng to: ảnh trang rộng hơn khung (925 / 402)
+-- mở bảng lọc
+ảnh màn hình: 05_filters.png (EditorViewController)
+-- kiểm tra giữ mức phóng khi mở bảng lọc
+PASS mở bảng lọc: vẫn phóng 2,5× (2.5)
+-- lọc Đen trắng
+ảnh màn hình: 06_filter_bw.png (EditorViewController)
+-- kiểm tra bộ lọc
+PASS trang 1 dùng bộ lọc Đen trắng
+PASS đổi bộ lọc khi đang phóng to: vẫn phóng 2,5× (2.5)
+-- giữ So sánh khi đang phóng
+ảnh màn hình: 06b_zoom_compare.png (EditorViewController)
+-- thả So sánh, về vừa khung
+-- kiểm tra về vừa khung
+PASS về vừa khung: mức 1× (1.0)
+PASS về vừa khung: ảnh trang nằm trong khung (370 / 402)
+-- xoay trái
+ảnh màn hình: 07_rotated.png (EditorViewController)
+-- kiểm tra xoay
+PASS trang 1 xoay 270°
+-- đóng bảng lọc + mở màn hình cắt
+ảnh màn hình: 08_crop_edit.png (CropViewController)
+-- tắt Tự động cắt
+ảnh màn hình: 08b_crop_auto_off.png (CropViewController)
+-- kiểm tra tắt
+PASS Tự động cắt: tắt -> khung toàn ảnh
+-- bật lại Tự động cắt
+-- kéo góc trên-trái
+ảnh màn hình: 08c_crop_drag_loupe.png (CropViewController)
+-- kiểm tra kéo tay
+PASS kéo tay cầm -> tự tắt Tự động cắt
+-- xác nhận vùng cắt
+ảnh màn hình: 09_editor_after_crop.png (EditorViewController)
+-- giữ So sánh
+ảnh màn hình: 09b_compare.png (EditorViewController)
+-- thả So sánh
+-- sang trang 2
+ảnh màn hình: 10_editor_page2.png (EditorViewController)
+-- chụp lại trang 2
+ảnh màn hình: 10b_camera_retake.png (CameraViewController)
+-- chụp (chụp lại)
+-- Tiếp tục (chụp lại)
+ảnh màn hình: 10c_after_retake.png (EditorViewController)
+-- kiểm tra chụp lại
+PASS chụp lại thay ảnh trang 2, vẫn 3 trang
+-- lưu tài liệu
+ảnh màn hình: 11_document_after_edit.png (DocumentViewController)
+-- Thêm trang
+-- chụp (thêm trang)
+-- Tiếp tục (thêm trang)
+ảnh màn hình: 11b_editor_add_page.png (EditorViewController)
+-- lưu (thêm trang)
+ảnh màn hình: 11c_document_4_pages.png (DocumentViewController)
+-- kiểm tra thêm trang
+PASS Thêm trang: tài liệu có 4 trang
+-- kiểm tra PDF sau chỉnh sửa
+PASS PDF 4 trang: 783 KB, 4 trang, ghi theo luồng trùng bản trong bộ nhớ
+-- chia sẻ PDF
+ảnh màn hình: 12_share_pdf.png (UIActivityViewController)
+-- đóng bảng chia sẻ
+PASS chia sẻ PDF: bảng chia sẻ hiện ra sau khi tạo file ở luồng nền
+-- chuyển sang Word rồi huỷ
+PASS chuyển sang Word: bắt đầu chạy ở luồng nền
+-- kiểm tra sau khi huỷ
+PASS huỷ chuyển sang Word: không bật bảng chia sẻ
+-- chia sẻ Word
+ảnh màn hình: 12b_word_progress.png (DocumentViewController)
+ảnh màn hình: 12c_share_word.png (UIActivityViewController)
+-- đóng bảng chia sẻ (Word)
+PASS chia sẻ Word: bảng chia sẻ hiện ra sau khi chuyển đổi ở luồng nền
+-- về màn hình chính
+-- mở máy ảnh (Đơn)
+ảnh màn hình: 13_camera_single.png (CameraViewController)
+-- chụp
+ảnh màn hình: 14_crop_capture.png (CropViewController)
+-- Tiếp tục
+ảnh màn hình: 15_editor_from_camera.png (EditorViewController)
+-- lưu
+ảnh màn hình: 16_document_new.png (DocumentViewController)
+-- kiểm tra tài liệu mới
+PASS tài liệu chụp Đơn có 1 trang
+PASS tài liệu chụp Đơn đã lưu
+-- về màn hình chính
+-- mở máy ảnh (Hàng loạt)
+-- chụp 1
+-- Tiếp tục 1
+ảnh màn hình: 17_camera_batch_1.png (CameraViewController)
+-- chụp 2
+-- Tiếp tục 2
+ảnh màn hình: 18_camera_batch_2.png (CameraViewController)
+-- xem các trang đã chụp
+ảnh màn hình: 19_editor_batch.png (EditorViewController)
+-- lưu
+ảnh màn hình: 20_document_batch.png (DocumentViewController)
+-- kiểm tra tài liệu hàng loạt
+PASS tài liệu Hàng loạt có 2 trang
+PASS PDF 2 trang: 382 KB, 2 trang, ghi theo luồng trùng bản trong bộ nhớ
+-- chọn khổ giấy PDF
+ảnh màn hình: 21_pdf_size.png (UIAlertController)
+-- đóng
+-- về màn hình chính
+-- nhập 1 ảnh
+ảnh màn hình: 22_import_crop.png (CropViewController)
+-- Xong (nhập ảnh)
+ảnh màn hình: 23_import_editor.png (EditorViewController)
+-- lưu (nhập ảnh)
+ảnh màn hình: 24_import_document.png (DocumentViewController)
+-- về màn hình chính
+-- nhập nhiều ảnh
+ảnh màn hình: 25_import_multi_editor.png (EditorViewController)
+-- kiểm tra nhập nhiều ảnh
+PASS nhập nhiều ảnh: 3 trang
+-- lưu (nhập nhiều ảnh)
+ảnh màn hình: 26_import_multi_document.png (DocumentViewController)
+-- về màn hình chính
+-- mở tài liệu 2 trang
+-- đổi tên
+ảnh màn hình: 28_renamed.png (DocumentViewController)
+-- kiểm tra đổi tên
+PASS đổi tên được lưu
+-- mở trình chỉnh sửa để xoá trang
+-- xoá trang 1
+ảnh màn hình: 29_page_deleted.png (EditorViewController)
+-- kiểm tra xoá trang
+PASS xoá trang: còn 1 trang
+-- xoá tài liệu
+-- tải lại
+ảnh màn hình: 30_home_final.png (HomeViewController)
+-- kiểm tra danh sách
+PASS xoá tài liệu: còn 4 tài liệu (4)
+-- nhập 12 ảnh lớn
+-- thời gian xử lý
+   nhập + xử lý 12 ảnh 12 MP: 48.8s
+ảnh màn hình: 31_stress_editor.png (EditorViewController)
+-- lưu (12 ảnh)
+ảnh màn hình: 32_stress_document.png (DocumentViewController)
+-- kiểm tra 12 trang
+PASS nhập 12 ảnh lớn: tài liệu 12 trang
+PASS PDF 12 trang: 6897 KB, 12 trang, ghi theo luồng trùng bản trong bộ nhớ
+-- về màn hình chính
+-- kiểm tra danh sách cuối
+PASS danh sách cuối: 5 tài liệu (5)
+-- nhập ảnh có ngón tay + chữ viết tay
+-- Xong (ảnh chỉnh sửa)
+ảnh màn hình: 40_finger_banner.png (EditorViewController)
+-- kiểm tra dải công cụ
+PASS dải công cụ: bốn công cụ đầu hiện trọn (mép phải nút thứ tư 280 / thấy được 322), nút đủ rộng cho nhãn (Cắt 60, Bên trái 60, Bộ lọc 60, Xóa thông minh 100, Chụp lại 60, Ký tên 60, Thêm văn bản 91, Brush 60, Khảm 60, Thêm hình mờ 92, Cắt dán 60, Tiêu đề trang 87)
+-- kiểm tra lời nhắc ngón tay
+PASS phát hiện ngón tay giữ giấy trên ảnh thử (finger=Optional(1))
+PASS hiện lời nhắc 'Phát hiện ngón tay'
+-- Gỡ bỏ
+ảnh màn hình: 41_finger_removed.png (EditorViewController)
+-- kiểm tra gỡ ngón tay
+PASS Gỡ bỏ -> bộ lọc Thần kỳ, lời nhắc ẩn
+PASS Thần kỳ gỡ ngón tay (màu da 0.9939 -> 0.0000)
+PASS Thần kỳ giữ chữ in (0.2023 -> 0.1977)
+-- mở bảng lọc
+ảnh màn hình: 42_filters_new.png (EditorViewController)
+-- Khử nhiễu
+ảnh màn hình: 42b_filter_denoise.png (EditorViewController)
+-- Không bóng
+ảnh màn hình: 42c_filter_noshadow.png (EditorViewController)
+-- Ko viết tay
+ảnh màn hình: 42d_filter_nohand.png (EditorViewController)
+-- kiểm tra Ko viết tay
+PASS Ko viết tay xoá nét bút xanh (0.0603 -> 0.0000)
+PASS Ko viết tay giữ con dấu đỏ (0.1646)
+-- ✓ giữ bộ lọc
+-- lời nhắc hiện lại rồi tắt hẳn
+PASS bỏ bộ lọc Thần kỳ -> lời nhắc ngón tay hiện lại
+PASS ✕ tắt lời nhắc cho trang này
+-- mở bảng lọc + Đen trắng
+-- ✕ trả lại bộ lọc cũ
+-- kiểm tra ✕
+PASS ✕ ở bảng lọc trả lại bộ lọc lúc mở bảng
+-- về bộ lọc Tăng cường
+-- mở Xóa thông minh
+ảnh màn hình: 43_erase_open.png (EraseViewController)
+-- kiểm tra hàng công cụ Xóa thông minh
+PASS Xóa thông minh: hàng công cụ nằm trọn bề ngang, nhãn không bị cắt (Bút 68, Hình chữ nhật 102, Thần kỳ 70, Viết tay 68, Xóa văn bản 93; hàng 402 / màn hình 402)
+-- Bút: tô lên dòng NGƯỜI LẬP
+-- Hình chữ nhật quanh con dấu
+ảnh màn hình: 43b_erase_pen_rect.png (EraseViewController)
+-- Thần kỳ: tô sơ qua nét bút xanh
+-- Xóa văn bản trong bảng
+-- Viết tay
+ảnh màn hình: 43c_erase_all.png (EraseViewController)
+-- hoàn tác
+-- kiểm tra hoàn tác + làm lại
+PASS hoàn tác bỏ thao tác cuối (4)
+-- giữ So sánh
+ảnh màn hình: 43d_erase_compare.png (EraseViewController)
+-- thả So sánh + ✓
+PASS 5 thao tác xoá theo thứ tự ([0, 1, 2, 3, 4])
+ảnh màn hình: 44_erase_applied.png (EditorViewController)
+-- kiểm tra ảnh sau Xóa thông minh
+PASS trang lưu 5 thao tác xoá
+PASS xoá chữ 'NGƯỜI LẬP' (Bút): 0.2023 -> 0.0000
+PASS xoá con dấu (Hình chữ nhật): 0.1915 -> 0.0000
+PASS xoá nét bút xanh dưới (Thần kỳ): 0.0603 -> 0.0000
+PASS xoá chữ trong bảng (Xóa văn bản): 0.1984 -> 0.0000
+PASS xoá nét bút xanh trên (Viết tay): 0.1022 -> 0.0000
+PASS Xóa văn bản giữ đường kẻ bảng (0.1346)
+-- mở Đánh dấu (Brush)
+-- kiểm tra hàng công cụ Đánh dấu
+PASS Đánh dấu: hàng công cụ nằm trọn bề ngang, nhãn không bị cắt (Ký tên 66, Thêm văn bản 101, Brush 66, Khảm 66, Thêm hình mờ 102; hàng 402 / màn hình 402)
+-- Brush đen + đỏ
+-- Khảm
+ảnh màn hình: 45_markup_brush_mosaic.png (MarkupViewController)
+-- Thêm văn bản + hình mờ
+ảnh màn hình: 45b_markup_text_watermark.png (MarkupViewController)
+-- Ký tên: mở bảng ký
+-- ký
+ảnh màn hình: 45c_sign_pad.png (MarkupViewController)
+-- Lưu chữ ký
+ảnh màn hình: 45d_sign_placed.png (MarkupViewController)
+-- kiểm tra chữ ký + kéo
+PASS lưu chữ ký: bảng ký đóng, có 6 đánh dấu (6)
+PASS chữ ký được lưu vào thư viện
+ảnh màn hình: 45e_sign_moved.png (MarkupViewController)
+-- kiểm tra kéo + hoàn tác / làm lại
+PASS kéo chữ ký tới vị trí mới (0.72, 0.9)
+PASS hoàn tác trả chữ ký về chỗ cũ
+PASS 6 đánh dấu theo thứ tự ([0, 0, 1, 2, 4, 3])
+ảnh màn hình: 46_markup_applied.png (EditorViewController)
+-- kiểm tra ảnh sau Đánh dấu
+PASS trang lưu 6 đánh dấu
+PASS file chữ ký nằm trong thư mục tài liệu
+PASS ảnh kết quả có nét brush đỏ (1.0000)
+-- Tiêu đề trang
+ảnh màn hình: 48_header.png (EditorViewController)
+-- kiểm tra tiêu đề trang
+PASS tiêu đề trang được điền số trang (BB_2026
+1/1)
+PASS ảnh kết quả có dòng tiêu đề ở lề trên (0.0000 -> 0.0488)
+-- mở màn hình cắt
+-- tắt Tự động cắt
+-- Xong (cắt lại)
+ảnh màn hình: 47_markup_recrop.png (EditorViewController)
+-- kiểm tra cắt lại
+PASS cắt lại: đánh dấu đi theo vùng cắt mới (còn 6)
+PASS cắt lại: vẫn còn 5 thao tác xoá
+-- Ký tên trên trang đã xoay
+-- chọn chữ ký trong thư viện
+PASS đã có chữ ký trong thư viện -> không tự mở bảng ký
+ảnh màn hình: 47b_sign_rotated.png (MarkupViewController)
+-- ✓ (chữ ký thứ hai)
+PASS chữ ký trên trang đã xoay nằm thẳng theo chiều hiển thị (góc 90)
+-- Cắt dán 4 trang mỗi tờ
+ảnh màn hình: 49_collage.png (DocumentViewController)
+-- kiểm tra tài liệu ghép
+PASS tờ ghép là A4 dọc 2480x3508 (2480x3508)
+PASS Cắt dán tạo tài liệu mới 1 tờ (Scan 14-11-2026 14.02 - ghép)
+-- xoá tài liệu ghép + gỡ tiêu đề
+-- lưu tài liệu đã chỉnh sửa
+PASS gỡ tiêu đề trang
+ảnh màn hình: 50_beauty_document.png (DocumentViewController)
+-- kiểm tra PDF + dọn dẹp
+PASS PDF 1 trang: 385 KB, 1 trang, ghi theo luồng trùng bản trong bộ nhớ
+PASS tài liệu lưu đủ chỉnh sửa (7 đánh dấu, 5 thao tác xoá)
+-- nhập ảnh biểu mẫu giấy nhàu
+-- Xong (giấy nhàu)
+ảnh màn hình: 51_flatten_default.png (EditorViewController)
+-- ảnh đối chứng: bộ lọc Tăng cường
+bộ lọc mặc định của trang mới: Tăng cường (1)
+-- đo ảnh bộ lọc Tăng cường
+PASS ảnh đối chứng dùng bộ lọc Tăng cường (1)
+-- mở bảng lọc + Làm phẳng
+ảnh màn hình: 52_filter_flatten.png (EditorViewController)
+-- kiểm tra Làm phẳng
+PASS trang dùng bộ lọc Làm phẳng
+PASS ảnh thử có bảng uốn lượn, nếp gấp, con dấu, chữ ký, chữ ở vị trí mong đợi (Tăng cường: 0 hàng kẻ thẳng, nếp gấp 0.0192, đỏ 0.1618, xanh 0.0579, chữ 0.0785)
+PASS Làm phẳng nắn thẳng đường kẻ bảng (hàng kẻ thẳng 0 -> 24)
+PASS Làm phẳng xoá vệt nếp gấp trên giấy trắng (0.0192 -> 0.0000)
+PASS Làm phẳng giữ con dấu đỏ (0.1618 -> 0.1508)
+PASS Làm phẳng giữ chữ ký bút xanh (0.0579 -> 0.0401)
+PASS Làm phẳng giữ chữ trong bảng (0.0785 -> 0.0393)
+-- ✓ giữ bộ lọc
+-- mở Xóa thông minh (Làm phẳng)
+ảnh màn hình: 52a_flatten_erase.png (EraseViewController)
+-- kiểm tra xem trước Xóa thông minh (Làm phẳng)
+PASS xem trước Xóa thông minh của trang Làm phẳng chưa nắn (hàng kẻ thẳng 0)
+PASS xem trước Xóa thông minh đã làm sạch nếp gấp (0.0000)
+-- Hình chữ nhật quanh con dấu (Làm phẳng)
+-- ✓ Xóa thông minh (Làm phẳng)
+-- kiểm tra xoá con dấu (Làm phẳng)
+PASS trang Làm phẳng lưu 1 thao tác xoá
+PASS xoá con dấu trên trang Làm phẳng (đỏ 0.0000)
+PASS xoá con dấu giữ chữ ký, trang vẫn nắn thẳng (xanh 0.0401, hàng kẻ thẳng 24)
+PASS có đường kẻ ngang thẳng trên ảnh kết quả Làm phẳng (12 đường)
+-- mở Đánh dấu (Làm phẳng)
+ảnh màn hình: 52b_flatten_markup.png (MarkupViewController)
+-- kiểm tra xem trước Đánh dấu (Làm phẳng) + brush dọc đường kẻ
+PASS xem trước Đánh dấu của trang Làm phẳng đã nắn thẳng (hàng kẻ thẳng 24)
+PASS đường kẻ ở xem trước Đánh dấu trùng ảnh kết quả (0.4413 / 0.4413)
+-- ✓ Đánh dấu (Làm phẳng)
+ảnh màn hình: 52c_flatten_marked.png (EditorViewController)
+-- kiểm tra nét brush trên đường kẻ (Làm phẳng)
+PASS trang Làm phẳng lưu 1 đánh dấu
+PASS nét brush dọc đường kẻ nằm trên đường kẻ ở ảnh kết quả (0.4413 / 0.4413, 7764 điểm)
+-- lưu tài liệu Làm phẳng
+PASS ✓ đóng bảng lọc, giữ bộ lọc Làm phẳng
+ảnh màn hình: 53_flatten_document.png (DocumentViewController)
+-- kiểm tra tài liệu Làm phẳng + PDF, dọn dẹp
+PASS tài liệu lưu 1 trang với bộ lọc Làm phẳng
+PASS PDF trang Làm phẳng: 162 KB, 1 trang, ghi theo luồng trùng bản trong bộ nhớ
+-- tiện ích: tìm kiếm không dấu, tên file, tên tài liệu
+PASS tìm kiếm không phân biệt dấu / hoa thường
+PASS tên file an toàn (80 ký tự / 160 byte, '_.._a_b_c_______x')
+PASS chuẩn hoá tên tài liệu (bỏ xuống dòng, giới hạn 120 ký tự)
+PASS toạ độ không hữu hạn được thay bằng 0 trước khi lưu
+PASS tài liệu không có trang: báo lỗi thay vì tạo file PDF hỏng
+PASS lưu sau khi xoá không tạo lại tài liệu
+-- khôi phục bản nháp
+PASS khôi phục tài liệu đang quét dở: 1 tài liệu, 1 trang còn ảnh gốc
+PASS dọn bản nháp rỗng và thư mục chưa có doc.json
+PASS thư mục có doc.json hỏng được giữ nguyên; tài liệu khôi phục hiện trong danh sách
+-- tải lại
+ảnh màn hình: 33_recovered_draft.png (HomeViewController)
+-- xoá tài liệu vừa khôi phục
+-- nhập 1 ảnh (chạm đúp)
+-- bấm Xong hai lần liên tiếp
+-- kiểm tra không tạo trùng
+PASS chạm đúp Xong ở màn hình cắt: chỉ tạo 1 tài liệu 1 trang (1 tài liệu, 1 trang)
+PASS chỉ một trình chỉnh sửa được mở (ngăn xếp 2)
+-- bấm ✓ hai lần liên tiếp
+-- kiểm tra một màn hình tài liệu
+PASS chạm đúp ✓: chỉ mở một màn hình tài liệu (1, ngăn xếp 2)
+PASS tài liệu vừa nhập đã được lưu
+-- mở trình chỉnh sửa, không sửa gì
+-- đóng trình chỉnh sửa
+-- kiểm tra thời điểm sửa
+PASS chỉ xem không sửa: giữ nguyên thời điểm sửa
+-- mở lại trình chỉnh sửa
+-- mở màn hình cắt
+-- tắt Tự động cắt rồi bấm Xong ngay
+PASS mở lại màn hình cắt: Tự động cắt vẫn bật
+ảnh màn hình: 34_crop_done_during_animation.png (EditorViewController)
+-- kiểm tra khung cắt là khung đích
+PASS Xong giữa lúc khung đang chuyển: lấy khung đích (lệch 0.00 px)
+-- mở ảnh ngoài khi đang chỉnh sửa
+PASS đang chỉnh sửa: không đóng ngang phiên để mở ảnh ngoài
+ảnh màn hình: 35_open_url_busy.png (EditorViewController)
+-- lưu
+-- mở file không phải ảnh
+PASS file không phải ảnh: từ chối, giữ nguyên màn hình
+-- mở ảnh ngoài khi đang xem tài liệu
+PASS nhận ảnh từ ứng dụng khác
+ảnh màn hình: 36_open_url_crop.png (CropViewController)
+-- Hủy
+-- mở tài liệu thử
+-- Thêm trang
+-- chụp
+-- Tiếp tục
+-- xoá hết các trang
+PASS tài liệu thử có 2 trang trước khi xoá (2)
+-- đóng máy ảnh
+-- kiểm tra tài liệu rỗng đã bị xoá
+PASS xoá hết trang lúc thêm trang: tài liệu rỗng bị xoá, về màn hình chính
+-- nhập 3 ảnh
+-- xoay rồi bỏ tài liệu khi đang xử lý
+PASS đang có 4 trang chờ xử lý
+-- kiểm tra không còn sót tài liệu
+PASS bỏ tài liệu lúc đang xử lý: không tạo lại thư mục tài liệu
+-- tài liệu có trang mất ảnh gốc
+ảnh màn hình: 37_failed_page.png (DocumentViewController)
+-- kiểm tra báo lỗi trang
+PASS trang mất ảnh gốc được đánh dấu lỗi (không quay chờ mãi)
+PASS không cho xuất khi còn trang lỗi
+-- mở trình chỉnh sửa trang lỗi
+ảnh màn hình: 38_failed_page_editor.png (EditorViewController)
+-- xoá trang lỗi
+-- kiểm tra tài liệu lỗi đã xoá
+PASS xoá trang cuối cùng: tài liệu bị xoá, về màn hình chính
+-- tải lại
+ảnh màn hình: 39_home_end.png (HomeViewController)
+-- kiểm tra không còn tài liệu thừa
+PASS sau đợt kiểm thử lỗi: 5 tài liệu, 5 thư mục (mong đợi 5/5)
+KẾT QUẢ: 129 đạt, 0 lỗi
+```
