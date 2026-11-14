@@ -1,0 +1,18 @@
+09:53:55 device: 14 34 Physical size: 1080x2400 Physical density: 420
+09:53:55 === Cài đặt
+09:53:57 Performing Streamed Install
+Success
+09:53:58 PASS Cài đặt
+09:53:58 === Mở ứng dụng
+09:54:00 Starting: Intent { cmp=vn.quettailieu.scanner/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: vn.quettailieu.scanner/.MainActivity
+TotalTime: 2217
+WaitTime: 2223
+Complete
+09:54:09 PASS Mở ứng dụng
+09:54:09 === Chuyển sang Word (nhận dạng chữ, bảng, huỷ, chia sẻ / lưu)
+09:55:11 Word: Scan 14-11-2026 09.54.docx, 29868 byte, 151 dòng chữ, 2 bảng (lớn nhất 13 hàng x 5 cột), 14 hình; khớp 12/12 cụm từ (bỏ dấu), 20/40 lần đúng cả dấu
+09:55:25 PASS Chuyển sang Word (nhận dạng chữ, bảng, huỷ, chia sẻ / lưu)
+09:55:25 DONE 3/3
