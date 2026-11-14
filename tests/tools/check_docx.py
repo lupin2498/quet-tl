@@ -463,11 +463,140 @@ def have(cmd):
     return shutil.which(cmd) is not None
 
 
-def render_pdf(docx, outdir):
+def soffice_pdf(docx, outdir):
     subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", outdir, docx], stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL, timeout=180)
     pdf = os.path.join(outdir, os.path.splitext(os.path.basename(docx))[0] + ".pdf")
     return pdf if os.path.exists(pdf) else None
+
+
+# Chiều cao hàng bảng "atLeast": Word hiểu là khoảng trống GIỮA hai đường viền (bước hàng = trHeight + bề dày viền; chỉ
+# "exact" mới vẽ viền lấn vào trong hàng) và DocxWriter ghi theo đúng nghĩa đó. LibreOffice đời cũ (24.2 trở về trước —
+# lỗi tdf#155229) lại coi atLeast như exact nên dựng mỗi hàng thấp đi một bề dày viền. Để phép đo vị trí phản ánh cách
+# Word dựng, trước khi dựng bằng một LibreOffice đời cũ thì cộng bề dày viền vào trHeight của bản sao tạm (file gốc
+# không đổi); LibreOffice đã sửa lỗi thì dựng nguyên file. Trình dựng thuộc loại nào được dò bằng một bảng mẫu.
+_ROW_MODEL = {}
+
+PROBE_DOC = ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="%s"><w:body>'
+             '<w:tbl><w:tblPr><w:tblW w:w="4000" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/>'
+             '<w:bottom w:w="0" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid><w:gridCol w:w="4000"/></w:tblGrid>%s</w:tbl>'
+             '<w:p/><w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" '
+             'w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>')
+PROBE_ROW = ('<w:tr><w:trPr><w:trHeight w:val="600" w:hRule="atLeast"/></w:trPr><w:tc><w:tcPr><w:tcW w:w="4000" w:type="dxa"/>'
+             '<w:tcBorders><w:top w:val="single" w:sz="48" w:space="0" w:color="000000"/><w:left w:val="single" w:sz="48" w:space="0" w:color="000000"/>'
+             '<w:bottom w:val="single" w:sz="48" w:space="0" w:color="000000"/><w:right w:val="single" w:sz="48" w:space="0" w:color="000000"/>'
+             '</w:tcBorders></w:tcPr><w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="200" w:lineRule="exact"/></w:pPr></w:p></w:tc></w:tr>')
+
+
+def rule_rows(pdf, dpi=144):
+    """Tâm (pt) của các đường kẻ ngang dài trên trang đầu của PDF."""
+    import glob
+    base = pdf[:-4] + "_probe"
+    subprocess.run(["pdftoppm", "-r", str(dpi), "-gray", "-f", "1", "-l", "1", pdf, base], stdout=subprocess.DEVNULL,
+                   stderr=subprocess.DEVNULL, timeout=120)
+    files = sorted(glob.glob(base + "*.pgm"))
+    if not files:
+        return []
+    data = open(files[0], "rb").read()
+    for f in files:
+        os.remove(f)
+    m = re.match(rb"P5\s+(\d+)\s+(\d+)\s+(\d+)\s", data)
+    if not m:
+        return []
+    w, h = int(m.group(1)), int(m.group(2))
+    px = data[m.end():]
+    rows = []
+    y = 0
+    while y < h:
+        row = px[y * w:(y + 1) * w]
+        if sum(1 for v in row if v < 128) > 0.2 * w:
+            y0 = y
+            while y < h and sum(1 for v in px[y * w:(y + 1) * w] if v < 128) > 0.2 * w:
+                y += 1
+            rows.append((y0 + y - 1) / 2.0 * 72.0 / dpi)
+        else:
+            y += 1
+    return rows
+
+
+def row_model(tmp):
+    """'word': trình dựng cộng bề dày viền vào hàng atLeast như Word; 'legacy': coi atLeast như exact; '?': không dò được."""
+    if "m" in _ROW_MODEL:
+        return _ROW_MODEL["m"]
+    model = "?"
+    try:
+        docx = os.path.join(tmp, "_row_probe.docx")
+        with zipfile.ZipFile(docx, "w", zipfile.ZIP_DEFLATED) as z:
+            z.writestr("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                       '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+                       '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+                       '<Default Extension="xml" ContentType="application/xml"/>'
+                       '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+                       '</Types>')
+            z.writestr("_rels/.rels", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+                       '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+                       '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'
+                       '</Relationships>')
+            z.writestr("word/document.xml", PROBE_DOC % (W, PROBE_ROW * 8))
+        pdf = soffice_pdf(docx, tmp)
+        rows = rule_rows(pdf) if pdf else []
+        if len(rows) == 9:
+            pitch = (rows[-1] - rows[0]) / 8.0   # trHeight 30 pt, viền 6 pt
+            if abs(pitch - 36.0) < 1.0:
+                model = "word"
+            elif abs(pitch - 30.0) < 1.0:
+                model = "legacy"
+        for f in (docx, pdf):
+            if f and os.path.exists(f):
+                os.remove(f)
+    except Exception as e:  # không dò được thì dựng nguyên file
+        print("Không dò được cách trình dựng tính chiều cao hàng bảng: %s" % e)
+    _ROW_MODEL["m"] = model
+    print("Trình dựng tính chiều cao hàng atLeast: %s" % {"word": "như Word (cộng bề dày viền)", "legacy": "kiểu cũ (coi như exact) — "
+          "cộng bề dày viền vào bản sao tạm trước khi dựng", "?": "không dò được"}[model])
+    return model
+
+
+def legacy_rows(xml):
+    """Cộng bề dày viền trên của từng hàng vào trHeight (cho trình dựng đời cũ)."""
+    out = []
+    prev_bottom = 0
+    pos = 0
+    for m in re.finditer(r"<w:tr>.*?</w:tr>", xml, flags=re.S):
+        row = m.group(0)
+        tops = [int(v) for v in re.findall(r'<w:top w:val="single" w:sz="(\d+)"', row)]
+        bottoms = [int(v) for v in re.findall(r'<w:bottom w:val="single" w:sz="(\d+)"', row)]
+        border = max(tops + [prev_bottom])
+        prev_bottom = max(bottoms + [0])
+
+        def bump(h, border=border):
+            return '<w:trHeight w:val="%d" w:hRule="atLeast"/>' % (int(h.group(1)) + int(border * 2.5 + 0.5))
+        row = re.sub(r'<w:trHeight w:val="(\d+)" w:hRule="atLeast"/>', bump, row, count=1)
+        out.append(xml[pos:m.start()])
+        out.append(row)
+        pos = m.end()
+        if "</w:tbl>" in xml[m.end():m.end() + 10]:
+            prev_bottom = 0
+    out.append(xml[pos:])
+    return "".join(out)
+
+
+def render_pdf(docx, outdir):
+    if row_model(outdir) != "legacy":
+        return soffice_pdf(docx, outdir)
+    # bản sao tạm cùng tên trong thư mục con để file PDF ra đúng tên
+    sub = os.path.join(outdir, "_legacy")
+    os.makedirs(sub, exist_ok=True)
+    tmp = os.path.join(sub, os.path.basename(docx))
+    with zipfile.ZipFile(docx) as zin, zipfile.ZipFile(tmp, "w", zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            data = zin.read(item.filename)
+            if item.filename == "word/document.xml":
+                data = legacy_rows(data.decode("utf-8")).encode("utf-8")
+            zout.writestr(item, data)
+    pdf = soffice_pdf(tmp, outdir)
+    os.remove(tmp)
+    return pdf
 
 
 def pdf_words(pdf):

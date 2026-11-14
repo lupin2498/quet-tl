@@ -241,18 +241,23 @@ public final class DocxWriter {
 
     // ================================================================== bảng
 
+    /** Bề dày viền theo đơn vị của Word (1/8 pt): 0 nếu không kẻ. */
+    static long borderSz(double t) {
+        if (!(t > 0)) return 0;
+        return Math.max(2, Math.min(96, rnd(t * 8.0)));
+    }
+
     static String borderXml(String tag, double t) {
-        if (!(t > 0)) return "";
-        long sz = Math.max(2, Math.min(96, rnd(t * 8.0)));
+        long sz = borderSz(t);
+        if (sz == 0) return "";
         return "<w:" + tag + " w:val=\"single\" w:sz=\"" + sz + "\" w:space=\"0\" w:color=\"000000\"/>";
     }
 
     static String tableXml(Block block, Ctx ctx) {
         Table t = block.table;
         int cols = t.cols, rows = t.rows;
-        long[] xTw = new long[cols + 1], yTw = new long[rows + 1];
+        long[] xTw = new long[cols + 1];
         for (int i = 0; i <= cols; i++) xTw[i] = tw(t.xs[i]);
-        for (int j = 0; j <= rows; j++) yTw[j] = tw(t.ys[j]);
         long[] colW = new long[cols];
         long total = 0;
         for (int i = 0; i < cols; i++) {
@@ -272,10 +277,27 @@ public final class DocxWriter {
         out.append("</w:tblPr><w:tblGrid>");
         for (int i = 0; i < cols; i++) out.append("<w:gridCol w:w=\"").append(colW[i]).append("\"/>");
         out.append("</w:tblGrid>");
+        // Chiều cao hàng "tối thiểu" (atLeast): nội dung đã đặt vừa trong ô nên hàng giữ đúng chiều cao, nhưng người dùng
+        // gõ thêm chữ thì hàng tự giãn (chiều cao cố định "exact" sẽ cắt mất chữ). Với atLeast, Word hiểu chiều cao hàng
+        // là khoảng trống GIỮA hai đường viền — viền trên của hàng cộng thêm bề dày của nó (khác "exact": viền vẽ lấn vào
+        // trong hàng) — nên phải trừ bề dày viền, nếu không mỗi hàng cao thêm một bề dày viền và cả bảng dài dần ra.
+        // bw: bề dày viền (twip) trên từng đường lưới ngang, đúng như sẽ ghi ở các ô; rowTop: mép trên của viền từng hàng.
+        double[] bw = new double[rows + 1];
+        for (Cell c : t.cells) {
+            bw[c.r0] = Math.max(bw[c.r0], borderSz(c.bTop) * 2.5);
+            bw[c.r1 + 1] = Math.max(bw[c.r1 + 1], borderSz(c.bBottom) * 2.5);
+        }
+        long[] rowHs = new long[rows];
+        double[] rowTop = new double[rows];
+        double cur = t.ys[0] * 20.0 - bw[0] / 2.0;
         for (int j = 0; j < rows; j++) {
-            long rowH = Math.max(1, yTw[j + 1] - yTw[j]);
-            // chiều cao hàng tối thiểu = khoảng cách hai đường kẻ; nội dung đã đặt vừa trong ô nên hàng giữ đúng chiều
-            // cao đó, nhưng người dùng gõ thêm chữ thì hàng tự giãn (không bị cắt chữ như chiều cao cố định)
+            double nextTop = t.ys[j + 1] * 20.0 - bw[j + 1] / 2.0;
+            rowTop[j] = cur;
+            rowHs[j] = Math.max(1, rnd(nextTop - cur - bw[j]));
+            cur += bw[j] + rowHs[j];
+        }
+        for (int j = 0; j < rows; j++) {
+            long rowH = rowHs[j];
             out.append("<w:tr><w:trPr><w:cantSplit/><w:trHeight w:val=\"").append(rowH).append("\" w:hRule=\"atLeast\"/></w:trPr>");
             // các ô có mặt ở hàng j, theo thứ tự cột
             int prev = -1;
@@ -302,19 +324,18 @@ public final class DocxWriter {
                 }
                 out.append("</w:tcPr>");
                 if (first && !c.paras.isEmpty()) {
-                    double topT = t.hT[c.r0];
                     Ctx cc = new Ctx();
                     cc.originX = c.x0 + c.marL;
-                    cc.yTw = tw(c.y0 + topT / 2.0);
+                    // nội dung ô bắt đầu ngay dưới viền trên của hàng
+                    cc.yTw = rnd(rowTop[c.r0] + bw[c.r0]);
                     cc.areaLeft = c.x0 + c.marL;
                     cc.areaRight = c.x1 - c.marR;
                     cc.clampIndent = true;
                     cc.defSz = ctx.defSz;
                     for (Para p : c.paras) out.append(linePara(p, cc, 0, ""));
                 } else {
-                    // ô trống: giữ cỡ chữ mặc định để gõ chữ vào trông đúng
-                    long avail = (first ? yTw[c.r1 + 1] : yTw[j + 1]) - yTw[j];
-                    long line = Math.max(10, Math.min(rnd(ctx.defSz * 11.5), avail - 10));
+                    // ô trống: giữ cỡ chữ mặc định để gõ chữ vào trông đúng (hộp dòng không cao quá hàng)
+                    long line = Math.max(10, Math.min(rnd(ctx.defSz * 11.5), rowH - 10));
                     out.append("<w:p><w:pPr><w:spacing w:before=\"0\" w:after=\"0\" w:line=\"").append(line)
                             .append("\" w:lineRule=\"exact\"/></w:pPr></w:p>");
                 }
