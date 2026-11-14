@@ -863,25 +863,47 @@ public final class DocxWriter {
                 + "</dcterms:created><dcterms:modified xsi:type=\"dcterms:W3CDTF\">" + esc(isoTime) + "</dcterms:modified></cp:coreProperties>";
     }
 
+    /** Một phần (mục zip) của file .docx: tên, nội dung, có nên nén hay không (hình đã nén thì lưu thẳng). */
+    public static final class Part {
+        public final String name;
+        public final byte[] data;
+        public final boolean deflate;
+
+        Part(String name, byte[] data, boolean deflate) {
+            this.name = name;
+            this.data = data;
+            this.deflate = deflate;
+        }
+    }
+
     /**
-     * Ghi file .docx. isoTime: thời điểm tạo dạng 2026-01-31T08:00:00Z.
+     * Mọi phần của file .docx theo đúng thứ tự ghi (dùng chung cho write và xuất đối chiếu Java ↔ Swift: bản Swift không
+     * nén bằng Deflater nên hai bản được so theo nội dung từng phần, không so byte của file zip).
+     * isoTime: thời điểm tạo dạng 2026-01-31T08:00:00Z.
      * Hình của từng trang (Pic.data / ext) phải được điền trước; hình không có dữ liệu thì bỏ qua.
      */
+    public static List<Part> parts(List<Page> pages, String title, String isoTime) {
+        ArrayList<Pic> media = new ArrayList<>();
+        String[] xml = buildXml(pages, media);
+        long defSz = Long.parseLong(xml[2]);
+        ArrayList<Part> out = new ArrayList<>();
+        out.add(new Part("[Content_Types].xml", CONTENT_TYPES_XML.getBytes(UTF8), true));
+        out.add(new Part("_rels/.rels", ROOT_RELS_XML.getBytes(UTF8), true));
+        out.add(new Part("docProps/core.xml", coreXml(title, isoTime == null ? "2026-01-01T00:00:00Z" : isoTime).getBytes(UTF8), true));
+        out.add(new Part("docProps/app.xml", APP_XML.getBytes(UTF8), true));
+        out.add(new Part("word/document.xml", xml[0].getBytes(UTF8), true));
+        out.add(new Part("word/styles.xml", stylesXml(defSz).getBytes(UTF8), true));
+        out.add(new Part("word/settings.xml", SETTINGS_XML.getBytes(UTF8), true));
+        out.add(new Part("word/_rels/document.xml.rels", xml[1].getBytes(UTF8), true));
+        for (int i = 0; i < media.size(); i++) out.add(new Part("word/media/" + mediaName(media.get(i), i), media.get(i).data, false));
+        return out;
+    }
+
+    /** Ghi file .docx (các phần của parts(), nén zip). */
     public static void write(OutputStream os, List<Page> pages, String title, String isoTime) throws IOException {
         if (pages == null || pages.isEmpty()) throw new IOException("Tài liệu không có trang");
-        ArrayList<Pic> media = new ArrayList<>();
-        String[] parts = buildXml(pages, media);
-        long defSz = Long.parseLong(parts[2]);
         Zip zip = new Zip(os);
-        zip.add("[Content_Types].xml", CONTENT_TYPES_XML.getBytes(UTF8), true);
-        zip.add("_rels/.rels", ROOT_RELS_XML.getBytes(UTF8), true);
-        zip.add("docProps/core.xml", coreXml(title, isoTime == null ? "2026-01-01T00:00:00Z" : isoTime).getBytes(UTF8), true);
-        zip.add("docProps/app.xml", APP_XML.getBytes(UTF8), true);
-        zip.add("word/document.xml", parts[0].getBytes(UTF8), true);
-        zip.add("word/styles.xml", stylesXml(defSz).getBytes(UTF8), true);
-        zip.add("word/settings.xml", SETTINGS_XML.getBytes(UTF8), true);
-        zip.add("word/_rels/document.xml.rels", parts[1].getBytes(UTF8), true);
-        for (int i = 0; i < media.size(); i++) zip.add("word/media/" + mediaName(media.get(i), i), media.get(i).data, false);
+        for (Part p : parts(pages, title, isoTime)) zip.add(p.name, p.data, p.deflate);
         zip.finish();
     }
 

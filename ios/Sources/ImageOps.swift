@@ -384,7 +384,7 @@ enum ImageOps {
         return ExportJob(title: doc.title, files: files, pdfSize: DocStore.shared.pdfSize)
     }
 
-    private static func shareDir() -> URL {
+    static func shareDir() -> URL {
         let dir = FileManager.default.temporaryDirectory.appendingPathComponent("share", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir

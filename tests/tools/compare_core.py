@@ -8,12 +8,24 @@ Mã thoát 0 nếu hai bản cho cùng kết quả (trong sai số làm tròn), 
 Bộ lọc Làm phẳng (chế độ 9) chỉ dùng phép tính cơ bản nên phải trùng TUYỆT ĐỐI: tổng kênh, từng điểm ảnh (*_m9.ppm),
 thông số trường nắn (dòng "flt", số thực chỉ được lệch một đơn vị chữ số cuối do cách làm tròn khi in); phải có ít nhất
 một trang được nắn và mọi trang wv_* đều được so từng điểm ảnh — không thì coi là thiếu dữ liệu.
+
+Lõi chuyển trang quét sang Word (DocLayout + DocxWriter; DumpCore --word / algotest --dump-word trên các trang của
+make_word_pages.py, make_word_junk.py):
+    python3 tests/tools/compare_core.py --word <kết-quả-java> <kết-quả-swift>
+Mọi thứ phải trùng TUYỆT ĐỐI: các dòng tóm tắt (số liệu của Result ở dạng bit, khung cắt + mã băm điểm ảnh từng hình),
+mô hình trang (*.model.txt), document.xml của từng trang ở cả ba khổ giấy, từng phần của tài liệu nhiều trang (all.<khổ>/);
+các file .docx được mở bằng zipfile và so nội dung từng mục (bản Java nén bằng Deflater, bản Swift thì không, nên không
+so byte của file zip). Chỗ lệch đầu tiên của mỗi file được chỉ rõ (dòng / byte + đoạn trích).
 """
 import math
 import os
 import sys
 
-IN, JAVA, SWIFT = sys.argv[1], sys.argv[2], sys.argv[3]
+WORD = len(sys.argv) > 1 and sys.argv[1] == "--word"
+if len(sys.argv) < 4:
+    print(__doc__)
+    sys.exit(2)
+IN, JAVA, SWIFT = ("", sys.argv[2], sys.argv[3]) if WORD else (sys.argv[1], sys.argv[2], sys.argv[3])
 problems = []
 stats = {}
 
@@ -281,5 +293,152 @@ def main():
     sys.exit(0 if not problems else 1)
 
 
+# ---------------------------------------------------------------------- lõi Word
+
+def first_diff(a, b):
+    """Vị trí byte khác nhau đầu tiên của hai chuỗi byte (bằng nhau: -1)."""
+    n = min(len(a), len(b))
+    if a[:n] == b[:n]:
+        return -1 if len(a) == len(b) else n
+    lo, hi = 0, n
+    while hi - lo > 1:
+        mid = (lo + hi) // 2
+        if a[:mid] == b[:mid]:
+            lo = mid
+        else:
+            hi = mid
+    return lo
+
+
+def describe_diff(name, a, b):
+    """Mô tả chỗ lệch đầu tiên: byte, dòng, cột + đoạn trích hai bản."""
+    at = first_diff(a, b)
+    line = a[:at].count(b"\n") + 1
+    col = at - (a[:at].rfind(b"\n") + 1) + 1
+
+    def cut(d):
+        return d[max(0, at - 60):at + 60].decode("utf-8", "replace").replace("\n", "\\n")
+    return "%s: lệch từ byte %d (dòng %d, cột %d; java %d byte, swift %d byte)\n      java : …%s…\n      swift: …%s…" % (
+        name, at, line, col, len(a), len(b), cut(a), cut(b))
+
+
+def read_bytes(path):
+    with open(path, "rb") as f:
+        return f.read()
+
+
+def compare_word():
+    import zipfile
+    import xml.etree.ElementTree as ET
+
+    def lines_of(d):
+        path = os.path.join(d, "word_results.txt")
+        if not os.path.exists(path):
+            bad("thiếu %s" % path)
+            return []
+        return read_bytes(path).decode("utf-8").split("\n")
+
+    ja, sw = lines_of(JAVA), lines_of(SWIFT)
+    n_lines = 0
+    for i in range(max(len(ja), len(sw))):
+        x = ja[i] if i < len(ja) else "<hết file>"
+        y = sw[i] if i < len(sw) else "<hết file>"
+        if x != y:
+            bad("word_results.txt dòng %d:\n      java : %s\n      swift: %s" % (i + 1, x, y))
+            break
+        n_lines += 1
+    pages, modes = set(), set()
+    n_word = n_pic = n_part = n_tables = n_skew = n_boxes = n_rules = 0
+    for line in ja:
+        p = line.split(" ")
+        if p[0] == "word":
+            n_word += 1
+            pages.add(p[1])
+            modes.add(p[2])
+            f = dict(x.split("=", 1) for x in p[5:] if "=" in x)
+            n_tables += f.get("tables", "0") != "0"
+            n_skew += f.get("skew", "0" * 16) != "0" * 16
+            n_boxes += f.get("boxes", "0") != "0"
+            n_rules += f.get("rules", "0") != "0"
+        elif p[0] == "pic":
+            n_pic += 1
+        elif p[0] == "part":
+            n_part += 1
+
+    # các file kết quả: mô hình trang, document.xml, từng phần của tài liệu nhiều trang
+    def listing(d):
+        out = []
+        for root, _, files in os.walk(d):
+            for f in files:
+                rel = os.path.relpath(os.path.join(root, f), d)
+                if rel != "word_results.txt":
+                    out.append(rel)
+        return sorted(out)
+
+    jf, sf = listing(JAVA), listing(SWIFT)
+    for f in sf:
+        if f not in set(jf):
+            bad("thừa %s ở bản Swift (bản Java không ghi)" % f)
+    n_files = n_same = n_bytes = n_docx = n_entries = n_deflated = 0
+    kinds = {}
+    for f in jf:
+        other = os.path.join(SWIFT, f)
+        if not os.path.exists(other):
+            bad("thiếu %s ở bản Swift" % f)
+            continue
+        if f.endswith(".docx"):
+            # cùng danh sách mục (đúng thứ tự), cùng nội dung từng mục; file zip đọc được, CRC đúng, XML đúng cú pháp
+            n_docx += 1
+            try:
+                za, zb = zipfile.ZipFile(os.path.join(JAVA, f)), zipfile.ZipFile(other)
+                for z, who in ((za, "java"), (zb, "swift")):
+                    broken = z.testzip()
+                    if broken:
+                        bad("%s (%s): mục %s hỏng CRC" % (f, who, broken))
+                if za.namelist() != zb.namelist():
+                    bad("%s: danh sách mục khác nhau: java %s | swift %s" % (f, za.namelist(), zb.namelist()))
+                    continue
+                for name in za.namelist():
+                    da, db = za.read(name), zb.read(name)
+                    n_entries += 1
+                    if zb.getinfo(name).compress_type == zipfile.ZIP_DEFLATED:
+                        n_deflated += 1
+                    if da != db:
+                        bad(describe_diff("%s!%s" % (f, name), da, db))
+                    if name.endswith(".xml") or name.endswith(".rels"):
+                        try:
+                            ET.fromstring(db)
+                        except ET.ParseError as e:
+                            bad("%s!%s (swift) không đúng cú pháp XML: %s" % (f, name, e))
+            except (zipfile.BadZipFile, OSError) as e:
+                bad("%s: không mở được bằng zipfile: %s" % (f, e))
+            continue
+        da, db = read_bytes(os.path.join(JAVA, f)), read_bytes(other)
+        n_files += 1
+        n_bytes += len(da)
+        kind = "phần DOCX" if os.sep in f else ("mô hình trang" if f.endswith(".model.txt") else "document.xml")
+        k = kinds.setdefault(kind, [0, 0])
+        k[0] += 1
+        if da == db:
+            n_same += 1
+            k[1] += 1
+        else:
+            bad(describe_diff(f, da, db))
+    print("Word: %d trang x %d khổ giấy (%s): %d dòng tóm tắt trùng (%d lượt phân tích, %d hình có mã băm điểm ảnh, %d phần DOCX)" % (
+        len(pages), len(modes), " / ".join(sorted(modes)), n_lines, n_word, n_pic, n_part))
+    print("Word: %d / %d file trùng từng byte (%s; %d byte); %d file .docx mở được, %d mục trùng nội dung (bản Swift nén %d mục)" % (
+        n_same, n_files, ", ".join("%s %d/%d" % (k, v[1], v[0]) for k, v in sorted(kinds.items())), n_bytes, n_docx, n_entries, n_deflated))
+    print("Word: lượt phân tích có bảng %d, có khử nghiêng %d, có hộp chữ %d, có đường kẻ rời %d" % (n_tables, n_skew, n_boxes, n_rules))
+    if n_word == 0 or n_files == 0 or n_part == 0 or n_docx == 0:
+        bad("thiếu dữ liệu Word để đối chiếu")
+    if modes and modes != {"a4", "letter", "fit"}:
+        bad("thiếu khổ giấy: chỉ có %s" % sorted(modes))
+    print("KẾT QUẢ ĐỐI CHIẾU WORD JAVA/SWIFT: %s (%d điểm lệch)" % ("TRÙNG" if not problems else "LỆCH", len(problems)))
+    sys.exit(0 if not problems else 1)
+
+
 if __name__ == "__main__":
-    main()
+    if WORD:
+        compare_word()
+    else:
+        main()

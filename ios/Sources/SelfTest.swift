@@ -1,3 +1,4 @@
+import Compression
 import UIKit
 
 /// Tự kiểm thử khi chạy với tham số `-selftest` (dùng trên iOS Simulator trong CI):
@@ -320,6 +321,28 @@ final class SelfTest {
         addSnap("12_share_pdf")
         addRun("đóng bảng chia sẻ") {
             self.check(self.nav.presentedViewController is UIActivityViewController, "chia sẻ PDF: bảng chia sẻ hiện ra sau khi tạo file ở luồng nền")
+            self.nav.presentedViewController?.dismiss(animated: false)
+        }
+        addWait(1.0)
+        // --- chuyển sang Word: huỷ giữa chừng, rồi chuyển hẳn và chia sẻ ---
+        addRun("chuyển sang Word rồi huỷ") {
+            self.docVC?.shareWord()
+            self.check(self.docVC?.testExporting == true, "chuyển sang Word: bắt đầu chạy ở luồng nền")
+            self.docVC?.testCancelWord()
+        }
+        addUntil("huỷ chuyển sang Word", 120) { self.docVC != nil && self.docVC?.testExporting == false }
+        addWait(1.0)
+        addRun("kiểm tra sau khi huỷ") {
+            self.check(self.nav.presentedViewController == nil, "huỷ chuyển sang Word: không bật bảng chia sẻ")
+        }
+        addRun("chia sẻ Word") { self.docVC?.shareWord() }
+        addWait(0.6)
+        addSnap("12b_word_progress")
+        addUntil("bảng chia sẻ (Word)", 300) { self.nav.presentedViewController != nil }
+        addWait(2.0)
+        addSnap("12c_share_word")
+        addRun("đóng bảng chia sẻ (Word)") {
+            self.check(self.nav.presentedViewController is UIActivityViewController, "chia sẻ Word: bảng chia sẻ hiện ra sau khi chuyển đổi ở luồng nền")
             self.nav.presentedViewController?.dismiss(animated: false)
         }
         addWait(1.0)
@@ -1710,6 +1733,7 @@ final class SelfTest {
         DocStore.shared.save(d)
         docIds.append(d.id)
         checkPdf(d, label: "PDF 3 trang")
+        checkWord(d, label: "Word 3 trang")
         // ghi bộ lọc mẫu để xem
         if let p = d.pages.first, let w = p.warp, let cg = ImageOps.loadCG(DocStore.shared.url(d, w)) {
             let small = ImageOps.scaledCG(cg, maxDim: 600)
@@ -1758,6 +1782,89 @@ final class SelfTest {
             }
             check(head.hasPrefix("%PDF-1.4") && tail.contains("%%EOF") && pages == d.pages.count && same,
                   "\(label): \(data.count / 1024) KB, \(pages) trang, ghi theo luồng \(same ? "trùng" : "KHÁC") bản trong bộ nhớ")
+        } catch {
+            check(false, "\(label): \(error.localizedDescription)")
+        }
+    }
+
+    /// Đọc file zip (mục "stored" hoặc DEFLATE) -> tên phần : nội dung. Chỉ để kiểm file .docx vừa ghi.
+    static func unzip(_ data: Data) -> [String: Data] {
+        var out = [String: Data]()
+        let b = [UInt8](data)
+        let n = b.count
+        func u16(_ o: Int) -> Int { return Int(b[o]) | Int(b[o + 1]) << 8 }
+        func u32(_ o: Int) -> Int { return Int(b[o]) | Int(b[o + 1]) << 8 | Int(b[o + 2]) << 16 | Int(b[o + 3]) << 24 }
+        guard n >= 22 else { return out }
+        var e = n - 22
+        while e >= 0, !(b[e] == 0x50 && b[e + 1] == 0x4b && b[e + 2] == 5 && b[e + 3] == 6) { e -= 1 }
+        guard e >= 0 else { return out }
+        let count = u16(e + 10)
+        var p = u32(e + 16)
+        for _ in 0..<count {
+            guard p + 46 <= n, u32(p) == 0x02014b50 else { break }
+            let method = u16(p + 10), csize = u32(p + 20), usize = u32(p + 24)
+            let nl = u16(p + 28), xl = u16(p + 30), cl = u16(p + 32), lho = u32(p + 42)
+            guard p + 46 + nl <= n, let name = String(bytes: b[(p + 46)..<(p + 46 + nl)], encoding: .utf8) else { break }
+            p += 46 + nl + xl + cl
+            guard lho + 30 <= n, u32(lho) == 0x04034b50 else { continue }
+            let start = lho + 30 + u16(lho + 26) + u16(lho + 28)
+            guard start + csize <= n else { continue }
+            let raw = Array(b[start..<(start + csize)])
+            if method == 0 {
+                out[name] = Data(raw)
+            } else if method == 8 {
+                var dst = [UInt8](repeating: 0, count: max(1, usize))
+                let got = compression_decode_buffer(&dst, dst.count, raw, raw.count, nil, COMPRESSION_ZLIB)
+                if got == usize { out[name] = Data(dst[0..<got]) }
+            }
+        }
+        return out
+    }
+
+    /// Chuyển tài liệu sang Word (Vision nhận dạng chữ ngay trên máy ảo) rồi kiểm file .docx: zip đọc lại được, đủ các
+    /// phần, mọi phần XML hợp lệ, mỗi trang quét một phần (sectPr), có chữ đọc đúng và bảng Word. File ghi ra thư mục kết quả.
+    private func checkWord(_ d: Doc, label: String, file: String? = nil) {
+        do {
+            let job = try ImageOps.exportJob(doc: d)
+            let t0 = Date()
+            let r = try WordExport.make(job: job)
+            let ms = Int(Date().timeIntervalSince(t0) * 1000)
+            try r.data.write(to: SelfTest.outDir.appendingPathComponent((file ?? "test_\(d.pages.count)p") + ".docx"))
+            let parts = SelfTest.unzip(r.data)
+            var xmlOK = !parts.isEmpty
+            for (name, data) in parts where name.hasSuffix(".xml") || name.hasSuffix(".rels") {
+                if !XMLParser(data: data).parse() {
+                    xmlOK = false
+                    log("   XML lỗi: \(name)")
+                }
+            }
+            let need = ["[Content_Types].xml", "_rels/.rels", "word/document.xml", "word/styles.xml", "word/_rels/document.xml.rels"]
+            let hasParts = need.allSatisfy { parts[$0] != nil }
+            let xml = parts["word/document.xml"].flatMap { String(data: $0, encoding: .utf8) } ?? ""
+            let sects = xml.components(separatedBy: "<w:sectPr").count - 1
+            let tables = xml.components(separatedBy: "<w:tbl>").count - 1
+            let media = parts.keys.filter { $0.hasPrefix("word/media/") }.count
+            check(hasParts && xmlOK && sects == d.pages.count,
+                  "\(label): \(r.data.count / 1024) KB, \(parts.count) phần (XML \(xmlOK ? "hợp lệ" : "LỖI")), \(sects) trang, \(tables) bảng, \(media) hình, \(ms) ms")
+            // chữ trong các đoạn (w:t), bỏ dấu để so
+            var text = ""
+            for para in xml.components(separatedBy: "</w:p>") {
+                var line = ""
+                var rest = Substring(para)
+                while let a = rest.range(of: "<w:t") {
+                    rest = rest[a.upperBound...]
+                    guard let gt = rest.range(of: ">"), let end = rest.range(of: "</w:t>") else { break }
+                    if gt.upperBound <= end.lowerBound { line += rest[gt.upperBound..<end.lowerBound] }
+                    rest = rest[end.upperBound...]
+                }
+                if !line.isEmpty { text += line + " | " }
+            }
+            let folded = ImageOps.fold(text)
+            let want = ["bien ban", "thiet bi", "may in laser", "man hinh", "ban phim", "mh-003", "mh-052", "ben giao", "ben nhan", "cong ty"]
+            let hit = want.filter { folded.contains($0) }
+            log("   \(label): \(r.stats.words) từ, \(r.stats.lines) dòng trên \(r.stats.textPages)/\(r.stats.pages) trang; khớp \(hit.count)/\(want.count) cụm từ mẫu; tiếng Việt: \(r.stats.vietnamese)")
+            check(r.stats.textPages == r.stats.pages && hit.count >= 7 && tables >= 1,
+                  "\(label): chữ đọc đúng (\(hit.count)/\(want.count) cụm từ mẫu), \(r.stats.textPages)/\(r.stats.pages) trang có chữ, bảng thành bảng Word (\(tables))")
         } catch {
             check(false, "\(label): \(error.localizedDescription)")
         }

@@ -1,9 +1,12 @@
 import vn.quettailieu.scanner.core.DocDetector;
+import vn.quettailieu.scanner.core.DocLayout;
+import vn.quettailieu.scanner.core.DocxWriter;
 import vn.quettailieu.scanner.core.Enhancer;
 import vn.quettailieu.scanner.core.Flatten;
 import vn.quettailieu.scanner.core.Geom;
 import vn.quettailieu.scanner.core.PdfWriter;
 import vn.quettailieu.scanner.core.Retouch;
+import vn.quettailieu.scanner.core.WordDoc;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
@@ -20,8 +23,9 @@ import java.util.Random;
 
 /**
  * Kiểm thử độ bền (fuzz) cho phần thuật toán: ảnh rất nhỏ / rất dẹt / một màu / nhiễu / sọc,
- * tứ giác suy biến, JPEG hỏng, trang mấp mô tổng hợp + trường nắn bất thường (Làm phẳng)... Không được ném ngoại lệ,
- * kết quả phải hợp lệ.
+ * tứ giác suy biến, JPEG hỏng, trang mấp mô tổng hợp + trường nắn bất thường (Làm phẳng), lõi chuyển sang Word (DocLayout
+ * + DocxWriter) với danh sách từ rác... Không được ném ngoại lệ, kết quả phải hợp lệ. File .docx ghi vào thư mục xuất
+ * (word_fuzz_*.docx) để kiểm bằng tests/tools/check_docx_zip.py.
  *
  * Cách chạy: java -cp out FuzzCore [thư-mục-xuất-PDF] [số-vòng]
  */
@@ -62,6 +66,9 @@ public class FuzzCore {
         t0 = System.currentTimeMillis();
         fuzzFlatten(rounds);
         System.out.printf("Flatten (Làm phẳng): xong (%d ms)%n", System.currentTimeMillis() - t0);
+        t0 = System.currentTimeMillis();
+        fuzzWord(rounds, outDir);
+        System.out.printf("DocLayout + DocxWriter (Word): xong (%d ms)%n", System.currentTimeMillis() - t0);
         fuzzPdf(outDir);
         System.out.println("PdfWriter: xong");
         System.out.printf("KẾT QUẢ FUZZ: %d kiểm tra, %d lỗi%n", checks, failures);
@@ -841,6 +848,391 @@ public class FuzzCore {
             } catch (Throwable t) {
                 fail("Làm phẳng mẫu " + kind + " " + w + "x" + h, t);
             }
+        }
+    }
+
+    // ------------------------------------------------------------------ lõi Word (DocLayout + DocxWriter)
+
+    static String repeatStr(String s, int n) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) sb.append(s);
+        return sb.toString();
+    }
+
+    /** Chữ rác: rỗng / toàn khoảng trắng / ký tự điều khiển, ký hiệu kẻ vạch, dấu tổ hợp, emoji, nửa cặp thay thế lẻ, chuỗi rất dài. */
+    static final String[] JUNK_TEXTS = {"", " ", "\t", "\n", "\r\n", "|", "_", "l", "I", "1", "||", "|a", "a|", "|_", "__", "—", "–", "¦x", "x¦",
+            "'", "\"", ".,", "-", "=", "~", "─┼─", "¬¯‾", "(", ")", "[]", "e\u0301", "a\u0323\u0302", "\u0301", "\u0323\u0301\u0302\u0300",
+            "Vie\u0323\u0302t", "😀", "😀😀😀", "👨\u200D👩\u200D👧", "中文字", "\u200B\u200C\u200D", "\uFEFF", "a\u0000b", "\u0001\u0002\u001F",
+            " x ", "<&>\"'", "\uFFFE\uFFFF", "\uDBFF\uDFFF", "\uD83D", "\uDE00x", "a\uD800", "\uD83C\uDDFB\uD83C\uDDF3", "ỵ", "Ỵ", "ạặậẹệ", "Q,;",
+            "{}", "a\u00A0b", "…", "Ǻǻ", "ḁḀ", "0", "00", "1.250.000", "Việt", "NAM", "xã", "hội", "aceimnorsuvwxz", repeatStr("W", 5000),
+            repeatStr("i", 3000), repeatStr("\u0301", 500), repeatStr("😀", 400), "|" + repeatStr("m", 40) + "|"};
+
+    static String junkText() {
+        if (rnd.nextInt(4) == 0) {
+            int[] alphabet = "abcxyzACEMÀẾỊỢỮđĐ0189|_-.,:;'()[]/\\ \u0301\u0323\u00A6\u2014中😀".codePoints().toArray();
+            StringBuilder sb = new StringBuilder();
+            int n = 1 + rnd.nextInt(12);
+            for (int i = 0; i < n; i++) sb.appendCodePoint(alphabet[rnd.nextInt(alphabet.length)]);
+            return sb.toString();
+        }
+        return JUNK_TEXTS[rnd.nextInt(JUNK_TEXTS.length)];
+    }
+
+    static float junkCoord(int lim) {
+        switch (rnd.nextInt(14)) {
+            case 0: return Float.NaN;
+            case 1: return Float.POSITIVE_INFINITY;
+            case 2: return Float.NEGATIVE_INFINITY;
+            case 3: return -1e30f;
+            case 4: return 1e30f;
+            case 5: return Float.MAX_VALUE;
+            case 6: return -5f;
+            case 7: return lim + 7f;
+            case 8: return lim;
+            case 9: return 0f;
+            case 10: return -0f;
+            case 11: return Float.MIN_VALUE;
+            default: return rnd.nextFloat() * lim;
+        }
+    }
+
+    /** n từ rác trên ảnh w x h: khung NaN / vô cực / âm / ngoài ảnh / đảo ngược / diện tích 0, chữ lạ, conf và số dòng bất thường. */
+    static List<DocLayout.Word> junkWords(int w, int h, int n) {
+        List<DocLayout.Word> out = new ArrayList<>();
+        int[] lines = {-1, 0, 1, 7, Integer.MAX_VALUE, Integer.MIN_VALUE, 0};
+        float[] confs = {1f, 1f, 1f, 0.5f, 0.49f, 0f, -1f, 2f, Float.NaN, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, 0f};
+        for (int i = 0; i < n; i++) {
+            float x0 = rnd.nextFloat() * w, y0 = rnd.nextFloat() * h;
+            float x1 = x0 + 1 + rnd.nextFloat() * 90, y1 = y0 + 2 + rnd.nextFloat() * 40;
+            switch (rnd.nextInt(10)) {
+                case 0: x0 = junkCoord(w); break;
+                case 1: y1 = junkCoord(h); break;
+                case 2: x0 = junkCoord(w); y0 = junkCoord(h); x1 = junkCoord(w); y1 = junkCoord(h); break;
+                case 3: { float t = x0; x0 = x1; x1 = t; t = y0; y0 = y1; y1 = t; break; }
+                case 4: x1 = x0; break;
+                case 5: x0 = -40; x1 = rnd.nextFloat() * 2; y1 = y0 + 30 + rnd.nextFloat() * h; break;
+                case 6: x0 = -50; y0 = -50; x1 = w + 50; y1 = h + 50; break;
+                default: break;
+            }
+            int li = rnd.nextInt(7);
+            DocLayout.Word wd = new DocLayout.Word(junkText(), x0, y0, x1, y1, li == 6 ? rnd.nextInt(30) : lines[li]);
+            int ci = rnd.nextInt(12);
+            wd.conf = ci == 11 ? rnd.nextFloat() : confs[ci];
+            int odd = rnd.nextInt(60);
+            if (odd == 0) wd.text = null;
+            out.add(odd == 1 ? null : wd);
+        }
+        return out;
+    }
+
+    static void fillRect(int[] px, int w, int h, int x0, int y0, int x1, int y1, int argb) {
+        for (int y = Math.max(0, y0); y < Math.min(h, y1); y++) {
+            for (int x = Math.max(0, x0); x < Math.min(w, x1); x++) px[y * w + x] = argb;
+        }
+    }
+
+    /** Dòng từ giả (dãy khối chữ nhật) từ xStart tới xEnd, đường chân chữ base (nghiêng theo slope); thêm các từ vào words. */
+    static void fakeLine(int[] px, int w, int h, List<DocLayout.Word> words, int[] line, int em, double slope, int xStart, int xEnd, int base) {
+        int lw = Math.max(1, em / 2 - 1), gap = Math.max(1, em / 8), xh = Math.max(3, em * 45 / 100), asc = Math.max(4, em * 66 / 100);
+        String low = "acemnorsuvwxz", tall = "bdfhklt";
+        int x = xStart;
+        line[0]++;
+        while (x + lw < xEnd) {
+            int n = 1 + rnd.nextInt(8);
+            StringBuilder sb = new StringBuilder();
+            int wx0 = x;
+            for (int k = 0; k < n && x + lw < xEnd; k++) {
+                boolean isTall = rnd.nextInt(4) == 0;
+                int yb = base + (int) (slope * x);
+                fillRect(px, w, h, x, yb - (isTall ? asc : xh), x + lw, yb, 0xFF1E1E24);
+                sb.append(isTall ? tall.charAt(rnd.nextInt(tall.length())) : low.charAt(rnd.nextInt(low.length())));
+                x += lw + gap;
+            }
+            int yb = base + (int) (slope * wx0);
+            float jx = rnd.nextFloat() * 2 - 1, jy = rnd.nextFloat() * 2 - 1;
+            DocLayout.Word wd = new DocLayout.Word(sb.toString(), wx0 - 1 + jx, yb - asc - 2 + jy, x - gap + 1 + jx, yb + 2 + jy, line[0]);
+            if (rnd.nextInt(3) == 0) wd.conf = 0.5f + 0.5f * rnd.nextFloat();
+            words.add(wd);
+            x += em / 3 + (rnd.nextInt(9) == 0 ? 3 * em : 0);
+        }
+    }
+
+    /**
+     * Trang "chữ" giả để lõi Word chạy hết các bước (đo từ, dòng, kiểu chữ, bảng, hình): các từ là dãy khối chữ nhật, có
+     * bảng kẻ (table), nét bút màu + khung dấu đỏ, dòng chữ nghiêng theo slope. Điểm ảnh ghi vào px; trả về các từ đúng khung.
+     */
+    static List<DocLayout.Word> wordPage(int[] px, int w, int h, double slope, boolean table) {
+        int shade = 236 + rnd.nextInt(20);
+        for (int i = 0; i < w * h; i++) px[i] = 0xFF000000 | (shade << 16) | (shade << 8) | (shade - rnd.nextInt(6));
+        List<DocLayout.Word> words = new ArrayList<>();
+        int em = Math.max(8, h / 48), mx = w / 12;
+        int[] line = {0};
+        int y = h / 14 + em, pitch = em * 16 / 10;
+        int tableAt = table ? 3 + rnd.nextInt(4) : -1;
+        for (int k = 0; y + em < h - h / 14; k++) {
+            if (k == tableAt && y + 5 * pitch < h - h / 14) {
+                // bảng 3 x 3, chữ trong ô
+                int t = Math.max(1, em / 8), rh = pitch * 13 / 10;
+                int[] cols = {mx, mx + (w - 2 * mx) / 4, mx + (w - 2 * mx) * 6 / 10, w - mx};
+                for (int j = 0; j <= 3; j++) fillRect(px, w, h, mx, y + j * rh, w - mx + t, y + j * rh + t, 0xFF18181C);
+                for (int c : cols) fillRect(px, w, h, c, y, c + t, y + 3 * rh + t, 0xFF18181C);
+                for (int j = 0; j < 3; j++) {
+                    for (int c = 0; c < 3; c++) {
+                        if (rnd.nextInt(5) != 0) fakeLine(px, w, h, words, line, em, slope, cols[c] + em / 2, cols[c + 1] - em / 2, y + j * rh + rh * 7 / 10);
+                    }
+                }
+                y += 3 * rh + pitch;
+            } else {
+                int indent = rnd.nextInt(5) == 0 ? 2 * em : 0;
+                int end = w - mx - (rnd.nextInt(4) == 0 ? rnd.nextInt(w / 3) : 0);
+                fakeLine(px, w, h, words, line, em, slope, mx + indent, end, y);
+                y += pitch + (rnd.nextInt(7) == 0 ? pitch / 2 : 0);
+            }
+        }
+        // nét bút xanh chéo + khung dấu đỏ
+        int sx = rnd.nextInt(Math.max(1, w / 2)), sy = h / 2 + rnd.nextInt(Math.max(1, h / 3));
+        for (int q = 0; q < w / 4; q++) fillRect(px, w, h, sx + q, sy + q / 3, sx + q + 2, sy + q / 3 + 2, 0xFF1E3CBE);
+        int bx = w / 2 + rnd.nextInt(Math.max(1, w / 4)), by = h * 3 / 4, bs = 3 * em;
+        fillRect(px, w, h, bx, by, bx + bs, by + 2, 0xFFC81E28);
+        fillRect(px, w, h, bx, by + bs, bx + bs + 2, by + bs + 2, 0xFFC81E28);
+        fillRect(px, w, h, bx, by, bx + 2, by + bs, 0xFFC81E28);
+        fillRect(px, w, h, bx + bs, by, bx + bs + 2, by + bs, 0xFFC81E28);
+        return words;
+    }
+
+    static int wordFuzzFiles = 0;
+    static final byte[] TINY_PNG = DumpCore.pngStored(new int[]{0xFFC81E28}, 1, 1);
+
+    static boolean finite(double v) {
+        return !Double.isNaN(v) && !Double.isInfinite(v);
+    }
+
+    /** Mọi số thực trong mô hình trang (dòng của DumpCore.modelText) phải hữu hạn. */
+    static boolean modelFinite(String model) {
+        for (String tok : model.split("[ \n]")) {
+            if (tok.length() != 16) continue;
+            try {
+                long v = Long.parseUnsignedLong(tok, 16);
+                if (((v >>> 52) & 0x7ff) == 0x7ff) return false;
+            } catch (NumberFormatException e) {
+                // không phải số hex (chữ của một mẩu)
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Kiểm một kết quả phân tích: khổ trang hữu hạn, hình nằm trong ảnh và cắt được, mô hình hữu hạn, document.xml đúng cú
+     * pháp XML, ghi được file .docx (vào outDir để kiểm bằng Python: mở bằng zipfile, cấu trúc OOXML).
+     */
+    static void checkWordResult(DocLayout.Result r, int w, int h, String what, File outDir) throws Exception {
+        WordDoc.Page page = r.page;
+        check(finite(page.width) && finite(page.height) && page.width > 0 && page.height > 0, what + ": khổ trang " + page.width + " x " + page.height);
+        for (WordDoc.Pic pic : page.pics) {
+            boolean ok = pic.px0 >= 0 && pic.py0 >= 0 && pic.px1 <= Math.max(w, 0) && pic.py1 <= Math.max(h, 0) && pic.px1 > pic.px0 && pic.py1 > pic.py0;
+            check(ok || w < 1 || h < 1, what + ": vùng cắt hình ngoài ảnh (" + pic.px0 + ", " + pic.py0 + ", " + pic.px1 + ", " + pic.py1 + ")");
+            if (!ok) continue;
+            int[] pix = r.picture(pic);
+            int pw = pic.px1 - pic.px0, ph = pic.py1 - pic.py0;
+            check(pix.length == pw * ph, what + ": picture trả về " + pix.length + " điểm cho hình " + pw + " x " + ph);
+            pic.data = pw * ph <= 4096 && pix.length == pw * ph ? DumpCore.pngStored(pix, pw, ph) : TINY_PNG;
+            pic.ext = "png";
+        }
+        check(modelFinite(DumpCore.modelText(r)), what + ": mô hình trang có số không hữu hạn");
+        r.release();
+        if (!page.pics.isEmpty()) {
+            WordDoc.Pic pic = page.pics.get(0);
+            if (pic.px1 > pic.px0 && pic.py1 > pic.py0 && (long) (pic.px1 - pic.px0) * (pic.py1 - pic.py0) <= 1 << 22) {
+                int[] white = r.picture(pic);
+                boolean all = white.length == (pic.px1 - pic.px0) * (pic.py1 - pic.py0);
+                for (int c : white) if (c != 0xFFFFFFFF) all = false;
+                check(all, what + ": picture sau release phải trắng");
+            }
+        }
+        List<WordDoc.Page> one = new ArrayList<>();
+        one.add(page);
+        String xml = DocxWriter.documentXml(one);
+        check(xml.startsWith("<?xml") && xml.endsWith("</w:body></w:document>"), what + ": document.xml đầu / cuối");
+        try {
+            javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new java.io.ByteArrayInputStream(xml.getBytes("UTF-8")));
+            checks++;
+        } catch (org.xml.sax.SAXException e) {
+            fail(what + ": document.xml không đúng cú pháp XML", e);
+        }
+        byte[] docx = DocxWriter.toBytes(one, what, "2026-01-01T00:00:00Z");
+        check(docx.length > 100 && docx[0] == 0x50 && docx[1] == 0x4B, what + ": file .docx");
+        if (outDir != null && wordFuzzFiles < 600) {
+            try (FileOutputStream fo = new FileOutputStream(new File(outDir, "word_fuzz_" + wordFuzzFiles + ".docx"))) { fo.write(docx); }
+        }
+        wordFuzzFiles++;
+    }
+
+    static void fuzzWord(int rounds, File outDir) {
+        // khổ trang / trang chỉ có ảnh với kích thước và khổ giấy bất kỳ
+        int[] dims = {0, 1, -5, 31, 32, 1000, 100000, Integer.MAX_VALUE};
+        for (int w : dims) {
+            for (int h : dims) {
+                for (int mode : new int[]{-1, 0, 1, 2, 3, 99}) {
+                    try {
+                        DocLayout.Geometry g = DocLayout.geometry(w, h, mode);
+                        check(finite(g.pageW) && finite(g.pageH) && finite(g.scale) && g.scale > 0 && g.pageW > 0 && g.pageH > 0,
+                                "geometry " + w + " x " + h + " khổ " + mode);
+                        WordDoc.Page page = DocLayout.picturePage(w, h, mode);
+                        check(page.pics.size() == 1 && page.width == g.pageW && page.height == g.pageH, "picturePage " + w + " x " + h + " khổ " + mode);
+                        if (mode >= 0 && mode <= 2 && (w == 1 || w == 1000)) {
+                            page.pics.get(0).data = TINY_PNG;
+                            page.pics.get(0).ext = "png";
+                            List<WordDoc.Page> one = new ArrayList<>();
+                            one.add(page);
+                            byte[] docx = DocxWriter.toBytes(one, "ảnh " + w + "x" + h, "2026-01-01T00:00:00Z");
+                            check(docx.length > 100, "picturePage " + w + " x " + h + ": file .docx");
+                            try (FileOutputStream fo = new FileOutputStream(new File(outDir, "word_fuzz_pic_" + w + "_" + h + "_" + mode + ".docx"))) { fo.write(docx); }
+                        }
+                    } catch (Throwable t) {
+                        fail("Word geometry / picturePage " + w + " x " + h + " khổ " + mode, t);
+                    }
+                }
+            }
+        }
+        // ảnh rất nhỏ / rất dẹt / một màu / nhiễu với các từ rác
+        int[][] sizes = {{1, 1}, {2, 2}, {8, 8}, {31, 31}, {31, 200}, {32, 32}, {33, 32}, {32, 33}, {40, 2000}, {2000, 40}, {47, 61}, {64, 64},
+                {100, 100}, {333, 111}, {640, 480}, {480, 640}};
+        for (int[] sz : sizes) {
+            int w = sz[0], h = sz[1];
+            for (int kind = 0; kind <= 8; kind++) {
+                String what = "Word mẫu " + kind + " " + w + "x" + h;
+                try {
+                    int[] px = pattern(kind, w, h);
+                    DocLayout.Result r = DocLayout.analyze(px, w, h, junkWords(w, h, rnd.nextInt(60)), rnd.nextInt(3));
+                    checks++;
+                    checkWordResult(r, w, h, what, outDir);
+                    if (w < 32 || h < 32) check(r.page.pics.isEmpty() && r.page.blocks.isEmpty(), "Word " + w + "x" + h + ": ảnh quá nhỏ -> trang trống");
+                } catch (Throwable t) {
+                    fail(what, t);
+                }
+            }
+        }
+        // tham số null / mảng điểm ảnh ngắn hơn ảnh: trang trống, không ném lỗi
+        try {
+            check(DocLayout.analyze(null, 64, 64, junkWords(64, 64, 5), 0).page.blocks.isEmpty(), "Word: ảnh null");
+            DocLayout.Result r = DocLayout.analyze(new int[100], 64, 64, junkWords(64, 64, 5), 0);
+            check(r.page.pics.isEmpty() && r.page.blocks.isEmpty() && r.lines == 0, "Word: mảng điểm ảnh ngắn hơn ảnh");
+            DocLayout.Result e = DocLayout.analyze(new int[0], 0, 0, null, 0);
+            check(e.page.blocks.isEmpty(), "Word: ảnh 0 x 0, không có danh sách từ");
+            e.picture(new WordDoc.Pic());
+            DocLayout.Result n = DocLayout.analyze(pattern(3, 80, 80), 80, 80, null, 2);
+            check(n.page.pics.size() == 1, "Word: danh sách từ null -> trang chỉ có ảnh");
+            checks++;
+        } catch (Throwable t) {
+            fail("Word tham số null / mảng ngắn", t);
+        }
+        // từ "|x" / "x|" hẹp hơn 1 điểm ảnh sát mép ảnh, cạnh một đường kẻ dọc: gọt ký tự đường kẻ rồi đo lại từng làm
+        // measureWord đọc ngoài mảng (ArrayIndexOutOfBoundsException)
+        try {
+            int w = 300, h = 300;
+            int[] px = new int[w * h];
+            java.util.Arrays.fill(px, 0xFFFFFFFF);
+            fillRect(px, w, h, 20, 0, 23, h, 0xFF101010);
+            fillRect(px, w, h, w - 23, 0, w - 20, h, 0xFF101010);
+            fillRect(px, w, h, 0, 10, 1, 41, 0xFF101010);
+            fillRect(px, w, h, w - 1, 10, w, 41, 0xFF101010);
+            List<DocLayout.Word> words = new ArrayList<>();
+            words.add(new DocLayout.Word("|x", -3f, -2f, 0.6f, 100f, 1));
+            words.add(new DocLayout.Word("x|", w - 0.6f, -2f, w + 3f, 100f, 1));
+            words.add(new DocLayout.Word("¦ab", -9f, 150f, 0.9f, 260f, 2));
+            checkWordResult(DocLayout.analyze(px, w, h, words, 0), w, h, "Word từ sát mép cạnh đường kẻ dọc", outDir);
+            checks++;
+        } catch (Throwable t) {
+            fail("Word từ sát mép cạnh đường kẻ dọc", t);
+        }
+        // trang chữ giả (bảng, nghiêng, nét màu) + từ rác: chạy hết các bước; chạy lại phải cho cùng kết quả
+        int nTables = 0, nSkew = 0, nLines = 0, nPics = 0;
+        for (int i = 0; i < Math.max(8, rounds / 2); i++) {
+            int w = 200 + rnd.nextInt(700), h = 200 + rnd.nextInt(900);
+            String what = "Word trang chữ giả #" + i + " " + w + "x" + h;
+            try {
+                double slope = i % 3 == 2 ? (rnd.nextDouble() - 0.5) * 0.08 : 0;
+                int[] px = new int[w * h];
+                List<DocLayout.Word> words = wordPage(px, w, h, slope, i % 2 == 0);
+                if (i % 4 != 3) words.addAll(junkWords(w, h, rnd.nextInt(40)));
+                int mode = i % 3;
+                DocLayout.Result r = DocLayout.analyze(px, w, h, words, mode);
+                checks++;
+                nTables += r.tables;
+                nLines += r.lines;
+                nPics += r.page.pics.size();
+                if (r.skew != 0) nSkew++;
+                String model = DumpCore.modelText(r);
+                checkWordResult(r, w, h, what, outDir);
+                if (i % 4 == 0) check(DumpCore.modelText(DocLayout.analyze(px, w, h, words, mode)).equals(model), what + ": chạy lại phải cho cùng kết quả");
+            } catch (Throwable t) {
+                fail(what, t);
+            }
+        }
+        check(nTables > 0 && nLines > 0 && nPics > 0, "Word: trang chữ giả phải có bảng (" + nTables + "), dòng chữ (" + nLines + "), hình (" + nPics + ")");
+        System.out.printf("   Word: trang chữ giả: %d dòng, %d bảng, %d hình, %d trang khử nghiêng%n", nLines, nTables, nPics, nSkew);
+        // hàng nghìn từ trùng nhau (dưới và trên ngưỡng 6000 của bước dọn khung trùng), lẫn rác
+        for (int n : new int[]{3000, 6500}) {
+            String what = "Word " + n + " từ trùng nhau";
+            try {
+                int w = 420, h = 300;
+                int[] px = new int[w * h];
+                DocLayout.Word first = wordPage(px, w, h, 0, false).get(0);
+                List<DocLayout.Word> words = new ArrayList<>();
+                for (int k = 0; k < n; k++) {
+                    DocLayout.Word wd = new DocLayout.Word(k % 5 == 4 ? "|" : first.text, first.x0, first.y0, first.x1, first.y1, first.line);
+                    if (k % 7 == 3) wd.conf = 0.9f;
+                    words.add(wd);
+                }
+                words.addAll(junkWords(w, h, 50));
+                long t0 = System.currentTimeMillis();
+                DocLayout.Result r = DocLayout.analyze(px, w, h, words, 0);
+                checks++;
+                checkWordResult(r, w, h, what, outDir);
+                check(System.currentTimeMillis() - t0 < 60000, what + ": quá chậm");
+            } catch (Throwable t) {
+                fail(what, t);
+            }
+        }
+        // ảnh lớn (cỡ trang thật): trang chữ giả + rác; nhiễu + rác
+        try {
+            int w = 1240, h = 1754;
+            int[] px = new int[w * h];
+            List<DocLayout.Word> words = wordPage(px, w, h, 0.01, true);
+            words.addAll(junkWords(w, h, 300));
+            checkWordResult(DocLayout.analyze(px, w, h, words, 0), w, h, "Word trang lớn " + w + "x" + h, outDir);
+            checkWordResult(DocLayout.analyze(pattern(3, 1000, 1400), 1000, 1400, junkWords(1000, 1400, 400), 2), 1000, 1400, "Word nhiễu 1000x1400", outDir);
+            checks++;
+        } catch (Throwable t) {
+            fail("Word ảnh lớn", t);
+        }
+        // DocxWriter: tài liệu rỗng, tiêu đề / thời điểm lạ, hình không có dữ liệu, nhiều trang
+        try {
+            try {
+                DocxWriter.toBytes(new ArrayList<WordDoc.Page>(), "x", null);
+                fail("DocxWriter phải từ chối tài liệu không có trang", null);
+            } catch (java.io.IOException ex) {
+                checks++;
+            }
+            List<WordDoc.Page> pages = new ArrayList<>();
+            for (int i = 0; i < 6; i++) {
+                int w = 300 + 40 * i, h = 260 + 55 * i;
+                int[] px = new int[w * h];
+                DocLayout.Result r = DocLayout.analyze(px, w, h, wordPage(px, w, h, 0, i % 2 == 1), i % 3);
+                for (int k = 0; k < r.page.pics.size(); k += 2) r.page.pics.get(k).data = TINY_PNG;
+                r.release();
+                pages.add(r.page);
+            }
+            pages.add(new WordDoc.Page());
+            pages.add(DocLayout.picturePage(10, 10, 0));
+            String[] titles = {"", "Biên bản <số 12> & \"phụ lục\" 😀 ấệữ", "a\u0000b\u0001\uFFFE\tc\n\uD83D", repeatStr("Tên rất dài ", 400), null};
+            for (int k = 0; k < titles.length; k++) {
+                byte[] docx = DocxWriter.toBytes(pages, titles[k], k == 2 ? "<lạ & \"\u0002>" : (k == 4 ? null : "2026-01-01T00:00:00Z"));
+                check(docx.length > 100, "DocxWriter nhiều trang, tiêu đề " + k);
+                try (FileOutputStream fo = new FileOutputStream(new File(outDir, "word_fuzz_multi_" + k + ".docx"))) { fo.write(docx); }
+            }
+        } catch (Throwable t) {
+            fail("DocxWriter nhiều trang / tiêu đề lạ", t);
         }
     }
 

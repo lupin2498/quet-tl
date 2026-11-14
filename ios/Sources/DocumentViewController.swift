@@ -2,7 +2,7 @@ import Photos
 import UIKit
 import UniformTypeIdentifiers
 
-/// Màn hình tài liệu: lưới trang, Thêm / Sửa / Chia sẻ / Lưu PDF / Lưu ảnh, khổ giấy PDF.
+/// Màn hình tài liệu: lưới trang, Thêm / Sửa / Chia sẻ / Word / Lưu PDF / Lưu ảnh, khổ giấy PDF + Word.
 final class DocumentViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIDocumentPickerDelegate {
     let doc: Doc
     private var collection: UICollectionView!
@@ -18,6 +18,10 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
     private let busy = BusyOverlay()
     private var exporting = false
     private var closed = false
+    /// Loại file vừa đưa vào bộ chọn nơi lưu (để báo "Đã lưu …" cho đúng).
+    private var savingWord = false
+    /// Cờ huỷ của lần chuyển sang Word đang chạy.
+    private var wordCancel: WordExport.CancelFlag?
 
     init(doc: Doc) {
         self.doc = doc
@@ -93,6 +97,7 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
             ("plus.rectangle.on.rectangle", "Thêm", #selector(addPages)),
             ("slider.horizontal.3", "Sửa", #selector(editPages)),
             ("square.and.arrow.up", "Chia sẻ", #selector(shareTapped)),
+            ("doc.text", "Word", #selector(wordTapped)),
             ("doc.richtext", "Lưu PDF", #selector(savePDF)),
             ("square.and.arrow.down", "Lưu ảnh", #selector(saveImages))
         ]
@@ -321,7 +326,7 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
         guard isFrontmost else { return }
         let a = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         a.addAction(UIAlertAction(title: "Đổi tên", style: .default) { [weak self] _ in self?.rename() })
-        a.addAction(UIAlertAction(title: "Khổ giấy PDF: \(DocStore.pdfSizeName(DocStore.shared.pdfSize))", style: .default) { [weak self] _ in
+        a.addAction(UIAlertAction(title: "Khổ giấy PDF / Word: \(DocStore.pdfSizeName(DocStore.shared.pdfSize))", style: .default) { [weak self] _ in
             self?.choosePdfSize()
         })
         a.addAction(UIAlertAction(title: "Xoá tài liệu", style: .destructive) { [weak self] _ in self?.deleteDoc() })
@@ -335,7 +340,7 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
         let names = ["A4 (210 × 297 mm)", "Letter (216 × 279 mm)", "Theo kích thước ảnh"]
         let values = [PdfWriter.sizeA4, PdfWriter.sizeLetter, PdfWriter.sizeFit]
         let cur = DocStore.shared.pdfSize
-        let a = UIAlertController(title: "Khổ giấy PDF", message: nil, preferredStyle: .actionSheet)
+        let a = UIAlertController(title: "Khổ giấy PDF / Word", message: nil, preferredStyle: .actionSheet)
         for (i, n) in names.enumerated() {
             let v = values[i]
             a.addAction(UIAlertAction(title: (v == cur ? "✓ " : "") + n, style: .default) { [weak self] _ in
@@ -362,8 +367,13 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
         navigationController?.popToRootViewController(animated: true)
     }
 
+    private enum ExportKind {
+        case pdf, images, word
+    }
+
     /// Tạo file xuất ở luồng nền (tài liệu nhiều trang mất vài giây) rồi gọi `then` ở luồng chính.
-    private func export(pdf: Bool, then: @escaping ([URL]) -> Void) {
+    /// Word: nhận dạng chữ từng trang nên lâu hơn — màn hình chờ hiện số trang và có nút Huỷ.
+    private func export(_ kind: ExportKind, then: @escaping ([URL]) -> Void) {
         guard !exporting, !closed else { return }
         let job: ImageOps.ExportJob
         do {
@@ -373,21 +383,46 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
             return
         }
         exporting = true
-        busy.show(in: navigationController?.view ?? view, text: pdf ? "Đang tạo PDF…" : "Đang chuẩn bị ảnh…")
+        let host: UIView = navigationController?.view ?? view
+        let cancel = WordExport.CancelFlag()
+        wordCancel = kind == .word ? cancel : nil
+        switch kind {
+        case .pdf: busy.show(in: host, text: "Đang tạo PDF…")
+        case .images: busy.show(in: host, text: "Đang chuẩn bị ảnh…")
+        case .word: busy.show(in: host, text: "Đang chuyển sang Word…", onCancel: { cancel.cancel() })
+        }
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            var note = ""
             let result: Result<[URL], Error> = Result {
-                try (pdf ? [ImageOps.exportPDF(job: job)] : ImageOps.exportImages(job: job))
+                switch kind {
+                case .pdf:
+                    return [try ImageOps.exportPDF(job: job)]
+                case .images:
+                    return try ImageOps.exportImages(job: job)
+                case .word:
+                    let r = try WordExport.export(job: job, cancel: cancel) { index, total in
+                        DispatchQueue.main.async {
+                            self?.busy.setText(index < total ? "Đang chuyển sang Word… (trang \(index + 1)/\(total))" : "Đang ghi file Word…")
+                        }
+                    }
+                    note = r.stats.note
+                    return [r.url]
+                }
             }
+            let noteText = note
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 self.busy.hide()
                 self.exporting = false
+                self.wordCancel = nil
                 switch result {
                 case .success(let urls):
                     // người dùng đã rời màn hình trong lúc tạo file -> không bật bảng chia sẻ lên màn hình khác
                     guard self.isFrontmost else { return }
+                    if !noteText.isEmpty { self.toast("Đã tạo file Word" + noteText) }
                     then(urls)
                 case .failure(let error):
+                    if error is WordExport.Cancelled { return }
                     self.toast("Lỗi: \(error.localizedDescription)")
                 }
             }
@@ -403,38 +438,81 @@ final class DocumentViewController: UIViewController, UICollectionViewDataSource
         a.addAction(UIAlertAction(title: "Chia sẻ ảnh JPG", style: .default) { [weak self] _ in
             self?.share(pdf: false)
         })
+        a.addAction(UIAlertAction(title: "Chia sẻ Word (.docx)", style: .default) { [weak self] _ in
+            self?.shareWord()
+        })
         a.addAction(UIAlertAction(title: "Hủy", style: .cancel))
         a.popoverPresentationController?.sourceView = view
         present(a, animated: true)
     }
 
+    private func presentShare(_ items: [URL]) {
+        let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        vc.popoverPresentationController?.sourceView = view
+        present(vc, animated: true)
+    }
+
     func share(pdf: Bool) {
         guard isFrontmost, ready() else { return }
-        export(pdf: pdf) { [weak self] items in
-            guard let self = self else { return }
-            let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
-            vc.popoverPresentationController?.sourceView = self.view
-            self.present(vc, animated: true)
+        export(pdf ? .pdf : .images) { [weak self] items in
+            self?.presentShare(items)
         }
+    }
+
+    /// Chuyển sang Word: nhận dạng chữ rồi dàn lại đúng bố cục (chữ, bảng; con dấu / chữ ký giữ dạng hình).
+    @objc private func wordTapped() {
+        guard isFrontmost, ready() else { return }
+        let a = UIAlertController(title: "Chuyển sang Word (.docx)", message: nil, preferredStyle: .actionSheet)
+        a.addAction(UIAlertAction(title: "Lưu file Word vào máy", style: .default) { [weak self] _ in
+            self?.saveWord()
+        })
+        a.addAction(UIAlertAction(title: "Chia sẻ file Word", style: .default) { [weak self] _ in
+            self?.shareWord()
+        })
+        a.addAction(UIAlertAction(title: "Hủy", style: .cancel))
+        a.popoverPresentationController?.sourceView = view
+        present(a, animated: true)
+    }
+
+    func shareWord() {
+        guard isFrontmost, ready() else { return }
+        export(.word) { [weak self] items in
+            self?.presentShare(items)
+        }
+    }
+
+    func saveWord() {
+        guard isFrontmost, ready() else { return }
+        export(.word) { [weak self] urls in
+            self?.presentSavePicker(urls, word: true)
+        }
+    }
+
+    private func presentSavePicker(_ urls: [URL], word: Bool) {
+        savingWord = word
+        let picker = UIDocumentPickerViewController(forExporting: urls, asCopy: true)
+        picker.delegate = self
+        present(picker, animated: true)
     }
 
     @objc private func savePDF() {
         guard isFrontmost, ready() else { return }
-        export(pdf: true) { [weak self] urls in
-            guard let self = self else { return }
-            let picker = UIDocumentPickerViewController(forExporting: urls, asCopy: true)
-            picker.delegate = self
-            self.present(picker, animated: true)
+        export(.pdf) { [weak self] urls in
+            self?.presentSavePicker(urls, word: false)
         }
     }
 
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        toast("Đã lưu PDF")
+        toast(savingWord ? "Đã lưu file Word" : "Đã lưu PDF")
     }
+
+    /// Móc kiểm thử (SelfTest): đang tạo file xuất; bấm Huỷ trong lúc chuyển sang Word.
+    var testExporting: Bool { exporting }
+    func testCancelWord() { wordCancel?.cancel() }
 
     @objc private func saveImages() {
         guard isFrontmost, ready() else { return }
-        export(pdf: false) { [weak self] urls in
+        export(.images) { [weak self] urls in
             self?.addToPhotos(urls)
         }
     }

@@ -393,8 +393,10 @@ public final class DocLayout {
         // ---- khử nghiêng
         double skew = estimateSkew(s, ws, segs);
         res.skew = skew;
-        s.cs = Math.cos(skew);
-        s.sn = Math.sin(skew);
+        // StrictMath (fdlibm): kết quả giống hệt trên mọi máy — Math.sin / cos của từng JVM được phép lệch 1 ulp, bản Swift
+        // (JavaNum) không thể trùng từng bit với chúng
+        s.cs = StrictMath.cos(skew);
+        s.sn = StrictMath.sin(skew);
         for (Seg sg : segs) deskewSeg(s, sg);
         for (W wd : ws) deskewWord(s, wd);
 
@@ -1234,10 +1236,11 @@ public final class DocLayout {
                     double fitFull = widthMisfit(t, ink, hgt, wf), fitCand = widthMisfit(cand, ink, hgt, wf);
                     if (fitCand + (nearRule ? 0.02 : 0.15) >= fitFull) break;
                 } else {
-                    // khung từ lùi khỏi đường kẻ (và viền nhoè của nó) để mực đường kẻ không tính vào chữ
+                    // khung từ lùi khỏi đường kẻ (và viền nhoè của nó) để mực đường kẻ không tính vào chữ; khung vẫn phải nằm
+                    // trong ảnh (từ hẹp hơn 1 điểm ảnh sát mép: ox1 - 1 < 0 làm measureWord đọc ngoài mảng)
                     double pad = 0.5 * (left != null ? left.t : right.t) + 1.0 + 0.12 * s.hc;
-                    if (left != null) wd.ox0 = Math.min(Math.max(wd.ox0, left.pos + pad), wd.ox1 - 1.0);
-                    else wd.ox1 = Math.max(Math.min(wd.ox1, right.pos - pad), wd.ox0 + 1.0);
+                    if (left != null) wd.ox0 = Math.max(0.0, Math.min(Math.max(wd.ox0, left.pos + pad), wd.ox1 - 1.0));
+                    else wd.ox1 = Math.min(s.w, Math.max(Math.min(wd.ox1, right.pos - pad), wd.ox0 + 1.0));
                 }
                 wd.text = cand;
                 wd.glyphs = Math.max(1, WordFont.glyphCount(cand));
@@ -1339,7 +1342,7 @@ public final class DocLayout {
         }
         // nghiêng dưới 0,1 độ coi như thẳng; quá 8 độ thì không tin
         if (Math.abs(slope) < 0.0017 || Math.abs(slope) > 0.14) return 0.0;
-        return Math.atan(slope);
+        return StrictMath.atan(slope);
     }
 
     static void deskewSeg(Scan s, Seg sg) {

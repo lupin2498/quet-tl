@@ -199,12 +199,15 @@ final class PaddingLabel: UILabel {
 }
 
 /// Màn hình chờ khi đang xử lý.
-final class BusyOverlay {
+final class BusyOverlay: NSObject {
     private let view = UIView()
     private let spinner = UIActivityIndicatorView(style: .large)
     private let label = UILabel()
 
-    func show(in host: UIView, text: String) {
+    private var cancelAction: (() -> Void)?
+
+    /// onCancel khác nil: thêm nút "Huỷ" dưới dòng chữ (việc dài, dừng được giữa chừng).
+    func show(in host: UIView, text: String, onCancel: (() -> Void)? = nil) {
         view.backgroundColor = UIColor(white: 0, alpha: 0.55)
         view.frame = host.bounds
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -214,20 +217,46 @@ final class BusyOverlay {
         label.textColor = .white
         label.font = UIFont.systemFont(ofSize: 15)
         label.textAlignment = .center
+        label.numberOfLines = 0
         let stack = UIStackView(arrangedSubviews: [spinner, label])
         stack.axis = .vertical
+        stack.alignment = .center
         stack.spacing = 12
         stack.translatesAutoresizingMaskIntoConstraints = false
+        cancelAction = onCancel
+        if onCancel != nil {
+            let b = UIButton(type: .system)
+            b.setTitle("Huỷ", for: .normal)
+            b.setTitleColor(.white, for: .normal)
+            b.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+            b.backgroundColor = UIColor(white: 1, alpha: 0.16)
+            b.layer.cornerRadius = 8
+            b.contentEdgeInsets = UIEdgeInsets(top: 8, left: 22, bottom: 8, right: 22)
+            b.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
+            stack.addArrangedSubview(b)
+            stack.setCustomSpacing(18, after: label)
+        }
         view.subviews.forEach { $0.removeFromSuperview() }
         view.addSubview(stack)
         NSLayoutConstraint.activate([
             stack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stack.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            stack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stack.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, constant: -48)
         ])
         host.addSubview(view)
     }
 
+    func setText(_ text: String) {
+        label.text = text
+    }
+
+    @objc private func cancelTapped() {
+        label.text = "Đang dừng…"
+        cancelAction?()
+    }
+
     func hide() {
+        cancelAction = nil
         view.removeFromSuperview()
     }
 }
