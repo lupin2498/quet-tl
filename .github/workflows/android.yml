@@ -91,7 +91,14 @@ jobs:
           sudo apt-get install -y -q fonts-liberation poppler-utils libreoffice-writer > /dev/null 2>&1 || true
           python3 tests/tools/make_word_pages.py "$RUNNER_TEMP/word-in" 2200
           java -Djava.awt.headless=true -Dfile.encoding=UTF-8 -cp out/core-classes EvalWord "$RUNNER_TEMP/word-in" "$RUNNER_TEMP/word-out" | tee out/core/word-tests.txt
-          python3 tests/tools/check_docx.py "$RUNNER_TEMP/word-in" "$RUNNER_TEMP/word-out" --render | tee -a out/core/word-tests.txt
+          { soffice --version; fc-match "Times New Roman"; python3 -c "import PIL; print('Pillow', PIL.__version__)"; } 2>&1 | tee -a out/core/word-tests.txt || true
+          rc=0
+          python3 tests/tools/check_docx.py "$RUNNER_TEMP/word-in" "$RUNNER_TEMP/word-out" --render --keep "$RUNNER_TEMP/word-rend" | tee -a out/core/word-tests.txt || rc=$?
+          # file Word + bản dựng lại (vài chục KB mỗi file) đẩy kèm kết quả để mở xem / đối chiếu khi cần
+          mkdir -p out/core/word
+          cp "$RUNNER_TEMP"/word-out/*.docx out/core/word/ || true
+          cp "$RUNNER_TEMP"/word-rend/*.pdf out/core/word/ 2>/dev/null || true
+          exit $rc
 
       - name: Kiểm thử độ bền thuật toán (fuzz) + kiểm tra PDF bằng trình phân tích thật
         run: |
