@@ -4,7 +4,7 @@
 Cách chạy:  python3 tests/android/run_tests.py <apk> <thư-mục-kết-quả>
 Kết quả: screens/*.png, summary.md, summary.json, logcat.txt, crash.txt, monkey.txt
 """
-import json, os, re, subprocess, sys, time, traceback
+import io, json, os, re, subprocess, sys, time, traceback
 import xml.etree.ElementTree as ET
 
 PKG = "vn.quettailieu.scanner"
@@ -435,9 +435,16 @@ def t_word_export():
     want = ["bien ban", "thiet bi", "may in laser", "man hinh", "ban phim", "chuot khong day", "mh-003", "mh-052", "mh-080",
             "ben giao", "ben nhan", "cong ty"]
     hit = [w for w in want if w in text]
-    log("Word: %s, %d byte, %d dòng chữ, %d bảng (lớn nhất %d hàng x %d cột), %d hình; khớp %d/%d cụm từ" % (
-        name, len(data), len(lines), tables, rows, cols, media, len(hit), len(want)))
-    notes.append("Word: %d dòng chữ, %d bảng (lớn nhất %d x %d), %d hình, khớp %d/%d cụm từ mẫu" % (len(lines), tables, rows, cols, media, len(hit), len(want)))
+    # cụm từ đúng cả dấu tiếng Việt (mỗi cụm có ở cả hai trang): chỉ ghi lại để theo dõi chất lượng nhận dạng
+    exact = ["BIÊN BẢN BÀN GIAO THIẾT BỊ", "CÔNG TY TNHH MẪU", "Độc lập - Tự do - Hạnh phúc", "Tên thiết bị", "Mã hiệu", "Số lượng",
+             "Máy in laser", "Màn hình 24 inch", "Bàn phím", "Chuột không dây", "Ổ cứng 1TB", "Bộ phát Wi-Fi", "Máy chiếu",
+             "Loa hội nghị", "Bộ lưu điện", "Cáp mạng", "Máy quét", "Đèn bàn", "BÊN GIAO", "BÊN NHẬN"]
+    joined = " | ".join(lines)
+    exact_hits = sum(min(2, joined.count(w)) for w in exact)
+    log("Word: %s, %d byte, %d dòng chữ, %d bảng (lớn nhất %d hàng x %d cột), %d hình; khớp %d/%d cụm từ (bỏ dấu), %d/%d lần đúng cả dấu" % (
+        name, len(data), len(lines), tables, rows, cols, media, len(hit), len(want), exact_hits, 2 * len(exact)))
+    notes.append("Word: %d dòng chữ, %d bảng (lớn nhất %d x %d), %d hình, khớp %d/%d cụm từ mẫu (bỏ dấu), %d/%d lần đúng cả dấu" % (
+        len(lines), tables, rows, cols, media, len(hit), len(want), exact_hits, 2 * len(exact)))
     close_chooser()
     if len(hit) < 8:
         raise AssertionError("Word: chỉ đọc đúng %d/%d cụm từ mẫu (%s)" % (len(hit), len(want), ", ".join(hit)))

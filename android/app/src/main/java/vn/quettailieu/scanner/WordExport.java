@@ -42,6 +42,12 @@ final class WordExport {
     static final String MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
     /** Cạnh dài tối đa của ảnh trang đem nhận dạng + phân tích (khoảng 200 dpi với trang A4). */
     static final int MAX_LONG = 2400;
+    /**
+     * Trang độ phân giải thấp (ảnh nhập từ nguồn khác, cạnh dài dưới mức này): chữ chỉ cao 7-10 điểm ảnh, bộ nhận dạng đọc
+     * sai dấu và đặt khung lệch -> phóng ảnh lên (tối đa 3 lần, tới cạnh dài MAX_LONG) riêng cho bước nhận dạng; việc dàn
+     * trang vẫn dùng ảnh gốc.
+     */
+    static final int OCR_MIN_LONG = 1600;
     static final int JPEG_QUALITY = 90;
 
     /** Số liệu của một lần chuyển (để báo cho người dùng và ghi log). */
@@ -113,6 +119,34 @@ final class WordExport {
         return page;
     }
 
+    /** Nhận dạng chữ; ảnh độ phân giải thấp được phóng lên trước, khung các từ quy về điểm ảnh của `bmp`. */
+    static List<DocLayout.Word> recognize(Ocr.Engine eng, Bitmap bmp) throws Exception {
+        int w = bmp.getWidth(), h = bmp.getHeight();
+        int l = Math.max(w, h);
+        if (l >= OCR_MIN_LONG) return eng.recognize(bmp);
+        float k = Math.min(3f, (float) MAX_LONG / l);
+        Bitmap big = null;
+        try {
+            big = Bitmap.createScaledBitmap(bmp, Math.max(1, Math.round(w * k)), Math.max(1, Math.round(h * k)), true);
+        } catch (OutOfMemoryError e) {
+            big = null;
+        }
+        if (big == null || big == bmp) return eng.recognize(bmp);
+        try {
+            List<DocLayout.Word> words = eng.recognize(big);
+            float kx = (float) w / big.getWidth(), ky = (float) h / big.getHeight();
+            for (DocLayout.Word wd : words) {
+                wd.x0 *= kx;
+                wd.x1 *= kx;
+                wd.y0 *= ky;
+                wd.y1 *= ky;
+            }
+            return words;
+        } finally {
+            big.recycle();
+        }
+    }
+
     /** Một trang: nhận dạng chữ -> dàn trang; lỗi ở bước nào thì trang đó vào Word dưới dạng ảnh. */
     static WordDoc.Page convertPage(File f, int sizeMode, Ocr.Engine eng, Stats st, int index) throws IOException {
         long t0 = System.currentTimeMillis();
@@ -127,7 +161,7 @@ final class WordExport {
             List<DocLayout.Word> words = null;
             if (eng != null && w >= 32 && h >= 32) {
                 try {
-                    words = eng.recognize(bmp);
+                    words = recognize(eng, bmp);
                 } catch (Throwable t) {
                     Log.w(TAG, "trang " + (index + 1) + ": nhận dạng chữ lỗi", t);
                 }
