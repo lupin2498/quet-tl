@@ -818,7 +818,9 @@ public final class DocLayout {
         }
         boolean nc = colorN > 0 && (allN - colorN) * 10 >= allN * 4;
         int mx = Math.max(2, (int) Math.round(0.30 * bh)), my = Math.max(1, (int) Math.round(0.18 * bh));
-        int rx0 = Math.max(0, bx0 - mx), rx1 = Math.min(w, bx1 + mx);
+        // cx: phạm vi dời mép trái / phải; cột mực lấy rộng hơn thế (để đo được bề rộng khe trắng bên ngoài mép ứng viên)
+        int cx = Math.max(2, (int) Math.round(0.45 * bh));
+        int rx0 = Math.max(0, bx0 - cx - mx), rx1 = Math.min(w, bx1 + cx + mx);
         int ry0 = Math.max(0, by0 - my), ry1 = Math.min(h, by1 + my);
         // mực theo cột (trong các hàng của khung nhận dạng)
         int[] col = new int[rx1 - rx0];
@@ -827,22 +829,36 @@ public final class DocLayout {
                 if (s.textInk(x, y, nc)) col[x - rx0]++;
             }
         }
-        // Mép trái / phải của khung mực = chỗ bắt đầu / kết thúc một nét mực GẦN mép khung nhận dạng nhất (trong phạm vi
-        // 0,3 chiều cao khung): khung của bộ nhận dạng có thể hụt mất một phần chữ đầu / cuối hoặc lấn sang chữ của từ
-        // bên cạnh, còn khe trắng giữa các chữ thì luôn có thật trên ảnh.
+        // Mép trái / phải của khung mực = chỗ bắt đầu / kết thúc một nét mực gần mép khung nhận dạng (trong phạm vi 0,45
+        // chiều cao khung): khung của bộ nhận dạng có thể hụt mất một phần chữ đầu / cuối, lấn sang chữ của từ bên cạnh
+        // hoặc lệch hẳn đi nửa chữ (ML Kit trên ảnh nhỏ), còn khe trắng giữa các chữ thì luôn có thật trên ảnh. Trong các
+        // chỗ bắt đầu / kết thúc nét ở gần, ưu tiên chỗ có khe trắng RỘNG phía ngoài (khe giữa hai từ) hơn chỗ gần nhất
+        // nhưng chỉ cách nét kế một khe hẹp (khe giữa hai chữ trong một từ): điểm = khoảng cách - 1,5 x bề rộng khe (khe
+        // tính tối đa mx = 0,3 chiều cao khung).
         int tx0 = -1, tx1 = -1;
-        for (int d = 0; d <= mx && tx0 < 0; d++) {
-            for (int sgn = -1; sgn <= 1 && tx0 < 0; sgn += 2) {
-                int x = bx0 + sgn * d;
-                if (x < rx0 || x >= rx1 || x >= bx1) continue;
-                if (col[x - rx0] > 0 && (x == rx0 || col[x - 1 - rx0] == 0)) tx0 = x;
+        double best0 = Double.MAX_VALUE, best1 = Double.MAX_VALUE;
+        for (int x = Math.max(rx0, bx0 - cx); x <= bx0 + cx && x < rx1 && x < bx1; x++) {
+            if (col[x - rx0] == 0) continue;
+            if (x > 0 && (x == rx0 || col[x - 1 - rx0] != 0)) continue;
+            int gap = 0;
+            while (gap < mx && x - 1 - gap >= rx0 && col[x - 1 - gap - rx0] == 0) gap++;
+            if (x - 1 - gap < 0) gap = mx;
+            double cost = Math.abs(x - bx0) - 1.5 * gap;
+            if (cost < best0) {
+                best0 = cost;
+                tx0 = x;
             }
         }
-        for (int d = 0; d <= mx && tx1 < 0; d++) {
-            for (int sgn = 1; sgn >= -1 && tx1 < 0; sgn -= 2) {
-                int x = bx1 + sgn * d;
-                if (x <= rx0 || x > rx1 || x <= bx0) continue;
-                if (col[x - 1 - rx0] > 0 && (x == rx1 || col[x - rx0] == 0)) tx1 = x;
+        for (int x = Math.min(rx1, bx1 + cx); x >= bx1 - cx && x > rx0 && x > bx0; x--) {
+            if (col[x - 1 - rx0] == 0) continue;
+            if (x < w && (x == rx1 || col[x - rx0] != 0)) continue;
+            int gap = 0;
+            while (gap < mx && x + gap < rx1 && col[x + gap - rx0] == 0) gap++;
+            if (x + gap >= w) gap = mx;
+            double cost = Math.abs(x - bx1) - 1.5 * gap;
+            if (cost < best1) {
+                best1 = cost;
+                tx1 = x;
             }
         }
         if (tx0 < 0) {
@@ -1260,6 +1276,22 @@ public final class DocLayout {
                     double ratio = ((wd.x1 - wd.x0) / em) / (nat / WordFont.UPM * wf);
                     // (khung bé tí so với chữ của trang: bộ nhận dạng đặt khung sai chỗ)
                     if (ratio < 0.5 || ratio > 2.0 || (em0 > 0 && em < 0.3 * em0)) {
+                        wd.drop = true;
+                        continue;
+                    }
+                }
+            }
+            // một ký tự mà hình dạng mực khác hẳn ký tự đó (rộng / hẹp hơn 2,5 lần so với tỷ lệ rộng : cao của nó) hoặc to
+            // gấp 2,5 lần chữ của trang: bộ nhận dạng đọc một hình thành chữ (vòng con dấu thành "(", nét ký thành "/"...)
+            // -> bỏ từ, phần mực thành hình
+            if (wd.glyphs == 1 && wd.inkN > 0) {
+                int[] ve = new int[2];
+                int vc = WordFont.verticalUnits(wd.text, ve);
+                double expH = (ve[0] - ve[1]) / WordFont.UPM;
+                int nat = natInkUnits(wd.text);
+                if (vc > 0 && expH >= 0.25 && nat > 0 && wd.y1 > wd.y0) {
+                    double ratio = ((wd.x1 - wd.x0) / (wd.y1 - wd.y0)) / (nat / WordFont.UPM * wf / expH);
+                    if (ratio < 0.4 || ratio > 2.5 || (em0 > 0 && (wd.y1 - wd.y0) / expH > 2.5 * em0)) {
                         wd.drop = true;
                         continue;
                     }
